@@ -31,18 +31,6 @@ export default async function VideosPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#1a1a1a] pt-20">
-      {/* Page Header */}
-      <section className="py-16 bg-[#282828]">
-        <div className="max-w-screen-xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold text-white mb-6">
-            All Videos
-          </h1>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Browse all my video content, from algorithms and data structures to system design and interview preparation.
-          </p>
-        </div>
-      </section>
-
       {/* Videos Grid with infinite scrolling */}
       <section className="py-16 bg-[#1a1a1a]">
         <div className="max-w-screen-xl mx-auto px-4">

@@ -46,8 +46,8 @@ export default function VideosList({ initialVideos, channelId }: VideosListProps
     setLoading(true);
     
     try {
-      // Calculate how many videos to skip (initial videos count + loaded videos)
-      const skip = initialVideos.length + (page - 1) * 6;
+      // Calculate how many videos to skip based on current videos length
+      const skip = videos.length;
       
       // Fetch next batch of videos
       const response = await fetch(`/api/videos?channelId=${channelId}&skip=${skip}&limit=6`);
