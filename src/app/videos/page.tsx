@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import VideosPageClient from '@/components/VideosPageClient';
-import ChannelStats from '@/components/ChannelStats';
 import { getChannelVideos, getChannelStats } from '@/lib/youtube';
 
 // Define the initial load limit
@@ -33,28 +32,8 @@ export default async function VideosPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#1a1a1a] pt-20">
       {/* Videos Grid with infinite scrolling */}
-      <section className="py-16 bg-[#1a1a1a]">
-        <div className="max-w-screen-xl mx-auto px-4">
-          {/* Channel Stats */}
-          {channelStats && <ChannelStats stats={channelStats} />}
-
-          <div className="mb-8 flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-white">
-              Videos
-            </h2>
-            <a 
-              href={`https://youtube.com/channel/${process.env.YOUTUBE_CHANNEL_ID}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#2cbb5d] hover:text-[#28a754] font-medium flex items-center"
-            >
-              Visit YouTube Channel
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
-          </div>
-          
+      <section className="pb-16 bg-[#1a1a1a]">
+        <div className="max-w-screen-xl mx-auto px-4">          
           <Suspense fallback={<LoadingVideos />}>
             <VideosPageClient 
               initialVideos={initialVideos} 
