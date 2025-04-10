@@ -233,4 +233,90 @@ export async function getChannelVideos(
     console.error('Error fetching YouTube videos:', error);
     return []; // Return empty array on error
   }
+}
+
+// Fetch popular videos from a specific channel
+export async function getPopularChannelVideos(
+  channelId: string,
+  maxResults: number = 3
+): Promise<YouTubeVideo[]> {
+  if (!process.env.YOUTUBE_API_KEY) {
+    console.error('YouTube API key is missing');
+    return [];
+  }
+
+  try {
+    // Use search.list to find videos for the channel, ordered by view count
+    const searchUrl = new URL(`https://www.googleapis.com/youtube/v3/search`);
+    searchUrl.searchParams.append('part', 'snippet');
+    searchUrl.searchParams.append('channelId', channelId);
+    searchUrl.searchParams.append('maxResults', maxResults.toString());
+    searchUrl.searchParams.append('order', 'viewCount'); // Order by popularity
+    searchUrl.searchParams.append('type', 'video'); // Ensure we only get videos
+    searchUrl.searchParams.append('key', process.env.YOUTUBE_API_KEY!);
+
+    const searchResponse = await fetch(searchUrl.toString());
+    if (!searchResponse.ok) {
+       const errorBody = await searchResponse.text();
+        console.error('YouTube API error details (Search):', errorBody);
+      throw new Error(`YouTube API error (Search): ${searchResponse.statusText}`);
+    }
+    const searchData = await searchResponse.json();
+
+    if (!searchData.items || searchData.items.length === 0) {
+      console.log('No popular videos found via search.');
+      return [];
+    }
+
+    // Extract video IDs from search results
+    const videoIds = searchData.items
+      .map((item: any) => item.id?.videoId)
+      .filter(Boolean) // Filter out potential null/undefined IDs
+      .join(',');
+
+    if (!videoIds) {
+      console.warn('No valid video IDs found in search results.');
+      return [];
+    }
+
+    // Fetch detailed video information (including statistics) for the found IDs
+    const videosResponse = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${videoIds}&key=${process.env.YOUTUBE_API_KEY}`
+    );
+    if (!videosResponse.ok) {
+      throw new Error(`YouTube API error (Videos): ${videosResponse.statusText}`);
+    }
+    const videosData = await videosResponse.json();
+
+     // Create a map for quick lookup of video details by ID
+    const videoDetailsMap = new Map(videosData.items.map((video: { id: string; snippet: any; statistics: any; contentDetails: any }) => [video.id, video]));
+
+    // Map search results to the detailed video info, preserving the order from search (most popular first)
+     const formattedVideos: (YouTubeVideo | null)[] = searchData.items.map((item: any) => {
+       const videoId = item.id?.videoId;
+       const video = videoDetailsMap.get(videoId) as { id: string; snippet: any; statistics: any; contentDetails: any } | undefined;
+
+       if (!video) {
+         console.warn(`Details not found for video ID: ${videoId}`);
+         return null;
+       }
+
+       return {
+         id: video.id,
+         title: video.snippet.title,
+         description: video.snippet.description,
+         thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url,
+         publishedAt: formatDate(video.snippet.publishedAt), // Use the existing formatDate function
+         viewCount: video.statistics?.viewCount,
+         videoUrl: `https://www.youtube.com/watch?v=${video.id}`
+       };
+     });
+
+     // Filter out any nulls
+     return formattedVideos.filter((video): video is YouTubeVideo => video !== null);
+
+  } catch (error) {
+    console.error('Error fetching popular YouTube videos:', error);
+    return [];
+  }
 } 

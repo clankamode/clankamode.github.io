@@ -1,5 +1,6 @@
 import VideoCard from '@/components/ui/VideoCard';
 import { getChannelVideos, getChannelStats, formatCount } from '@/lib/youtube';
+import { getPopularChannelVideos } from '@/lib/youtube';
 
 // Load videos from YouTube
 async function getYouTubeVideos() {
@@ -12,6 +13,7 @@ async function getYouTubeVideos() {
   }
   
   try {
+    // Fetch latest videos
     const videos = await getChannelVideos(channelId, 3);
     return videos;
   } catch (error) {
@@ -20,10 +22,30 @@ async function getYouTubeVideos() {
   }
 }
 
+// Load popular videos from YouTube
+async function getYouTubePopularVideos() {
+  const channelId = process.env.YOUTUBE_CHANNEL_ID;
+  if (!channelId) {
+    console.error('YouTube channel ID not found in environment variables');
+    return [];
+  }
+  try {
+    // Fetch popular videos
+    const videos = await getPopularChannelVideos(channelId, 3);
+    return videos;
+  } catch (error) {
+    console.error('Error fetching popular YouTube videos:', error);
+    return [];
+  }
+}
+
 export default async function Home() {
   // Fetch videos and channel stats from YouTube
-  const videos = await getYouTubeVideos();
-  const channelStats = await getChannelStats(process.env.YOUTUBE_CHANNEL_ID || '');
+  const [latestVideos, popularVideos, channelStats] = await Promise.all([
+    getYouTubeVideos(),
+    getYouTubePopularVideos(),
+    getChannelStats(process.env.YOUTUBE_CHANNEL_ID || '')
+  ]);
 
   return (
     <div className="flex flex-col min-h-screen bg-[#1a1a1a]">
@@ -87,7 +109,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Featured Videos Section */}
+      {/* Latest Videos Section */}
       <section className="py-16 bg-[#1a1a1a]">
         <div className="max-w-screen-xl mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
@@ -102,9 +124,9 @@ export default async function Home() {
             </a>
           </div>
           
-          {videos.length > 0 ? (
+          {latestVideos.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {videos.map((video) => (
+              {latestVideos.map((video) => (
                 <VideoCard 
                   key={video.id}
                   title={video.title}
@@ -126,6 +148,52 @@ export default async function Home() {
               <h3 className="text-xl font-bold text-white mb-2">No Videos Found</h3>
               <p className="text-gray-400">
                 Please check your YouTube API key and channel ID in the .env.local file.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Popular Videos Section */}
+      <section className="py-16 bg-[#282828]"> {/* Slightly different bg for distinction */}
+        <div className="max-w-screen-xl mx-auto px-4">
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-3xl font-bold text-white">
+              Popular Videos
+            </h2>
+            {/* Optional: Link to a "popular" filtered view if you create one */}
+            {/* <a href="/videos?sort=popular" className="text-[#2cbb5d] hover:text-[#28a754] font-medium flex items-center">
+              View all
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a> */}
+          </div>
+          
+          {popularVideos.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {popularVideos.map((video) => (
+                <VideoCard 
+                  key={video.id}
+                  title={video.title}
+                  description={video.description}
+                  thumbnailUrl={video.thumbnailUrl}
+                  videoUrl={video.videoUrl}
+                  date={video.publishedAt} // YouTube API for search doesn't always return publishedAt easily, might need adjustment
+                  viewCount={video.viewCount} // viewCount should be available
+                />
+              ))}
+            </div>
+          ) : (
+             <div className="bg-[#1a1a1a] rounded-lg p-8 text-center"> {/* Adjusted background */}
+              <div className="w-16 h-16 bg-[#2cbb5d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[#2cbb5d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">No Popular Videos Found</h3>
+              <p className="text-gray-400">
+                Could not fetch popular videos at this time.
               </p>
             </div>
           )}
