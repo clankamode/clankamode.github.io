@@ -1,31 +1,32 @@
 import { Suspense } from 'react';
-import VideosList from '@/components/VideosList';
+import VideosPageClient from '@/components/VideosPageClient';
 import ChannelStats from '@/components/ChannelStats';
 import { getChannelVideos, getChannelStats } from '@/lib/youtube';
 
+// Define the initial load limit
+const INITIAL_LOAD_LIMIT = 6;
+
 // Initial load of videos
 async function getInitialVideos() {
-  // Get channel ID from environment variable
   const channelId = process.env.YOUTUBE_CHANNEL_ID;
-  
   if (!channelId) {
     console.error('YouTube channel ID not found in environment variables');
-    return [];
+    return { videos: [], hasMore: false }; // Return object with hasMore
   }
-  
   try {
-    // Initial batch of videos (6 is a good starting point)
-    const videos = await getChannelVideos(channelId, 6);
-    return videos;
+    const videos = await getChannelVideos(channelId, INITIAL_LOAD_LIMIT);
+    // Determine if there are potentially more videos
+    const hasMore = videos.length === INITIAL_LOAD_LIMIT;
+    return { videos, hasMore };
   } catch (error) {
     console.error('Error fetching YouTube videos:', error);
-    return [];
+    return { videos: [], hasMore: false }; // Return object with hasMore
   }
 }
 
 export default async function VideosPage() {
-  // Fetch initial videos
-  const initialVideos = await getInitialVideos();
+  // Fetch initial videos and hasMore status
+  const { videos: initialVideos, hasMore: initialHasMore } = await getInitialVideos();
   const channelId = process.env.YOUTUBE_CHANNEL_ID || '';
   const channelStats = await getChannelStats(channelId);
 
@@ -55,7 +56,11 @@ export default async function VideosPage() {
           </div>
           
           <Suspense fallback={<LoadingVideos />}>
-            <VideosList initialVideos={initialVideos} channelId={process.env.YOUTUBE_CHANNEL_ID || ''} />
+            <VideosPageClient 
+              initialVideos={initialVideos} 
+              channelId={channelId} 
+              initialHasMore={initialHasMore} 
+            />
           </Suspense>
         </div>
       </section>

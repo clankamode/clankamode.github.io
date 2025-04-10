@@ -1,86 +1,38 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useVideoContext } from '@/context/VideoContext';
 import VideoCard from '@/components/ui/VideoCard';
-import { YouTubeVideo } from '@/lib/youtube';
 
-interface VideosListProps {
-  initialVideos: YouTubeVideo[];
-  channelId: string;
-}
-
-export default function VideosList({ initialVideos, channelId }: VideosListProps) {
-  const [videos, setVideos] = useState<YouTubeVideo[]>(initialVideos);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
+export default function VideosList() {
+  const { videos, loading, hasMore, loadMoreVideos } = useVideoContext();
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  // Set up intersection observer to detect when user scrolls to bottom
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting && hasMore && !loading) {
+          console.log('Intersection observer triggered loadMoreVideos');
           loadMoreVideos();
         }
       },
       { threshold: 1.0 }
     );
 
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
+    const currentLoaderRef = loaderRef.current;
+    if (currentLoaderRef) {
+      observer.observe(currentLoaderRef);
     }
 
     return () => {
-      if (loaderRef.current) {
-        observer.unobserve(loaderRef.current);
+      if (currentLoaderRef) {
+        observer.unobserve(currentLoaderRef);
       }
     };
-  }, [hasMore, loading]);
+  }, [hasMore, loading, loadMoreVideos]);
 
-  // Function to load more videos
-  const loadMoreVideos = async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-    
-    try {
-      // Calculate how many videos to skip based on current videos length
-      const skip = videos.length;
-      
-      // Fetch next batch of videos
-      const response = await fetch(`/api/videos?channelId=${channelId}&skip=${skip}&limit=6`);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch more videos');
-      }
-      
-      const newVideos = await response.json();
-      
-      // If we received less videos than requested, there are no more to load
-      if (newVideos.length === 0 || newVideos.length < 6) {
-        setHasMore(false);
-      }
-      
-      // Add new videos to the list
-      if (newVideos.length > 0) {
-        setVideos((prevVideos) => [...prevVideos, ...newVideos]);
-        setPage((prevPage) => prevPage + 1);
-      } else {
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.error('Error loading more videos:', error);
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // If no videos were found initially, show error message
-  if (videos.length === 0) {
+  if (!loading && videos.length === 0 && hasMore === false) {
     return (
       <div className="bg-[#282828] rounded-lg p-8 text-center">
         <div className="w-16 h-16 bg-[#2cbb5d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -90,7 +42,7 @@ export default function VideosList({ initialVideos, channelId }: VideosListProps
         </div>
         <h3 className="text-xl font-bold text-white mb-2">No Videos Found</h3>
         <p className="text-gray-400 mb-4">
-          Please check your YouTube API key and channel ID in the .env.local file.
+          Could not fetch videos. Please check the channel ID or API key.
         </p>
         <a 
           href="/"
@@ -118,7 +70,6 @@ export default function VideosList({ initialVideos, channelId }: VideosListProps
         ))}
       </div>
       
-      {/* Loading indicator and intersection observer target */}
       {hasMore && (
         <div 
           ref={loaderRef} 
@@ -137,21 +88,9 @@ export default function VideosList({ initialVideos, channelId }: VideosListProps
         </div>
       )}
       
-      {/* End of videos message */}
       {!hasMore && videos.length > 0 && (
         <div className="text-center mt-12 py-4 text-gray-400">
           <p>You've reached the end of the videos</p>
-          <a 
-            href={`https://youtube.com/channel/${channelId}`} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center px-4 py-2 mt-4 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-          >
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            See all videos on YouTube
-          </a>
         </div>
       )}
     </>

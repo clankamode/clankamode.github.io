@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import { VideoProvider } from "@/context/VideoContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,10 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
-        <main className="min-h-screen pt-16">
-          {children}
-        </main>
+        <VideoProvider channelId={process.env.YOUTUBE_CHANNEL_ID || ''}>
+          <Navbar />
+          <main className="min-h-screen pt-16">
+            {children}
+          </main>
+        </VideoProvider>
       </body>
     </html>
   );
