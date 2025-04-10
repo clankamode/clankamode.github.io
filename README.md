@@ -9,6 +9,7 @@ A modern personal website showcasing videos, blog posts, and portfolio items. Bu
 - View counts and publish dates for videos
 - Dark mode by default
 - Mobile-friendly navigation
+- Infinite scrolling on videos page to load more content as you scroll
 
 ## Getting Started
 

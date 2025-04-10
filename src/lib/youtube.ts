@@ -9,6 +9,17 @@ export interface YouTubeVideo {
   videoUrl: string;
 }
 
+export interface ChannelStats {
+  id: string;
+  title: string;
+  description: string;
+  customUrl?: string;
+  thumbnailUrl: string;
+  subscriberCount: string;
+  viewCount: string;
+  videoCount: string;
+}
+
 // Format publishedAt date to a more readable format
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -17,6 +28,60 @@ function formatDate(dateString: string): string {
     month: 'long',
     day: 'numeric'
   }).format(date);
+}
+
+// Format numbers for better readability
+export function formatCount(count: string | number): string {
+  const num = typeof count === 'string' ? parseInt(count) : count;
+  
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  } else {
+    return num.toString();
+  }
+}
+
+// Fetch channel statistics
+export async function getChannelStats(channelId: string): Promise<ChannelStats | null> {
+  if (!process.env.YOUTUBE_API_KEY) {
+    console.error('YouTube API key is missing');
+    return null;
+  }
+
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${process.env.YOUTUBE_API_KEY}`
+    );
+    
+    if (!response.ok) {
+      throw new Error(`YouTube API error: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.items || data.items.length === 0) {
+      console.error('Channel not found');
+      return null;
+    }
+    
+    const channel = data.items[0];
+    
+    return {
+      id: channel.id,
+      title: channel.snippet.title,
+      description: channel.snippet.description,
+      customUrl: channel.snippet.customUrl,
+      thumbnailUrl: channel.snippet.thumbnails.high?.url || channel.snippet.thumbnails.default?.url,
+      subscriberCount: channel.statistics.subscriberCount,
+      viewCount: channel.statistics.viewCount,
+      videoCount: channel.statistics.videoCount
+    };
+  } catch (error) {
+    console.error('Error fetching channel stats:', error);
+    return null;
+  }
 }
 
 // Parse ISO 8601 duration to get video duration in readable format
@@ -37,10 +102,11 @@ function formatDuration(duration: string): string {
   return result;
 }
 
-// Fetch videos from a specific channel
+// Fetch videos from a specific channel with pagination support
 export async function getChannelVideos(
   channelId: string,
-  maxResults: number = 5
+  maxResults: number = 5,
+  skip: number = 0
 ): Promise<YouTubeVideo[]> {
   if (!process.env.YOUTUBE_API_KEY) {
     console.error('YouTube API key is missing');
@@ -65,9 +131,14 @@ export async function getChannelVideos(
       return [];
     }
     
-    // Get videos from the uploads playlist
+    // Get videos from the uploads playlist with pagination
+    // YouTube API uses pageToken for pagination, but we'll simulate skip/limit
+    // by requesting more videos and then slicing them
+    const totalToFetch = skip + maxResults;
+    const fetchLimit = Math.min(totalToFetch, 50); // API limit is 50
+    
     const playlistResponse = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=${maxResults}&playlistId=${uploadsPlaylistId}&key=${process.env.YOUTUBE_API_KEY}`
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=${fetchLimit}&playlistId=${uploadsPlaylistId}&key=${process.env.YOUTUBE_API_KEY}`
     );
     
     if (!playlistResponse.ok) {
@@ -76,8 +147,20 @@ export async function getChannelVideos(
     
     const playlistData = await playlistResponse.json();
     
+    // If we don't have enough videos or if requested index is out of bounds
+    if (skip >= playlistData.items.length) {
+      return [];
+    }
+    
+    // Get the subset of videos we need
+    const relevantItems = playlistData.items.slice(skip, skip + maxResults);
+    
     // Get video IDs for detailed video info
-    const videoIds = playlistData.items.map((item: any) => item.contentDetails.videoId).join(',');
+    const videoIds = relevantItems.map((item: any) => item.contentDetails.videoId).join(',');
+    
+    if (!videoIds) {
+      return [];
+    }
     
     // Get detailed video information
     const videosResponse = await fetch(
@@ -95,7 +178,7 @@ export async function getChannelVideos(
       id: video.id,
       title: video.snippet.title,
       description: video.snippet.description,
-      thumbnailUrl: video.snippet.thumbnails.high.url || video.snippet.thumbnails.default.url,
+      thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url,
       publishedAt: formatDate(video.snippet.publishedAt),
       viewCount: video.statistics?.viewCount,
       videoUrl: `https://www.youtube.com/watch?v=${video.id}`
