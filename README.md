@@ -34,3 +34,18 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## Ideas
+
+- tell it use a terminal theme like green/black with gradients so it can give a hacker kind of vibe
+- Farzan says build it like the leetcode home page
+
+## Functional requirments
+- A github style contribution graph for youtube uploads
+- Build coderpad straight into my website so I can run my mock interviews there
+- Build a calander feature so I can schedule streams and mock interviews
+- Show youtube content
+- Show stream schedule
+- Maybe analytics
+
