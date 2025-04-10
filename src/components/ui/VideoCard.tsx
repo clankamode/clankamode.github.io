@@ -4,9 +4,13 @@ interface VideoCardProps {
   thumbnailUrl: string;
   videoUrl: string;
   date: string;
+  viewCount?: string;
 }
 
-export default function VideoCard({ title, description, thumbnailUrl, videoUrl, date }: VideoCardProps) {
+export default function VideoCard({ title, description, thumbnailUrl, videoUrl, date, viewCount }: VideoCardProps) {
+  // Format view count with commas
+  const formattedViewCount = viewCount ? parseInt(viewCount).toLocaleString() : '';
+
   return (
     <div className="group bg-[#1a1a1a] rounded-lg border border-[#3e3e3e] hover:border-[#2cbb5d] transition-all duration-300">
       <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="block relative">
@@ -28,7 +32,7 @@ export default function VideoCard({ title, description, thumbnailUrl, videoUrl, 
       </a>
       <div className="p-5">
         <a href={videoUrl} target="_blank" rel="noopener noreferrer">
-          <h5 className="mb-2 text-xl font-bold tracking-tight text-white group-hover:text-[#2cbb5d] transition-colors duration-300">
+          <h5 className="mb-2 text-xl font-bold tracking-tight text-white group-hover:text-[#2cbb5d] transition-colors duration-300 line-clamp-2">
             {title}
           </h5>
         </a>
@@ -36,9 +40,16 @@ export default function VideoCard({ title, description, thumbnailUrl, videoUrl, 
           {description}
         </p>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">
-            {date}
-          </span>
+          <div className="flex flex-col space-y-1">
+            <span className="text-sm text-gray-500">
+              {date}
+            </span>
+            {viewCount && (
+              <span className="text-xs text-gray-500">
+                {formattedViewCount} views
+              </span>
+            )}
+          </div>
           <a
             href={videoUrl}
             target="_blank"

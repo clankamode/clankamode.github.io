@@ -1,32 +1,29 @@
 import VideoCard from '@/components/ui/VideoCard';
-import Image from 'next/image';
+import { getChannelVideos, YouTubeVideo } from '@/lib/youtube';
 
-// This would typically come from your YouTube API or CMS
-const featuredVideos = [
-  {
-    title: 'System Design Interview: Building a URL Shortener',
-    description: 'Learn how to design a scalable URL shortener service from scratch.',
-    thumbnailUrl: 'https://i.ytimg.com/vi/example1/maxresdefault.jpg',
-    videoUrl: 'https://youtube.com/watch?v=example1',
-    date: 'March 15, 2024',
-  },
-  {
-    title: 'Dynamic Programming: Solving the Knapsack Problem',
-    description: 'Master dynamic programming with this classic problem-solving tutorial.',
-    thumbnailUrl: 'https://i.ytimg.com/vi/example2/maxresdefault.jpg',
-    videoUrl: 'https://youtube.com/watch?v=example2',
-    date: 'March 10, 2024',
-  },
-  {
-    title: 'Graph Algorithms: Finding the Shortest Path',
-    description: 'Deep dive into graph algorithms and pathfinding techniques.',
-    thumbnailUrl: 'https://i.ytimg.com/vi/example3/maxresdefault.jpg',
-    videoUrl: 'https://youtube.com/watch?v=example3',
-    date: 'March 5, 2024',
-  },
-];
+// Load videos from YouTube
+async function getYouTubeVideos(): Promise<YouTubeVideo[]> {
+  // Get channel ID from environment variable
+  const channelId = process.env.YOUTUBE_CHANNEL_ID;
+  
+  if (!channelId) {
+    console.error('YouTube channel ID not found in environment variables');
+    return [];
+  }
+  
+  try {
+    const videos = await getChannelVideos(channelId, 3);
+    return videos;
+  } catch (error) {
+    console.error('Error fetching YouTube videos:', error);
+    return [];
+  }
+}
 
-export default function Home() {
+export default async function Home() {
+  // Fetch videos from YouTube
+  const videos = await getYouTubeVideos();
+
   return (
     <div className="flex flex-col min-h-screen bg-[#1a1a1a]">
       {/* Hero Section */}
@@ -50,7 +47,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col mb-8 lg:mb-16 space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
             <a
-              href="https://youtube.com"
+              href={`https://youtube.com/channel/${process.env.YOUTUBE_CHANNEL_ID}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white bg-[#2cbb5d] rounded-lg hover:bg-[#28a754] focus:ring-2 focus:ring-[#2cbb5d]/50 transition-all duration-300"
@@ -84,11 +81,34 @@ export default function Home() {
               </svg>
             </a>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredVideos.map((video, index) => (
-              <VideoCard key={index} {...video} />
-            ))}
-          </div>
+          
+          {videos.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {videos.map((video) => (
+                <VideoCard 
+                  key={video.id}
+                  title={video.title}
+                  description={video.description}
+                  thumbnailUrl={video.thumbnailUrl}
+                  videoUrl={video.videoUrl}
+                  date={video.publishedAt}
+                  viewCount={video.viewCount}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-[#282828] rounded-lg p-8 text-center">
+              <div className="w-16 h-16 bg-[#2cbb5d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[#2cbb5d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">No Videos Found</h3>
+              <p className="text-gray-400">
+                Please check your YouTube API key and channel ID in the .env.local file.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -150,7 +170,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href="https://youtube.com"
+              href={`https://youtube.com/channel/${process.env.YOUTUBE_CHANNEL_ID}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-[#2cbb5d] rounded-lg hover:bg-[#28a754] focus:ring-2 focus:ring-[#2cbb5d]/50 transition-all duration-300"
