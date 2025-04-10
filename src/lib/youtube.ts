@@ -105,7 +105,7 @@ function formatDuration(duration: string): string {
 // Fetch videos from a specific channel with pagination support
 export async function getChannelVideos(
   channelId: string,
-  maxResults: number = 5,
+  maxResults: number = 6, // Keep the frontend's default limit
   skip: number = 0
 ): Promise<YouTubeVideo[]> {
   if (!process.env.YOUTUBE_API_KEY) {
@@ -114,77 +114,123 @@ export async function getChannelVideos(
   }
 
   try {
-    // First get the upload playlist ID for the channel
+    // 1. Get the uploads playlist ID
     const channelResponse = await fetch(
       `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${process.env.YOUTUBE_API_KEY}`
     );
-    
     if (!channelResponse.ok) {
-      throw new Error(`YouTube API error: ${channelResponse.statusText}`);
+      throw new Error(`YouTube API error (Channel): ${channelResponse.statusText}`);
     }
-    
     const channelData = await channelResponse.json();
     const uploadsPlaylistId = channelData.items[0]?.contentDetails?.relatedPlaylists?.uploads;
-    
+
     if (!uploadsPlaylistId) {
       console.error('Could not find uploads playlist for channel');
       return [];
     }
-    
-    // Get videos from the uploads playlist with pagination
-    // YouTube API uses pageToken for pagination, but we'll simulate skip/limit
-    // by requesting more videos and then slicing them
-    const totalToFetch = skip + maxResults;
-    const fetchLimit = Math.min(totalToFetch, 50); // API limit is 50
-    
-    const playlistResponse = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=${fetchLimit}&playlistId=${uploadsPlaylistId}&key=${process.env.YOUTUBE_API_KEY}`
-    );
-    
-    if (!playlistResponse.ok) {
-      throw new Error(`YouTube API error: ${playlistResponse.statusText}`);
+
+    // 2. Fetch playlist items page by page until we have enough
+    let allPlaylistItems: any[] = [];
+    let nextPageToken: string | undefined = undefined;
+    const videosToSkip = skip;
+    const videosToFetch = maxResults;
+    const totalVideosNeeded = videosToSkip + videosToFetch;
+    let videosFetchedSoFar = 0;
+
+    do {
+      const apiLimit = Math.min(50, totalVideosNeeded - videosFetchedSoFar); // Request up to 50, but no more than needed
+
+      const playlistUrl = new URL(`https://www.googleapis.com/youtube/v3/playlistItems`);
+      playlistUrl.searchParams.append('part', 'snippet,contentDetails');
+      playlistUrl.searchParams.append('playlistId', uploadsPlaylistId);
+      playlistUrl.searchParams.append('maxResults', apiLimit.toString());
+      playlistUrl.searchParams.append('key', process.env.YOUTUBE_API_KEY!);
+      if (nextPageToken) {
+        playlistUrl.searchParams.append('pageToken', nextPageToken);
+      }
+
+      const playlistResponse = await fetch(playlistUrl.toString());
+      if (!playlistResponse.ok) {
+        // Log the response body for more details on the error
+        const errorBody = await playlistResponse.text();
+        console.error('YouTube API error details (PlaylistItems):', errorBody);
+        throw new Error(`YouTube API error (PlaylistItems): ${playlistResponse.statusText}`);
+      }
+
+      const playlistData = await playlistResponse.json();
+
+      if (playlistData.items) {
+         allPlaylistItems = allPlaylistItems.concat(playlistData.items);
+         videosFetchedSoFar += playlistData.items.length;
+      }
+
+      nextPageToken = playlistData.nextPageToken;
+
+      // Stop if we have enough videos OR if there's no next page token
+    } while (nextPageToken && videosFetchedSoFar < totalVideosNeeded);
+
+
+    // 3. Slice the collected items to get the desired page
+    const relevantItems = allPlaylistItems.slice(videosToSkip, videosToSkip + videosToFetch);
+
+    if (relevantItems.length === 0) {
+      return []; // No videos found for this skip/limit combination
     }
-    
-    const playlistData = await playlistResponse.json();
-    
-    // If we don't have enough videos or if requested index is out of bounds
-    if (skip >= playlistData.items.length) {
-      return [];
-    }
-    
-    // Get the subset of videos we need
-    const relevantItems = playlistData.items.slice(skip, skip + maxResults);
-    
-    // Get video IDs for detailed video info
-    const videoIds = relevantItems.map((item: any) => item.contentDetails.videoId).join(',');
-    
+
+    // 4. Get video IDs for detailed video info
+    const videoIds = relevantItems
+      .map((item: any) => item.contentDetails?.videoId)
+      .filter(Boolean) // Filter out potential null/undefined IDs
+      .join(',');
+
     if (!videoIds) {
+      console.warn('No valid video IDs found in relevant playlist items.');
       return [];
     }
-    
-    // Get detailed video information
+
+    // 5. Get detailed video information (statistics, etc.)
     const videosResponse = await fetch(
       `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${videoIds}&key=${process.env.YOUTUBE_API_KEY}`
     );
-    
     if (!videosResponse.ok) {
-      throw new Error(`YouTube API error: ${videosResponse.statusText}`);
+      throw new Error(`YouTube API error (Videos): ${videosResponse.statusText}`);
     }
-    
     const videosData = await videosResponse.json();
-    
-    // Format the video data
-    return videosData.items.map((video: any) => ({
-      id: video.id,
-      title: video.snippet.title,
-      description: video.snippet.description,
-      thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url,
-      publishedAt: formatDate(video.snippet.publishedAt),
-      viewCount: video.statistics?.viewCount,
-      videoUrl: `https://www.youtube.com/watch?v=${video.id}`
-    }));
+
+    // Create a map for quick lookup of video details by ID
+    // Explicitly type 'video' based on expected YouTube API structure
+    const videoDetailsMap = new Map(videosData.items.map((video: { id: string; snippet: any; statistics: any; contentDetails: any }) => [video.id, video]));
+
+    // 6. Format the video data, ensuring order matches relevantItems
+     // Define the intermediate type explicitly to help TypeScript before filtering
+     const formattedVideos: (YouTubeVideo | null)[] = relevantItems.map((item: any) => {
+       const videoId = item.contentDetails?.videoId;
+       // Explicitly type 'video' obtained from the map and assert its type
+       const video = videoDetailsMap.get(videoId) as { id: string; snippet: any; statistics: any; contentDetails: any } | undefined;
+
+       if (!video) {
+         // This shouldn't happen if videoIds were fetched correctly, but handle defensively
+         console.warn(`Details not found for video ID: ${videoId}`);
+         return null; // Return null for filtering later
+       }
+
+       return {
+         id: video.id,
+         title: video.snippet.title,
+         description: video.snippet.description,
+         thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url,
+         publishedAt: formatDate(video.snippet.publishedAt),
+         viewCount: video.statistics?.viewCount, // Optional: viewCount might not always be present
+         // duration: formatDuration(video.contentDetails.duration), // Uncomment if you added duration formatting
+         videoUrl: `https://www.youtube.com/watch?v=${video.id}`
+       };
+     });
+
+     // Filter out any nulls and assert the final type
+     return formattedVideos.filter((video): video is YouTubeVideo => video !== null);
+
   } catch (error) {
     console.error('Error fetching YouTube videos:', error);
-    return [];
+    return []; // Return empty array on error
   }
 } 
