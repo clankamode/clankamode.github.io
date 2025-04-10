@@ -19,7 +19,7 @@ export default function ChannelStats({ stats }: ChannelStatsProps) {
         <div className="flex-grow text-center md:text-left">
           <h2 className="text-xl font-bold text-white mb-2">{stats.title}</h2>
           {stats.customUrl && (
-            <p className="text-sm text-gray-400 mb-3">@{stats.customUrl}</p>
+            <p className="text-sm text-gray-400 mb-3">{stats.customUrl}</p>
           )}
           <p className="text-sm text-gray-400 mb-4 line-clamp-2">{stats.description}</p>
           
