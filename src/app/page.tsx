@@ -54,19 +54,28 @@ export default async function Home() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#2cbb5d]/20 to-[#1a1a1a]/20 mix-blend-multiply"></div>
         <div className="relative py-20 px-4 mx-auto max-w-screen-xl text-center lg:py-32">
+          {/* Add Channel Profile Picture */}
+          {channelStats && channelStats.thumbnailUrl && (
+            <img 
+              src={channelStats.thumbnailUrl}
+              alt={channelStats.title || 'Channel Profile Picture'}
+              className="w-24 h-24 rounded-full mx-auto mb-6 border-2 border-[#2cbb5d]/50 object-cover"
+            />
+          )}
           <div className="inline-flex items-center justify-center px-3 py-1 mb-6 text-sm font-medium text-[#2cbb5d] bg-[#2cbb5d]/10 rounded-full">
             <span className="px-2 py-1 mr-2 bg-[#2cbb5d] rounded-full"></span>
-            New video every week
+            NEW VIDEOS DAILY
           </div>
           <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2cbb5d] to-[#28a754]">
-              Coding Interviews
+              James Peralta
             </span>
-            <br />
-            <span className="text-white">Made Simple</span>
           </h1>
           <p className="mb-8 text-lg font-normal text-gray-400 lg:text-xl sm:px-16 xl:px-48">
-            Deep dives into algorithms, system design, and problem-solving strategies for technical interviews.
+            {/* Display Channel Description if available, otherwise fallback */}
+            {channelStats?.description || 
+             'Deep dives into algorithms, system design, and problem-solving strategies for technical interviews.'
+            }
           </p>
           
           {/* Channel Stats */}
