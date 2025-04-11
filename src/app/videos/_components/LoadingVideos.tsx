@@ -3,7 +3,7 @@ import React from 'react';
 export default function LoadingVideos() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {[...Array(6)].map((_, index) => (
+      {[...Array(24)].map((_, index) => (
         <div key={index} className="bg-[#282828] rounded-lg overflow-hidden animate-pulse">
           <div className="h-48 bg-gray-700"></div>
           <div className="p-5">

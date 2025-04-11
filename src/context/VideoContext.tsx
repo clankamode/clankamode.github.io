@@ -24,7 +24,7 @@ interface VideoProviderProps {
 export const VideoProvider = ({ 
   children, 
   channelId, 
-  initialLoadLimit = 6 // Default limit per fetch
+  initialLoadLimit = 24 // Default limit per fetch
 }: VideoProviderProps) => {
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [loading, setLoading] = useState(false);

@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const channelId = url.searchParams.get('channelId');
     const skip = parseInt(url.searchParams.get('skip') || '0');
-    const limit = parseInt(url.searchParams.get('limit') || '6');
+    const limit = parseInt(url.searchParams.get('limit') || '24');
     
     // Validate channelId
     if (!channelId) {
