@@ -7,13 +7,13 @@ import { YouTubeVideo } from '@/lib/youtube';
 
 interface VideosPageClientProps {
   initialVideos: YouTubeVideo[];
-  channelId: string;
+  
   initialHasMore: boolean; // Pass whether the initial fetch indicated more videos
 }
 
 export default function VideosPageClient({ 
   initialVideos, 
-  channelId, 
+  
   initialHasMore 
 }: VideosPageClientProps) {
   const { initializeState, isInitialized } = useVideoContext();

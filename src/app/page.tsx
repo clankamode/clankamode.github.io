@@ -1,4 +1,4 @@
-import { getChannelVideos, getChannelStats, getPopularChannelVideos, YouTubeVideo } from '@/lib/youtube';
+import { getChannelVideos, getChannelStats, getPopularChannelVideos } from '@/lib/youtube';
 import HeroSection from '@/components/sections/HeroSection';
 import VideoSection from '@/components/sections/VideoSection';
 

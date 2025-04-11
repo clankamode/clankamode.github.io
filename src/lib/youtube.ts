@@ -20,6 +20,138 @@ export interface ChannelStats {
   videoCount: string;
 }
 
+// Interfaces for YouTube API responses
+
+interface YouTubeThumbnail {
+  url: string;
+  width?: number; // Optional based on API
+  height?: number; // Optional based on API
+}
+
+interface YouTubeThumbnails {
+  default?: YouTubeThumbnail;
+  medium?: YouTubeThumbnail;
+  high?: YouTubeThumbnail;
+  standard?: YouTubeThumbnail;
+  maxres?: YouTubeThumbnail;
+}
+
+// For playlistItems list response
+interface PlaylistItemSnippet {
+  publishedAt: string;
+  channelId: string;
+  title: string;
+  description: string;
+  thumbnails: YouTubeThumbnails;
+  channelTitle: string;
+  playlistId: string;
+  position: number;
+  resourceId: {
+    kind: string;
+    videoId: string;
+  };
+  videoOwnerChannelTitle?: string; // Optional
+  videoOwnerChannelId?: string; // Optional
+}
+
+interface PlaylistItemContentDetails {
+  videoId: string;
+  videoPublishedAt?: string; // Optional
+}
+
+interface PlaylistItem {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: PlaylistItemSnippet;
+  contentDetails: PlaylistItemContentDetails;
+}
+
+// For videos list response
+interface VideoSnippet {
+  publishedAt: string;
+  channelId: string;
+  title: string;
+  description: string;
+  thumbnails: YouTubeThumbnails;
+  channelTitle: string;
+  tags?: string[]; // Optional
+  categoryId?: string; // Optional
+  liveBroadcastContent?: string; // Optional
+  defaultLanguage?: string; // Optional
+  localized?: {
+    title: string;
+    description: string;
+  };
+  defaultAudioLanguage?: string; // Optional
+}
+
+interface VideoStatistics {
+  viewCount?: string; // Optional because linter found it might not be present
+  likeCount?: string; // Optional
+  dislikeCount?: string; // Optional, deprecated
+  favoriteCount?: string; // Optional
+  commentCount?: string; // Optional
+}
+
+interface VideoContentDetails {
+  duration: string;
+  dimension: string;
+  definition: string;
+  caption: string;
+  licensedContent: boolean;
+  contentRating?: object; // Use object instead of {}
+  projection?: string; // Optional
+}
+
+interface VideoItem {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: VideoSnippet;
+  contentDetails: VideoContentDetails;
+  statistics?: VideoStatistics; // Optional based on current usage and note
+}
+
+// For search list response
+interface SearchItemId {
+    kind: string;
+    videoId?: string; // Optional depending on item type
+    channelId?: string; // Optional
+    playlistId?: string; // Optional
+}
+
+interface SearchItemSnippet {
+    publishedAt: string;
+    channelId: string;
+    title: string;
+    description: string;
+    thumbnails: YouTubeThumbnails;
+    channelTitle: string;
+    liveBroadcastContent: string;
+    publishTime?: string; // Optional
+}
+
+interface SearchItem {
+    kind: string;
+    etag: string;
+    id: SearchItemId;
+    snippet: SearchItemSnippet;
+}
+
+// YouTube API Response Structures
+interface YouTubeApiResponse<T> {
+    kind: string;
+    etag: string;
+    nextPageToken?: string;
+    prevPageToken?: string; // Optional
+    pageInfo: {
+        totalResults: number;
+        resultsPerPage: number;
+    };
+    items: T[];
+}
+
 // Format publishedAt date to a more readable format
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -84,24 +216,6 @@ export async function getChannelStats(channelId: string): Promise<ChannelStats |
   }
 }
 
-// Parse ISO 8601 duration to get video duration in readable format
-function formatDuration(duration: string): string {
-  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-  
-  const hours = (match?.[1] || '').replace('H', '');
-  const minutes = (match?.[2] || '').replace('M', '');
-  const seconds = (match?.[3] || '').replace('S', '');
-  
-  let result = '';
-  if (hours) result += `${hours}:`;
-  if (minutes) result += `${hours ? minutes.padStart(2, '0') : minutes}:`;
-  else result += '0:';
-  if (seconds) result += seconds.padStart(2, '0');
-  else result += '00';
-  
-  return result;
-}
-
 // Fetch videos from a specific channel with pagination support
 export async function getChannelVideos(
   channelId: string,
@@ -121,6 +235,7 @@ export async function getChannelVideos(
     if (!channelResponse.ok) {
       throw new Error(`YouTube API error (Channel): ${channelResponse.statusText}`);
     }
+    // Consider adding a type for this response too for full type safety
     const channelData = await channelResponse.json();
     const uploadsPlaylistId = channelData.items[0]?.contentDetails?.relatedPlaylists?.uploads;
 
@@ -130,7 +245,7 @@ export async function getChannelVideos(
     }
 
     // 2. Fetch playlist items page by page until we have enough
-    let allPlaylistItems: any[] = [];
+    let allPlaylistItems: PlaylistItem[] = []; // Typed array
     let nextPageToken: string | undefined = undefined;
     const videosToSkip = skip;
     const videosToFetch = maxResults;
@@ -157,7 +272,7 @@ export async function getChannelVideos(
         throw new Error(`YouTube API error (PlaylistItems): ${playlistResponse.statusText}`);
       }
 
-      const playlistData = await playlistResponse.json();
+      const playlistData: YouTubeApiResponse<PlaylistItem> = await playlistResponse.json(); // Typed response
 
       if (playlistData.items) {
          allPlaylistItems = allPlaylistItems.concat(playlistData.items);
@@ -179,8 +294,8 @@ export async function getChannelVideos(
 
     // 4. Get video IDs for detailed video info
     const videoIds = relevantItems
-      .map((item: any) => item.contentDetails?.videoId)
-      .filter(Boolean) // Filter out potential null/undefined IDs
+      .map((item: PlaylistItem) => item.contentDetails?.videoId) // Use PlaylistItem type
+      .filter((id): id is string => !!id) // Type guard for filtering null/undefined
       .join(',');
 
     if (!videoIds) {
@@ -195,22 +310,21 @@ export async function getChannelVideos(
     if (!videosResponse.ok) {
       throw new Error(`YouTube API error (Videos): ${videosResponse.statusText}`);
     }
-    const videosData = await videosResponse.json();
+    const videosData: YouTubeApiResponse<VideoItem> = await videosResponse.json(); // Typed response
 
     // Create a map for quick lookup of video details by ID
-    // Explicitly type 'video' based on expected YouTube API structure
-    const videoDetailsMap = new Map(videosData.items.map((video: { id: string; snippet: any; statistics: any; contentDetails: any }) => [video.id, video]));
+    const videoDetailsMap = new Map(videosData.items.map((video: VideoItem) => [video.id, video])); // Use VideoItem type
 
     // 6. Format the video data, ensuring order matches relevantItems
-     // Define the intermediate type explicitly to help TypeScript before filtering
-     const formattedVideos: (YouTubeVideo | null)[] = relevantItems.map((item: any) => {
+     const formattedVideos: (YouTubeVideo | null)[] = relevantItems.map((item: PlaylistItem) => { // Use PlaylistItem type
        const videoId = item.contentDetails?.videoId;
-       // Explicitly type 'video' obtained from the map and assert its type
-       const video = videoDetailsMap.get(videoId) as { id: string; snippet: any; statistics: any; contentDetails: any } | undefined;
+       if (!videoId) return null; // Skip if videoId is missing
 
-       if (!video) {
-         // This shouldn't happen if videoIds were fetched correctly, but handle defensively
-         console.warn(`Details not found for video ID: ${videoId}`);
+       const video = videoDetailsMap.get(videoId); // Type is VideoItem | undefined
+
+       // Ensure video and required properties exist before trying to access them
+       if (!video || !video.snippet || !video.contentDetails) {
+         console.warn(`Details not found or incomplete for video ID: ${videoId}`);
          return null; // Return null for filtering later
        }
 
@@ -218,10 +332,10 @@ export async function getChannelVideos(
          id: video.id,
          title: video.snippet.title,
          description: video.snippet.description,
-         thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url,
+         // Provide a fallback empty string if no thumbnail is found
+         thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url || '',
          publishedAt: formatDate(video.snippet.publishedAt),
-         viewCount: video.statistics?.viewCount, // Optional: viewCount might not always be present
-         // duration: formatDuration(video.contentDetails.duration), // Uncomment if you added duration formatting
+         viewCount: video.statistics?.viewCount, // Safely access optional property
          videoUrl: `https://www.youtube.com/watch?v=${video.id}`
        };
      });
@@ -252,71 +366,76 @@ export async function getPopularChannelVideos(
     searchUrl.searchParams.append('channelId', channelId);
     searchUrl.searchParams.append('maxResults', maxResults.toString());
     searchUrl.searchParams.append('order', 'viewCount'); // Order by popularity
-    searchUrl.searchParams.append('type', 'video'); // Ensure we only get videos
+    searchUrl.searchParams.append('type', 'video'); // Only search for videos
     searchUrl.searchParams.append('key', process.env.YOUTUBE_API_KEY!);
 
     const searchResponse = await fetch(searchUrl.toString());
     if (!searchResponse.ok) {
-       const errorBody = await searchResponse.text();
+        // Log the response body for more details on the error
+        const errorBody = await searchResponse.text();
         console.error('YouTube API error details (Search):', errorBody);
-      throw new Error(`YouTube API error (Search): ${searchResponse.statusText}`);
+        throw new Error(`YouTube API error (Search): ${searchResponse.statusText}`);
     }
-    const searchData = await searchResponse.json();
+    const searchData: YouTubeApiResponse<SearchItem> = await searchResponse.json(); // Typed response
 
     if (!searchData.items || searchData.items.length === 0) {
-      console.log('No popular videos found via search.');
-      return [];
+        console.warn('No popular videos found via search.');
+        return [];
     }
 
-    // Extract video IDs from search results
+    // Get video IDs from search results
     const videoIds = searchData.items
-      .map((item: any) => item.id?.videoId)
-      .filter(Boolean) // Filter out potential null/undefined IDs
-      .join(',');
+        .map((item: SearchItem) => item.id?.videoId) // Use SearchItem type
+        .filter((id): id is string => !!id) // Type guard for filtering null/undefined
+        .join(',');
 
     if (!videoIds) {
-      console.warn('No valid video IDs found in search results.');
-      return [];
+        console.warn('No valid video IDs found in search results.');
+        return [];
     }
 
-    // Fetch detailed video information (including statistics) for the found IDs
+    // Get detailed video information (reuse the same fetch logic)
     const videosResponse = await fetch(
       `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${videoIds}&key=${process.env.YOUTUBE_API_KEY}`
     );
     if (!videosResponse.ok) {
       throw new Error(`YouTube API error (Videos): ${videosResponse.statusText}`);
     }
-    const videosData = await videosResponse.json();
+    const videosData: YouTubeApiResponse<VideoItem> = await videosResponse.json(); // Typed response
 
-     // Create a map for quick lookup of video details by ID
-    const videoDetailsMap = new Map(videosData.items.map((video: { id: string; snippet: any; statistics: any; contentDetails: any }) => [video.id, video]));
+    // Create a map for quick lookup
+    const videoDetailsMap = new Map(videosData.items.map((video: VideoItem) => [video.id, video])); // Use VideoItem type
 
-    // Map search results to the detailed video info, preserving the order from search (most popular first)
-     const formattedVideos: (YouTubeVideo | null)[] = searchData.items.map((item: any) => {
-       const videoId = item.id?.videoId;
-       const video = videoDetailsMap.get(videoId) as { id: string; snippet: any; statistics: any; contentDetails: any } | undefined;
+    // Format the video data, ensuring order matches search results
+     const formattedVideos: (YouTubeVideo | null)[] = searchData.items.map((item: SearchItem) => { // Use SearchItem type
+        const videoId = item.id?.videoId;
+        if (!videoId) return null; // Skip if videoId is missing
 
-       if (!video) {
-         console.warn(`Details not found for video ID: ${videoId}`);
-         return null;
-       }
+        const video = videoDetailsMap.get(videoId); // Type is VideoItem | undefined
 
-       return {
-         id: video.id,
-         title: video.snippet.title,
-         description: video.snippet.description,
-         thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url,
-         publishedAt: formatDate(video.snippet.publishedAt), // Use the existing formatDate function
-         viewCount: video.statistics?.viewCount,
-         videoUrl: `https://www.youtube.com/watch?v=${video.id}`
-       };
+        // Ensure video and required properties exist
+        if (!video || !video.snippet || !video.contentDetails) {
+            console.warn(`Details not found or incomplete for video ID: ${videoId}`);
+            return null;
+        }
+
+        return {
+            id: video.id,
+            title: video.snippet.title,
+            description: video.snippet.description,
+            // Provide a fallback empty string if no thumbnail is found
+            thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url || '',
+            publishedAt: formatDate(video.snippet.publishedAt),
+            viewCount: video.statistics?.viewCount, // Safely access optional property
+            videoUrl: `https://www.youtube.com/watch?v=${video.id}`
+        };
      });
 
-     // Filter out any nulls
-     return formattedVideos.filter((video): video is YouTubeVideo => video !== null);
+    // Filter out any nulls and assert the final type
+    return formattedVideos.filter((video): video is YouTubeVideo => video !== null);
 
   } catch (error) {
     console.error('Error fetching popular YouTube videos:', error);
-    return [];
+    return []; // Return empty array on error
   }
 } 

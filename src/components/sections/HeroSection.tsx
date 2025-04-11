@@ -1,4 +1,5 @@
 import { ChannelStats, formatCount } from '@/lib/youtube';
+import Image from 'next/image';
 
 interface HeroSectionProps {
   channelStats: ChannelStats | null;
@@ -13,10 +14,12 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
       <div className="relative py-20 px-4 mx-auto max-w-screen-xl text-center lg:py-32">
         {/* Add Channel Profile Picture */}
         {channelStats && channelStats.thumbnailUrl && (
-          <img 
+          <Image 
             src={channelStats.thumbnailUrl}
             alt={channelStats.title || 'Channel Profile Picture'}
-            className="w-24 h-24 rounded-full mx-auto mb-6 border-2 border-[#2cbb5d]/50 object-cover"
+            width={96}
+            height={96}
+            className="rounded-full mx-auto mb-6 border-2 border-[#2cbb5d]/50 object-cover"
           />
         )}
         <div className="inline-flex items-center justify-center px-3 py-1 mb-6 text-sm font-medium text-[#2cbb5d] bg-[#2cbb5d]/10 rounded-full">

@@ -21,10 +21,14 @@ export async function GET(request: Request) {
     const videos = await getChannelVideos(channelId, limit, skip);
     
     return NextResponse.json(videos);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching videos:', error);
+    let errorMessage = 'Failed to fetch videos';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch videos' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

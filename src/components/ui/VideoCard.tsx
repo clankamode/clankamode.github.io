@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface VideoCardProps {
   title: string;
   description: string;
@@ -15,10 +17,12 @@ export default function VideoCard({ title, description, thumbnailUrl, videoUrl, 
     <div className="group bg-[#1a1a1a] rounded-lg border border-[#3e3e3e] hover:border-[#2cbb5d] transition-all duration-300">
       <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="block relative">
         <div className="relative h-48 overflow-hidden rounded-t-lg">
-          <img
+          <Image
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
             src={thumbnailUrl}
             alt={title}
+            fill
+            style={{ objectFit: 'cover' }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] to-transparent opacity-50 group-hover:opacity-70 transition-opacity duration-300"></div>
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

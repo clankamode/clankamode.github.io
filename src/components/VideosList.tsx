@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useVideoContext } from '@/context/VideoContext';
 import VideoCard from '@/components/ui/VideoCard';
+import Link from 'next/link';
 
 export default function VideosList() {
   const { videos, loading, hasMore, loadMoreVideos } = useVideoContext();
@@ -44,12 +45,12 @@ export default function VideosList() {
         <p className="text-gray-400 mb-4">
           Could not fetch videos. Please check the channel ID or API key.
         </p>
-        <a 
+        <Link 
           href="/"
           className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#2cbb5d] rounded-lg hover:bg-[#28a754] focus:ring-2 focus:ring-[#2cbb5d]/50 transition-all duration-300"
         >
           Return to Home
-        </a>
+        </Link>
       </div>
     );
   }
@@ -90,7 +91,7 @@ export default function VideosList() {
       
       {!hasMore && videos.length > 0 && (
         <div className="text-center mt-12 py-4 text-gray-400">
-          <p>You've reached the end of the videos</p>
+          <p>You&apos;ve reached the end of the videos</p>
         </div>
       )}
     </>
