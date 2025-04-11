@@ -33,7 +33,7 @@ export async function getFromCache<T>(key: string): Promise<T | null> {
 }
 
 // Generic cache set function
-export async function setInCache(key: string, value: any, ttl = CACHE_TTL): Promise<void> {
+export async function setInCache<T>(key: string, value: T, ttl = CACHE_TTL): Promise<void> {
   try {
     await redis.setex(key, ttl, JSON.stringify(value));
   } catch (error) {

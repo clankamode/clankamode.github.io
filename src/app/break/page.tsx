@@ -3,6 +3,18 @@
 import { useState, useEffect, useRef } from 'react';
 import YouTube from 'react-youtube'; // Import the YouTube player
 
+// Define minimal type for the YouTube Player instance
+interface YouTubePlayer {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  // Add other methods if needed
+}
+
+// Define type for the onReady event
+interface YouTubePlayerEvent {
+  target: YouTubePlayer;
+}
+
 export default function BreakPage() {
   const [time, setTime] = useState(300); // Start with 5 seconds for testing
   const [isRunning, setIsRunning] = useState(false);
@@ -10,7 +22,7 @@ export default function BreakPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const playerRef = useRef<any>(null); // Ref for YouTube player instance
+  const playerRef = useRef<YouTubePlayer | null>(null); // Use defined type
 
   // Fetch random video ID on mount
   useEffect(() => {
@@ -25,9 +37,11 @@ export default function BreakPage() {
         }
         const data = await response.json();
         setVideoId(data.videoId);
-      } catch (err: any) {
+      } catch (err: unknown) { // Use unknown instead of any
         console.error('Error fetching video ID:', err);
-        setError(err.message || 'An unknown error occurred');
+        // Type check before accessing properties
+        const message = err instanceof Error ? err.message : 'An unknown error occurred';
+        setError(message);
       } finally {
         setIsLoading(false);
       }
@@ -37,7 +51,7 @@ export default function BreakPage() {
 
   // Initialize audio
   useEffect(() => {
-    const beepSound = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRA0PVqzn77BdGAg+ltryxnMpBSl+zPLaizsIGGS57OihUBELTKXh8bllHgU2jdXzzn0vBSF1xe/glEILElyx6OyrWBUIQ5zd8sFuJAUuhM/z1YU2Bhxqvu7mnEYODlOq5O+zYBoGPJPY88p2KwUme8rx3I4+CRZiturqpVITC0mi4PK8aB8GM4nU8tGAMQYfcsLu45ZFDBFYr+ftrVoXCECY3PLEcSYELIHO8diJOQgZaLvt559NEAxPqOPwtmMcBjiP1/PMeS0GI3fH8N2RQAoUXrTp66hVFApGnt/yvmwhBTCG0fPTgjQGHW/A7eSaRQ0PVqzl77BeGQc9ltvyxnUoBSh+zPDaizsIGGS56+mjTxELTKXh8bllHgU1jdT0z3wvBSJ1xe/glEILElyx6OyrWRUIRJve8sFuJAUug8/z1YU2BRxqvu3mnEYODlOq5O+zYRsGPJLZ88p3KgUme8rx3I4+CRVht+rqpVITC0mh4fK8aiAFM4nU8tGAMQYfccPu45ZFDBFYr+ftrVwWCECY3PLEcSYGK4DN8tiIOQgZZ7zs56BODwxPp+PxtmQcBjiP1/PMeS0GI3fH8N+RQAoUXrTp66hWEwlGnt/yv2wiBDCG0fPTgzQHHG/A7eSaSw0PVqzl77BeGQc9ltv0xnUoBSh9y/HajDsIF2W56+mjUREKTKPi8blnHgU1jdTy0HwvBSJ0xe/glEQKElux6eyrWRUJQ5vd88FwJAQug8/z1YY2BRxqvu3mnEYODlOq5O+zYRsGOpPY88p3KgUmecnw3Y4/CBVhtuvqpVQSCkig4PG9ayAFM4nS89GBMgUfccLv45dGDRBYrufur1sYB0CX2/PEcycFK3/M8tiKOQgZZ7vs56BODwxPp+Lxt2QdBTiP1/PMeS0GI3bH8d+RQQsUXbPq66hWEwlGnt/yv2wiBDCF0PPThDUHHG3A7eSbTA0PVKrl77BgGQc9ltr0x3UoBSh9y/HajDwIF2S56+mjUREKTKPi8blnHwU1jdTy0H4wBSF0xe/glEQKElux5+yrWRUJQ5vd88NwJAQug87y1oY3BRxqvu3mnEgNDlKp5PC1YRsGOpHY88p3LAUlecnw3Y8/CBVhtuvqpVQSCkig4PG9ayAFM4nS89GBMgUfccLv45dGDRBXr+fur1wXB0CX2/PEcycFKw==';
+    const beepSound = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRA0PVqzn77BdGAg+ltryxnMpBSl+zPLaizsIGGS57OihUBELTKXh8bllHgU2jdXzzn0vBSF1xe/glEILElyx6OyrWBUIQ5zd8sFuJAUuhM/z1YU2Bhxqvu7mnEYODlOq5O+zYBoGPJPY88p2KwUme8rx3I4+CRZiturqpVITC0mi4PK8aB8GM4nU8tGAMQYfcsLu45ZFDBFYr+ftrVoXCECY3PLEcSYELIHO8diJOQgZaLvt559NEAxPqOPwtmMcBjiP1/PMeS0GI3fH8N2RQAoUXrTp66hVFApGnt/yvmwhBTCG0fPTgjQGHW/A7eSaRQ0PVqzl77BeGQc9ltvyxnUoBSh+zPDaizsIGGS56+mjTxELTKXh8bllHgU1jdTy0HwvBSJ1xe/glEILElyx6OyrWRUIRJve8sFuJAUug8/z1YU2BRxqvu3mnEYODlOq5O+zYRsGPJLZ88p3KgUme8rx3I4+CRVht+rqpVITC0mh4fK8aiAFM4nU8tGAMQYfccPu45ZFDBFYr+ftrVwWCECY3PLEcSYGK4DN8tiIOQgZZ7zs56BODwxPp+PxtmQcBjiP1/PMeS0GI3fH8N+RQAoUXrTp66hWEwlGnt/yv2wiBDCG0fPTgzQHHG/A7eSaSw0PVqzl77BeGQc9ltv0xnUoBSh9y/HajDsIF2W56+mjUREKTKPi8blnHgU1jdTy0HwvBSJ0xe/glEQKElux6eyrWRUJQ5vd88FwJAQug8/z1YY2BRxqvu3mnEYODlOq5O+zYRsGOpPY88p3KgUmecnw3Y4/CBVhtuvqpVQSCkig4PG9ayAFM4nS89GBMgUfccLv45dGDRBYrufur1sYB0CX2/PEcycFK3/M8tiKOQgZZ7vs56BODwxPp+Lxt2QdBTiP1/PMeS0GI3bH8d+RQQsUXbPq66hWEwlGnt/yv2wiBDCF0PPThDUHHG3A7eSbTA0PVKrl77BgGQc9ltr0x3UoBSh9y/HajDwIF2S56+mjUREKTKPi8blnHwU1jdTy0H4wBSF0xe/glEQKElux5+yrWRUJQ5vd88NwJAQug87y1oY3BRxqvu3mnEgNDlKp5PC1YRsGOpHY88p3LAUlecnw3Y8/CBVhtuvqpVQSCkig4PG9ayAFM4nS89GBMgUfccLv45dGDRBXr+fur1wXB0CX2/PEcycFKw==';
     audioRef.current = new Audio(beepSound);
     audioRef.current.volume = 1.0;
   }, []);
@@ -130,7 +144,7 @@ export default function BreakPage() {
     },
   };
 
-  const onPlayerReady = (event: any) => {
+  const onPlayerReady = (event: YouTubePlayerEvent) => {
     playerRef.current = event.target; // Save player instance
     // If timer was already running when video loaded, play video
     if (isRunning && time > 0) {

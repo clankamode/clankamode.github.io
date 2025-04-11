@@ -4,6 +4,13 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const YOUTUBE_CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID; // Your YouTube Channel ID
 const BASE_URL = 'https://www.googleapis.com/youtube/v3';
 
+// Define a type for the relevant part of the playlist item
+interface PlaylistItem {
+  contentDetails?: {
+    videoId?: string;
+  };
+}
+
 async function getUploadsPlaylistId(channelId: string): Promise<string | null> {
   const url = `${BASE_URL}/channels?part=contentDetails&id=${channelId}&key=${YOUTUBE_API_KEY}`;
   try {
@@ -40,7 +47,7 @@ async function getRandomVideoIdFromPlaylist(playlistId: string): Promise<string 
       const data = await response.json();
 
       const videoIds = data.items
-        ?.map((item: any) => item.contentDetails?.videoId)
+        ?.map((item: PlaylistItem) => item.contentDetails?.videoId)
         .filter(Boolean) || []; // Filter out any potential nulls/undefined
       allVideoIds = [...allVideoIds, ...videoIds];
 
