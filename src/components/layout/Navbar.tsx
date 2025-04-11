@@ -56,6 +56,18 @@ export default function Navbar() {
                 Videos
               </Link>
             </li>
+            <li>
+              <Link 
+                href="/break" 
+                className={`block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 ${
+                  isActive('/break') 
+                    ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' 
+                    : 'text-gray-200 hover:text-[#2cbb5d] transition-colors duration-300'
+                }`}
+              >
+                Break
+              </Link>
+            </li>
           </ul>
         </div>
         
@@ -108,6 +120,19 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Videos
+              </Link>
+            </li>
+            <li>
+              <Link 
+                href="/break" 
+                className={`block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 ${
+                  isActive('/break') 
+                    ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' 
+                    : 'text-gray-200 hover:text-[#2cbb5d] transition-colors duration-300'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Break
               </Link>
             </li>
             <li className="mt-3 md:hidden">
