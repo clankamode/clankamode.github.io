@@ -1,8 +1,10 @@
 ## April 12 Mock Schedule
-- Research domain names and how those work
+- Research domain names and how those work. www.jamesperalta.com is LIVEEEEEE
 - Add Google Oauth to the page
 - Build out scheduling feature
 - Build out the analytics feature
+- Build a James 75 List
+
 
 ### Mock Interview Slots (April 12, ALL IN PST)
 - Coding challenge before the stream starts
