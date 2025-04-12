@@ -2,6 +2,9 @@ import { getChannelVideos, getChannelStats, getPopularChannelVideos } from '@/li
 import HeroSection from '@/components/sections/HeroSection';
 import VideoSection from '@/components/sections/VideoSection';
 
+// Add revalidation directive - adjust time as needed
+export const revalidate = 60 * 5; // Revalidate at most once per 5 minutes
+
 export default async function Home() {
   const channelId = process.env.YOUTUBE_CHANNEL_ID || '';
   // Fetch videos and channel stats from YouTube

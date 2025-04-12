@@ -10,13 +10,14 @@ A modern personal website showcasing videos, blog posts, and portfolio items. Bu
 - Dark mode by default
 - Mobile-friendly navigation
 - Infinite scrolling on videos page to load more content as you scroll
+- Google OAuth authentication
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+ and npm/yarn
-- A Google Cloud Platform account for YouTube Data API access
+- A Google Cloud Platform account for YouTube Data API access and OAuth
 
 ### Installation
 
@@ -34,7 +35,7 @@ A modern personal website showcasing videos, blog posts, and portfolio items. Bu
    ```
 
 3. Set up environment variables:
-   - Copy the `.env.local.example` file to `.env.local` and fill in your YouTube API key and channel ID.
+   - Copy the `.env.local.example` file to `.env.local` and fill in your YouTube API key, channel ID, and OAuth credentials.
 
 4. Run the development server:
    ```bash
@@ -64,10 +65,39 @@ To display your YouTube videos, you need to set up the YouTube Data API:
    - Go to your YouTube channel
    - Look at the URL: https://www.youtube.com/channel/YOUR_CHANNEL_ID
    - Or if you have a custom URL, you can use a tool like [Comment Picker](https://commentpicker.com/youtube-channel-id.php)
-10. Add your channel ID to `.env.local`:
-    ```
-    YOUTUBE_CHANNEL_ID=your_channel_id_here
-    ```
+
+## Setting Up Google OAuth
+
+To enable Google login functionality:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Navigate to the same project you created for the YouTube API or create a new one.
+3. Go to "APIs & Services" > "OAuth consent screen".
+   - Set up the OAuth consent screen with your app name and contact information.
+   - Add the necessary scopes (typically `userinfo.email` and `userinfo.profile`).
+   - Add your email as a test user if you're in testing mode.
+
+4. Go to "APIs & Services" > "Credentials".
+5. Click "Create Credentials" > "OAuth client ID".
+   - Select "Web application" as the application type.
+   - Add your app's URL to "Authorized JavaScript origins":
+     - For local development: `http://localhost:3000`
+     - For production: Your actual domain
+   - Add redirect URIs:
+     - For local development: `http://localhost:3000/api/auth/callback/google`
+     - For production: `https://your-domain.com/api/auth/callback/google`
+
+6. Copy the generated Client ID and Client Secret.
+
+7. Add these credentials to your `.env.local` file:
+   ```
+   GOOGLE_CLIENT_ID=your_client_id_here
+   GOOGLE_CLIENT_SECRET=your_client_secret_here
+   NEXTAUTH_URL=http://localhost:3000 # or your production URL
+   NEXTAUTH_SECRET=your_generated_secret # Generate with: openssl rand -base64 32
+   ```
+
+8. Now you should be able to sign in with Google.
 
 ## Customization
 

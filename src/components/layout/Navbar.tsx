@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const youtubeChannelUrl = "https://www.youtube.com/@jamesperaltaSWE?sub_confirmation=1";
+  const { data: session, status } = useSession();
 
   // Helper function to check if a path is active
   const isActive = (path: string) => {
@@ -17,11 +19,15 @@ export default function Navbar() {
     return pathname.startsWith(path);
   };
 
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
+
   return (
     <nav className="bg-[#2cbb5d]/5 backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo - left side */}
-        <div className="flex-1">
+        <div className="flex-shrink-0 mr-4">
           <Link href="/" className="flex items-center">
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
               James Peralta
@@ -30,123 +36,90 @@ export default function Navbar() {
         </div>
         
         {/* Navigation - center */}
-        <div className="flex-1 hidden md:flex justify-center">
-          <ul className="flex flex-row space-x-8">
-            <li>
-              <Link 
-                href="/" 
-                className={`block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 ${
-                  isActive('/') 
-                    ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' 
-                    : 'text-gray-200 hover:text-[#2cbb5d] transition-colors duration-300'
-                }`}
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link 
-                href="/videos" 
-                className={`block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 ${
-                  isActive('/videos') 
-                    ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' 
-                    : 'text-gray-200 hover:text-[#2cbb5d] transition-colors duration-300'
-                }`}
-              >
-                Videos
-              </Link>
-            </li>
-            <li>
-              <Link 
-                href="/break" 
-                className={`block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 ${
-                  isActive('/break') 
-                    ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' 
-                    : 'text-gray-200 hover:text-[#2cbb5d] transition-colors duration-300'
-                }`}
-              >
-                Break
-              </Link>
-            </li>
-          </ul>
+        <div className="hidden md:flex flex-grow items-center justify-center">
+          <div className="flex space-x-8">
+            <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
+              Home
+            </Link>
+            <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
+              Videos
+            </Link>
+          </div>
         </div>
-        
-        {/* Mobile menu button - right side */}
-        <div className="flex-1 flex justify-end md:order-2">
-          <a 
+
+        {/* Right side - Auth & Subscribe buttons */}
+        <div className="flex items-center">
+          {status === 'loading' ? (
+            <div className="h-10 w-24 bg-gray-700 animate-pulse rounded"></div>
+          ) : session ? (
+            <div className="flex items-center space-x-4">
+              <span className="hidden md:inline-block text-sm text-white">
+                {session.user?.name}
+              </span>
+              <button
+                onClick={handleSignOut}
+                className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="text-white bg-[#2cbb5d] hover:bg-[#25a24f] px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              Login
+            </Link>
+          )}
+          
+          <a
             href={youtubeChannelUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:inline-block text-white bg-[#2cbb5d] hover:bg-[#28a754] focus:ring-4 focus:outline-none focus:ring-[#2cbb5d]/50 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3"
+            className="hidden md:flex ml-4 items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             Subscribe
           </a>
+          
+          {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-200 rounded-lg md:hidden hover:bg-[#2cbb5d]/10 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]/50"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden focus:outline-none ml-2"
           >
             <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
             </svg>
           </button>
         </div>
-        
-        {/* Mobile menu */}
-        <div className={`items-center justify-between w-full md:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
-          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium rounded-lg bg-[#2cbb5d]/5 backdrop-blur-md">
-            <li>
-              <Link 
-                href="/" 
-                className={`block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 ${
-                  isActive('/') 
-                    ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' 
-                    : 'text-gray-200 hover:text-[#2cbb5d] transition-colors duration-300'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link 
-                href="/videos" 
-                className={`block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 ${
-                  isActive('/videos') 
-                    ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' 
-                    : 'text-gray-200 hover:text-[#2cbb5d] transition-colors duration-300'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Videos
-              </Link>
-            </li>
-            <li>
-              <Link 
-                href="/break" 
-                className={`block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 ${
-                  isActive('/break') 
-                    ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' 
-                    : 'text-gray-200 hover:text-[#2cbb5d] transition-colors duration-300'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Break
-              </Link>
-            </li>
-            <li className="mt-3 md:hidden">
-              <a 
-                href={youtubeChannelUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full inline-block text-white bg-[#2cbb5d] hover:bg-[#28a754] focus:ring-4 focus:outline-none focus:ring-[#2cbb5d]/50 font-medium rounded-lg text-sm px-4 py-2 text-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Subscribe to YouTube
-              </a>
-            </li>
-          </ul>
+      </div>
+
+      {/* Mobile menu */}
+      <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} bg-[#1a1a1a] border-t border-[#3e3e3e]`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <Link 
+            href="/" 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/') ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' : 'text-white hover:text-[#2cbb5d] hover:bg-[#2cbb5d]/5'}`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Home
+          </Link>
+          <Link 
+            href="/videos" 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/videos') ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' : 'text-white hover:text-[#2cbb5d] hover:bg-[#2cbb5d]/5'}`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Videos
+          </Link>
+          <a
+            href={youtubeChannelUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 text-center my-2"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Subscribe
+          </a>
         </div>
       </div>
     </nav>

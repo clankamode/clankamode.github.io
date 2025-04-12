@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import { VideoProvider } from "@/context/VideoContext";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <VideoProvider channelId={process.env.YOUTUBE_CHANNEL_ID || ''}>
-          <Navbar />
-          <main className="min-h-screen pt-16">
-            {children}
-          </main>
-        </VideoProvider>
+        <AuthProvider>
+          <VideoProvider channelId={process.env.YOUTUBE_CHANNEL_ID || ''}>
+            <Navbar />
+            <main className="min-h-screen pt-16">
+              {children}
+            </main>
+          </VideoProvider>
+        </AuthProvider>
       </body>
     </html>
   );

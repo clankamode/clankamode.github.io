@@ -1,4 +1,6 @@
 ## April 12 Mock Schedule
+- Research domain names and how those work
+- Add Google Oauth to the page
 - Build out scheduling feature
 - Build out the analytics feature
 
