@@ -2,6 +2,7 @@
 
 import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
 import { YouTubeVideo } from '@/lib/youtube';
+import { usePathname } from 'next/navigation';
 
 interface VideoContextState {
   videos: YouTubeVideo[];
@@ -31,6 +32,7 @@ export const VideoProvider = ({
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1); // Keep track of logical page number if needed
   const [isInitialized, setIsInitialized] = useState(false);
+  const pathname = usePathname();
 
   const initializeState = useCallback((initialVideos: YouTubeVideo[], initialHasMore: boolean) => {
     if (!isInitialized) {
@@ -55,7 +57,12 @@ export const VideoProvider = ({
       const skip = videos.length; // Calculate skip based on current state
       const limit = initialLoadLimit;
       
-      const response = await fetch(`/api/videos?channelId=${channelId}&skip=${skip}&limit=${limit}`);
+      // Different API endpoint based on the current path
+      const apiUrl = pathname.includes('/mocks') 
+        ? `/api/mocks?skip=${skip}&limit=${limit}`
+        : `/api/videos?channelId=${channelId}&skip=${skip}&limit=${limit}`;
+      
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -81,7 +88,7 @@ export const VideoProvider = ({
     } finally {
       setLoading(false);
     }
-  }, [loading, hasMore, videos, page, channelId, isInitialized, initialLoadLimit]);
+  }, [loading, hasMore, videos, page, channelId, isInitialized, initialLoadLimit, pathname]);
 
   const contextValue: VideoContextState = {
     videos,

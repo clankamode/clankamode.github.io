@@ -30,16 +30,19 @@ export default function Navbar() {
         <div className="flex-shrink-0 justify-self-start">
           <Link href="/" className="flex items-center">
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-            {session ? `Welcome, ${session.user?.name}` : "James Peralta"}
+            {session ? session.user?.name : "James Peralta"}
             </span>
           </Link>
         </div>
         
         {/* Navigation - center */}
         <div className="hidden md:flex items-center justify-center justify-self-center">
-          <div className="flex space-x-8">
+          <div className="flex space-x-4">
             <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
               Home
+            </Link>
+            <Link href="/mocks" className={`px-3 py-2 ${isActive('/mocks') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
+              Rate Mocks
             </Link>
             <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
               Videos
@@ -104,6 +107,15 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Home
+            </Link>
+          </li>
+          <li>
+            <Link 
+              href="/mocks" 
+              className={`block py-2 pl-3 pr-4 rounded ${isActive('/mocks') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Mocks
             </Link>
           </li>
           <li>
