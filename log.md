@@ -1,15 +1,15 @@
 ## April 12 Mock Schedule
 - Research domain names and how those work. www.jamesperalta.com is LIVEEEEEE
-- Add Google Oauth to the page
-- Build out scheduling feature
+- Add Google Oauth to the page (TODO)
 - Build out the analytics feature
+- Build out scheduling feature
 - Build a James 75 List
 
 
 ### Mock Interview Slots (April 12, ALL IN PST)
 - Coding challenge before the stream starts
 - 9:00 AM - 10:00 AM: YCODE
-- 10:00 AM - 11:00 AM: Fahim
+- 10:00 AM - 11:00 AM: OPEN
 - 11:00 AM - 12:00 PM: Ricky
 - 12:00 PM - 1:00 PM: Someone interview
 - 1:00 PM - 2:00 PM: System Design Interview for Alpha

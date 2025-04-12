@@ -10,7 +10,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const youtubeChannelUrl = "https://www.youtube.com/@jamesperaltaSWE?sub_confirmation=1";
   const { data: session, status } = useSession();
-
+  
   // Helper function to check if a path is active
   const isActive = (path: string) => {
     if (path === '/') {
@@ -43,6 +43,9 @@ export default function Navbar() {
             </Link>
             <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
               Videos
+            </Link>
+            <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
+              Analytics
             </Link>
           </div>
         </div>
@@ -95,32 +98,45 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} bg-[#1a1a1a] border-t border-[#3e3e3e]`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link 
-            href="/" 
-            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/') ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' : 'text-white hover:text-[#2cbb5d] hover:bg-[#2cbb5d]/5'}`}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Home
-          </Link>
-          <Link 
-            href="/videos" 
-            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/videos') ? 'text-[#2cbb5d] bg-[#2cbb5d]/10' : 'text-white hover:text-[#2cbb5d] hover:bg-[#2cbb5d]/5'}`}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Videos
-          </Link>
-          <a
-            href={youtubeChannelUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 text-center my-2"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Subscribe
-          </a>
-        </div>
+      <div className={`${isMenuOpen ? 'block' : 'hidden'} w-full md:hidden`}>
+        <ul className="flex flex-col font-medium p-4 border border-[#3e3e3e] rounded-lg bg-[#282828] mt-4">
+          <li>
+            <Link 
+              href="/" 
+              className={`block py-2 pl-3 pr-4 rounded ${isActive('/') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link 
+              href="/videos" 
+              className={`block py-2 pl-3 pr-4 rounded ${isActive('/videos') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Videos
+            </Link>
+          </li>
+          <li>
+            <Link 
+              href="/analytics" 
+              className={`block py-2 pl-3 pr-4 rounded ${isActive('/analytics') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Analytics
+            </Link>
+          </li>
+          <li>
+            <a 
+              href="#" 
+              className="block py-2 pl-3 pr-4 text-white rounded hover:text-[#2cbb5d]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Contact
+            </a>
+          </li>
+        </ul>
       </div>
     </nav>
   );

@@ -438,4 +438,162 @@ export async function getPopularChannelVideos(
     console.error('Error fetching popular YouTube videos:', error);
     return []; // Return empty array on error
   }
+}
+
+// Analytics interfaces
+export interface VideoAnalytics {
+  id: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  publishedAt: string;
+  viewCount: string;
+  likeCount?: string;
+  commentCount?: string;
+  duration: string;
+  category?: string; 
+  videoUrl: string;
+}
+
+export interface ChannelAnalytics extends ChannelStats {
+  topVideos: VideoAnalytics[];
+  videoCategoryDistribution: Record<string, number>;
+  uploadFrequency: Record<string, number>;
+  videoDurationDistribution: Record<string, number>;
+  averageViewsPerVideo: number;
+  mostRecentUploadDate: string;
+}
+
+// Helper function to parse ISO 8601 duration to minutes
+export function parseDuration(duration: string): number {
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  const hours = parseInt(match?.[1] || '0');
+  const minutes = parseInt(match?.[2] || '0');
+  const seconds = parseInt(match?.[3] || '0');
+  return hours * 60 + minutes + (seconds / 60);
+}
+
+// Group durations into categories for visualization
+export function categorizeDuration(durationMinutes: number): string {
+  if (durationMinutes < 5) return 'Under 5 min';
+  if (durationMinutes < 10) return '5-10 min';
+  if (durationMinutes < 20) return '10-20 min';
+  if (durationMinutes < 30) return '20-30 min';
+  if (durationMinutes < 60) return '30-60 min';
+  return 'Over 60 min';
+}
+
+// Format a date to YYYY-MM for upload frequency analysis
+export function formatYearMonth(dateString: string): string {
+  const date = new Date(dateString);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// Get channel analytics
+export async function getChannelAnalytics(channelId: string): Promise<ChannelAnalytics | null> {
+  if (!process.env.YOUTUBE_API_KEY) {
+    console.error('YouTube API key is missing');
+    return null;
+  }
+
+  try {
+    // Get basic channel stats
+    const channelStats = await getChannelStats(channelId);
+    if (!channelStats) {
+      return null;
+    }
+
+    // Get videos for analytics (larger quantity)
+    const allVideos = await getChannelVideos(channelId, 50, 0);
+    if (!allVideos || allVideos.length === 0) {
+      return null;
+    }
+
+    // Get detailed video information for analytics
+    const videoIds = allVideos.map(video => video.id).join(',');
+    const videosResponse = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${videoIds}&key=${process.env.YOUTUBE_API_KEY}`
+    );
+
+    if (!videosResponse.ok) {
+      throw new Error(`YouTube API error: ${videosResponse.statusText}`);
+    }
+
+    const videosData = await videosResponse.json();
+    
+    if (!videosData.items || videosData.items.length === 0) {
+      console.error('No video details found');
+      return null;
+    }
+
+    // Process videos for analytics
+    const videoAnalytics: VideoAnalytics[] = videosData.items.map((video: VideoItem) => {
+      // Parse duration but don't store in a variable since it's not used
+      parseDuration(video.contentDetails.duration);
+      
+      return {
+        id: video.id,
+        title: video.snippet.title,
+        description: video.snippet.description,
+        thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.default?.url || '',
+        publishedAt: video.snippet.publishedAt,
+        viewCount: video.statistics?.viewCount || '0',
+        likeCount: video.statistics?.likeCount,
+        commentCount: video.statistics?.commentCount,
+        duration: video.contentDetails.duration,
+        category: video.snippet.categoryId, // This is a numeric ID that needs to be mapped later
+        videoUrl: `https://www.youtube.com/watch?v=${video.id}`
+      };
+    });
+
+    // Sort by view count for top videos
+    const topVideos = [...videoAnalytics].sort((a, b) => 
+      parseInt(b.viewCount) - parseInt(a.viewCount)
+    ).slice(0, 10);
+
+    // Calculate video category distribution
+    const videoCategoryDistribution: Record<string, number> = {};
+    videoAnalytics.forEach(video => {
+      const category = video.category || 'Unknown';
+      videoCategoryDistribution[category] = (videoCategoryDistribution[category] || 0) + 1;
+    });
+
+    // Calculate upload frequency
+    const uploadFrequency: Record<string, number> = {};
+    videoAnalytics.forEach(video => {
+      const yearMonth = formatYearMonth(video.publishedAt);
+      uploadFrequency[yearMonth] = (uploadFrequency[yearMonth] || 0) + 1;
+    });
+
+    // Calculate duration distribution
+    const videoDurationDistribution: Record<string, number> = {};
+    videoAnalytics.forEach(video => {
+      const durationMinutes = parseDuration(video.duration);
+      const category = categorizeDuration(durationMinutes);
+      videoDurationDistribution[category] = (videoDurationDistribution[category] || 0) + 1;
+    });
+
+    // Calculate average views per video
+    const totalViews = videoAnalytics.reduce((sum, video) => sum + parseInt(video.viewCount || '0'), 0);
+    const averageViewsPerVideo = Math.round(totalViews / videoAnalytics.length);
+
+    // Find most recent upload date
+    const sortedByDate = [...videoAnalytics].sort((a, b) => 
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    );
+    const mostRecentUploadDate = sortedByDate[0]?.publishedAt || '';
+
+    return {
+      ...channelStats,
+      topVideos,
+      videoCategoryDistribution,
+      uploadFrequency,
+      videoDurationDistribution,
+      averageViewsPerVideo,
+      mostRecentUploadDate
+    };
+  } catch (error) {
+    console.error('Error fetching channel analytics:', error);
+    return null;
+  }
 } 
