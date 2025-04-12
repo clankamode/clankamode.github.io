@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug --headed"
+    "test:e2e:debug": "playwright test --debug --headed",
+    "dev:debug": "NODE_OPTIONS='--inspect' next dev --turbopack"
   },
   "dependencies": {
     "ioredis": "^5.6.0",
