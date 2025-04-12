@@ -25,18 +25,18 @@ export default function Navbar() {
 
   return (
     <nav className="bg-[#2cbb5d]/5 backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl grid grid-cols-3 items-center mx-auto p-4">
         {/* Logo - left side */}
-        <div className="flex-shrink-0 mr-4">
+        <div className="flex-shrink-0 justify-self-start">
           <Link href="/" className="flex items-center">
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-              James Peralta
+            {session ? `Welcome, ${session.user?.name}` : "James Peralta"}
             </span>
           </Link>
         </div>
         
         {/* Navigation - center */}
-        <div className="hidden md:flex flex-grow items-center justify-center">
+        <div className="hidden md:flex items-center justify-center justify-self-center">
           <div className="flex space-x-8">
             <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
               Home
@@ -51,14 +51,11 @@ export default function Navbar() {
         </div>
 
         {/* Right side - Auth & Subscribe buttons */}
-        <div className="flex items-center">
+        <div className="flex items-center justify-self-end">
           {status === 'loading' ? (
             <div className="h-10 w-24 bg-gray-700 animate-pulse rounded"></div>
           ) : session ? (
             <div className="flex items-center space-x-4">
-              <span className="hidden md:inline-block text-sm text-white">
-                {session.user?.name}
-              </span>
               <button
                 onClick={handleSignOut}
                 className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition-colors"
@@ -87,7 +84,7 @@ export default function Navbar() {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden focus:outline-none ml-2"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden focus:outline-none ml-2 ml-auto"
           >
             <span className="sr-only">Open main menu</span>
             <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
