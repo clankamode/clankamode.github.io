@@ -11,6 +11,7 @@ A modern personal website showcasing videos, blog posts, and portfolio items. Bu
 - Mobile-friendly navigation
 - Infinite scrolling on videos page to load more content as you scroll
 - Google OAuth authentication
+- Fix the themes. Make it editable in one spot.
 
 ## Getting Started
 

@@ -25,7 +25,7 @@ export default function RootLayout({
           <AuthProvider>
             <VideoProvider channelId={process.env.YOUTUBE_CHANNEL_ID || ''}>
               <Navbar />
-              <main className="min-h-screen pt-16">
+              <main className="min-h-screen pt-14">
                 {children}
               </main>
             </VideoProvider>
