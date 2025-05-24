@@ -25,7 +25,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
-      <div className="max-w-screen-xl flex justify-between items-center mx-auto p-4">
+      <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
         {/* Logo - left side */}
         <div className="flex-shrink-0 justify-self-start">
           <Link href="/" className="flex items-center">
@@ -99,7 +99,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
-        <ul className="flex flex-col font-medium p-4 border border-[#3e3e3e] rounded-lg bg-[#282828] mt-4">
+        <ul className="flex flex-col font-medium border border-[#3e3e3e] rounded-lg bg-[#282828] mt-4">
           <li>
             <Link 
               href="/" 

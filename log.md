@@ -1,3 +1,14 @@
+## May 24
+- Fixed the navigation bar (DONE)
+- Fix the login
+- Fix the card footer.
+- Build out the voice in my website.
+- Build out the chat.
+- Be able to run the coding interviews in my website.
+- Be able to have people sign-up
+- Survey
+
+
 ## April 12 Mock Schedule
 - Research domain names and how those work. www.jamesperalta.com is LIVEEEEEE
 - Add Google Oauth to the page (TODO)
