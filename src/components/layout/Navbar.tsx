@@ -24,8 +24,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-[#2cbb5d]/5 backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
-      <div className="max-w-screen-xl grid grid-cols-3 items-center mx-auto p-4">
+    <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
+      <div className="max-w-screen-xl flex justify-between items-center mx-auto p-4">
         {/* Logo - left side */}
         <div className="flex-shrink-0 justify-self-start">
           <Link href="/" className="flex items-center">
@@ -38,16 +38,16 @@ export default function Navbar() {
         {/* Navigation - center */}
         <div className="hidden md:flex items-center justify-center justify-self-center">
           <div className="flex space-x-4">
-            <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
+            <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Home
             </Link>
-            <Link href="/mocks" className={`px-3 py-2 ${isActive('/mocks') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
+            <Link href="/mocks" className={`px-3 py-2 ${isActive('/mocks') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Rate Mocks
             </Link>
-            <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
+            <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Videos
             </Link>
-            <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-[#2cbb5d]' : 'text-white hover:text-[#2cbb5d]'}`}>
+            <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Analytics
             </Link>
           </div>
@@ -69,7 +69,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="text-white bg-[#2cbb5d] hover:bg-[#25a24f] px-4 py-2 rounded-lg text-sm transition-colors"
+              className="hidden md:flex text-white bg-[#ff7f50] hover:bg-[#ff6347] px-4 py-2 rounded-lg text-sm transition-colors"
             >
               Login
             </Link>
@@ -98,7 +98,7 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      <div className={`${isMenuOpen ? 'block' : 'hidden'} w-full md:hidden`}>
+      <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
         <ul className="flex flex-col font-medium p-4 border border-[#3e3e3e] rounded-lg bg-[#282828] mt-4">
           <li>
             <Link 
@@ -138,11 +138,11 @@ export default function Navbar() {
           </li>
           <li>
             <a 
-              href="#" 
-              className="block py-2 pl-3 pr-4 text-white rounded hover:text-[#2cbb5d]"
+              href="/login" 
+              className="block py-2 pl-3 pr-4 text-white rounded bg-[#ff7f50] hover:bg-[#ff6347"
               onClick={() => setIsMenuOpen(false)}
             >
-              Contact
+              Login
             </a>
           </li>
         </ul>
