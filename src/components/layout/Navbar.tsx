@@ -23,6 +23,9 @@ export default function Navbar() {
     await signOut({ callbackUrl: '/' });
   };
 
+  const isLoggedIn = !!session;
+  debugger;
+
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
       <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
@@ -30,7 +33,7 @@ export default function Navbar() {
         <div className="flex-shrink-0 justify-self-start">
           <Link href="/" className="flex items-center">
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-            {session ? session.user?.name : "James Peralta"}
+            {isLoggedIn ? session.user?.name : "James Peralta"}
             </span>
           </Link>
         </div>
@@ -41,15 +44,21 @@ export default function Navbar() {
             <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Home
             </Link>
-            <Link href="/mocks" className={`px-3 py-2 ${isActive('/mocks') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-              Rate Mocks
+            <Link href="/peralta75" className={`px-3 py-2 ${isActive('/peralta75') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+              Peralta 75
             </Link>
             <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Videos
             </Link>
-            <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-              Analytics
+            <Link href="/mocks" className={`px-3 py-2 ${isActive('/mocks') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+              Mocks
             </Link>
+            {
+              isLoggedIn && 
+              <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                Analytics
+              </Link>
+            }
           </div>
         </div>
 
@@ -111,15 +120,6 @@ export default function Navbar() {
           </li>
           <li>
             <Link 
-              href="/mocks" 
-              className={`block py-2 pl-3 pr-4 rounded ${isActive('/mocks') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Mocks
-            </Link>
-          </li>
-          <li>
-            <Link 
               href="/videos" 
               className={`block py-2 pl-3 pr-4 rounded ${isActive('/videos') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
               onClick={() => setIsMenuOpen(false)}
@@ -129,13 +129,25 @@ export default function Navbar() {
           </li>
           <li>
             <Link 
-              href="/analytics" 
-              className={`block py-2 pl-3 pr-4 rounded ${isActive('/analytics') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+              href="/mocks" 
+              className={`block py-2 pl-3 pr-4 rounded ${isActive('/mocks') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Analytics
+              Mocks
             </Link>
           </li>
+          {
+            isLoggedIn &&
+            <li>
+              <Link 
+                href="/analytics" 
+                className={`block py-2 pl-3 pr-4 rounded ${isActive('/analytics') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Analytics
+              </Link>
+            </li>
+          }
           <li>
             <a 
               href="/login" 
