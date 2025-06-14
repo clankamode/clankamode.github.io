@@ -132,7 +132,7 @@ export default function Component() {
                     ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   After solving 650+ LeetCode problems, reaching the top 0.5% of LeetCode users worldwide, and landing offers at Meta, Amazon, Bloomberg, 
-                  and various Silicon Valley startups - I've decided to curate a list of questions that were pivotal in my algorthmic journey.
+                  and various Silicon Valley startups - I&apos;ve decided to curate a list of questions that were pivotal in my algorthmic journey.
                 </p>
 
                 <p 
