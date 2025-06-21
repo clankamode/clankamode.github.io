@@ -25,6 +25,7 @@ export default function Navbar() {
 
   const isLoggedIn = !!session;
   const isAdmin = session?.user?.role === 'ADMIN';
+  const isEditor = session?.user?.role === 'EDITOR';
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
       <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
@@ -63,7 +64,7 @@ export default function Navbar() {
                 Analytics
               </Link>
             }
-            {<Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+            {isLoggedIn && (isEditor || isAdmin) && <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Thumbnails
             </Link>}
           </div>
