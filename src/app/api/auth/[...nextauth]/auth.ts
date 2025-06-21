@@ -1,5 +1,6 @@
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
+import { getRole } from "@/types/auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -12,12 +13,20 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
   },
   callbacks: {
-    async session({ session }) {
-      return session;
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          role: token.role
+        },
+      };
     },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.role = getRole(user.email || '');
       }
       return token;
     },

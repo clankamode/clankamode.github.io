@@ -24,7 +24,8 @@ export default function Navbar() {
   };
 
   const isLoggedIn = !!session;
-
+  const isAdmin = session?.user?.role === 'ADMIN';
+debugger;
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
       <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
