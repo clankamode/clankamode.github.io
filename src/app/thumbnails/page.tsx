@@ -6,7 +6,7 @@ import { useState } from "react"
 
 interface Thumbnail {
   id: string
-  videoUrl: string
+  editUrl: string
   videoTitle: string
   thumbnailUrl?: string
   notes: string
@@ -19,13 +19,14 @@ interface SubmissionData {
   thumbnail: File | null
   notes: string
   videoUrl: string
+  editUrl?: string
 }
 
 // Mock data for demonstration
 const mockThumbnails: Thumbnail[] = [
   {
     id: "1",
-    videoUrl: "https://youtube.com/watch?v=example1",
+    editUrl: "/thumbnails/1",
     videoTitle: "How to Build a React App",
     thumbnailUrl: "/placeholder.svg?height=180&width=320",
     notes:
@@ -36,7 +37,7 @@ const mockThumbnails: Thumbnail[] = [
   },
   {
     id: "2",
-    videoUrl: "https://youtube.com/watch?v=example2",
+    editUrl: "/thumbnails/2",
     videoTitle: "Advanced JavaScript Concepts",
     thumbnailUrl: "/placeholder.svg?height=180&width=320",
     notes: "1:00 - Closures explanation\n3:30 - Async/await demo\n7:20 - Key takeaways",
@@ -46,7 +47,7 @@ const mockThumbnails: Thumbnail[] = [
   },
   {
     id: "3",
-    videoUrl: "https://youtube.com/watch?v=example3",
+    editUrl: "/thumbnails/3",
     videoTitle: "CSS Grid Layout Tutorial",
     notes: "",
     status: "todo",
@@ -55,7 +56,7 @@ const mockThumbnails: Thumbnail[] = [
   },
   {
     id: "4",
-    videoUrl: "https://youtube.com/watch?v=example4",
+    editUrl: "/thumbnails/4",
     videoTitle: "Node.js Backend Development",
     notes: "",
     status: "todo",
@@ -64,7 +65,7 @@ const mockThumbnails: Thumbnail[] = [
   },
   {
     id: "5",
-    videoUrl: "https://youtube.com/watch?v=example5",
+    editUrl: "/thumbnails/5",
     videoTitle: "Database Design Principles",
     thumbnailUrl: "/placeholder.svg?height=180&width=320",
     notes:
@@ -146,7 +147,7 @@ export default function ThumbnailDashboard() {
     // Add new thumbnail to in-review
     const newThumbnail: Thumbnail = {
       id: Date.now().toString(),
-      videoUrl: formData.videoUrl,
+      editUrl: formData.editUrl || "",
       videoTitle: "New Video Submission",
       thumbnailUrl: previewUrl || undefined,
       notes: formData.notes,
@@ -168,16 +169,17 @@ export default function ThumbnailDashboard() {
 
   const renderSidebar = () => (
     <div
-      className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+      className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#282828] shadow-lg transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
     >
 
       <nav className="mt-8">
         <div className="px-6 mb-6">
           <button
+            disabled={true}
             onClick={() => setCurrentView("submit")}
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="w-full bg-[#2cbb5d] text-white px-4 py-2 rounded-lg hover:bg-[#25a24f] transition-colors font-medium"
           >
-            + Submit New
+            Create New Job
           </button>
         </div>
 
@@ -190,8 +192,8 @@ export default function ThumbnailDashboard() {
             <button
               key={item.key}
               onClick={() => setCurrentView(item.key)}
-              className={`w-full flex items-center justify-between px-6 py-3 text-left hover:bg-gray-50 transition-colors ${
-                currentView === item.key ? "bg-blue-50 border-r-2 border-blue-600 text-blue-700" : "text-gray-700"
+              className={`w-full flex items-center justify-between px-6 py-3 text-left hover:bg-[#1a1a1a] transition-colors ${
+                currentView === item.key ? "bg-[#1a1a1a] border-r-2 border-[#2cbb5d] text-[#2cbb5d]" : "text-gray-300"
               }`}
             >
               <div className="flex items-center">
@@ -200,7 +202,7 @@ export default function ThumbnailDashboard() {
               </div>
               <span
                 className={`px-2 py-1 text-xs rounded-full ${
-                  currentView === item.key ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+                  currentView === item.key ? "bg-[#2cbb5d] text-white" : "bg-[#282828] text-gray-400 border border-gray-600"
                 }`}
               >
                 {item.count}
@@ -213,8 +215,8 @@ export default function ThumbnailDashboard() {
   )
 
   const renderThumbnailCard = (thumbnail: Thumbnail) => (
-    <div key={thumbnail.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="aspect-video bg-gray-100 relative">
+    <div key={thumbnail.id} className="bg-[#282828] rounded-lg shadow-md overflow-hidden">
+      <div className="aspect-video bg-[#1a1a1a] relative">
         {thumbnail.thumbnailUrl ? (
           <img
             src={thumbnail.thumbnailUrl || "/placeholder.svg"}
@@ -222,7 +224,7 @@ export default function ThumbnailDashboard() {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
+          <div className="w-full h-full flex items-center justify-center text-gray-500">
             <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -236,9 +238,9 @@ export default function ThumbnailDashboard() {
       </div>
 
       <div className="p-4">
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{thumbnail.videoTitle}</h3>
+        <h3 className="font-semibold text-white mb-2 line-clamp-2">{thumbnail.videoTitle}</h3>
 
-        <div className="flex items-center text-sm text-gray-500 mb-3">
+        <div className="flex items-center text-sm text-gray-400 mb-3">
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -258,16 +260,16 @@ export default function ThumbnailDashboard() {
 
         {thumbnail.notes && (
           <div className="mb-3">
-            <p className="text-sm text-gray-600 line-clamp-3">{thumbnail.notes}</p>
+            <p className="text-sm text-gray-300 line-clamp-3">{thumbnail.notes}</p>
           </div>
         )}
 
         <div className="flex items-center justify-between">
           <a
-            href={thumbnail.videoUrl}
-            target="_blank"
+            href={thumbnail.editUrl}
+            // target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="text-[#2cbb5d] hover:text-[#25a24f] text-sm font-medium"
           >
             View Video →
           </a>
@@ -276,7 +278,7 @@ export default function ThumbnailDashboard() {
             {thumbnail.status !== "todo" && (
               <button
                 onClick={() => updateThumbnailStatus(thumbnail.id, "todo")}
-                className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"
+                className="px-2 py-1 text-xs bg-[#1a1a1a] text-gray-400 rounded hover:bg-[#282828] transition-colors"
                 title="Move to To Do"
               >
                 📋
@@ -285,7 +287,7 @@ export default function ThumbnailDashboard() {
             {thumbnail.status !== "in-review" && (
               <button
                 onClick={() => updateThumbnailStatus(thumbnail.id, "in-review")}
-                className="px-2 py-1 text-xs bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200 transition-colors"
+                className="px-2 py-1 text-xs bg-[#282828] text-[#2cbb5d] rounded hover:bg-[#1a1a1a] transition-colors"
                 title="Move to In Review"
               >
                 👀
@@ -294,7 +296,7 @@ export default function ThumbnailDashboard() {
             {thumbnail.status !== "completed" && (
               <button
                 onClick={() => updateThumbnailStatus(thumbnail.id, "completed")}
-                className="px-2 py-1 text-xs bg-green-100 text-green-600 rounded hover:bg-green-200 transition-colors"
+                className="px-2 py-1 text-xs bg-[#2cbb5d] text-white rounded hover:bg-[#25a24f] transition-colors"
                 title="Move to Completed"
               >
                 ✅
@@ -317,16 +319,16 @@ export default function ThumbnailDashboard() {
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">{statusLabels[status]}</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-bold text-white">{statusLabels[status]}</h2>
+          <p className="text-gray-400">
             {filteredThumbnails.length} thumbnail{filteredThumbnails.length !== 1 ? "s" : ""}
           </p>
         </div>
 
         {filteredThumbnails.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 bg-[#282828] rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -335,10 +337,10 @@ export default function ThumbnailDashboard() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-white mb-2">
               No thumbnails {status === "todo" ? "to do" : status}
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-400">
               {status === "todo" && "New video requests will appear here"}
               {status === "in-review" && "Submitted thumbnails will appear here for review"}
               {status === "completed" && "Approved thumbnails will appear here"}
@@ -356,15 +358,15 @@ export default function ThumbnailDashboard() {
   const renderSubmissionForm = () => (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Submit New Thumbnail</h2>
-        <p className="text-gray-600">Upload your Canva-created thumbnail and add your notes</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Submit New Thumbnail</h2>
+        <p className="text-gray-400">Upload your Canva-created thumbnail and add your notes</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-[#282828] rounded-lg shadow-lg p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Video URL Input */}
           <div>
-            <label htmlFor="videoUrl" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="videoUrl" className="block text-sm font-medium text-gray-300 mb-2">
               Video URL
             </label>
             <input
@@ -373,17 +375,17 @@ export default function ThumbnailDashboard() {
               value={formData.videoUrl}
               onChange={(e) => setFormData((prev) => ({ ...prev, videoUrl: e.target.value }))}
               placeholder="https://youtube.com/watch?v=..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-600 bg-[#1a1a1a] text-white rounded-lg focus:ring-2 focus:ring-[#2cbb5d] focus:border-[#2cbb5d]"
               required
             />
           </div>
 
           {/* File Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail Image</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Thumbnail Image</label>
             <div
               className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
+                dragActive ? "border-[#2cbb5d] bg-[#1a1a1a]" : "border-gray-600 hover:border-gray-400 bg-[#282828]"
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -404,7 +406,7 @@ export default function ThumbnailDashboard() {
                     alt="Thumbnail preview"
                     className="max-w-full max-h-48 mx-auto rounded-lg shadow-md"
                   />
-                  <div className="flex items-center justify-center space-x-2 text-green-600">
+                  <div className="flex items-center justify-center space-x-2 text-[#2cbb5d]">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
@@ -413,15 +415,15 @@ export default function ThumbnailDashboard() {
                   <button
                     type="button"
                     onClick={() => handleFileChange(null)}
-                    className="text-red-600 hover:text-red-800 text-sm"
+                    className="text-red-400 hover:text-red-600 text-sm"
                   >
                     Remove file
                   </button>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-12 h-12 bg-[#1a1a1a] rounded-full flex items-center justify-center mx-auto">
+                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -431,8 +433,8 @@ export default function ThumbnailDashboard() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Drop your thumbnail here</p>
-                    <p className="text-sm text-gray-500">or click to browse files</p>
+                    <p className="font-medium text-white">Drop your thumbnail here</p>
+                    <p className="text-sm text-gray-400">or click to browse files</p>
                   </div>
                 </div>
               )}
@@ -441,7 +443,7 @@ export default function ThumbnailDashboard() {
 
           {/* Notes */}
           <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-2">
               Notes & Timestamps
             </label>
             <textarea
@@ -449,7 +451,7 @@ export default function ThumbnailDashboard() {
               value={formData.notes}
               onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
               placeholder="Example:&#10;0:30 - Introduction&#10;2:15 - Main demo&#10;5:45 - Key takeaway"
-              className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+              className="w-full h-32 px-4 py-3 border border-gray-600 bg-[#1a1a1a] text-white rounded-lg focus:ring-2 focus:ring-[#2cbb5d] focus:border-[#2cbb5d] resize-vertical"
               rows={6}
             />
           </div>
@@ -457,7 +459,7 @@ export default function ThumbnailDashboard() {
           <button
             type="submit"
             disabled={!formData.thumbnail || !formData.videoUrl || isSubmitting}
-            className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-6 py-3 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">
@@ -486,7 +488,7 @@ export default function ThumbnailDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-[#1a1a1a] flex">
       {/* Sidebar */}
       {renderSidebar()}
 
@@ -498,13 +500,13 @@ export default function ThumbnailDashboard() {
       {/* Main content */}
       <div className="flex-1 lg:ml-0">
         {/* Mobile header */}
-        <div className="lg:hidden bg-white shadow-sm px-4 py-3 flex items-center justify-between">
-          <button onClick={() => setSidebarOpen(true)} className="text-gray-600 hover:text-gray-900">
+        <div className="lg:hidden bg-[#282828] shadow-sm px-4 py-3 flex items-center justify-between">
+          <button onClick={() => setSidebarOpen(true)} className="text-gray-300 hover:text-white">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className="text-lg font-semibold text-gray-900">Thumbnail Dashboard</h1>
+          <h1 className="text-lg font-semibold text-white">Thumbnail Dashboard</h1>
           <div></div>
         </div>
 
