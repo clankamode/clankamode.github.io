@@ -69,22 +69,22 @@ export default function ThumbnailSubmissionPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center p-4">
+        <div className="bg-[#282828] rounded-lg shadow-lg p-8 max-w-md w-full text-center border border-[#3e3e3e]">
+          <div className="w-16 h-16 bg-[#2cbb5d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-[#2cbb5d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Submission Complete!</h2>
-          <p className="text-gray-600 mb-6">Your thumbnail and notes have been submitted successfully.</p>
+          <h2 className="text-2xl font-bold text-white mb-2">Submission Complete!</h2>
+          <p className="text-gray-400 mb-6">Your thumbnail and notes have been submitted successfully.</p>
           <button
             onClick={() => {
               setSubmitted(false)
               setFormData({ thumbnail: null, notes: "", videoUrl: formData.videoUrl })
               setPreviewUrl(null)
             }}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-[#2cbb5d] text-white px-6 py-2 rounded-lg hover:bg-[#25a24f] transition-colors"
           >
             Submit Another
           </button>
@@ -94,26 +94,26 @@ export default function ThumbnailSubmissionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-[#1a1a1a] py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-[#282828] rounded-lg shadow-lg overflow-hidden border border-[#3e3e3e]">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-8">
+          <div className="bg-[#282828] px-6 py-8 border-b border-[#3e3e3e]">
             <h1 className="text-3xl font-bold text-white mb-2">Thumbnail Submission</h1>
-            <p className="text-blue-100">Upload your Canva-created thumbnail and add your notes</p>
+            <p className="text-gray-400">Please upload the thumbnail and add your notes</p>
           </div>
 
           <div className="p-6">
             {/* Video Link Section */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">Video to Review</h2>
-              <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
-                <p className="text-sm text-gray-600 mb-2">Please watch this video before creating the thumbnail:</p>
+              <h2 className="text-xl font-semibold text-white mb-3">Video to Review</h2>
+              <div className="bg-[#1a1a1a] rounded-lg p-4 border-l-4 border-[#2cbb5d]">
+                <p className="text-sm text-gray-400 mb-2">Please watch this video before creating the thumbnail:</p>
                 <a
                   href={formData.videoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 font-medium break-all"
+                  className="text-[#2cbb5d] hover:text-[#25a24f] font-medium break-all"
                 >
                   {formData.videoUrl}
                 </a>
@@ -122,7 +122,7 @@ export default function ThumbnailSubmissionPage() {
                     href={formData.videoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-[#2cbb5d] text-white text-sm font-medium rounded-lg hover:bg-[#28a754] transition-colors"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -141,10 +141,10 @@ export default function ThumbnailSubmissionPage() {
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* File Upload Section */}
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-3">Upload Thumbnail</h2>
+                <h2 className="text-xl font-semibold text-white mb-3">Upload Thumbnail</h2>
                 <div
                   className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                    dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
+                    dragActive ? "border-[#2cbb5d] bg-[#2cbb5d]/5" : "border-[#3e3e3e] hover:border-[#2cbb5d] bg-[#1a1a1a]"
                   }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -181,8 +181,8 @@ export default function ThumbnailSubmissionPage() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-16 h-16 bg-[#282828] rounded-full flex items-center justify-center mx-auto">
+                        <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -192,8 +192,8 @@ export default function ThumbnailSubmissionPage() {
                         </svg>
                       </div>
                       <div>
-                        <p className="text-lg font-medium text-gray-900">Drop your thumbnail here</p>
-                        <p className="text-gray-500">or click to browse files</p>
+                        <p className="text-lg font-medium text-white">Drop your thumbnail here</p>
+                        <p className="text-gray-400">or click to browse files</p>
                       </div>
                       <p className="text-sm text-gray-400">PNG, JPG, GIF up to 10MB</p>
                     </div>
@@ -203,10 +203,10 @@ export default function ThumbnailSubmissionPage() {
 
               {/* Notes Section */}
               <div>
-                <label htmlFor="notes" className="block text-xl font-semibold text-gray-900 mb-3">
+                <label htmlFor="notes" className="block text-xl font-semibold text-white mb-3">
                   Notes & Timestamps
                 </label>
-                <p className="text-gray-600 mb-3">
+                <p className="text-white-700 mb-3">
                   Add any notes, timestamps, or key moments from the video that should be included in the description.
                 </p>
                 <textarea
@@ -214,7 +214,7 @@ export default function ThumbnailSubmissionPage() {
                   value={formData.notes}
                   onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
                   placeholder="Example:&#10;0:30 - Introduction to the topic&#10;2:15 - Main demonstration begins&#10;5:45 - Key takeaway&#10;&#10;Additional notes:&#10;- Great energy in this video&#10;- Consider highlighting the demo section"
-                  className="w-full h-40 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+                  className="w-full h-40 px-4 py-3 border border-[#3e3e3e] rounded-lg focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d] resize-vertical bg-[#1a1a1a] text-white placeholder:text-gray-500"
                   rows={8}
                 />
                 <p className="text-sm text-gray-500 mt-2">{formData.notes.length} characters</p>
@@ -225,7 +225,7 @@ export default function ThumbnailSubmissionPage() {
                 <button
                   type="submit"
                   disabled={!formData.thumbnail || isSubmitting}
-                  className="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-8 py-3 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d]/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">
