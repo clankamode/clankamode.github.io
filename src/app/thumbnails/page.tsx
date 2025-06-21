@@ -1,8 +1,17 @@
 "use client"
 
 import type React from "react"
+import { useState, useEffect } from "react"
 
-import { useState } from "react"
+interface ThumbnailJob {
+  id: string
+  name: string
+  status: 'TODO' | 'REVIEW' | 'DONE'
+  video_link: string
+  thumbnail_link?: string
+  description?: string
+  created_at?: string
+}
 
 interface Thumbnail {
   id: string
@@ -22,66 +31,28 @@ interface SubmissionData {
   editUrl?: string
 }
 
-// Mock data for demonstration
-const mockThumbnails: Thumbnail[] = [
-  {
-    id: "1",
-    editUrl: "/thumbnails/1",
-    videoTitle: "How to Build a React App",
-    thumbnailUrl: "/placeholder.svg?height=180&width=320",
-    notes:
-      "0:30 - Introduction\n2:15 - Setup process\n5:45 - First component\n\nGreat tutorial, focus on the coding sections",
-    status: "completed",
-    submittedAt: new Date("2024-01-15"),
-    submittedBy: "Designer A",
-  },
-  {
-    id: "2",
-    editUrl: "/thumbnails/2",
-    videoTitle: "Advanced JavaScript Concepts",
-    thumbnailUrl: "/placeholder.svg?height=180&width=320",
-    notes: "1:00 - Closures explanation\n3:30 - Async/await demo\n7:20 - Key takeaways",
-    status: "in-review",
-    submittedAt: new Date("2024-01-18"),
-    submittedBy: "Designer B",
-  },
-  {
-    id: "3",
-    editUrl: "/thumbnails/3",
-    videoTitle: "CSS Grid Layout Tutorial",
-    notes: "",
-    status: "todo",
-    submittedAt: new Date("2024-01-20"),
-    submittedBy: "",
-  },
-  {
-    id: "4",
-    editUrl: "/thumbnails/4",
-    videoTitle: "Node.js Backend Development",
-    notes: "",
-    status: "todo",
-    submittedAt: new Date("2024-01-22"),
-    submittedBy: "",
-  },
-  {
-    id: "5",
-    editUrl: "/thumbnails/5",
-    videoTitle: "Database Design Principles",
-    thumbnailUrl: "/placeholder.svg?height=180&width=320",
-    notes:
-      "2:00 - ERD creation\n4:45 - Normalization\n8:15 - Best practices\n\nVery technical, might need simpler thumbnail",
-    status: "in-review",
-    submittedAt: new Date("2024-01-19"),
-    submittedBy: "Designer A",
-  },
-]
+// Function to convert API data to our frontend format
+const convertApiDataToThumbnail = (job: ThumbnailJob): Thumbnail => {
+  return {
+    id: job.id,
+    editUrl: `/thumbnails/${job.id}`,
+    videoTitle: job.name,
+    thumbnailUrl: job.thumbnail_link,
+    notes: job.description || "",
+    status: job.status === "TODO" ? "todo" : job.status === "REVIEW" ? "in-review" : "completed",
+    submittedAt: job.created_at ? new Date(job.created_at) : new Date(),
+    submittedBy: "System" // We can update this when we have user info
+  }
+}
 
 type ViewType = "todo" | "in-review" | "completed" | "submit"
 
 export default function ThumbnailDashboard() {
   const [currentView, setCurrentView] = useState<ViewType>("todo")
-  const [thumbnails, setThumbnails] = useState<Thumbnail[]>(mockThumbnails)
+  const [thumbnails, setThumbnails] = useState<Thumbnail[]>([])
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   // Submission form state
   const [formData, setFormData] = useState<SubmissionData>({
@@ -92,6 +63,29 @@ export default function ThumbnailDashboard() {
   const [dragActive, setDragActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchThumbnails = async () => {
+      try {
+        const response = await fetch('/api/thumbnails')
+        if (!response.ok) {
+          throw new Error('Failed to fetch thumbnails')
+        }
+        const data = await response.json()
+        if (data.error) {
+          throw new Error(data.error)
+        }
+        const convertedThumbnails = data.data.map(convertApiDataToThumbnail)
+        setThumbnails(convertedThumbnails)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchThumbnails()
+  }, [])
 
   const getStatusCounts = () => {
     return {
@@ -314,6 +308,39 @@ export default function ThumbnailDashboard() {
       todo: "To Do",
       "in-review": "In Review",
       completed: "Completed",
+    }
+
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2cbb5d]"></div>
+            <p className="text-gray-400">Loading thumbnails...</p>
+          </div>
+        </div>
+      )
+    }
+
+    if (error) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-white">Failed to load thumbnails</h3>
+            <p className="text-gray-400">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-[#2cbb5d] text-white rounded-lg hover:bg-[#25a24f]"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      )
     }
 
     return (
