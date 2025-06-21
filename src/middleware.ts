@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import { ADMINS, isAdmin } from '@/types/auth';
 
 export async function middleware(req: NextRequest) {
     try {
@@ -13,7 +12,7 @@ export async function middleware(req: NextRequest) {
             return NextResponse.redirect(new URL('/', req.url));
         }
         
-        if (!isAdmin(token.role)) {
+        if (token.role !== 'ADMIN') {
             return NextResponse.redirect(new URL('/', req.url));
         }         
     } catch (error) {

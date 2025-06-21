@@ -1,6 +1,15 @@
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
-import { getRole } from "@/types/auth";
+
+const ADMINS = ['jamesperalta35@gmail.com'];
+const EDITORS = ['castleridge.labs@gmail.com'];
+
+const getRole = (email: string) => {
+  if (ADMINS.includes(email)) {
+    return 'ADMIN';
+  }
+  return 'USER';
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
