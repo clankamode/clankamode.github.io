@@ -63,6 +63,9 @@ export default function Navbar() {
                 Analytics
               </Link>
             }
+            {<Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+              Thumbnails
+            </Link>}
           </div>
         </div>
 
