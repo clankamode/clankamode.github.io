@@ -54,7 +54,7 @@ debugger;
               Mocks
             </Link>
             {
-              isLoggedIn && 
+              isLoggedIn && isAdmin &&
               <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                 Analytics
               </Link>
