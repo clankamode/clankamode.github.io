@@ -25,7 +25,6 @@ export default function Navbar() {
 
   const isLoggedIn = !!session;
   const isAdmin = session?.user?.role === 'ADMIN';
-debugger;
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
       <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
@@ -137,7 +136,7 @@ debugger;
             </Link>
           </li>
           {
-            isLoggedIn &&
+            isLoggedIn && isAdmin &&
             <li>
               <Link 
                 href="/analytics" 
@@ -151,7 +150,7 @@ debugger;
           <li>
             <a 
               href="/login" 
-              className="block py-2 pl-3 pr-4 text-white rounded bg-[#ff7f50] hover:bg-[#ff6347"
+              className="block py-2 pl-3 pr-4 text-white rounded bg-[#ff7f50] hover:bg-[#ff6347]"
               onClick={() => setIsMenuOpen(false)}
             >
               Login
