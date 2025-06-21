@@ -8,6 +8,11 @@ const getRole = (email: string) => {
   if (ADMINS.includes(email)) {
     return 'ADMIN';
   }
+
+  if (EDITORS.includes(email)) {
+    return 'EDITOR';
+  }
+
   return 'USER';
 }
 

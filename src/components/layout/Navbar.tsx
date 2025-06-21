@@ -34,6 +34,11 @@ export default function Navbar() {
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
             {isLoggedIn ? session.user?.name : "James Peralta"}
             </span>
+            {isLoggedIn && session.user?.role && (
+              <span className="ml-2 mt-1 px-2 py-0.5 rounded text-xs bg-white/20 text-white border border-white/30">
+                {session.user.role}
+              </span>
+            )}
           </Link>
         </div>
         
