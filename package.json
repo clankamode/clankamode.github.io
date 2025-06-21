@@ -13,13 +13,14 @@
     "dev:debug": "NODE_OPTIONS='--inspect' next dev --turbopack"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.50.0",
     "chart.js": "^4.4.1",
     "next": "15.3.0",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^19.0.0",
-    "react-youtube": "^10.1.0"
+    "react-youtube": "^10.1.0",
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
