@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useParams, redirect } from "next/navigation"
+import { useParams, redirect, useRouter } from "next/navigation"
 
 interface SubmissionData {
   videoTitle: string
@@ -14,6 +14,7 @@ interface SubmissionData {
 
 export default function ThumbnailSubmissionPage() {
   const { thumbnail } = useParams();
+  const router = useRouter();
   const [formData, setFormData] = useState<SubmissionData>({
     videoTitle: "",
     videoUrl: "",
@@ -103,7 +104,17 @@ export default function ThumbnailSubmissionPage() {
         <div className="bg-[#282828] rounded-lg shadow-lg overflow-hidden border border-[#3e3e3e]">
           {/* Header */}
           <div className="bg-[#282828] px-6 py-8 border-b border-[#3e3e3e]">
-            <h1 className="text-3xl font-bold text-white mb-2">{formData.videoTitle}</h1>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => router.push('/thumbnails')}
+                className="flex items-center text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+              <h1 className="text-3xl font-bold text-white">{formData.videoTitle}</h1>
+            </div>
           </div>
 
           <div className="p-6">
