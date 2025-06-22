@@ -87,14 +87,9 @@ export default function ThumbnailSubmissionPage() {
     setIsSubmitting(true)
 
     // Simulate API call
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      redirect(`/thumbnails`)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsSubmitting(false)
-    }
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    setIsSubmitting(false)
+    redirect(`/thumbnails`)
   }
 
 
