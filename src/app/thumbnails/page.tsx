@@ -6,6 +6,7 @@ import type { ThumbnailJob } from '@/types/ThumbnailJob';
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 import Sidebar from './_components/Sidebar';
 import ThumbnailOverview from './_components/ThumbnailOverview';
+import CreateJobModal from './_components/CreateJobModal';
 
 interface Thumbnail {
   id: string
@@ -34,6 +35,7 @@ export default function ThumbnailDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchThumbnails = async () => {
@@ -58,6 +60,30 @@ export default function ThumbnailDashboard() {
     fetchThumbnails()
   }, [])
 
+  const handleCreateJob = async (videoUrl: string, videoTitle: string) => {
+    const response = await fetch('/api/thumbnail_job', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        video_url: videoUrl,
+        video_title: videoTitle 
+      }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || 'Failed to create thumbnail job')
+    }
+
+    // Refresh the thumbnails list
+    const updatedResponse = await fetch('/api/thumbnail_job')
+    const data = await updatedResponse.json()
+    const convertedThumbnails = data.data.map(convertApiDataToThumbnail)
+    setThumbnails(convertedThumbnails)
+  }
+
   const getStatusCounts = () => {
     return {
       todo: thumbnails.filter((t) => t.status === ThumbnailJobStatus.TODO).length,
@@ -71,7 +97,20 @@ export default function ThumbnailDashboard() {
   return (
     <div className="min-h-screen bg-[#1a1a1a] flex">
       {/* Sidebar */}
-      <Sidebar currentView={currentView} setCurrentView={setCurrentView} statusCounts={statusCounts} sidebarOpen={sidebarOpen}/>
+      <Sidebar 
+        currentView={currentView} 
+        setCurrentView={setCurrentView} 
+        statusCounts={statusCounts} 
+        sidebarOpen={sidebarOpen}
+        onCreateClick={() => setIsModalOpen(true)}
+      />
+
+      {/* Create Job Modal */}
+      <CreateJobModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateJob}
+      />
 
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
