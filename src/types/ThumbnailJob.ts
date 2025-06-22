@@ -13,3 +13,12 @@ export type ThumbnailJob = {
     notes?: string;
     created_at?: string;
 }
+
+export interface Thumbnail {
+  id: string
+  editUrl: string
+  videoTitle: string
+  thumbnailUrl?: string
+  notes: string
+  status: ThumbnailJobStatus
+}
