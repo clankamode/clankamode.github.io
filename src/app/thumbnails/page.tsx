@@ -40,16 +40,6 @@ export default function ThumbnailDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Submission form state
-  const [formData, setFormData] = useState<SubmissionData>({
-    thumbnail: null,
-    notes: "",
-    videoUrl: "",
-  })
-  const [dragActive, setDragActive] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-
   useEffect(() => {
     const fetchThumbnails = async () => {
       try {
@@ -83,65 +73,6 @@ export default function ThumbnailDashboard() {
 
   const statusCounts = getStatusCounts()
 
-  const handleFileChange = (file: File | null) => {
-    setFormData((prev) => ({ ...prev, thumbnail: file }))
-
-    if (file) {
-      const url = URL.createObjectURL(file)
-      setPreviewUrl(url)
-    } else {
-      setPreviewUrl(null)
-    }
-  }
-
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
-    } else if (e.type === "dragleave") {
-      setDragActive(false)
-    }
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0]
-      if (file.type.startsWith("image/")) {
-        handleFileChange(file)
-      }
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    // Add new thumbnail to in-review
-    const newThumbnail: Thumbnail = {
-      id: Date.now().toString(),
-      editUrl: formData.editUrl || "",
-      videoTitle: "New Video Submission",
-      thumbnailUrl: previewUrl || undefined,
-      notes: formData.notes,
-      status: ThumbnailJobStatus.IN_REVIEW,
-      submittedAt: new Date(),
-      submittedBy: "Current User",
-    }
-
-    setThumbnails((prev) => [...prev, newThumbnail])
-    setFormData({ thumbnail: null, notes: "", videoUrl: "" })
-    setPreviewUrl(null)
-    setIsSubmitting(false)
-    setCurrentView(ThumbnailJobStatus.IN_REVIEW)
-  }
 
   const updateThumbnailStatus = (id: string, newStatus: ThumbnailJobStatus) => {
     setThumbnails((prev) => prev.map((thumb) => (thumb.id === id ? { ...thumb, status: newStatus } : thumb)))
@@ -156,7 +87,7 @@ export default function ThumbnailDashboard() {
         <div className="px-6 mb-6">
           <button
             disabled={true}
-            onClick={() => setCurrentView("submit")}
+            // onClick={() => setCurrentView("submit")}
             className="w-full bg-[#2cbb5d] text-white px-4 py-2 rounded-lg hover:bg-[#25a24f] transition-colors font-medium"
           >
             Create New Job
@@ -165,9 +96,9 @@ export default function ThumbnailDashboard() {
 
         <div className="space-y-1">
           {[
-            { key: "todo" as const, label: "To Do", icon: "📋", count: statusCounts.todo },
-            { key: "in-review" as const, label: "In Review", icon: "👀", count: statusCounts["in-review"] },
-            { key: "completed" as const, label: "Completed", icon: "✅", count: statusCounts.completed },
+            { key: ThumbnailJobStatus.TODO, label: "To Do", icon: "📋", count: statusCounts.todo },
+            { key: ThumbnailJobStatus.IN_REVIEW, label: "In Review", icon: "👀", count: statusCounts["in-review"] },
+            { key: ThumbnailJobStatus.COMPLETED, label: "Completed", icon: "✅", count: statusCounts.completed },
           ].map((item) => (
             <button
               key={item.key}
