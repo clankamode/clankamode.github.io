@@ -67,7 +67,7 @@ export default function ThumbnailDashboard() {
   useEffect(() => {
     const fetchThumbnails = async () => {
       try {
-        const response = await fetch('/api/thumbnails')
+        const response = await fetch('/api/thumbnail_job')
         if (!response.ok) {
           throw new Error('Failed to fetch thumbnails')
         }

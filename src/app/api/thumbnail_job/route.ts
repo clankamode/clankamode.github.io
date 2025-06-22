@@ -4,23 +4,26 @@ import { createClient } from '@supabase/supabase-js'
 
 type ThumbnailJob = {
   id: string;
-  name: string;
-  status: 'TODO' | 'REVIEW' | 'DONE';
-  video_link: string;
-  thumbnail_link?: string;
-  description?: string;
-  created_at?: string; // ISO timestamp string
+  video_title: string;
+  video_url: string;
+  status: 'TODO' | 'IN_REVIEW' | 'COMPLETED';
+  thumbnail?: string;
+  notes?: string;
+  created_at?: string;
 }
+
+const TABLE_NAME = 'ThumbnailJob';
 
 export async function GET(request: Request): Promise<NextResponse<{
   data?: ThumbnailJob[];
   error?: string;
 }>> {
+  // ADMIN and EDITOR ROLES ONLY
   try {
     // Get query parameters
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
     let { data, error } = await supabase
-        .from('thumbnail_jobs')
+        .from(TABLE_NAME)
         .select('*')
 
     return NextResponse.json({
@@ -41,13 +44,21 @@ export async function GET(request: Request): Promise<NextResponse<{
 
 
 export async function POST(request: Request) {
+  // ADMIN ROLE Only
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
-  
+
   const body = await request.json()
-  const { data, error } = await supabase.from('thumbnail_jobs').insert({
-    name: body.name,
-    status: body.status,
-    video_link: body.video_link,
+  const { video_url, video_title } = body;
+  if (!video_url || !video_title) {
+    return NextResponse.json({
+      error: 'Video URL and Video Title is required',
+    }, { status: 400 })
+  }
+
+  const { data, error } = await supabase.from(TABLE_NAME).insert({
+    video_url,
+    video_title,
+    status: 'TODO',
   })
 
   return NextResponse.json({
