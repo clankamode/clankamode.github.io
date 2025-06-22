@@ -2,25 +2,50 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useParams, redirect } from "next/navigation"
 
 interface SubmissionData {
+  videoTitle: string
+  videoUrl: string
   thumbnail: File | null
   notes: string
-  videoUrl: string
 }
 
 export default function ThumbnailSubmissionPage() {
+  const { thumbnail } = useParams();
   const [formData, setFormData] = useState<SubmissionData>({
+    videoTitle: "",
+    videoUrl: "",
     thumbnail: null,
     notes: "",
-    videoUrl: "https://www.youtube.com/watch?v=-Oosfa_Nz28&t=1656s", // This would come from props or URL params
   })
 
   const [dragActive, setDragActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+
+  useEffect(() => {
+    const fetchThumbnail = async () => {
+      const response = await fetch(`/api/thumbnail_job/${thumbnail}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch thumbnails')
+      }
+      const data = await response.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
+      setFormData({
+        thumbnail: null,
+        notes: data.data.notes || "",
+        videoUrl: data.data.video_url || "",
+        videoTitle: data.data.video_title || "",
+      })
+    }
+
+    fetchThumbnail()
+  }, [])
 
   const handleFileChange = (file: File | null) => {
     setFormData((prev) => ({ ...prev, thumbnail: file }))
@@ -61,37 +86,16 @@ export default function ThumbnailSubmissionPage() {
     setIsSubmitting(true)
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    setSubmitted(true)
-    setIsSubmitting(false)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      redirect(`/thumbnails`)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center p-4">
-        <div className="bg-[#282828] rounded-lg shadow-lg p-8 max-w-md w-full text-center border border-[#3e3e3e]">
-          <div className="w-16 h-16 bg-[#2cbb5d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-[#2cbb5d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Submission Complete!</h2>
-          <p className="text-gray-400 mb-6">Your thumbnail and notes have been submitted successfully.</p>
-          <button
-            onClick={() => {
-              setSubmitted(false)
-              setFormData({ thumbnail: null, notes: "", videoUrl: formData.videoUrl })
-              setPreviewUrl(null)
-            }}
-            className="bg-[#2cbb5d] text-white px-6 py-2 rounded-lg hover:bg-[#25a24f] transition-colors"
-          >
-            Submit Another
-          </button>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] py-8 px-4">
@@ -99,14 +103,12 @@ export default function ThumbnailSubmissionPage() {
         <div className="bg-[#282828] rounded-lg shadow-lg overflow-hidden border border-[#3e3e3e]">
           {/* Header */}
           <div className="bg-[#282828] px-6 py-8 border-b border-[#3e3e3e]">
-            <h1 className="text-3xl font-bold text-white mb-2">Thumbnail Submission</h1>
-            <p className="text-gray-400">Please upload the thumbnail and add your notes</p>
+            <h1 className="text-3xl font-bold text-white mb-2">{formData.videoTitle}</h1>
           </div>
 
           <div className="p-6">
             {/* Video Link Section */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-white mb-3">Video to Review</h2>
               <div className="bg-[#1a1a1a] rounded-lg p-4 border-l-4 border-[#2cbb5d]">
                 <p className="text-sm text-gray-400 mb-2">Please watch this video before creating the thumbnail:</p>
                 <a
