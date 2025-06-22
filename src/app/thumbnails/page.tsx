@@ -2,16 +2,8 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-
-interface ThumbnailJob {
-  id: string
-  name: string
-  status: 'TODO' | 'REVIEW' | 'DONE'
-  video_link: string
-  thumbnail_link?: string
-  description?: string
-  created_at?: string
-}
+import type { ThumbnailJob } from '@/types/ThumbnailJob';
+import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 
 interface Thumbnail {
   id: string
@@ -19,9 +11,7 @@ interface Thumbnail {
   videoTitle: string
   thumbnailUrl?: string
   notes: string
-  status: "todo" | "in-review" | "completed"
-  submittedAt: Date
-  submittedBy: string
+  status: ThumbnailJobStatus
 }
 
 interface SubmissionData {
@@ -36,19 +26,15 @@ const convertApiDataToThumbnail = (job: ThumbnailJob): Thumbnail => {
   return {
     id: job.id,
     editUrl: `/thumbnails/${job.id}`,
-    videoTitle: job.name,
-    thumbnailUrl: job.thumbnail_link,
-    notes: job.description || "",
-    status: job.status === "TODO" ? "todo" : job.status === "REVIEW" ? "in-review" : "completed",
-    submittedAt: job.created_at ? new Date(job.created_at) : new Date(),
-    submittedBy: "System" // We can update this when we have user info
+    videoTitle: job.video_title,
+    thumbnailUrl: job.thumbnail,
+    notes: job.notes || '',
+    status: job.status,
   }
 }
 
-type ViewType = "todo" | "in-review" | "completed" | "submit"
-
 export default function ThumbnailDashboard() {
-  const [currentView, setCurrentView] = useState<ViewType>("todo")
+  const [currentView, setCurrentView] = useState<ThumbnailJobStatus>(ThumbnailJobStatus.TODO)
   const [thumbnails, setThumbnails] = useState<Thumbnail[]>([])
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -89,9 +75,9 @@ export default function ThumbnailDashboard() {
 
   const getStatusCounts = () => {
     return {
-      todo: thumbnails.filter((t) => t.status === "todo").length,
-      "in-review": thumbnails.filter((t) => t.status === "in-review").length,
-      completed: thumbnails.filter((t) => t.status === "completed").length,
+      todo: thumbnails.filter((t) => t.status === ThumbnailJobStatus.TODO).length,
+      "in-review": thumbnails.filter((t) => t.status === ThumbnailJobStatus.IN_REVIEW).length,
+      completed: thumbnails.filter((t) => t.status === ThumbnailJobStatus.COMPLETED).length,
     }
   }
 
@@ -145,7 +131,7 @@ export default function ThumbnailDashboard() {
       videoTitle: "New Video Submission",
       thumbnailUrl: previewUrl || undefined,
       notes: formData.notes,
-      status: "in-review",
+      status: ThumbnailJobStatus.IN_REVIEW,
       submittedAt: new Date(),
       submittedBy: "Current User",
     }
@@ -154,10 +140,10 @@ export default function ThumbnailDashboard() {
     setFormData({ thumbnail: null, notes: "", videoUrl: "" })
     setPreviewUrl(null)
     setIsSubmitting(false)
-    setCurrentView("in-review")
+    setCurrentView(ThumbnailJobStatus.IN_REVIEW)
   }
 
-  const updateThumbnailStatus = (id: string, newStatus: "todo" | "in-review" | "completed") => {
+  const updateThumbnailStatus = (id: string, newStatus: ThumbnailJobStatus) => {
     setThumbnails((prev) => prev.map((thumb) => (thumb.id === id ? { ...thumb, status: newStatus } : thumb)))
   }
 
@@ -234,23 +220,6 @@ export default function ThumbnailDashboard() {
       <div className="p-4">
         <h3 className="font-semibold text-white mb-2 line-clamp-2">{thumbnail.videoTitle}</h3>
 
-        <div className="flex items-center text-sm text-gray-400 mb-3">
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {thumbnail.submittedAt.toLocaleDateString()}
-          {thumbnail.submittedBy && (
-            <>
-              <span className="mx-2">•</span>
-              <span>{thumbnail.submittedBy}</span>
-            </>
-          )}
-        </div>
 
         {thumbnail.notes && (
           <div className="mb-3">
@@ -269,27 +238,27 @@ export default function ThumbnailDashboard() {
           </a>
 
           <div className="flex space-x-1">
-            {thumbnail.status !== "todo" && (
+            {thumbnail.status !== ThumbnailJobStatus.TODO && (
               <button
-                onClick={() => updateThumbnailStatus(thumbnail.id, "todo")}
+                onClick={() => updateThumbnailStatus(thumbnail.id, ThumbnailJobStatus.TODO)}
                 className="px-2 py-1 text-xs bg-[#1a1a1a] text-gray-400 rounded hover:bg-[#282828] transition-colors"
                 title="Move to To Do"
               >
                 📋
               </button>
             )}
-            {thumbnail.status !== "in-review" && (
+            {thumbnail.status !== ThumbnailJobStatus.IN_REVIEW && (
               <button
-                onClick={() => updateThumbnailStatus(thumbnail.id, "in-review")}
+                onClick={() => updateThumbnailStatus(thumbnail.id, ThumbnailJobStatus.IN_REVIEW)}
                 className="px-2 py-1 text-xs bg-[#282828] text-[#2cbb5d] rounded hover:bg-[#1a1a1a] transition-colors"
                 title="Move to In Review"
               >
                 👀
               </button>
             )}
-            {thumbnail.status !== "completed" && (
+            {thumbnail.status !== ThumbnailJobStatus.COMPLETED && (
               <button
-                onClick={() => updateThumbnailStatus(thumbnail.id, "completed")}
+                onClick={() => updateThumbnailStatus(thumbnail.id, ThumbnailJobStatus.COMPLETED)}
                 className="px-2 py-1 text-xs bg-[#2cbb5d] text-white rounded hover:bg-[#25a24f] transition-colors"
                 title="Move to Completed"
               >
@@ -302,12 +271,12 @@ export default function ThumbnailDashboard() {
     </div>
   )
 
-  const renderStatusView = (status: "todo" | "in-review" | "completed") => {
+  const renderStatusView = (status: ThumbnailJobStatus) => {
     const filteredThumbnails = thumbnails.filter((t) => t.status === status)
     const statusLabels = {
-      todo: "To Do",
-      "in-review": "In Review",
-      completed: "Completed",
+      [ThumbnailJobStatus.TODO]: "To Do",
+      [ThumbnailJobStatus.IN_REVIEW]: "In Review",
+      [ThumbnailJobStatus.COMPLETED]: "Completed",
     }
 
     if (isLoading) {
@@ -365,12 +334,12 @@ export default function ThumbnailDashboard() {
               </svg>
             </div>
             <h3 className="text-lg font-medium text-white mb-2">
-              No thumbnails {status === "todo" ? "to do" : status}
+              No thumbnails {status === ThumbnailJobStatus.TODO ? "to do" : status}
             </h3>
             <p className="text-gray-400">
-              {status === "todo" && "New video requests will appear here"}
-              {status === "in-review" && "Submitted thumbnails will appear here for review"}
-              {status === "completed" && "Approved thumbnails will appear here"}
+              {status === ThumbnailJobStatus.TODO && "New video requests will appear here"}
+              {status === ThumbnailJobStatus.IN_REVIEW && "Submitted thumbnails will appear here for review"}
+              {status === ThumbnailJobStatus.COMPLETED && "Approved thumbnails will appear here"}
             </p>
           </div>
         ) : (
@@ -381,138 +350,6 @@ export default function ThumbnailDashboard() {
       </div>
     )
   }
-
-  const renderSubmissionForm = () => (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Submit New Thumbnail</h2>
-        <p className="text-gray-400">Upload your Canva-created thumbnail and add your notes</p>
-      </div>
-
-      <div className="bg-[#282828] rounded-lg shadow-lg p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Video URL Input */}
-          <div>
-            <label htmlFor="videoUrl" className="block text-sm font-medium text-gray-300 mb-2">
-              Video URL
-            </label>
-            <input
-              type="url"
-              id="videoUrl"
-              value={formData.videoUrl}
-              onChange={(e) => setFormData((prev) => ({ ...prev, videoUrl: e.target.value }))}
-              placeholder="https://youtube.com/watch?v=..."
-              className="w-full px-4 py-2 border border-gray-600 bg-[#1a1a1a] text-white rounded-lg focus:ring-2 focus:ring-[#2cbb5d] focus:border-[#2cbb5d]"
-              required
-            />
-          </div>
-
-          {/* File Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Thumbnail Image</label>
-            <div
-              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                dragActive ? "border-[#2cbb5d] bg-[#1a1a1a]" : "border-gray-600 hover:border-gray-400 bg-[#282828]"
-              }`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-
-              {previewUrl ? (
-                <div className="space-y-3">
-                  <img
-                    src={previewUrl || "/placeholder.svg"}
-                    alt="Thumbnail preview"
-                    className="max-w-full max-h-48 mx-auto rounded-lg shadow-md"
-                  />
-                  <div className="flex items-center justify-center space-x-2 text-[#2cbb5d]">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm font-medium">{formData.thumbnail?.name}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleFileChange(null)}
-                    className="text-red-400 hover:text-red-600 text-sm"
-                  >
-                    Remove file
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="w-12 h-12 bg-[#1a1a1a] rounded-full flex items-center justify-center mx-auto">
-                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="font-medium text-white">Drop your thumbnail here</p>
-                    <p className="text-sm text-gray-400">or click to browse files</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-2">
-              Notes & Timestamps
-            </label>
-            <textarea
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
-              placeholder="Example:&#10;0:30 - Introduction&#10;2:15 - Main demo&#10;5:45 - Key takeaway"
-              className="w-full h-32 px-4 py-3 border border-gray-600 bg-[#1a1a1a] text-white rounded-lg focus:ring-2 focus:ring-[#2cbb5d] focus:border-[#2cbb5d] resize-vertical"
-              rows={6}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={!formData.thumbnail || !formData.videoUrl || isSubmitting}
-            className="w-full px-6 py-3 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {isSubmitting ? (
-              <div className="flex items-center justify-center">
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Submitting...
-              </div>
-            ) : (
-              "Submit Thumbnail"
-            )}
-          </button>
-        </form>
-      </div>
-    </div>
-  )
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] flex">
@@ -539,8 +376,7 @@ export default function ThumbnailDashboard() {
 
         {/* Page content */}
         <div className="p-6">
-          {currentView === "submit" && renderSubmissionForm()}
-          {currentView !== "submit" && renderStatusView(currentView)}
+          {renderStatusView(currentView)}
         </div>
       </div>
     </div>

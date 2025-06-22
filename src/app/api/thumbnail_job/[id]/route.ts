@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js'
+import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 
 export async function PATCH(
   request: Request,
@@ -21,7 +22,7 @@ export async function PATCH(
     .update({
       thumbnail,
       notes,
-      status: 'IN_REVIEW',
+      status: ThumbnailJobStatus.IN_REVIEW,
     })
     .eq('id', params.id);
 

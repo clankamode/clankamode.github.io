@@ -1,16 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js'
-
-
-type ThumbnailJob = {
-  id: string;
-  video_title: string;
-  video_url: string;
-  status: 'TODO' | 'IN_REVIEW' | 'COMPLETED';
-  thumbnail?: string;
-  notes?: string;
-  created_at?: string;
-}
+import type { ThumbnailJob } from '@/types/ThumbnailJob';
+import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 
 const TABLE_NAME = 'ThumbnailJob';
 
@@ -58,7 +49,7 @@ export async function POST(request: Request) {
   const { data, error } = await supabase.from(TABLE_NAME).insert({
     video_url,
     video_title,
-    status: 'TODO',
+    status: ThumbnailJobStatus.TODO,
   })
 
   return NextResponse.json({
