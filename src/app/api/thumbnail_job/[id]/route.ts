@@ -24,7 +24,8 @@ export async function PATCH(
       notes,
       status: ThumbnailJobStatus.IN_REVIEW,
     })
-    .eq('id', params.id);
+    .eq('id', params.id)
+    .select();
 
   return NextResponse.json({
     data,

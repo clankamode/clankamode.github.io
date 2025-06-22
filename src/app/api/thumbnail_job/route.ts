@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     video_url,
     video_title,
     status: ThumbnailJobStatus.TODO,
-  })
+  }).select();
 
   return NextResponse.json({
     data,
