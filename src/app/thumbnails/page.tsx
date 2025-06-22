@@ -167,36 +167,6 @@ export default function ThumbnailDashboard() {
           >
             View Video →
           </a>
-
-          <div className="flex space-x-1">
-            {thumbnail.status !== ThumbnailJobStatus.TODO && (
-              <button
-                onClick={() => updateThumbnailStatus(thumbnail.id, ThumbnailJobStatus.TODO)}
-                className="px-2 py-1 text-xs bg-[#1a1a1a] text-gray-400 rounded hover:bg-[#282828] transition-colors"
-                title="Move to To Do"
-              >
-                📋
-              </button>
-            )}
-            {thumbnail.status !== ThumbnailJobStatus.IN_REVIEW && (
-              <button
-                onClick={() => updateThumbnailStatus(thumbnail.id, ThumbnailJobStatus.IN_REVIEW)}
-                className="px-2 py-1 text-xs bg-[#282828] text-[#2cbb5d] rounded hover:bg-[#1a1a1a] transition-colors"
-                title="Move to In Review"
-              >
-                👀
-              </button>
-            )}
-            {thumbnail.status !== ThumbnailJobStatus.COMPLETED && (
-              <button
-                onClick={() => updateThumbnailStatus(thumbnail.id, ThumbnailJobStatus.COMPLETED)}
-                className="px-2 py-1 text-xs bg-[#2cbb5d] text-white rounded hover:bg-[#25a24f] transition-colors"
-                title="Move to Completed"
-              >
-                ✅
-              </button>
-            )}
-          </div>
         </div>
       </div>
     </div>
