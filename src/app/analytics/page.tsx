@@ -6,6 +6,7 @@ import PerformanceCards from './_components/PerformanceCards';
 import TopVideos from './_components/TopVideos';
 import ContentAnalysis from './_components/ContentAnalysis';
 import type { ChannelAnalytics } from '@/lib/youtube';
+import Loading from '@/components/ui/Loading';
 
 export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<ChannelAnalytics | null>(null);
@@ -87,14 +88,7 @@ export default function AnalyticsPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-[#1a1a1a]">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-8 w-32 bg-[#3e3e3e] rounded mb-4"></div>
-          <div className="h-60 w-full max-w-2xl bg-[#282828] rounded"></div>
-        </div>
-      </div>
-    );
+    return <Loading/>;
   }
 
   if (error) {

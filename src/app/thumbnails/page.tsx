@@ -4,6 +4,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import type { ThumbnailJob } from '@/types/ThumbnailJob';
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
+import Loading from '@/components/ui/Loading';
 
 interface Thumbnail {
   id: string
@@ -12,13 +13,6 @@ interface Thumbnail {
   thumbnailUrl?: string
   notes: string
   status: ThumbnailJobStatus
-}
-
-interface SubmissionData {
-  thumbnail: File | null
-  notes: string
-  videoUrl: string
-  editUrl?: string
 }
 
 // Function to convert API data to our frontend format
@@ -181,14 +175,7 @@ export default function ThumbnailDashboard() {
     }
 
     if (isLoading) {
-      return (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2cbb5d]"></div>
-            <p className="text-gray-400">Loading thumbnails...</p>
-          </div>
-        </div>
-      )
+      return <Loading />
     }
 
     if (error) {
