@@ -27,7 +27,23 @@ export async function PATCH(
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   
   const body = await request.json()
-  const { thumbnail, notes } = body;
+  const { thumbnail, notes, status } = body;
+
+  // If status is provided, only update the status
+  if (status === ThumbnailJobStatus.COMPLETED) {
+    const { data, error } = await supabase
+      .from('ThumbnailJob')
+      .update({ status })
+      .eq('id', params.id)
+      .select();
+
+    return NextResponse.json({
+      data,
+      error,
+    })
+  }
+
+  // Otherwise, handle the normal thumbnail submission case
   if (!thumbnail || !notes) {
     return NextResponse.json({
       error: 'Thumbnail and Notes are required',

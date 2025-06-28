@@ -1,12 +1,15 @@
 import type React from "react"
 import { Thumbnail } from "@/types/ThumbnailJob"
+import { ThumbnailJobStatus } from "@/types/ThumbnailJob"
 
 
 interface ThumbnailCardProps {
   thumbnail: Thumbnail
+  status: ThumbnailJobStatus,
+  onComplete?: (thumbnailId: string) => void
 }
 
-export default function ThumbnailCard({ thumbnail }: ThumbnailCardProps) {
+export default function ThumbnailCard({ thumbnail, status, onComplete }: ThumbnailCardProps) {
   return (
     <div key={thumbnail.id} className="bg-[#282828] rounded-lg shadow-md overflow-hidden">
       <div className="aspect-video bg-[#1a1a1a] relative">
@@ -49,6 +52,14 @@ export default function ThumbnailCard({ thumbnail }: ThumbnailCardProps) {
           >
             View Video →
           </a>
+          {status === ThumbnailJobStatus.IN_REVIEW && onComplete && (
+            <button
+              onClick={() => onComplete(thumbnail.id)}
+              className="bg-[#2cbb5d] hover:bg-[#25a24f] text-white px-4 py-1 rounded-md text-sm font-medium"
+            >
+              Complete
+            </button>
+          )}
         </div>
       </div>
     </div>

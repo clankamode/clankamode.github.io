@@ -37,26 +37,26 @@ export default function ThumbnailDashboard() {
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  useEffect(() => {
-    const fetchThumbnails = async () => {
-      try {
-        const response = await fetch('/api/thumbnail_job')
-        if (!response.ok) {
-          throw new Error('Failed to fetch thumbnails')
-        }
-        const data = await response.json()
-        if (data.error) {
-          throw new Error(data.error)
-        }
-        const convertedThumbnails = data.data.map(convertApiDataToThumbnail)
-        setThumbnails(convertedThumbnails)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred')
-      } finally {
-        setIsLoading(false)
+  const fetchThumbnails = async () => {
+    try {
+      const response = await fetch('/api/thumbnail_job')
+      if (!response.ok) {
+        throw new Error('Failed to fetch thumbnails')
       }
+      const data = await response.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
+      const convertedThumbnails = data.data.map(convertApiDataToThumbnail)
+      setThumbnails(convertedThumbnails)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setIsLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchThumbnails()
   }, [])
 
@@ -78,10 +78,7 @@ export default function ThumbnailDashboard() {
     }
 
     // Refresh the thumbnails list
-    const updatedResponse = await fetch('/api/thumbnail_job')
-    const data = await updatedResponse.json()
-    const convertedThumbnails = data.data.map(convertApiDataToThumbnail)
-    setThumbnails(convertedThumbnails)
+    fetchThumbnails()
   }
 
   const getStatusCounts = () => {
@@ -132,7 +129,13 @@ export default function ThumbnailDashboard() {
 
         {/* Page content */}
         <div className="p-6 flex-1 overflow-y-auto">
-          <ThumbnailOverview thumbnails={thumbnails} status={currentView} isLoading={isLoading} error={error} />
+          <ThumbnailOverview 
+            thumbnails={thumbnails} 
+            status={currentView} 
+            isLoading={isLoading} 
+            error={error}
+            onThumbnailsChange={fetchThumbnails}
+          />
         </div>
       </div>
     </div>

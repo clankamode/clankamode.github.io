@@ -9,15 +9,40 @@ type ThumbnailOverviewProps = {
   status: ThumbnailJobStatus
   isLoading: boolean
   error: string | null
+  onThumbnailsChange: () => void
 }
 
-export default function ThumbnailOverview({ thumbnails, status, isLoading, error }: ThumbnailOverviewProps) {
+export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange }: ThumbnailOverviewProps) {
 
     const filteredThumbnails = thumbnails.filter((t) => t.status === status)
     const statusLabels = {
       [ThumbnailJobStatus.TODO]: "To Do",
       [ThumbnailJobStatus.IN_REVIEW]: "In Review",
       [ThumbnailJobStatus.COMPLETED]: "Completed",
+    }
+
+    const handleComplete = async (thumbnailId: string) => {
+      try {
+        const response = await fetch(`/api/thumbnail_job/${thumbnailId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: ThumbnailJobStatus.COMPLETED
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to complete thumbnail')
+        }
+
+        // Refresh the thumbnails list
+        onThumbnailsChange();
+      } catch (error) {
+        console.error('Error completing thumbnail:', error);
+        // You might want to show an error toast here
+      }
     }
 
     if (isLoading) {
@@ -63,7 +88,7 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2-2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                 />
               </svg>
             </div>
@@ -78,7 +103,14 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredThumbnails.map((thumbnail: Thumbnail) => <ThumbnailCard key={thumbnail.id} thumbnail={thumbnail} />)}
+            {filteredThumbnails.map((thumbnail: Thumbnail) => (
+              <ThumbnailCard 
+                key={thumbnail.id} 
+                thumbnail={thumbnail} 
+                status={status}
+                onComplete={handleComplete}
+              />
+            ))}
           </div>
         )}
       </div>
