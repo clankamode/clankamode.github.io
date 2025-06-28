@@ -13,7 +13,15 @@ type ThumbnailOverviewProps = {
 }
 
 export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange }: ThumbnailOverviewProps) {
-  const filteredThumbnails = thumbnails.filter((t) => t.status === status)
+  const filteredThumbnails = thumbnails
+    .filter((t) => t.status === status)
+    .sort((a, b) => {
+      const dateA = new Date(a.updatedAt || 0).getTime()
+      const dateB = new Date(b.updatedAt || 0).getTime()
+      return dateB - dateA // Sort in descending order (newest first)
+    })
+
+  debugger;
   const statusLabels = {
     [ThumbnailJobStatus.TODO]: "To Do",
     [ThumbnailJobStatus.IN_REVIEW]: "In Review",

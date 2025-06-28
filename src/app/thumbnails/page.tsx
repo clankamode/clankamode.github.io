@@ -15,6 +15,7 @@ interface Thumbnail {
   thumbnailUrl?: string
   notes: string
   status: ThumbnailJobStatus
+  updatedAt?: string
 }
 
 // Function to convert API data to our frontend format
@@ -26,6 +27,7 @@ const convertApiDataToThumbnail = (job: ThumbnailJob): Thumbnail => {
     thumbnailUrl: job.thumbnail,
     notes: job.notes || '',
     status: job.status,
+    updatedAt: job.updated_at,
   }
 }
 

@@ -12,6 +12,7 @@ export type ThumbnailJob = {
     thumbnail?: string;
     notes?: string;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface Thumbnail {
@@ -19,6 +20,7 @@ export interface Thumbnail {
   editUrl: string
   videoTitle: string
   thumbnailUrl?: string
-  notes: string
+  notes?: string
   status: ThumbnailJobStatus
+  updatedAt: string
 }
