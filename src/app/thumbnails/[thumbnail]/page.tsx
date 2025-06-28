@@ -2,13 +2,14 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useParams, redirect, useRouter } from "next/navigation"
+import { upload } from '@vercel/blob/client';
 
 interface SubmissionData {
   videoTitle: string
   videoUrl: string
-  thumbnail: File | null
+  thumbnail_url?: string
   notes: string
 }
 
@@ -18,13 +19,13 @@ export default function ThumbnailSubmissionPage() {
   const [formData, setFormData] = useState<SubmissionData>({
     videoTitle: "",
     videoUrl: "",
-    thumbnail: null,
+    thumbnail_url: undefined,
     notes: "",
   })
 
+  const inputFileRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
 
   useEffect(() => {
@@ -38,25 +39,33 @@ export default function ThumbnailSubmissionPage() {
         throw new Error(data.error)
       }
       setFormData({
-        thumbnail: null,
+        thumbnail_url: data.data.thumbnail || undefined,
         notes: data.data.notes || "",
         videoUrl: data.data.video_url || "",
         videoTitle: data.data.video_title || "",
       })
+      debugger;
     }
 
     fetchThumbnail()
   }, [])
 
-  const handleFileChange = (file: File | null) => {
-    setFormData((prev) => ({ ...prev, thumbnail: file }))
-
-    if (file) {
-      const url = URL.createObjectURL(file)
-      setPreviewUrl(url)
-    } else {
-      setPreviewUrl(null)
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<Element> | null) => {
+    if (event) {
+      event.preventDefault();
     }
+
+    if (!inputFileRef.current?.files) {
+      throw new Error('No file selected');
+    }
+
+    const file = inputFileRef.current.files[0];
+    const newBlob = await upload(file.name, file, {
+      access: 'public',
+      handleUploadUrl: '/api/avatar/upload',
+    });
+
+    setFormData((prev) => ({ ...prev, thumbnail_url: newBlob.url }))
   }
 
   const handleDrag = (e: React.DragEvent) => {
@@ -77,7 +86,7 @@ export default function ThumbnailSubmissionPage() {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0]
       if (file.type.startsWith("image/")) {
-        handleFileChange(file)
+        handleFileChange(e);
       }
     }
   }
@@ -86,12 +95,21 @@ export default function ThumbnailSubmissionPage() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    const response = await fetch(`/api/thumbnail_job/${thumbnail}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        thumbnail: formData.thumbnail_url,
+        notes: formData.notes,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit thumbnail')
+    }
+
     setIsSubmitting(false)
     redirect(`/thumbnails`)
   }
-
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] py-8 px-4">
@@ -162,14 +180,15 @@ export default function ThumbnailSubmissionPage() {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
+                    ref={inputFileRef}
+                    onChange={(e) => handleFileChange(e)}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
 
-                  {previewUrl ? (
+                  {formData.thumbnail_url ? (
                     <div className="space-y-4">
                       <img
-                        src={previewUrl || "/placeholder.svg"}
+                        src={formData.thumbnail_url || "/placeholder.svg"}
                         alt="Thumbnail preview"
                         className="max-w-full max-h-64 mx-auto rounded-lg shadow-md"
                       />
@@ -177,15 +196,7 @@ export default function ThumbnailSubmissionPage() {
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        <span className="font-medium">{formData.thumbnail?.name}</span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleFileChange(null)}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
-                      >
-                        Remove file
-                      </button>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -232,7 +243,7 @@ export default function ThumbnailSubmissionPage() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  disabled={!formData.thumbnail || isSubmitting}
+                  disabled={!formData.thumbnail_url || isSubmitting}
                   className="px-8 py-3 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d]/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSubmitting ? (
