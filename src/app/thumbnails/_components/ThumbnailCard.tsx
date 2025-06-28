@@ -10,6 +10,26 @@ interface ThumbnailCardProps {
 }
 
 export default function ThumbnailCard({ thumbnail, status, onStatusChange }: ThumbnailCardProps) {
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(thumbnail.thumbnailUrl || '')
+      if (!response.ok) throw new Error('Download failed')
+      
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${thumbnail.videoTitle || ''}.png`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (error) {
+      console.error('Error downloading thumbnail:', error)
+      alert('Failed to download thumbnail')
+    }
+  }
+
   return (
     <div key={thumbnail.id} className="bg-[#282828] rounded-lg shadow-md overflow-hidden">
       <div className="aspect-video bg-[#1a1a1a] relative">
@@ -44,14 +64,24 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange }: Thu
         )}
 
         <div className="flex items-center justify-between">
-          <a
-            href={thumbnail.editUrl}
-            // target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#2cbb5d] hover:text-[#25a24f] text-sm font-medium"
-          >
-            View Video →
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href={thumbnail.editUrl}
+              // target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#2cbb5d] hover:text-[#25a24f] text-sm font-medium"
+            >
+              View Video →
+            </a>
+            {thumbnail.thumbnailUrl && (
+              <button
+                onClick={handleDownload}
+                className="text-blue-400 hover:text-blue-300 text-sm font-medium"
+              >
+                Download Thumbnail
+              </button>
+            )}
+          </div>
           {status === ThumbnailJobStatus.TODO && onStatusChange && thumbnail.thumbnailUrl && (
             <button
               onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.IN_REVIEW)}
