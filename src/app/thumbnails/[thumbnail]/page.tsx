@@ -44,7 +44,6 @@ export default function ThumbnailSubmissionPage() {
         videoUrl: data.data.video_url || "",
         videoTitle: data.data.video_title || "",
       })
-      debugger;
     }
 
     fetchThumbnail()

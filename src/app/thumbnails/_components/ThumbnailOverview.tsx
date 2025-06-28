@@ -21,7 +21,6 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
       return dateB - dateA // Sort in descending order (newest first)
     })
 
-  debugger;
   const statusLabels = {
     [ThumbnailJobStatus.TODO]: "To Do",
     [ThumbnailJobStatus.IN_REVIEW]: "In Review",
