@@ -52,7 +52,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange }: Thu
           >
             View Video →
           </a>
-          {status === ThumbnailJobStatus.TODO && onStatusChange && (
+          {status === ThumbnailJobStatus.TODO && onStatusChange && thumbnail.thumbnailUrl && (
             <button
               onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.IN_REVIEW)}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md text-sm font-medium"

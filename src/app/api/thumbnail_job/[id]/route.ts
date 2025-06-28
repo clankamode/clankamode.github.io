@@ -62,7 +62,6 @@ export async function PATCH(
     .update({
       thumbnail,
       notes,
-      status: ThumbnailJobStatus.IN_REVIEW,
     })
     .eq('id', params.id)
     .select();
