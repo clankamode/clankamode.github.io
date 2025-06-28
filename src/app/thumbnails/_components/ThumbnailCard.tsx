@@ -6,10 +6,10 @@ import { ThumbnailJobStatus } from "@/types/ThumbnailJob"
 interface ThumbnailCardProps {
   thumbnail: Thumbnail
   status: ThumbnailJobStatus,
-  onComplete?: (thumbnailId: string) => void
+  onStatusChange?: (thumbnailId: string, newStatus: ThumbnailJobStatus) => void
 }
 
-export default function ThumbnailCard({ thumbnail, status, onComplete }: ThumbnailCardProps) {
+export default function ThumbnailCard({ thumbnail, status, onStatusChange }: ThumbnailCardProps) {
   return (
     <div key={thumbnail.id} className="bg-[#282828] rounded-lg shadow-md overflow-hidden">
       <div className="aspect-video bg-[#1a1a1a] relative">
@@ -52,12 +52,28 @@ export default function ThumbnailCard({ thumbnail, status, onComplete }: Thumbna
           >
             View Video →
           </a>
-          {status === ThumbnailJobStatus.IN_REVIEW && onComplete && (
+          {status === ThumbnailJobStatus.TODO && onStatusChange && (
             <button
-              onClick={() => onComplete(thumbnail.id)}
+              onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.IN_REVIEW)}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md text-sm font-medium"
+            >
+              Move to Review
+            </button>
+          )}
+          {status === ThumbnailJobStatus.IN_REVIEW && onStatusChange && (
+            <button
+              onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.COMPLETED)}
               className="bg-[#2cbb5d] hover:bg-[#25a24f] text-white px-4 py-1 rounded-md text-sm font-medium"
             >
               Complete
+            </button>
+          )}
+          {status === ThumbnailJobStatus.COMPLETED && onStatusChange && (
+            <button
+              onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.TODO)}
+              className="bg-[#f59e0b] hover:bg-[#d97706] text-white px-4 py-1 rounded-md text-sm font-medium"
+            >
+              Move to Todo
             </button>
           )}
         </div>

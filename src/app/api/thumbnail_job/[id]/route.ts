@@ -30,7 +30,14 @@ export async function PATCH(
   const { thumbnail, notes, status } = body;
 
   // If status is provided, only update the status
-  if (status === ThumbnailJobStatus.COMPLETED) {
+  if (status !== undefined) {
+    // Validate that the status is a valid ThumbnailJobStatus
+    if (!Object.values(ThumbnailJobStatus).includes(status)) {
+      return NextResponse.json({
+        error: 'Invalid status value',
+      }, { status: 400 })
+    }
+
     const { data, error } = await supabase
       .from('ThumbnailJob')
       .update({ status })
