@@ -22,5 +22,5 @@ export interface Thumbnail {
   thumbnailUrl?: string
   notes?: string
   status: ThumbnailJobStatus
-  updatedAt: string
+  updatedAt?: string
 }

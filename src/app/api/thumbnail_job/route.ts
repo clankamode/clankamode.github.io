@@ -5,7 +5,7 @@ import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 
 const TABLE_NAME = 'ThumbnailJob';
 
-export async function GET(request: Request): Promise<NextResponse<{
+export async function GET(): Promise<NextResponse<{
   data?: ThumbnailJob[];
   error?: string;
 }>> {
@@ -13,7 +13,7 @@ export async function GET(request: Request): Promise<NextResponse<{
   try {
     // Get query parameters
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
-    let { data, error } = await supabase
+    const { data } = await supabase
         .from(TABLE_NAME)
         .select('*')
 

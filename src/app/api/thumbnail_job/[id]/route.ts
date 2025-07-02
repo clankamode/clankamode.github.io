@@ -2,16 +2,22 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js'
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 
+type PathParams = {
+  params: Promise<{ id: string }>
+}
+
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
-) {
+  { params }: PathParams
+): Promise<NextResponse> {
   // ADMIN and EDITOR ROLES ONLY
+  const { id } = await params
+
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   const { data, error } = await supabase
     .from('ThumbnailJob')
     .select()
-    .eq('id', params.id);
+    .eq('id', id);
 
   return NextResponse.json({
     data: data?.[0],
@@ -21,8 +27,10 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: PathParams
 ) {
+  const { id } = await params
+
   // ADMIN and EDITOR ROLES ONLY
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   
@@ -41,7 +49,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('ThumbnailJob')
       .update({ status })
-      .eq('id', params.id)
+      .eq('id', id)
       .select();
 
     return NextResponse.json({
@@ -63,7 +71,7 @@ export async function PATCH(
       thumbnail,
       notes,
     })
-    .eq('id', params.id)
+    .eq('id', id)
     .select();
 
   return NextResponse.json({
@@ -74,14 +82,16 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: PathParams,
 ) {
+  const { id } = await params
+
   // ADMIN and EDITOR ROLES ONLY
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   const { data, error } = await supabase
     .from('ThumbnailJob')
     .delete()
-    .eq('id', params.id)
+    .eq('id', id)
     .select();
 
   return NextResponse.json({

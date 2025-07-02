@@ -1,6 +1,7 @@
 import type React from "react"
 import { Thumbnail } from "@/types/ThumbnailJob"
 import { ThumbnailJobStatus } from "@/types/ThumbnailJob"
+import Image from "next/image"
 
 
 interface ThumbnailCardProps {
@@ -34,7 +35,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange }: Thu
     <div key={thumbnail.id} className="bg-[#282828] rounded-lg shadow-md overflow-hidden">
       <div className="aspect-video bg-[#1a1a1a] relative">
         {thumbnail.thumbnailUrl ? (
-          <img
+          <Image
             src={thumbnail.thumbnailUrl || "/placeholder.svg"}
             alt={thumbnail.videoTitle}
             className="w-full h-full object-cover"

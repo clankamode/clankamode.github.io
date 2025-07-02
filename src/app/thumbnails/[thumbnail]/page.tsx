@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { useParams, redirect, useRouter } from "next/navigation"
 import { upload } from '@vercel/blob/client';
+import Image from "next/image"
 
 interface SubmissionData {
   videoTitle: string
@@ -47,7 +48,7 @@ export default function ThumbnailSubmissionPage() {
     }
 
     fetchThumbnail()
-  }, [])
+  }, [thumbnail])
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<Element> | null) => {
     if (event) {
@@ -186,7 +187,7 @@ export default function ThumbnailSubmissionPage() {
 
                   {formData.thumbnail_url ? (
                     <div className="space-y-4">
-                      <img
+                      <Image
                         src={formData.thumbnail_url || "/placeholder.svg"}
                         alt="Thumbnail preview"
                         className="max-w-full max-h-64 mx-auto rounded-lg shadow-md"

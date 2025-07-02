@@ -7,16 +7,7 @@ import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 import Sidebar from './_components/Sidebar';
 import ThumbnailOverview from './_components/ThumbnailOverview';
 import CreateJobModal from './_components/CreateJobModal';
-
-interface Thumbnail {
-  id: string
-  editUrl: string
-  videoTitle: string
-  thumbnailUrl?: string
-  notes: string
-  status: ThumbnailJobStatus
-  updatedAt?: string
-}
+import { Thumbnail } from "@/types/ThumbnailJob"
 
 // Function to convert API data to our frontend format
 const convertApiDataToThumbnail = (job: ThumbnailJob): Thumbnail => {
