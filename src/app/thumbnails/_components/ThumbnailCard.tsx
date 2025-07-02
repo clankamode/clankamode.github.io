@@ -39,6 +39,8 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange }: Thu
             src={thumbnail.thumbnailUrl || "/placeholder.svg"}
             alt={thumbnail.videoTitle}
             className="w-full h-full object-cover"
+            width={100}
+            height={100}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-500">
