@@ -24,8 +24,8 @@ export default function Navbar() {
   };
 
   const isLoggedIn = !!session;
-  debugger;
-
+  const isAdmin = session?.user?.role === 'ADMIN';
+  const isEditor = session?.user?.role === 'EDITOR';
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
       <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
@@ -35,6 +35,11 @@ export default function Navbar() {
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
             {isLoggedIn ? session.user?.name : "James Peralta"}
             </span>
+            {isLoggedIn && session.user?.role && (
+              <span className="ml-2 mt-1 px-2 py-0.5 rounded text-xs bg-white/20 text-white border border-white/30">
+                {session.user.role}
+              </span>
+            )}
           </Link>
         </div>
         
@@ -54,11 +59,14 @@ export default function Navbar() {
               Mocks
             </Link>
             {
-              isLoggedIn && 
+              isLoggedIn && isAdmin &&
               <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                 Analytics
               </Link>
             }
+            {isLoggedIn && (isEditor || isAdmin) && <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+              Thumbnails
+            </Link>}
           </div>
         </div>
 
@@ -137,7 +145,7 @@ export default function Navbar() {
             </Link>
           </li>
           {
-            isLoggedIn &&
+            isLoggedIn && isAdmin &&
             <li>
               <Link 
                 href="/analytics" 
@@ -151,7 +159,7 @@ export default function Navbar() {
           <li>
             <a 
               href="/login" 
-              className="block py-2 pl-3 pr-4 text-white rounded bg-[#ff7f50] hover:bg-[#ff6347"
+              className="block py-2 pl-3 pr-4 text-white rounded bg-[#ff7f50] hover:bg-[#ff6347]"
               onClick={() => setIsMenuOpen(false)}
             >
               Login
