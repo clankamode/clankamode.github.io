@@ -1,7 +1,7 @@
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
 
-const ADMINS = ['jamesperalta.swe@gmail.com'];
+const ADMINS = ['jamesperalta.swe@gmail.com', 'jamesperalta35@gmail.com'];
 const EDITORS = ['castleridge.labs@gmail.com', 'cedsanityfitness@gmail.com'];
 
 const getRole = (email: string) => {
