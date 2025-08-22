@@ -1,19 +1,22 @@
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
+import { supabase } from "@/lib/supabase";
+import { UserRole } from "@/types/roles";
 
-const ADMINS = ['jamesperalta.swe@gmail.com', 'jamesperalta35@gmail.com'];
-const EDITORS = ['castleridge.labs@gmail.com', 'cedsanityfitness@gmail.com'];
+const getRole = async (email: string): Promise<UserRole> => {
+  const { data: user, error } = await supabase
+    .from('Users')
+    .select('role')
+    .eq('email', email)
+    .single();
 
-const getRole = (email: string) => {
-  if (ADMINS.includes(email)) {
-    return 'ADMIN';
+  if (error || !user) {
+    console.error('email', email);
+    console.error('Error fetching user role:', error);
+    return UserRole.USER;
   }
 
-  if (EDITORS.includes(email)) {
-    return 'EDITOR';
-  }
-
-  return 'USER';
+  return user.role as UserRole;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -40,7 +43,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = getRole(user.email || '');
+        token.role = await getRole(user.email || '');
       }
       return token;
     },

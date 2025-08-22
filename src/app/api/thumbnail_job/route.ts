@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js'
 import type { ThumbnailJob } from '@/types/ThumbnailJob';
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
+import { supabase } from '@/lib/supabase';
 
 const TABLE_NAME = 'ThumbnailJob';
 
@@ -12,7 +12,6 @@ export async function GET(): Promise<NextResponse<{
   // ADMIN and EDITOR ROLES ONLY
   try {
     // Get query parameters
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
     const { data } = await supabase
         .from(TABLE_NAME)
         .select('*')
@@ -36,8 +35,6 @@ export async function GET(): Promise<NextResponse<{
 
 export async function POST(request: Request) {
   // ADMIN ROLE Only
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
-
   const body = await request.json()
   const { video_url, video_title } = body;
   if (!video_url || !video_title) {
