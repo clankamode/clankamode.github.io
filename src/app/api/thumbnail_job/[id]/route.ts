@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js'
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 import { supabase } from '@/lib/supabase';
 
