@@ -12,9 +12,16 @@ export async function middleware(req: NextRequest) {
             return NextResponse.redirect(new URL('/', req.url));
         }
         
-        if (token.role !== 'ADMIN') {
-            return NextResponse.redirect(new URL('/', req.url));
-        }         
+        // Check if the route is thumbnail-related
+        if (req.nextUrl.pathname.startsWith('/thumbnails') || req.nextUrl.pathname.startsWith('/api/thumbnail_job')) {
+            if (token.role !== 'ADMIN' && token.role !== 'EDITOR') {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+        } else if (req.nextUrl.pathname.startsWith('/analytics')) {
+            if (token.role !== 'ADMIN') {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+        }
     } catch (error) {
         console.log('error', error);
         return NextResponse.redirect(new URL('/', req.url));
@@ -24,5 +31,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/analytics'],
+    matcher: ['/analytics', '/thumbnails/:path*', '/api/thumbnail_job/:path*'],
 }

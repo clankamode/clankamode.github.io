@@ -104,7 +104,7 @@ export default function Navbar() {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden focus:outline-none ml-2 ml-auto"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden focus:outline-none ml-auto"
           >
             <span className="sr-only">Open main menu</span>
             <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
@@ -156,15 +156,28 @@ export default function Navbar() {
               </Link>
             </li>
           }
-          <li>
-            <a 
-              href="/login" 
-              className="block py-2 pl-3 pr-4 text-white rounded bg-[#ff7f50] hover:bg-[#ff6347]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Login
-            </a>
-          </li>
+          {isLoggedIn && (isEditor || isAdmin) && (
+            <li>
+              <Link 
+                href="/thumbnails" 
+                className={`block py-2 pl-3 pr-4 rounded ${isActive('/thumbnails') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Thumbnails
+              </Link>
+            </li>
+          )}
+          {!isLoggedIn && (
+            <li>
+              <a 
+                href="/login" 
+                className="block py-2 pl-3 pr-4 text-white rounded bg-[#ff7f50] hover:bg-[#ff6347]"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
+              </a>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
