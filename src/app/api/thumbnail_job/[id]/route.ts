@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js'
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
+import { supabase } from '@/lib/supabase';
+
 
 type PathParams = {
   params: Promise<{ id: string }>
@@ -13,7 +15,6 @@ export async function GET(
   // ADMIN and EDITOR ROLES ONLY
   const { id } = await params
 
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   const { data, error } = await supabase
     .from('ThumbnailJob')
     .select()
@@ -32,7 +33,6 @@ export async function PATCH(
   const { id } = await params
 
   // ADMIN and EDITOR ROLES ONLY
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   
   const body = await request.json()
   const { thumbnail, notes, status } = body;
@@ -87,7 +87,6 @@ export async function DELETE(
   const { id } = await params
 
   // ADMIN and EDITOR ROLES ONLY
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   const { data, error } = await supabase
     .from('ThumbnailJob')
     .delete()
