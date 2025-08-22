@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import { UserRole, hasRole } from '@/types/roles';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,8 +25,9 @@ export default function Navbar() {
   };
 
   const isLoggedIn = !!session;
-  const isAdmin = session?.user?.role === 'ADMIN';
-  const isEditor = session?.user?.role === 'EDITOR';
+  const userRole = (session?.user?.role as UserRole) || UserRole.USER;
+  const isAdmin = hasRole(userRole, UserRole.ADMIN);
+  const isEditor = hasRole(userRole, UserRole.EDITOR);
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
       <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">

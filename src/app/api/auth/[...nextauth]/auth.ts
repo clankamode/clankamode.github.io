@@ -1,8 +1,9 @@
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
 import { supabase } from "@/lib/supabase";
+import { UserRole } from "@/types/roles";
 
-const getRole = async (email: string): Promise<string> => {
+const getRole = async (email: string): Promise<UserRole> => {
   const { data: user, error } = await supabase
     .from('Users')
     .select('role')
@@ -12,10 +13,10 @@ const getRole = async (email: string): Promise<string> => {
   if (error || !user) {
     console.error('email', email);
     console.error('Error fetching user role:', error);
-    return 'USER';
+    return UserRole.USER;
   }
 
-  return user.role;
+  return user.role as UserRole;
 }
 
 export const authOptions: NextAuthOptions = {
