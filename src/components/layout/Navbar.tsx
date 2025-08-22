@@ -57,9 +57,6 @@ export default function Navbar() {
             <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Videos
             </Link>
-            <Link href="/mocks" className={`px-3 py-2 ${isActive('/mocks') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-              Mocks
-            </Link>
             {
               isLoggedIn && isAdmin &&
               <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
