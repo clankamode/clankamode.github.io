@@ -162,6 +162,8 @@ async function main() {
     console.log(`Fetching details for videos ${i + 1}-${Math.min(i + chunkSize, allIds.length)}…`);
     const videos = await fetchVideosByIds(chunk);
     const rows = videos.map(mapVideoRow);
+
+    console.log('Upserting to Supabase...');
     await upsertToSupabase(rows);
     console.log(`Upserted ${rows.length} rows.`);
     await new Promise(r => setTimeout(r, 150)); // optional throttle
