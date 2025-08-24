@@ -1,5 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Only load .env.local if we're running as a script (not in Next.js)
+if (!process.env.NEXT_RUNTIME) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { config } = require('dotenv');
+  config({ path: '.env.local' });
+}
+
+
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   throw new Error('Missing env.NEXT_PUBLIC_SUPABASE_URL');
 }
