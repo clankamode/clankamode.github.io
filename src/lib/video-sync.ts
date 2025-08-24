@@ -14,7 +14,7 @@ export function mapVideoRow(v: VideoData): VideoRow {
   const snippet = v.snippet || {};
   const contentDetails = v.contentDetails || {};
   const live = v.liveStreamingDetails || {};
-
+  
   const durationSeconds = contentDetails.duration
     ? iso8601DurationToSeconds(contentDetails.duration)
     : null;
@@ -35,7 +35,7 @@ export function mapVideoRow(v: VideoData): VideoRow {
 }
 
 export function iso8601DurationToSeconds(iso: string): number | null {
-  const m = iso?.match(/PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?/);
+  const m = iso?.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
   if (!m) return null;
   const h = parseInt(m[1] || '0', 10);
   const min = parseInt(m[2] || '0', 10);
