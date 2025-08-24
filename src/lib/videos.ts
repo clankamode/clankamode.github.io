@@ -1,22 +1,42 @@
-import { getChannelVideos } from '@/lib/youtube';
+import { supabase } from './supabase';
+
+export interface Video {
+  id: string;
+  title: string;
+  description: string;
+  duration: number | null;
+  date_uploaded: string;
+  thumbnail: string;
+}
 
 // Define the initial load limit
 export const INITIAL_LOAD_LIMIT = 24;
 
-// Initial load of videos
-export async function getInitialVideos() {
-  const channelId = process.env.YOUTUBE_CHANNEL_ID;
-  if (!channelId) {
-    console.error('YouTube channel ID not found in environment variables');
-    return { videos: [], hasMore: false }; // Return object with hasMore
-  }
+// Get recent videos from Supabase
+export async function getRecentVideos(limit: number = 6, offset: number = 0) {
   try {
-    const videos = await getChannelVideos(channelId, INITIAL_LOAD_LIMIT);
-    // Determine if there are potentially more videos
-    const hasMore = videos.length === INITIAL_LOAD_LIMIT;
+    const { data, error, count } = await supabase
+      .from('Videos')
+      .select('*', { count: 'exact' })
+      .order('date_uploaded', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      console.error('Error fetching videos from Supabase:', error);
+      return { videos: [], hasMore: false };
+    }
+
+    const videos = data as Video[];
+    const hasMore = count ? offset + limit < count : false;
+
     return { videos, hasMore };
   } catch (error) {
-    console.error('Error fetching YouTube videos:', error);
-    return { videos: [], hasMore: false }; // Return object with hasMore
+    console.error('Error fetching videos:', error);
+    return { videos: [], hasMore: false };
   }
+}
+
+// Initial load of videos
+export async function getInitialVideos() {
+  return getRecentVideos(INITIAL_LOAD_LIMIT);
 } 
