@@ -57,12 +57,6 @@ export default function Navbar() {
             <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Videos
             </Link>
-            {
-              isLoggedIn && isAdmin &&
-              <Link href="/analytics" className={`px-3 py-2 ${isActive('/analytics') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-                Analytics
-              </Link>
-            }
             {isLoggedIn && (isEditor || isAdmin) && <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
               Thumbnails
             </Link>}
@@ -143,18 +137,6 @@ export default function Navbar() {
               Mocks
             </Link>
           </li>
-          {
-            isLoggedIn && isAdmin &&
-            <li>
-              <Link 
-                href="/analytics" 
-                className={`block py-2 pl-3 pr-4 rounded ${isActive('/analytics') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Analytics
-              </Link>
-            </li>
-          }
           {isLoggedIn && (isEditor || isAdmin) && (
             <li>
               <Link 
