@@ -1,3 +1,32 @@
+export interface VideoData {
+  id: string;
+  snippet?: {
+    title?: string;
+    description?: string;
+    publishedAt?: string;
+    thumbnails?: {
+      high?: {
+        url?: string;
+      };
+    };
+  };
+  contentDetails?: {
+    duration?: string;
+  };
+  liveStreamingDetails?: {
+    actualStartTime?: string;
+  };
+}
+
+interface VideoRow {
+  id: string;
+  title: string | null;
+  description: string | null;
+  Duration: number | null;
+  date_uploaded: string | null;
+  thumbnail_high_url: string | null;
+}
+
 // YouTube API types
 export interface YouTubeVideo {
   id: string;
@@ -462,6 +491,87 @@ export interface ChannelAnalytics extends ChannelStats {
   videoDurationDistribution: Record<string, number>;
   averageViewsPerVideo: number;
   mostRecentUploadDate: string;
+}
+
+// Base URL for YouTube API
+const YT_BASE = 'https://www.googleapis.com/youtube/v3';
+
+// Helper function to make YouTube API requests
+async function ytGet<T>(path: string, params: Record<string, string>): Promise<T> {
+  const url = new URL(`${YT_BASE}/${path}`);
+  params.key = process.env.YOUTUBE_API_KEY!;
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  const res = await fetch(url.toString());
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`YouTube API error ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
+// Get uploads playlist ID for a channel
+export async function getUploadsPlaylistId(channelId: string): Promise<string> {
+  const data = await ytGet<{
+    items: Array<{
+      contentDetails: {
+        relatedPlaylists: {
+          uploads: string;
+        };
+      };
+    }>;
+  }>('channels', {
+    part: 'contentDetails',
+    id: channelId,
+    maxResults: '1',
+  });
+  const item = data.items?.[0];
+  if (!item) throw new Error('Channel not found or no contentDetails available.');
+  return item.contentDetails.relatedPlaylists.uploads;
+}
+
+// Iterate through all video IDs in a playlist
+export async function* iteratePlaylistVideoIds(playlistId: string): AsyncGenerator<string> {
+  let pageToken;
+  do {
+    const data: {
+      items: Array<{
+        contentDetails?: {
+          videoId?: string;
+        };
+      }>;
+      nextPageToken?: string;
+    } = await ytGet<{
+      items: Array<{
+        contentDetails?: {
+          videoId?: string;
+        };
+      }>;
+      nextPageToken?: string;
+    }>('playlistItems', {
+      part: 'contentDetails',
+      playlistId,
+      maxResults: '50',
+      ...(pageToken ? { pageToken } : {}),
+    });
+    for (const it of data.items || []) {
+      const vid = it.contentDetails?.videoId;
+      if (vid) yield vid;
+    }
+    pageToken = data.nextPageToken;
+  } while (pageToken);
+}
+
+// Fetch detailed video data for a list of video IDs
+export async function fetchVideosByIds(videoIds: string[]): Promise<VideoData[]> {
+  if (videoIds.length === 0) return [];
+  const data = await ytGet<{
+    items: VideoData[];
+  }>('videos', {
+    part: 'snippet,statistics,contentDetails,liveStreamingDetails',
+    id: videoIds.join(','),
+    maxResults: '50',
+  });
+  return data.items || [];
 }
 
 // Helper function to parse ISO 8601 duration to minutes

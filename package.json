@@ -10,7 +10,8 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug --headed",
-    "dev:debug": "NODE_OPTIONS='--inspect' next dev --turbopack"
+    "dev:debug": "NODE_OPTIONS='--inspect' next dev --turbopack",
+    "sync:videos": "tsx scripts/src/get_video_data.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.56.0",
