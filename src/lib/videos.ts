@@ -1,4 +1,3 @@
-import { getChannelVideos } from '@/lib/youtube';
 import { supabase } from '@/lib/supabase';
 
 /**
@@ -28,20 +27,70 @@ export async function getTotalVideosDuration(): Promise<number> {
 // Define the initial load limit
 export const INITIAL_LOAD_LIMIT = 24;
 
-// Initial load of videos
-export async function getInitialVideos() {
-  const channelId = process.env.YOUTUBE_CHANNEL_ID;
-  if (!channelId) {
-    console.error('YouTube channel ID not found in environment variables');
-    return { videos: [], hasMore: false }; // Return object with hasMore
-  }
+// Get recent videos from Supabase
+export async function getRecentVideos(limit: number = 6, offset: number = 0) {
   try {
-    const videos = await getChannelVideos(channelId, INITIAL_LOAD_LIMIT);
-    // Determine if there are potentially more videos
-    const hasMore = videos.length === INITIAL_LOAD_LIMIT;
+    const { data, error, count } = await supabase
+      .from('Videos')
+      .select('*', { count: 'exact' })
+      .order('date_uploaded', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      console.error('Error fetching videos from Supabase:', error);
+      return { videos: [], hasMore: false };
+    }
+
+    const videos = data as Video[];
+    const hasMore = count ? offset + limit < count : false;
+
     return { videos, hasMore };
   } catch (error) {
-    console.error('Error fetching YouTube videos:', error);
-    return { videos: [], hasMore: false }; // Return object with hasMore
+    console.error('Error fetching videos:', error);
+    return { videos: [], hasMore: false };
+  }
+}
+
+// Transform Video to YouTubeVideo format
+function transformToYouTubeVideo(video: Video) {
+  return {
+    id: video.id,
+    title: video.title,
+    description: video.description,
+    thumbnailUrl: video.thumbnail || '',
+    publishedAt: new Date(video.date_uploaded).toLocaleDateString(),
+    videoUrl: `https://www.youtube.com/watch?v=${video.id}`
+  };
+}
+
+// Initial load of videos
+export async function getInitialVideos() {
+  const { videos, hasMore } = await getRecentVideos(INITIAL_LOAD_LIMIT);
+  return {
+    videos: videos.map(transformToYouTubeVideo),
+    hasMore
+  };
+}
+
+// Load more videos after initial load
+export async function loadMoreVideos(skip: number) {
+  const { videos, hasMore } = await getRecentVideos(INITIAL_LOAD_LIMIT, skip);
+  return {
+    videos: videos.map(transformToYouTubeVideo),
+    hasMore
+  };
+}
+
+// API route handler for videos
+export async function handleVideoRequest(skip: number = 0, limit: number = INITIAL_LOAD_LIMIT) {
+  try {
+    const { videos, hasMore } = await getRecentVideos(limit, skip);
+    return { 
+      videos: videos.map(transformToYouTubeVideo), 
+      hasMore 
+    };
+  } catch (error) {
+    console.error('Error handling video request:', error);
+    throw error;
   }
 } 
