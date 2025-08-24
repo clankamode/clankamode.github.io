@@ -18,15 +18,6 @@ export interface VideoData {
   };
 }
 
-interface VideoRow {
-  id: string;
-  title: string | null;
-  description: string | null;
-  Duration: number | null;
-  date_uploaded: string | null;
-  thumbnail_high_url: string | null;
-}
-
 // YouTube API types
 export interface YouTubeVideo {
   id: string;
