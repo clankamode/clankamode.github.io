@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { YouTubeVideo } from './youtube';
 
 export interface Video {
   id: string;
@@ -36,7 +37,46 @@ export async function getRecentVideos(limit: number = 6, offset: number = 0) {
   }
 }
 
+// Transform Video to YouTubeVideo format
+function transformToYouTubeVideo(video: Video) {
+  return {
+    id: video.id,
+    title: video.title,
+    description: video.description,
+    thumbnailUrl: video.thumbnail || '',
+    publishedAt: new Date(video.date_uploaded).toLocaleDateString(),
+    videoUrl: `https://www.youtube.com/watch?v=${video.id}`
+  };
+}
+
 // Initial load of videos
 export async function getInitialVideos() {
-  return getRecentVideos(INITIAL_LOAD_LIMIT);
+  const { videos, hasMore } = await getRecentVideos(INITIAL_LOAD_LIMIT);
+  return {
+    videos: videos.map(transformToYouTubeVideo),
+    hasMore
+  };
+}
+
+// Load more videos after initial load
+export async function loadMoreVideos(skip: number) {
+  const { videos, hasMore } = await getRecentVideos(INITIAL_LOAD_LIMIT, skip);
+  return {
+    videos: videos.map(transformToYouTubeVideo),
+    hasMore
+  };
+}
+
+// API route handler for videos
+export async function handleVideoRequest(skip: number = 0, limit: number = INITIAL_LOAD_LIMIT) {
+  try {
+    const { videos, hasMore } = await getRecentVideos(limit, skip);
+    return { 
+      videos: videos.map(transformToYouTubeVideo), 
+      hasMore 
+    };
+  } catch (error) {
+    console.error('Error handling video request:', error);
+    throw error;
+  }
 } 

@@ -1,24 +1,15 @@
 import { NextResponse } from 'next/server';
-import { getChannelVideos } from '@/lib/youtube';
+import { handleVideoRequest } from '@/lib/videos';
 
 export async function GET(request: Request) {
   try {
     // Get query parameters
     const url = new URL(request.url);
-    const channelId = url.searchParams.get('channelId');
     const skip = parseInt(url.searchParams.get('skip') || '0');
     const limit = parseInt(url.searchParams.get('limit') || '24');
     
-    // Validate channelId
-    if (!channelId) {
-      return NextResponse.json(
-        { error: 'Channel ID is required' },
-        { status: 400 }
-      );
-    }
-    
-    // Fetch videos from YouTube
-    const videos = await getChannelVideos(channelId, limit, skip);
+    // Fetch videos from Supabase
+    const { videos, hasMore } = await handleVideoRequest(skip, limit);
     
     return NextResponse.json(videos);
   } catch (error: unknown) {
