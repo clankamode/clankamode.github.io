@@ -4,9 +4,15 @@ import Image from 'next/image';
 interface HeroSectionProps {
   channelStats: ChannelStats | null;
   channelId: string;
+  totalDuration?: number;
 }
 
-export default function HeroSection({ channelStats, channelId }: HeroSectionProps) {
+const formatDurationHours = (seconds: number): string => {
+  const hours = Math.round(seconds / 3600);
+  return `${hours}`;
+}
+
+export default function HeroSection({ channelStats, channelId, totalDuration = 0 }: HeroSectionProps) {
   return (
     <section className="relative bg-[#282828] overflow-hidden">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
@@ -52,6 +58,10 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold text-white">{formatCount(channelStats.viewCount)}</span>
               <span className="text-sm text-gray-400">Views</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-3xl font-bold text-white">{formatDurationHours(totalDuration)}</span>
+              <span className="text-sm text-gray-400">Hours of Content</span>
             </div>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { getChannelVideos, getChannelStats, getPopularChannelVideos } from '@/lib/youtube';
+import { getTotalVideosDuration } from '@/lib/videos';
 import HeroSection from '@/components/sections/HeroSection';
 import VideoSection from '@/components/sections/VideoSection';
 
@@ -8,16 +9,17 @@ export const revalidate = 300; // Revalidate at most once per 5 minutes
 export default async function Home() {
   const channelId = process.env.YOUTUBE_CHANNEL_ID || '';
   // Fetch videos and channel stats from YouTube
-  const [latestVideos, popularVideos, channelStats] = await Promise.all([
+  const [latestVideos, popularVideos, channelStats, totalDuration] = await Promise.all([
     getChannelVideos(channelId, 6),
     getPopularChannelVideos(channelId, 6),
-    getChannelStats(channelId)
+    getChannelStats(channelId),
+    getTotalVideosDuration()
   ]);
 
   return (
     <div className="flex flex-col min-h-screen bg-[#1a1a1a]">
       {/* Use HeroSection Component */}
-      <HeroSection channelStats={channelStats} channelId={channelId} />
+      <HeroSection channelStats={channelStats} channelId={channelId} totalDuration={totalDuration} />
 
       {/* Use VideoSection for Latest Videos */}
       <VideoSection 
