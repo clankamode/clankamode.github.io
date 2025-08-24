@@ -1,5 +1,14 @@
 import { supabase } from '@/lib/supabase';
 
+interface Video {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string | null;
+  date_uploaded: string;
+  duration: number;
+}
+
 /**
  * Calculates the total duration of all videos in the Videos table
  * @returns Promise<number> Total duration in seconds
