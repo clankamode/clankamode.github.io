@@ -509,6 +509,25 @@ async function ytGet<T>(path: string, params: Record<string, string>): Promise<T
   return res.json();
 }
 
+// Fetch playlist items with pagination
+interface PlaylistItemsResponse {
+  items: Array<{
+    contentDetails?: {
+      videoId?: string;
+    };
+  }>;
+  nextPageToken?: string;
+}
+
+export async function fetchPlaylistItems(playlistId: string, pageToken?: string, numResults: string = '50'): Promise<PlaylistItemsResponse> {
+  return ytGet<PlaylistItemsResponse>('playlistItems', {
+    part: 'contentDetails',
+    playlistId,
+    maxResults: numResults,
+    ...(pageToken ? { pageToken } : {}),
+  });
+}
+
 // Get uploads playlist ID for a channel
 export async function getUploadsPlaylistId(channelId: string): Promise<string> {
   const data = await ytGet<{
@@ -533,26 +552,7 @@ export async function getUploadsPlaylistId(channelId: string): Promise<string> {
 export async function* iteratePlaylistVideoIds(playlistId: string): AsyncGenerator<string> {
   let pageToken;
   do {
-    const data: {
-      items: Array<{
-        contentDetails?: {
-          videoId?: string;
-        };
-      }>;
-      nextPageToken?: string;
-    } = await ytGet<{
-      items: Array<{
-        contentDetails?: {
-          videoId?: string;
-        };
-      }>;
-      nextPageToken?: string;
-    }>('playlistItems', {
-      part: 'contentDetails',
-      playlistId,
-      maxResults: '50',
-      ...(pageToken ? { pageToken } : {}),
-    });
+    const data = await fetchPlaylistItems(playlistId, pageToken, '50');
     for (const it of data.items || []) {
       const vid = it.contentDetails?.videoId;
       if (vid) yield vid;
