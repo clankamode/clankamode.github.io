@@ -28,10 +28,6 @@ export default function HeroSection({ channelStats, channelId, totalDuration = 0
             className="rounded-full mx-auto mb-6 border-2 border-[#2cbb5d]/50 object-cover"
           />
         )}
-        <div className="inline-flex items-center justify-center px-3 py-1 mb-6 text-sm font-medium text-[#2cbb5d] bg-[#2cbb5d]/10 rounded-full">
-          <span className="px-2 py-1 mr-2 bg-[#2cbb5d] rounded-full"></span>
-          NEW VIDEOS DAILY
-        </div>
         <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2cbb5d] to-[#28a754]">
             {channelStats?.title || 'James Peralta'} {/* Display channel title or fallback */}
