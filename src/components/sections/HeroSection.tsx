@@ -46,22 +46,24 @@ export default function HeroSection({ channelStats, channelId, totalDuration = 0
         
         {/* Channel Stats */}
         {channelStats && (
-          <div className="flex flex-wrap justify-center gap-8 mb-8">
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-[#2cbb5d]">{formatCount(channelStats.subscriberCount)}</span>
-              <span className="text-sm text-gray-400">Subscribers</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-white">{formatCount(channelStats.videoCount)}</span>
-              <span className="text-sm text-gray-400">Videos</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-white">{formatCount(channelStats.viewCount)}</span>
-              <span className="text-sm text-gray-400">Views</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-white">{formatDurationHours(totalDuration)}</span>
-              <span className="text-sm text-gray-400">Hours of Content</span>
+          <div className="flex justify-center mb-8">
+            <div className="flex space-x-4 md:space-x-8">
+              <div className="flex flex-col items-center">
+                <span className="text-xl md:text-3xl font-bold text-[#2cbb5d]">{formatCount(channelStats.subscriberCount)}</span>
+                <span className="text-xs md:text-sm text-gray-400">Subscribers</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-xl md:text-3xl font-bold text-white">{formatCount(channelStats.videoCount)}</span>
+                <span className="text-xs md:text-sm text-gray-400">Videos</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-xl md:text-3xl font-bold text-white">{formatCount(channelStats.viewCount)}</span>
+                <span className="text-xs md:text-sm text-gray-400">Views</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-xl md:text-3xl font-bold text-white">{formatDurationHours(totalDuration)}h</span>
+                <span className="text-xs md:text-sm text-gray-400">of Content</span>
+              </div>
             </div>
           </div>
         )}
