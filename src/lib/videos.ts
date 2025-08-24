@@ -1,5 +1,4 @@
 import { supabase } from './supabase';
-import { YouTubeVideo } from './youtube';
 
 export interface Video {
   id: string;

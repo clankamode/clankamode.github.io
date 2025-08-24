@@ -58,36 +58,6 @@ interface YouTubeThumbnails {
   maxres?: YouTubeThumbnail;
 }
 
-// For playlistItems list response
-interface PlaylistItemSnippet {
-  publishedAt: string;
-  channelId: string;
-  title: string;
-  description: string;
-  thumbnails: YouTubeThumbnails;
-  channelTitle: string;
-  playlistId: string;
-  position: number;
-  resourceId: {
-    kind: string;
-    videoId: string;
-  };
-  videoOwnerChannelTitle?: string; // Optional
-  videoOwnerChannelId?: string; // Optional
-}
-
-interface PlaylistItemContentDetails {
-  videoId: string;
-  videoPublishedAt?: string; // Optional
-}
-
-interface PlaylistItem {
-  kind: string;
-  etag: string;
-  id: string;
-  snippet: PlaylistItemSnippet;
-  contentDetails: PlaylistItemContentDetails;
-}
 
 // For videos list response
 interface VideoSnippet {
