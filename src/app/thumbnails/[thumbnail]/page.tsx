@@ -108,7 +108,7 @@ export default function ThumbnailSubmissionPage() {
     }
 
     setIsSubmitting(false)
-    redirect(`/thumbnails`)
+    router.push('/thumbnails')
   }
 
   return (
@@ -167,7 +167,55 @@ export default function ThumbnailSubmissionPage() {
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* File Upload Section */}
               <div>
-                <h2 className="text-xl font-semibold text-white mb-3">Upload Thumbnail</h2>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-xl font-semibold text-white">Upload Thumbnail</h2>
+                  {formData.thumbnail_url && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault() // Prevent any form submission
+                        const handleDownload = async () => {
+                          try {
+                            const response = await fetch(formData.thumbnail_url || '')
+                            if (!response.ok) throw new Error('Download failed')
+                            
+                            const blob = await response.blob()
+                            const url = window.URL.createObjectURL(blob)
+                            const a = document.createElement('a')
+                            a.href = url
+                            a.download = `${formData.videoTitle || ''}.png`
+                            document.body.appendChild(a)
+                            a.click()
+                            window.URL.revokeObjectURL(url)
+                            document.body.removeChild(a)
+                          } catch (error) {
+                            console.error('Error downloading thumbnail:', error)
+                            alert('Failed to download thumbnail')
+                          }
+                        }
+                        handleDownload()
+                      }}
+                      type="button" // Explicitly set type to button to prevent form submission
+                      className="text-blue-400 hover:text-blue-300 text-sm font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
+                      title="Download Thumbnail"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
                 <div
                   className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     dragActive ? "border-[#2cbb5d] bg-[#2cbb5d]/5" : "border-[#3e3e3e] hover:border-[#2cbb5d] bg-[#1a1a1a]"
