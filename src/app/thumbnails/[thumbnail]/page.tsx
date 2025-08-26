@@ -108,7 +108,7 @@ export default function ThumbnailSubmissionPage() {
     }
 
     setIsSubmitting(false)
-    router.push('/thumbnails')
+    redirect(`/thumbnails`)
   }
 
   return (
