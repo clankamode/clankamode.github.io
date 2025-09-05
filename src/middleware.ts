@@ -25,6 +25,13 @@ export async function middleware(req: NextRequest) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
         }
+
+        // Check if the route is tools-related
+        if (req.nextUrl.pathname.startsWith('/tools')) {
+            if (!hasRole(userRole, UserRole.EDITOR)) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+        }
     } catch (error) {
         console.log('error', error);
         return NextResponse.redirect(new URL('/', req.url));
