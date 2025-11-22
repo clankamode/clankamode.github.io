@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import ToolsSidebar, { ToolView } from './_components/ToolsSidebar';
+import FactChecker from './_components/FactChecker';
 
 export default function ToolsDashboard() {
   const [currentView, setCurrentView] = useState<ToolView>("fact-checker")
@@ -38,10 +39,7 @@ export default function ToolsDashboard() {
         {/* Page content */}
         <div className="p-6 flex-1 overflow-y-auto">
           {currentView === "fact-checker" && (
-            <div>
-              <h2 className="text-2xl font-semibold text-white mb-6">Fact Checker</h2>
-              {/* Fact checker content will be added here */}
-            </div>
+            <FactChecker />
           )}
           {currentView === "timestamp-generator" && (
             <div>
