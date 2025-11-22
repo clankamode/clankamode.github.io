@@ -10,9 +10,10 @@ type ThumbnailOverviewProps = {
   isLoading: boolean
   error: string | null
   onThumbnailsChange: () => void
+  onViewClick?: (thumbnailId: string) => void
 }
 
-export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange }: ThumbnailOverviewProps) {
+export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange, onViewClick }: ThumbnailOverviewProps) {
   const filteredThumbnails = thumbnails
     .filter((t) => t.status === status)
     .sort((a, b) => {
@@ -115,6 +116,7 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
               thumbnail={thumbnail} 
               status={status}
               onStatusChange={handleStatusChange}
+              onViewClick={onViewClick}
             />
           ))}
         </div>

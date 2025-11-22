@@ -7,6 +7,7 @@ import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 import Sidebar from './_components/Sidebar';
 import ThumbnailOverview from './_components/ThumbnailOverview';
 import CreateJobModal from './_components/CreateJobModal';
+import ThumbnailViewModal from './_components/ThumbnailViewModal';
 import { Thumbnail } from "@/types/ThumbnailJob"
 
 // Function to convert API data to our frontend format
@@ -29,6 +30,8 @@ export default function ThumbnailDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [viewModalOpen, setViewModalOpen] = useState(false)
+  const [selectedThumbnailId, setSelectedThumbnailId] = useState<string | null>(null)
 
   const fetchThumbnails = async () => {
     try {
@@ -74,6 +77,11 @@ export default function ThumbnailDashboard() {
     fetchThumbnails()
   }
 
+  const handleViewClick = (thumbnailId: string) => {
+    setSelectedThumbnailId(thumbnailId)
+    setViewModalOpen(true)
+  }
+
   const getStatusCounts = () => {
     return {
       todo: thumbnails.filter((t) => t.status === ThumbnailJobStatus.TODO).length,
@@ -102,6 +110,17 @@ export default function ThumbnailDashboard() {
         onSubmit={handleCreateJob}
       />
 
+      {/* Thumbnail View Modal */}
+      <ThumbnailViewModal
+        isOpen={viewModalOpen}
+        onClose={() => {
+          setViewModalOpen(false)
+          setSelectedThumbnailId(null)
+        }}
+        thumbnailId={selectedThumbnailId}
+        onSubmitSuccess={fetchThumbnails}
+      />
+
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
@@ -128,6 +147,7 @@ export default function ThumbnailDashboard() {
             isLoading={isLoading} 
             error={error}
             onThumbnailsChange={fetchThumbnails}
+            onViewClick={handleViewClick}
           />
         </div>
       </div>
