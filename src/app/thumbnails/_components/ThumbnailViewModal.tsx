@@ -1,11 +1,16 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect, useRef } from "react"
-import { useParams, redirect, useRouter } from "next/navigation"
 import { upload } from '@vercel/blob/client';
 import Image from "next/image"
+
+interface ThumbnailViewModalProps {
+  isOpen: boolean
+  onClose: () => void
+  thumbnailId: string | null
+  onSubmitSuccess: () => void
+}
 
 interface SubmissionData {
   videoTitle: string
@@ -14,9 +19,7 @@ interface SubmissionData {
   notes: string
 }
 
-export default function ThumbnailSubmissionPage() {
-  const { thumbnail } = useParams();
-  const router = useRouter();
+export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSubmitSuccess }: ThumbnailViewModalProps) {
   const [formData, setFormData] = useState<SubmissionData>({
     videoTitle: "",
     videoUrl: "",
@@ -27,28 +30,37 @@ export default function ThumbnailSubmissionPage() {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchThumbnail = async () => {
-      const response = await fetch(`/api/thumbnail_job/${thumbnail}`)
-      if (!response.ok) {
-        throw new Error('Failed to fetch thumbnails')
+    if (isOpen && thumbnailId) {
+      setIsLoading(true)
+      const fetchThumbnail = async () => {
+        try {
+          const response = await fetch(`/api/thumbnail_job/${thumbnailId}`)
+          if (!response.ok) {
+            throw new Error('Failed to fetch thumbnail')
+          }
+          const data = await response.json()
+          if (data.error) {
+            throw new Error(data.error)
+          }
+          setFormData({
+            thumbnail_url: data.data.thumbnail || undefined,
+            notes: data.data.notes || "",
+            videoUrl: data.data.video_url || "",
+            videoTitle: data.data.video_title || "",
+          })
+        } catch (error) {
+          console.error('Error fetching thumbnail:', error)
+        } finally {
+          setIsLoading(false)
+        }
       }
-      const data = await response.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
-      setFormData({
-        thumbnail_url: data.data.thumbnail || undefined,
-        notes: data.data.notes || "",
-        videoUrl: data.data.video_url || "",
-        videoTitle: data.data.video_title || "",
-      })
-    }
 
-    fetchThumbnail()
-  }, [thumbnail])
+      fetchThumbnail()
+    }
+  }, [isOpen, thumbnailId])
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<Element> | null) => {
     if (event) {
@@ -86,7 +98,10 @@ export default function ThumbnailSubmissionPage() {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0]
       if (file.type.startsWith("image/")) {
-        handleFileChange(e);
+        if (inputFileRef.current) {
+          inputFileRef.current.files = e.dataTransfer.files
+          handleFileChange(e);
+        }
       }
     }
   }
@@ -95,42 +110,82 @@ export default function ThumbnailSubmissionPage() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    const response = await fetch(`/api/thumbnail_job/${thumbnail}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        thumbnail: formData.thumbnail_url,
-        notes: formData.notes,
-      }),
-    });
+    try {
+      const response = await fetch(`/api/thumbnail_job/${thumbnailId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          thumbnail: formData.thumbnail_url,
+          notes: formData.notes,
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to submit thumbnail')
+      if (!response.ok) {
+        throw new Error('Failed to submit thumbnail')
+      }
+
+      setIsSubmitting(false)
+      onSubmitSuccess()
+      onClose()
+    } catch (error) {
+      console.error('Error submitting thumbnail:', error)
+      setIsSubmitting(false)
     }
-
-    setIsSubmitting(false)
-    redirect(`/thumbnails`)
   }
 
-  return (
-    <div className="min-h-screen bg-[#1a1a1a] py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-[#282828] rounded-lg shadow-lg overflow-hidden border border-[#3e3e3e]">
-          {/* Header */}
-          <div className="bg-[#282828] px-6 py-8 border-b border-[#3e3e3e]">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => router.push('/thumbnails')}
-                className="flex items-center text-gray-400 hover:text-white transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-              </button>
-              <h1 className="text-3xl font-bold text-white">{formData.videoTitle}</h1>
-            </div>
-          </div>
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(formData.thumbnail_url || '')
+      if (!response.ok) throw new Error('Download failed')
+      
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${formData.videoTitle || ''}.png`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (error) {
+      console.error('Error downloading thumbnail:', error)
+      alert('Failed to download thumbnail')
+    }
+  }
 
-          <div className="p-6">
+  if (!isOpen) return null
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[#282828] rounded-lg shadow-lg w-full max-w-4xl my-8 border border-[#3e3e3e]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="bg-[#282828] px-6 py-4 border-b border-[#3e3e3e] flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={onClose}
+              className="flex items-center text-gray-400 hover:text-white transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h1 className="text-2xl font-bold text-white">
+              {isLoading ? "Loading..." : formData.videoTitle}
+            </h1>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="p-6 flex items-center justify-center min-h-[400px]">
+            <div className="text-gray-400">Loading thumbnail data...</div>
+          </div>
+        ) : (
+          <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
             {/* Video Link Section */}
             <div className="mb-8">
               <div className="bg-[#1a1a1a] rounded-lg p-4 border-l-4 border-[#2cbb5d]">
@@ -172,29 +227,10 @@ export default function ThumbnailSubmissionPage() {
                   {formData.thumbnail_url && (
                     <button
                       onClick={(e) => {
-                        e.preventDefault() // Prevent any form submission
-                        const handleDownload = async () => {
-                          try {
-                            const response = await fetch(formData.thumbnail_url || '')
-                            if (!response.ok) throw new Error('Download failed')
-                            
-                            const blob = await response.blob()
-                            const url = window.URL.createObjectURL(blob)
-                            const a = document.createElement('a')
-                            a.href = url
-                            a.download = `${formData.videoTitle || ''}.png`
-                            document.body.appendChild(a)
-                            a.click()
-                            window.URL.revokeObjectURL(url)
-                            document.body.removeChild(a)
-                          } catch (error) {
-                            console.error('Error downloading thumbnail:', error)
-                            alert('Failed to download thumbnail')
-                          }
-                        }
+                        e.preventDefault()
                         handleDownload()
                       }}
-                      type="button" // Explicitly set type to button to prevent form submission
+                      type="button"
                       className="text-blue-400 hover:text-blue-300 text-sm font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
                       title="Download Thumbnail"
                     >
@@ -239,8 +275,8 @@ export default function ThumbnailSubmissionPage() {
                         src={formData.thumbnail_url || "/placeholder.svg"}
                         alt="Thumbnail preview"
                         className="max-w-full max-h-64 mx-auto rounded-lg shadow-md"
-                        width={100}
-                        height={100}
+                        width={640}
+                        height={360}
                       />
                       <div className="flex items-center justify-center space-x-2 text-green-600">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -275,7 +311,7 @@ export default function ThumbnailSubmissionPage() {
                 <label htmlFor="notes" className="block text-xl font-semibold text-white mb-3">
                   Notes & Timestamps
                 </label>
-                <p className="text-white-700 mb-3">
+                <p className="text-gray-300 mb-3">
                   Add any notes, timestamps, or key moments from the video that should be included in the description.
                 </p>
                 <textarea
@@ -290,7 +326,15 @@ export default function ThumbnailSubmissionPage() {
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-end">
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-6 py-2 text-gray-300 hover:text-white transition-colors"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
                   disabled={!formData.thumbnail_url || isSubmitting}
@@ -327,8 +371,9 @@ export default function ThumbnailSubmissionPage() {
               </div>
             </form>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
 }
+

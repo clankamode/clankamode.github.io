@@ -8,9 +8,10 @@ interface ThumbnailCardProps {
   thumbnail: Thumbnail
   status: ThumbnailJobStatus,
   onStatusChange?: (thumbnailId: string, newStatus: ThumbnailJobStatus) => void
+  onViewClick?: (thumbnailId: string) => void
 }
 
-export default function ThumbnailCard({ thumbnail, status, onStatusChange }: ThumbnailCardProps) {
+export default function ThumbnailCard({ thumbnail, status, onStatusChange, onViewClick }: ThumbnailCardProps) {
   const handleDownload = async () => {
     try {
       const response = await fetch(thumbnail.thumbnailUrl || '')
@@ -68,14 +69,12 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange }: Thu
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <a
-              href={thumbnail.editUrl}
-              // target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => onViewClick?.(thumbnail.id)}
               className="text-[#2cbb5d] hover:text-[#25a24f] text-sm font-medium"
             >
               View Video
-            </a>
+            </button>
             {thumbnail.thumbnailUrl && (
               <button
                 onClick={handleDownload}
