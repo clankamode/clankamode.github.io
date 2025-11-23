@@ -4,19 +4,41 @@ import { supabase } from "@/lib/supabase";
 import { UserRole } from "@/types/roles";
 
 const getRole = async (email: string): Promise<UserRole> => {
+  // First, try to get the existing user
   const { data: user, error } = await supabase
     .from('Users')
     .select('role')
     .eq('email', email)
     .single();
 
-  if (error || !user) {
-    console.error('email', email);
-    console.error('Error fetching user role:', error);
+  // If user exists, return their role
+  if (user && !error) {
+    return user.role as UserRole;
+  }
+
+  // If user doesn't exist, create them with the basic USER role
+  const { data: newUser, error: upsertError } = await supabase
+    .from('Users')
+    .upsert(
+      { 
+        email, 
+        role: UserRole.USER 
+      },
+      { 
+        onConflict: 'email',
+        ignoreDuplicates: false 
+      }
+    )
+    .select('role')
+    .single();
+
+  if (upsertError) {
+    console.error('Error upserting user:', upsertError);
+    // Return USER as fallback even if upsert fails
     return UserRole.USER;
   }
 
-  return user.role as UserRole;
+  return newUser?.role as UserRole || UserRole.USER;
 }
 
 export const authOptions: NextAuthOptions = {

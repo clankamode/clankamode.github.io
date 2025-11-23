@@ -128,6 +128,15 @@ export default function Navbar() {
           </li>
           <li>
             <Link 
+              href="/peralta75" 
+              className={`block py-2 pl-3 pr-4 rounded ${isActive('/peralta75') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Peralta 75
+            </Link>
+          </li>
+          <li>
+            <Link 
               href="/videos" 
               className={`block py-2 pl-3 pr-4 rounded ${isActive('/videos') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
               onClick={() => setIsMenuOpen(false)}

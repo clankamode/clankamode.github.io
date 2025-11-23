@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Only load .env.local if we're running as a script (not in Next.js)
-if (!process.env.NEXT_RUNTIME) {
+// Only load .env.local if we're running as a Node.js script (not in browser or Next.js runtime)
+if (typeof window === 'undefined' && !process.env.NEXT_RUNTIME) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { config } = require('dotenv');
   config({ path: '.env.local' });

@@ -32,6 +32,13 @@ export async function middleware(req: NextRequest) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
         }
+
+        // Check if the route is practice-test-related
+        if (req.nextUrl.pathname.startsWith('/practice-test') || req.nextUrl.pathname.startsWith('/api/test-session')) {
+            if (!hasRole(userRole, UserRole.USER)) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+        }
     } catch (error) {
         console.log('error', error);
         return NextResponse.redirect(new URL('/', req.url));
@@ -41,5 +48,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/analytics', '/thumbnails/:path*', '/api/thumbnail_job/:path*'],
+    matcher: ['/analytics', '/thumbnails/:path*', '/api/thumbnail_job/:path*', '/practice-test', '/api/test-session/:path*'],
 }
