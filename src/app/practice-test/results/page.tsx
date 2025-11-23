@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
@@ -35,7 +35,7 @@ interface TestResults {
   unitBreakdown: UnitBreakdown[];
 }
 
-export default function ResultsPage() {
+function ResultsContent() {
   const { status } = useSession();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -308,6 +308,25 @@ export default function ResultsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2cbb5d]"></div>
+              <p className="text-white text-lg">Loading results...</p>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <ResultsContent />
+    </Suspense>
   );
 }
 
