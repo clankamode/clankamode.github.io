@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get all question numbers
-    const questionNumbers = answers.map(a => a.question_number);
+    const questionNumbers = allAnswers.map(a => a.question_number);
     
     // Fetch question bank data
     const { data: questions, error: questionsError } = await supabase
@@ -47,13 +47,23 @@ export async function POST(req: NextRequest) {
       .select('question_number, correct_answer, question, options, rationale, unit, knowledge_area')
       .in('question_number', questionNumbers);
 
-    // Get only incorrect answers for detailed feedback
-    const incorrectAnswersList = allAnswers.filter(a => !a.is_correct);
+    if (questionsError) {
+      console.error('Error fetching questions:', questionsError);
+      throw questionsError;
+    }
+
+    // Create a map for quick lookup
+    const questionsMap = new Map(
+      questions?.map(q => [q.question_number, q]) || []
+    );
+
+    let correctCount = 0;
+    const totalQuestions = allAnswers.length;
     const incorrectAnswers = [];
     const unitBreakdown: Record<string, { correct: number; total: number }> = {};
 
-    if (incorrectAnswersList.length > 0) {
-      const incorrectQuestionNumbers = incorrectAnswersList.map(a => a.question_number);
+    for (const answer of allAnswers) {
+      const question = questionsMap.get(answer.question_number);
       
       if (!question) {
         console.error(`Question ${answer.question_number} not found`);
@@ -86,27 +96,9 @@ export async function POST(req: NextRequest) {
           knowledgeArea: question.knowledge_area,
         });
       }
-
-      // Create a map for quick lookup
-      const questionsMap = new Map(
-        questions?.map(q => [q.question_number, q]) || []
-      );
-
-      for (const answer of incorrectAnswersList) {
-        const question = questionsMap.get(answer.question_number);
-        
-        if (question) {
-          incorrectAnswers.push({
-            questionNumber: answer.question_number,
-            question: question.question,
-            options: question.options,
-            userAnswer: answer.user_answer,
-            correctAnswer: question.correct_answer,
-            rationale: question.rationale,
-          });
-        }
-      }
     }
+
+    const scorePercentage = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
 
     // Update session with completion data
     const { error: updateError } = await supabase
