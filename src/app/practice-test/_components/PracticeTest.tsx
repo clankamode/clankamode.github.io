@@ -38,6 +38,8 @@ interface SessionData {
   sessionId: string;
   answeredQuestions: number[];
   totalQuestions: number;
+  allowedQuestionNumbers?: number[];
+  isRetakeOfIncorrect?: boolean;
 }
 
 interface NewSessionData {
@@ -206,11 +208,27 @@ export default function PracticeTest() {
     try {
       setLoading(true);
       setTestState('loading');
+      setError(null);
+
+      // Get session data including allowed questions from API
+      const response = await fetch('/api/test-session');
+      if (!response.ok) throw new Error('Failed to get session data');
       
-      // Fetch all questions
+      const sessionData: SessionData = await response.json();
+
+      // Determine which questions to fetch
+      const questionNumbersToFetch = sessionData.allowedQuestionNumbers || [];
+      
+      if (questionNumbersToFetch.length === 0) {
+        setError('No questions found for this session.');
+        return;
+      }
+
+      // Fetch only the allowed questions
       const { data: questionsData, error: questionsError } = await supabase
         .from('QuestionBank')
         .select('question_number, question, options, correct_answer, rationale')
+        .in('question_number', questionNumbersToFetch)
         .order('question_number', { ascending: true });
 
       if (questionsError) throw questionsError;
@@ -222,23 +240,16 @@ export default function PracticeTest() {
 
       setQuestions(questionsData);
 
-      // Get answers for this session
-      const { data: answers, error: answersError } = await supabase
-        .from('TestAnswer')
-        .select('question_number')
-        .eq('session_id', session.id)
-        .order('question_number', { ascending: true });
-
-      if (answersError) throw answersError;
-
-      const answeredSet = new Set(answers?.map(a => a.question_number) || []);
-      setSessionId(session.id);
+      const answeredSet = new Set(sessionData.answeredQuestions);
+      setSessionId(sessionData.sessionId);
       setAnsweredQuestions(answeredSet);
+      setIsRetakeOfIncorrect(sessionData.isRetakeOfIncorrect || false);
+      setRetakeQuestionCount(questionsData.length);
 
       // Check if all questions are answered
       if (answeredSet.size === questionsData.length) {
         // All questions answered, complete the test
-        await completeTestForSession(session.id);
+        await completeTestForSession(sessionData.sessionId);
         return;
       }
 
@@ -255,6 +266,7 @@ export default function PracticeTest() {
     } catch (err) {
       console.error('Error continuing test:', err);
       setError('Failed to continue test. Please try again later.');
+      setTestState('session-list');
     } finally {
       setLoading(false);
     }

@@ -36,10 +36,65 @@ export async function GET(req: NextRequest) {
 
       if (answersError) throw answersError;
 
+      // Calculate which questions should be in this session
+      // Find the most recent completed session
+      const { data: previousSession, error: prevSessionError } = await supabase
+        .from('TestSession')
+        .select('id, completed_at')
+        .eq('email', userEmail)
+        .not('completed_at', 'is', null)
+        .order('completed_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (prevSessionError && prevSessionError.code !== 'PGRST116') {
+        throw prevSessionError;
+      }
+
+      let allowedQuestionNumbers: number[] = [];
+      let isRetakeOfIncorrect = false;
+
+      if (previousSession) {
+        // Get incorrect answers from the previous session
+        const { data: incorrectAnswers, error: incorrectError } = await supabase
+          .from('TestAnswer')
+          .select('question_number')
+          .eq('session_id', previousSession.id)
+          .eq('is_correct', false)
+          .order('question_number', { ascending: true });
+
+        if (incorrectError) throw incorrectError;
+
+        if (incorrectAnswers && incorrectAnswers.length > 0) {
+          allowedQuestionNumbers = incorrectAnswers.map(a => a.question_number);
+          isRetakeOfIncorrect = true;
+        } else {
+          // Perfect score - all questions
+          const { data: allQuestions, error: allQuestionsError } = await supabase
+            .from('QuestionBank')
+            .select('question_number')
+            .order('question_number', { ascending: true });
+
+          if (allQuestionsError) throw allQuestionsError;
+          allowedQuestionNumbers = allQuestions?.map(q => q.question_number) || [];
+        }
+      } else {
+        // First session - all questions
+        const { data: allQuestions, error: allQuestionsError } = await supabase
+          .from('QuestionBank')
+          .select('question_number')
+          .order('question_number', { ascending: true });
+
+        if (allQuestionsError) throw allQuestionsError;
+        allowedQuestionNumbers = allQuestions?.map(q => q.question_number) || [];
+      }
+
       return NextResponse.json({
         sessionId: existingSession.id,
         answeredQuestions: answers?.map(a => a.question_number) || [],
         totalQuestions: existingSession.total_questions,
+        allowedQuestionNumbers,
+        isRetakeOfIncorrect,
       });
     }
 
