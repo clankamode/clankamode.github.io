@@ -357,6 +357,26 @@ export default function PracticeTest() {
     }
   };
 
+  const viewPreviousResults = async (sessionId: string) => {
+    try {
+      setLoading(true);
+      setTestState('loading');
+
+      const response = await fetch(`/api/test-session/results?sessionId=${sessionId}`);
+      if (!response.ok) throw new Error('Failed to fetch results');
+
+      const resultsData: TestResults = await response.json();
+      setResults(resultsData);
+      setSessionId(sessionId);
+      setTestState('results');
+    } catch (err) {
+      console.error('Error fetching results:', err);
+      setError('Failed to load results. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Session list state
   if (testState === 'session-list' && sessionList) {
     return (
@@ -422,8 +442,8 @@ export default function PracticeTest() {
               <h2 className="text-xl font-semibold text-white mb-4">Previous Tests</h2>
               <div className="space-y-3">
                 {sessionList.completed.map((session) => (
-                  <div key={session.id} className="bg-[#1a1a1a] rounded-lg p-4 border-2 border-[#3e3e3e]">
-                    <div className="flex justify-between items-center">
+                  <div key={session.id} className="bg-[#1a1a1a] rounded-lg p-4 border-2 border-[#3e3e3e] hover:border-[#2cbb5d]/50 transition-colors">
+                    <div className="flex justify-between items-center gap-4">
                       <div className="flex-1">
                         <p className="text-white font-medium">
                           Completed: {new Date(session.completed_at!).toLocaleDateString()} at{' '}
@@ -433,13 +453,21 @@ export default function PracticeTest() {
                           {session.total_questions} questions
                         </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-[#2cbb5d]">
-                          {session.score_percentage}%
-                        </p>
-                        <p className="text-gray-400 text-sm">
-                          {session.correct_answers}/{session.total_questions} correct
-                        </p>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-[#2cbb5d]">
+                            {Math.round(session.score_percentage || 0)}%
+                          </p>
+                          <p className="text-gray-400 text-sm">
+                            {session.correct_answers}/{session.total_questions} correct
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => viewPreviousResults(session.id)}
+                          className="bg-[#3e3e3e] hover:bg-[#2cbb5d] text-white font-semibold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
+                        >
+                          View Details
+                        </button>
                       </div>
                     </div>
                   </div>
