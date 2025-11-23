@@ -40,6 +40,12 @@ interface SessionData {
   totalQuestions: number;
 }
 
+interface NewSessionData {
+  sessionId: string;
+  allowedQuestionNumbers: number[];
+  isRetakeOfIncorrect: boolean;
+}
+
 interface UnitBreakdown {
   unit: string;
   correct: number;
@@ -85,6 +91,8 @@ export default function PracticeTest() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [sessionList, setSessionList] = useState<SessionList | null>(null);
   const [totalQuestionsInBank, setTotalQuestionsInBank] = useState<number>(0);
+  const [isRetakeOfIncorrect, setIsRetakeOfIncorrect] = useState(false);
+  const [retakeQuestionCount, setRetakeQuestionCount] = useState(0);
   
   // Answer tracking
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -101,20 +109,7 @@ export default function PracticeTest() {
     async function loadSessions() {
       try {
         setLoading(true);
-        
-        // Fetch total question count
-        const { count, error: countError } = await supabase
-          .from('QuestionBank')
-          .select('*', { count: 'exact', head: true });
-        
-        if (countError) throw countError;
-        setTotalQuestionsInBank(count || 0);
-
-        const response = await fetch('/api/test-session/list');
-        if (!response.ok) throw new Error('Failed to load sessions');
-        
-        const data: SessionList = await response.json();
-        setSessionList(data);
+        await loadSessionList();
         setTestState('session-list');
       } catch (err) {
         console.error('Error loading sessions:', err);
@@ -131,11 +126,33 @@ export default function PracticeTest() {
     try {
       setLoading(true);
       setTestState('loading');
+      setError(null);
+
+      // Create new session first to get filtered question numbers
+      const response = await fetch('/api/test-session', {
+        method: 'POST',
+      });
       
-      // Fetch all questions
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 400 && errorData.incompleteSessionId) {
+          // There's an incomplete session
+          setError(errorData.error || 'You have an incomplete session. Please complete it first.');
+          setTestState('session-list');
+          // Refresh session list
+          await loadSessionList();
+          return;
+        }
+        throw new Error(errorData.error || 'Failed to create session');
+      }
+      
+      const sessionData: NewSessionData = await response.json();
+      
+      // Fetch questions that are allowed for this session
       const { data: questionsData, error: questionsError } = await supabase
         .from('QuestionBank')
         .select('question_number, question, options, correct_answer, rationale')
+        .in('question_number', sessionData.allowedQuestionNumbers)
         .order('question_number', { ascending: true });
 
       if (questionsError) throw questionsError;
@@ -146,26 +163,42 @@ export default function PracticeTest() {
       }
 
       setQuestions(questionsData);
-
-      // Create new session
-      const response = await fetch('/api/test-session', {
-        method: 'POST',
-      });
-      if (!response.ok) throw new Error('Failed to create session');
-      
-      const sessionData: SessionData = await response.json();
       setSessionId(sessionData.sessionId);
       setAnsweredQuestions(new Set());
       setCurrentQuestionIndex(0);
       setSelectedAnswer(null);
+      setIsRetakeOfIncorrect(sessionData.isRetakeOfIncorrect);
+      setRetakeQuestionCount(questionsData.length);
       setTestState('answering');
       questionStartTime.current = Date.now();
 
     } catch (err) {
       console.error('Error starting test:', err);
       setError('Failed to start test. Please try again later.');
+      setTestState('session-list');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadSessionList = async () => {
+    try {
+      // Fetch total question count
+      const { count, error: countError } = await supabase
+        .from('QuestionBank')
+        .select('*', { count: 'exact', head: true });
+      
+      if (countError) throw countError;
+      setTotalQuestionsInBank(count || 0);
+
+      const response = await fetch('/api/test-session/list');
+      if (!response.ok) throw new Error('Failed to load sessions');
+      
+      const data: SessionList = await response.json();
+      setSessionList(data);
+    } catch (err) {
+      console.error('Error loading sessions:', err);
+      throw err;
     }
   };
 
@@ -344,23 +377,14 @@ export default function PracticeTest() {
       setLoading(true);
       setTestState('loading');
       
-      // Fetch total question count
-      const { count, error: countError } = await supabase
-        .from('QuestionBank')
-        .select('*', { count: 'exact', head: true });
-      
-      if (countError) throw countError;
-      setTotalQuestionsInBank(count || 0);
-
-      const response = await fetch('/api/test-session/list');
-      if (!response.ok) throw new Error('Failed to load sessions');
-      
-      const data: SessionList = await response.json();
-      setSessionList(data);
+      await loadSessionList();
       setTestState('session-list');
       setResults(null);
       setSessionId(null);
       setAnsweredQuestions(new Set());
+      setError(null);
+      setIsRetakeOfIncorrect(false);
+      setRetakeQuestionCount(0);
     } catch (err) {
       console.error('Error loading sessions:', err);
       setError('Failed to load sessions. Please try again later.');
@@ -375,10 +399,19 @@ export default function PracticeTest() {
 
   // Session list state
   if (testState === 'session-list' && sessionList) {
+    const hasIncompleteSession = sessionList.incomplete.length > 0;
+    
     return (
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
           <h1 className="text-3xl font-bold text-white mb-6">Practice Tests</h1>
+          
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 bg-red-500/10 border-2 border-red-500/30 rounded-lg p-4">
+              <p className="text-red-400 font-medium">{error}</p>
+            </div>
+          )}
           
           {/* Incomplete Sessions */}
           {sessionList.incomplete.length > 0 && (
@@ -424,10 +457,24 @@ export default function PracticeTest() {
             </div>
           )}
 
+          {/* Warning message if incomplete session exists */}
+          {hasIncompleteSession && (
+            <div className="mb-4 bg-orange-500/10 border-2 border-orange-500/30 rounded-lg p-4">
+              <p className="text-orange-400 font-medium text-center">
+                Complete your current test before starting a new one
+              </p>
+            </div>
+          )}
+
           {/* Start New Test Button */}
           <button
             onClick={startNewTest}
-            className="w-full bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-4 px-6 rounded-lg transition-colors mb-8"
+            disabled={hasIncompleteSession}
+            className={`w-full font-semibold py-4 px-6 rounded-lg transition-colors mb-8 ${
+              hasIncompleteSession
+                ? 'bg-[#3e3e3e] text-gray-500 cursor-not-allowed'
+                : 'bg-[#2cbb5d] hover:bg-[#25a352] text-white'
+            }`}
           >
             Start New Practice Test
           </button>
@@ -721,6 +768,15 @@ export default function PracticeTest() {
   return (
     <div className="max-w-3xl mx-auto px-4">
       <div className="bg-[#282828] rounded-lg p-6 shadow-lg">
+        {/* Retake Banner */}
+        {isRetakeOfIncorrect && (
+          <div className="mb-4 bg-blue-500/10 border-2 border-blue-500/30 rounded-lg p-4">
+            <p className="text-blue-400 font-medium text-center">
+              📚 Retaking {retakeQuestionCount} question{retakeQuestionCount !== 1 ? 's' : ''} you got wrong on your last test
+            </p>
+          </div>
+        )}
+
         {/* Progress Header */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
