@@ -1,0 +1,2042 @@
+[
+  {
+    "question_number": 1,
+    "question": "Which of the following is NOT true about motivation to change?",
+    "options": {
+      "A": "Motivation fluctuates from one time to another.",
+      "B": "Motivation can be increased by working to remove barriers to change.",
+      "C": "Motivation is driven by hope or the belief that life can be different.",
+      "D": "Motivation that is imposed by external forces is more salient than that which is intrinsic."
+    },
+    "correct_answer": "D",
+    "rationale": "Motivation is a state of readiness or eagerness to change, which fluctuates from one time to another. The role of the social worker is to create an atmosphere that is conducive to change and to increase a client's intrinsic motivation, so that change arises from within rather than being imposed from without. If a client is driven to change internally, it is much more likely that the change effort will be sustained. A technique to increase motivation is to work to remove barriers and instill hope or the belief that life can be different."
+  },
+  {
+    "question_number": 2,
+    "question": "Evidence-based social work practice can BEST be defined as:",
+    "options": {
+      "A": "Interventions that a social worker has gained training and experience in delivering",
+      "B": "Treatment that yields the most cost-effective outcomes according to a cost-benefit analysis",
+      "C": "Decision making based on the conscientious, explicit, and judicious use of research knowledge, clinical expertise, social work values, and client wishes",
+      "D": "Practice evaluations that adhere to scientific principles"
+    },
+    "correct_answer": "C",
+    "rationale": "Evidence-based practice (EBP) combines well-researched interventions with clinical experience and ethics, as well as client preferences and culture, to guide and inform the delivery of treatments and services. Social workers, clients, and others must work together in order to identify what works, for whom, and under what conditions. This approach ensures that the treatments and services, when used as intended, will have the most effective outcomes as demonstrated by the research."
+  },
+  {
+    "question_number": 3,
+    "question": "What are the stages of change in sequential order?",
+    "options": {
+      "A": "Precontemplation, preparation, contemplation, action, maintenance, and relapse",
+      "B": "Preparation, action, precontemplation, contemplation, maintenance, and relapse",
+      "C": "Preparation, precontemplation, contemplation, action, maintenance, and relapse",
+      "D": "Precontemplation, contemplation, preparation, action, maintenance, and relapse"
+    },
+    "correct_answer": "D",
+    "rationale": "Precontemplation is denial or ignorance of the problem. It is followed by contemplation in which there is ambivalence about making change. Then comes preparation or experimenting with small changes. Action moves toward achieving a goal, whereas maintenance sustains a new behavior and avoids relapse, which can lead to feelings of frustration and failure."
+  },
+  {
+    "question_number": 4,
+    "question": "Which of the following is NOT an essential step in ethical problem solving?",
+    "options": {
+      "A": "Identifying the ethical standards that may be compromised",
+      "B": "Determining whether there is an ethical dilemma",
+      "C": "Weighing ethical issues in light of social work values and principles",
+      "D": "Asking a supervisor to monitor practice to identify new ethical issues or dilemmas"
+    },
+    "correct_answer": "D",
+    "rationale": "A social worker, not his or her supervisor, should monitor practice to identify whether new issues or dilemmas arise."
+  },
+  {
+    "question_number": 5,
+    "question": "A young boy is stopped by a police officer and claims that he is a member of the armed forces, though it is obvious that he is not. This assertion by the boy is MOST likely a:",
+    "options": {
+      "A": "Comorbid thought",
+      "B": "Dissociation",
+      "C": "Folie à deux",
+      "D": "Delusion"
+    },
+    "correct_answer": "D",
+    "rationale": "A delusion is a false, fixed belief despite evidence to the contrary (i.e., believing something that is not true). Comorbid means existing at the same time. Dissociation is a change in memory, perception, or consciousness. Folie à deux is a shared delusion."
+  },
+  {
+    "question_number": 6,
+    "question": "A social work administrator is having trouble finding a group home manager for a new program scheduled to open in 2 weeks. Further delays in locating staff will delay clients from moving into the program. The administrator temporarily hires her niece, who just graduated with a social work degree, for this position. This action is:",
+    "options": {
+      "A": "Ethical because the niece is clearly qualified for the position",
+      "B": "Unethical because this is a conflict of interest",
+      "C": "Ethical because the position is temporary and ensures clients get the services needed",
+      "D": "Unethical because clients will experience staff turnover when a new manager is hired"
+    },
+    "correct_answer": "B",
+    "rationale": "Social workers should avoid situations interfering with impartial judgment. Hiring a family member creates a dual relationship and should be avoided."
+  },
+  {
+    "question_number": 7,
+    "question": "A social worker is interested in seeing the extent to which current clients are satisfied with a new relapse prevention program. The social worker distributes a client satisfaction survey to those in the program. The social worker then collects the surveys and analyzes the results that are presented to a management team in the agency. The social worker is conducting which type of evaluation?",
+    "options": {
+      "A": "Summative",
+      "B": "Experimental",
+      "C": "Quasi-experimental",
+      "D": "Formative"
+    },
+    "correct_answer": "D",
+    "rationale": "Formative evaluations examine the process of delivering services, whereas summative evaluations examine the outcomes. Formative evaluations are ongoing processes that allow for feedback to be implemented during service delivery. These types of evaluations allow social workers to make changes as needed to help achieve program goals. Summative evaluations occur at the end of services and provide an overall description of their effectiveness. Summative evaluation examines outcomes to determine whether objectives were met. The design described is not experimental—which requires a control group and randomization of assignment—or quasi-experimental, which does not require randomization, but has more support for causal inferences than does preexperimental designs."
+  },
+  {
+    "question_number": 8,
+    "question": "Which of the following is an example of social stratification?",
+    "options": {
+      "A": "A child is not included in group activities in school because of his or her poor social skills.",
+      "B": "Children who are violent need to be segregated from their peers.",
+      "C": "A child with social deficits is assumed to be delayed in cognition without additional assessment.",
+      "D": "Children from affluent households receive a better public education than those from low-income households."
+    },
+    "correct_answer": "D",
+    "rationale": "Stratification refers to structured inequality of entire categories of people in society who have unequal access to social rewards. Stratification applies to individuals based on ethnic and racial background, social status, and/or other factors."
+  },
+  {
+    "question_number": 9,
+    "question": "During an intake interview, a client reports that she is extremely depressed and has self-destructive thoughts. She has had prior suicide attempts, but tells the social worker not to worry as she won't \"do it again.\" The social worker should FIRST:",
+    "options": {
+      "A": "Tell the client that her decision not to harm herself is a good one",
+      "B": "Explore with the client what is causing her depression",
+      "C": "Conduct a safety assessment",
+      "D": "Refer the client to a psychiatrist for a medication evaluation"
+    },
+    "correct_answer": "C",
+    "rationale": "Despite the client's report that she will not act on her thoughts, she is at risk because she has had these feelings and has acted on them in the past. The case vignette does not describe the social worker taking any action yet. A safety assessment will determine the severity of the depression and whether the client is at risk for a suicide attempt. It must be done FIRST before any other action is taken."
+  },
+  {
+    "question_number": 10,
+    "question": "A client with a Social Anxiety Disorder will MOST likely be prescribed which of the following medications to take on an ongoing basis?",
+    "options": {
+      "A": "Zoloft (sertraline)",
+      "B": "Mellaril (thioridazine)",
+      "C": "Thorazine (chlorpromazine)",
+      "D": "Valium (diazepam)"
+    },
+    "correct_answer": "A",
+    "rationale": "The primary medications used to treat social anxiety disorder are selective serotonin reuptake inhibitors (SSRIs), which were first developed to treat depression. They have been found to be effective in the treatment of a wider range of disorders. Zoloft (sertraline) is an SSRI. Benzodiazepines, such as Valium (diazepam), reduce levels of anxiety. However, they are habit-forming and sedating, so they are typically prescribed for only short-term use. Mellaril (thioridazine) and Thorazine (chlorpromazine) are antipsychotic medications for the treatment of psychosis."
+  },
+  {
+    "question_number": 11,
+    "question": "A social worker is appointed by the court to conduct a child custody evaluation for a couple that is divorcing. The mother reports that her husband is verbally abusive, controlling, and neglects the children when they are in his care. She reports that the children have missed a lot of school when staying with their father because he does not assist with getting them ready for school or doing their homework. The father states that his wife is lazy, irresponsible, and cannot meet the children's basic needs. He reports that the school frequently has to provide lunch for the children because the mother does not supply it when they are in her care. In order to BEST evaluate the legitimacy of the information, the social worker should:",
+    "options": {
+      "A": "Ask the husband and wife to put their allegations in writing and sign them, attesting to their accuracy",
+      "B": "Determine whether the husband or wife have had any past instances with being untruthful",
+      "C": "Always speak to the husband and wife together so that they are more likely to be honest",
+      "D": "Obtain information from school personnel and records after obtaining parental consent"
+    },
+    "correct_answer": "D",
+    "rationale": "Collateral information is often used when the credibility and validity of information obtained from a client or others is questionable. For example, child custody cases are inherently characterized by biased data within an adversarial process. Social workers should use data from neutral parties, such as the school, because this information has higher integrity."
+  },
+  {
+    "question_number": 12,
+    "question": "A social worker is facilitating a psychotherapy group for individuals who are in recovery from substance abuse. After group, a client mentions that she has been having problems dealing with job stress without the use of substances. In order to meet this client's needs, the social worker should:",
+    "options": {
+      "A": "Recommend that the client see the social worker individually in addition to the group therapy because she appears to need some additional support",
+      "B": "Suggest that the client bring this topic up in the group next week to see if others are having similar problems",
+      "C": "Evaluate whether group therapy is the best treatment modality for the client due to the issue being mentioned to the social worker outside of the group context",
+      "D": "Determine if there is an employee assistance program in the client's work setting to assist"
+    },
+    "correct_answer": "B",
+    "rationale": "In group therapy, the group is the major helping agent. Issues should be brought back to the group to address. There is no need for the client to see the social worker for individual therapy. Contacting an employee assistance program would breach confidentiality."
+  },
+  {
+    "question_number": 13,
+    "question": "An 11-year-old child would like to start helping around the house with chores. She approaches her mother many times, but is told she cannot assist because \"she won't do it right.\" During several attempts to do things on her own, she is scolded. According to psychosocial development theory, she may experience doubts in her abilities due to a crisis in which of the following stages?",
+    "options": {
+      "A": "Industry versus inferiority",
+      "B": "Initiative versus guilt",
+      "C": "Autonomy versus shame/doubt",
+      "D": "Generativity versus stagnation"
+    },
+    "correct_answer": "A",
+    "rationale": "Industry versus inferiority—From age 6 to puberty, children begin to develop a sense of pride in their accomplishments. If children are encouraged and reinforced for their initiative, they begin to feel industrious and feel confident in their ability to achieve goals. If this initiative is not encouraged and is restricted, children begin to feel inferior, doubting their abilities."
+  },
+  {
+    "question_number": 14,
+    "question": "A social worker employed in a hospital is asked to use a SOAP format in a client's record. In this format, the \"A\" stands for:",
+    "options": {
+      "A": "Action plan",
+      "B": "Assessment",
+      "C": "Active treatment",
+      "D": "Adjustments to services needed"
+    },
+    "correct_answer": "B",
+    "rationale": "SOAP stands for Subjective, Objective, Assessment, and Plan. In the Assessment portion, a social worker pulls together objective and subjective findings and consolidates them into a short assessment."
+  },
+  {
+    "question_number": 15,
+    "question": "Aphasia is BEST defined as difficulty with:",
+    "options": {
+      "A": "Walking or running",
+      "B": "Common motor skills such as combing hair, despite normal strength",
+      "C": "Understanding language or using language to speak or write",
+      "D": "Recognizing familiar objects"
+    },
+    "correct_answer": "C",
+    "rationale": "Aphasia is a change in cognition (mental ability) that is characterized by difficulty understanding language or using language to speak or write. Difficulty with common motor skills is known as ataxia. Inability to recognize familiar objects is labeled agnosia."
+  },
+  {
+    "question_number": 16,
+    "question": "Culture-bound syndromes in the DSM-5 are replaced by all of the following concepts EXCEPT:",
+    "options": {
+      "A": "Cultural syndromes",
+      "B": "Cultural stratification",
+      "C": "Cultural idioms of distress",
+      "D": "Cultural explanations"
+    },
+    "correct_answer": "B",
+    "rationale": "In the DSM-5, there is recognition that every disorder is inherently culture-bound. These new guidelines help a social worker be more sensitive to cultural differences and understand that a client is manifesting symptoms in a way that his or her culture experiences them. Cultural syndromes are clusters of invariant symptoms in a specific cultural group. Cultural idioms of distress are a way of talking about suffering among people in a cultural group, and cultural explanations or perceived causes for symptoms, illness, or distress have been added to assist with diagnosing."
+  },
+  {
+    "question_number": 17,
+    "question": "A social worker receives a court order to provide records of a former client. In this instance, the social worker should submit the records:",
+    "options": {
+      "A": "And try to contact the client to inform her about the disclosure",
+      "B": "With the contact information of the client so the court can contact her about the release",
+      "C": "But not contact the client as court orders are not to be discussed by anyone other than judges and attorneys",
+      "D": "And write to the judge to see if he or she wants the client to know about the court order"
+    },
+    "correct_answer": "A",
+    "rationale": "Social workers should inform clients, to the extent possible, about the disclosure of confidential information and the potential consequences, when feasible, before any disclosure is made. This applies whether social workers disclose confidential information on the basis of a legal requirement or client consent"
+  },
+  {
+    "question_number": 18,
+    "question": "A family comes into treatment because of their young daughter's behavior. They report, upon intake, that she yells at her parents, doesn't listen, and complains about their behavior. There is little progress during the course of treatment and the girl reports that she has no intention of changing. After the sixth session, a social worker tells the girl that she cannot help with her behavior and she should continue to \"do as she wishes.\" According to strategic family therapy, the social worker's directive is known as a:",
+    "options": {
+      "A": "Paradoxical intent",
+      "B": "Pretend technique",
+      "C": "Relabeling paradigm",
+      "D": "Differentiation response"
+    },
+    "correct_answer": "A",
+    "rationale": "A paradoxical intent or directive prescribes the symptomatic behavior so the client realizes control over it and uses the strength of resistance to change."
+  },
+  {
+    "question_number": 19,
+    "question": "A social worker is leaving one agency to work at another. In order to address this situation ethically, the social worker should:",
+    "options": {
+      "A": "Not inform clients in order to avoid causing them undue stress and harm",
+      "B": "Advise clients that it would be best for them to transfer services to the social worker's new agency to avoid any interruptions in treatment",
+      "C": "Inform clients of appropriate options for the continuation of services and the benefits and risks of the options",
+      "D": "Discontinue services to clients immediately"
+    },
+    "correct_answer": "C",
+    "rationale": "Social workers who are leaving an employment setting should inform clients of appropriate options for the continuation of services and of the benefits and risks of the options."
+  },
+  {
+    "question_number": 20,
+    "question": "Federal law requires health care facilities that receive Medicare and Medicaid reimbursements to do all of the following with regard to advance directives EXCEPT:",
+    "options": {
+      "A": "Inform clients of their rights to have advance directives that will allow them to make decisions regarding their health care",
+      "B": "Use a portion of their revenues to assist clients with the costs associated with creating advance directives",
+      "C": "Ask clients if they have advance directives and document their responses",
+      "D": "Provide education about advance directives"
+    },
+    "correct_answer": "B",
+    "rationale": "The Patient Self-Determination Act of 1991 specifies facilities that receive Medicare and Medicaid inform clients of their rights to make decisions concerning their own health care, ask and document whether clients have advance directives, and provide education for staff and the community."
+  },
+  {
+    "question_number": 21,
+    "question": "In which of the following circumstances is task-centered treatment NOT recommended?",
+    "options": {
+      "A": "When the client wants to see immediate results or changes in circumstances",
+      "B": "When the client is anxious to be an active part of the change process",
+      "C": "When there is a time limited period in which to work with the client",
+      "D": "When the client is addressing long-standing problems that are complex in nature"
+    },
+    "correct_answer": "D",
+    "rationale": "A task-centered approach aims to quickly engage clients in the problem-solving process because it is usually delivered in a time-limited environment. The client is an active part of the change process and the approach is highly structured to attempt to achieve immediate results as goals are broken into defined tasks. Termination begins in the first session. This approach is too brief to address long-standing problems that are complex."
+  },
+  {
+    "question_number": 22,
+    "question": "A client is currently taking Clozaril for the treatment of Schizophrenia. The client is MOST likely going to be required to undergo what medical monitoring due to this medication use?",
+    "options": {
+      "A": "Weight checks",
+      "B": "Blood work",
+      "C": "Dietary restrictions",
+      "D": "Exercise regimen"
+    },
+    "correct_answer": "B",
+    "rationale": "Clozaril increases the risk of agranulocytosis (low white blood cell count). Monitoring of the white blood cell count through regular blood work is required."
+  },
+  {
+    "question_number": 23,
+    "question": "Which of the following inhibits the establishment of a therapeutic relationship?",
+    "options": {
+      "A": "A universalism approach or the acceptance of a standard set of norms or standards",
+      "B": "A pluralistic approach that values cultural pluralism",
+      "C": "Clients examined as being influenced by their environment with problems being seen as resulting from role ambiguity rather than individual deficits",
+      "D": "Flexible treatment approaches that take into account the subjective realities of clients"
+    },
+    "correct_answer": "A",
+    "rationale": "Universalism is based on one acceptable norm or standard for everyone versus many valid standards that have been developed by clients that they have determined to be most useful to them."
+  },
+  {
+    "question_number": 24,
+    "question": "Which of the following is NOT an exception to a social worker's duty to protect confidentiality?",
+    "options": {
+      "A": "When a client poses a serious risk to self and others",
+      "B": "When child abuse is suspected",
+      "C": "When a client has violated criminal laws and has not been properly prosecuted",
+      "D": "When there is an imminent threat by a client to an identifiable third party"
+    },
+    "correct_answer": "C",
+    "rationale": "In all other instances, there is a serious threat to the health and safety of self or others. D is required under duty to warn (Tarasoff decision)."
+  },
+  {
+    "question_number": 25,
+    "question": "Which of the following theories is used to explain why clients in battering relationships will not leave until the benefits exceed the risks?",
+    "options": {
+      "A": "Psychoanalytic",
+      "B": "Problem solving",
+      "C": "Functional",
+      "D": "Social exchange"
+    },
+    "correct_answer": "D",
+    "rationale": "Social exchange theory is based on the idea of totaling potential benefits and losses to determine behavior. A client will leave a battering relationship when the alternative is seen as better than the current situation (rewards outweigh costs)."
+  },
+  {
+    "question_number": 26,
+    "question": "A social worker is working with a client who is anxious about public speaking. The social worker asks the client to close her eyes, visualize herself speaking to a large group, and describe her feelings related to the imaginary situation in detail. This technique by the social worker is known as:",
+    "options": {
+      "A": "Covert modeling",
+      "B": "Self-modeling",
+      "C": "Live modeling",
+      "D": "Symbolic modeling"
+    },
+    "correct_answer": "A",
+    "rationale": "Covert modeling is when clients are asked to use their imagination, visualize the desired behavior, and describe it in detail. Self-modeling is when clients are videotaped demonstrating the desired behavior and this tape is watched and discussed. Live modeling refers to watching a real person performing the desired behavior. Symbolic modeling includes watching others who have been videotaped perform the desired behavior."
+  },
+  {
+    "question_number": 27,
+    "question": "Which of the following is an example of role discomplementarity?",
+    "options": {
+      "A": "A husband complains that his wife does not take responsibility for keeping the house clean and a wife is upset that her husband does not financially provide for the family.",
+      "B": "A woman states that she does not like working and wants to quit her job.",
+      "C": "A young child wants to play in the neighborhood unsupervised.",
+      "D": "A man struggles to fit in time at home with his family due to his hectic work schedule."
+    },
+    "correct_answer": "A",
+    "rationale": "Role discomplementarity results when roles conflict or when the role expectations of others differ from one's own. In this situation, the husband and wife do not have the same expectations with regard to the tasks for which each other should be responsible."
+  },
+  {
+    "question_number": 28,
+    "question": "Which of the following is NOT one of six levels of cognition?",
+    "options": {
+      "A": "Synthesis",
+      "B": "Knowledge",
+      "C": "Affective",
+      "D": "Evaluation"
+    },
+    "correct_answer": "C",
+    "rationale": "The six levels of cognition are, in sequential order—knowledge, comprehension, application, analysis, synthesis, and evaluation. Teaching techniques should match the cognitive objective, such as knowing specific facts, theories, or information (knowledge) or creating something new/integrating it into a solution (synthesis). Learning aimed at judging the quality of something is known as evaluation."
+  },
+  {
+    "question_number": 29,
+    "question": "Which of the following is NOT a stated purpose of the professional code of ethics?",
+    "options": {
+      "A": "To be used by malpractice insurance companies to mitigate liability",
+      "B": "To summarize the values on which the profession is based",
+      "C": "To be used by the profession to determine whether social workers have acted unethically",
+      "D": "To serve as a guide to socialize new social workers in the field"
+    },
+    "correct_answer": "A",
+    "rationale": "The Code of Ethics also provides ethical standards to which the general public can hold the profession accountable and social workers can consult if professional obligations conflict. These functions of the Code are printed immediately after the preamble. The mitigation of liability by third-party payers is not based on the values of the profession and is not a stated purpose of the Code."
+  },
+  {
+    "question_number": 30,
+    "question": "Which of the following is an example of role reversal?",
+    "options": {
+      "A": "A mother who shares her 11-year-old daughter's clothes and collects stuffed animals",
+      "B": "A mother expecting her 11-year-old daughter to stay at home unsupervised",
+      "C": "A mother with relationship problems who is repeatedly emotionally comforted by her 11-year-old daughter",
+      "D": "A mother who arranges a date for her 11-year-old daughter"
+    },
+    "correct_answer": "C",
+    "rationale": "A role reversal is when two people switch or reverse roles. In this answer, the mother is emotionally dependent and the child is the comforter. These behaviors are usually reversed in a parent-child relationship. The other response choices may relate to roles, but are not reversals."
+  },
+  {
+    "question_number": 31,
+    "question": "A social worker receives a subpoena from the courts in the mail for a former client's records. In this situation, a social worker should:",
+    "options": {
+      "A": "Immediately send in the original records to the courts",
+      "B": "Prepare a summary of the records to send in immediately",
+      "C": "Claim privilege to protect the confidentiality of the client",
+      "D": "Ignore the subpoena because it relates to a former client and is not relevant"
+    },
+    "correct_answer": "C",
+    "rationale": "A subpoena is not a court order and no documents should be sent unless ordered by the court. However, a social worker does have to respond and should not send in the records when receiving a subpoena unless the client has provided a written release."
+  },
+  {
+    "question_number": 32,
+    "question": "In the DSM-5, when a social worker provides a reason why a condition does not qualify for a disorder, it should be noted as:",
+    "options": {
+      "A": "Not otherwise specified",
+      "B": "Other specified",
+      "C": "Unspecified",
+      "D": "Not specified elsewhere"
+    },
+    "correct_answer": "B",
+    "rationale": "In the DSM-5, \"Not Otherwise Specified\" (NOS) categories for disorders that do not fit under specific disorder categories are replaced. \"Other Specified\" (i.e., \"Other Specified Depressive Disorder\") categories are used when a social worker provides the reason why the condition does not qualify for a specific diagnosis (i.e., short duration). \"Unspecified\" is used when no additional explanation is provided as to why the disorder does not meet the usual criteria."
+  },
+  {
+    "question_number": 33,
+    "question": "A client abruptly stops coming to therapy after the sixth session. She shows up at the office several weeks later demanding a copy of her records. The social worker does not believe that the information in the record could cause harm to the client, but denies access because the client did not provide any reason for the abrupt termination or reason for wanting the copies. The actions by the social worker are:",
+    "options": {
+      "A": "Unethical because the client should have access to his or her record under these circumstances",
+      "B": "Ethical because the reason for the release must be disclosed to the social worker",
+      "C": "Ethical because the client terminated without notice",
+      "D": "Unethical because the client is always able to access his or her record under any circumstances"
+    },
+    "correct_answer": "A",
+    "rationale": "A social worker who is concerned that client access to his or her records could cause serious harm to the client can limit access to the record or portion of the record when the rationale for the request is documented in the file. This case vignette clearly states that the social worker is not concerned that releasing the record to the client would be harmful, so it must be released and to not do so is unethical."
+  },
+  {
+    "question_number": 34,
+    "question": "A client was referred to a mental health agency for treatment. Upon admission, he reported feeling lethargic and hopeless and had difficulty getting out of bed. Several weeks later, he states that he is sleepless, agitated, and unable to focus. Which of the following medications is the client MOST likely going to be prescribed?",
+    "options": {
+      "A": "Ativan (lorazepam)",
+      "B": "Nardil (phenelzine)",
+      "C": "Lithium (lithium carbonate)",
+      "D": "Buspar (buspirone)"
+    },
+    "correct_answer": "C",
+    "rationale": "Ativan and Buspar are antianxiety medications and Nardil is an antidepressant. Lithium is a mood stabilizer, and this client appears to be experiencing depression upon admission, as well as mania later in treatment. A mood stabilizer is used for the treatment of Bipolar Disorder."
+  },
+  {
+    "question_number": 35,
+    "question": "When clients are at high risk for relapse after discharge, all of the following should occur after termination EXCEPT:",
+    "options": {
+      "A": "Regular assessments to determine whether services are needed",
+      "B": "Creation of client contracts that reinforce positive behaviors",
+      "C": "Utilization of natural supports and peer support services",
+      "D": "Follow-up to see whether discharge plans are being implemented"
+    },
+    "correct_answer": "B",
+    "rationale": "Clients who are at high risk for developing problems after services have ended should receive regular assessments to see if additional services are needed and/or discharge plans are being implemented. Natural supports and peer supports, such as 12-step programs, are good resources to assist with sustaining progress made. The creation of a contract is not done after termination because it indicates the presence of an intervention in a therapeutic relationship. It is incorrect given the order of the problem-solving process."
+  },
+  {
+    "question_number": 36,
+    "question": "A social worker in private practice designs a standard intake form that includes questions about the client's demographic information including age, gender, marital status, sexual orientation, education, and drug/alcohol use. This form is:",
+    "options": {
+      "A": "Ethical since it contains important information for the social worker to know in order to work with the client effectively",
+      "B": "Ethical since all of this information will be kept confidential",
+      "C": "Unethical since this information may not be needed for treatment",
+      "D": "Unethical unless the social worker makes it clear that the client has the choice as to whether to complete it"
+    },
+    "correct_answer": "C",
+    "rationale": "Social workers should respect clients' right to privacy. Social workers should not solicit private information from clients unless it is essential to providing services or conducting social work evaluation or research. Information about the client's sexual orientation and/or drug or alcohol use may not be relevant to the presenting problem or treatment."
+  },
+  {
+    "question_number": 37,
+    "question": "A social worker is charged with creating a behavioral objective to assist her client, John, in his educational setting. Which of the following statements is the BEST example of this type of objective?",
+    "options": {
+      "A": "John will make eye contact during conversations in practical arts class at least 75% of the time.",
+      "B": "John will be motivated to complete his homework daily in order to achieve a grade of a B or better.",
+      "C": "The teacher will praise John during class at least 10 times per hour.",
+      "D": "John will sit in his chair at least 80% of the time."
+    },
+    "correct_answer": "A",
+    "rationale": "A behavioral objective should be client-oriented and emphasize what a client needs to do. C is excluded as it focuses on the teacher's actions. An important element of behavioral objectives is that they are observable. Motivation is not easily observed. The conditions under which the behavior will be performed should also be included. D does not indicate if the expectation regarding sitting is to take place during class or all of the time. A has all of the elements—it specifies the target behavior, the conditions under which the behavior will be performed, and the criteria for determining when the acceptable performance of the behavior occurs."
+  },
+  {
+    "question_number": 38,
+    "question": "A new client enters the office walking slowly, using a cane, and has difficulty picking up objects, swallowing, and speaking as a result of a stroke. The BEST diagnosis for this client is:",
+    "options": {
+      "A": "Agnosia",
+      "B": "Ataxia",
+      "C": "Prosopagnosia",
+      "D": "Acalculia"
+    },
+    "correct_answer": "B",
+    "rationale": "Ataxia describes a lack of muscle control during voluntary movements, such as walking or picking up objects. A sign of an underlying condition, ataxia can affect movement, speech, eye movement, and swallowing. Persistent ataxia usually results from damage to the cerebellum—the part of the brain that controls muscle coordination. Many conditions can cause ataxia, including alcohol abuse, stroke, tumor, cerebral palsy, and multiple sclerosis. An inability to recognize familiar objects is agnosia, and an inability to recognize familiar faces is prosopagnosia. Acalculia is the inability to do simple arithmetic."
+  },
+  {
+    "question_number": 39,
+    "question": "Echolalia is BEST defined as:",
+    "options": {
+      "A": "Mimicking another's speech",
+      "B": "Spontaneous movement",
+      "C": "Repetitive movements",
+      "D": "Odd mannerisms or actions"
+    },
+    "correct_answer": "A",
+    "rationale": "Echolalia is repeating noises and phrases. It is sometimes associated with Catatonia, Autism Spectrum Disorder, Schizophrenia, and other disorders."
+  },
+  {
+    "question_number": 40,
+    "question": "A man who is having problems at work finds that he is yelling at his children more and has begun to have marital issues with his wife. The husband is MOST likely using the defense mechanism of:",
+    "options": {
+      "A": "Reaction formation",
+      "B": "Projection",
+      "C": "Conversion",
+      "D": "Displacement"
+    },
+    "correct_answer": "D",
+    "rationale": "Displacement is directing an impulse, wish, or feeling toward another person or situation that is less threatening. The man unconsciously realizes that he cannot express his anger on the job or it may have negative consequences, so he goes home and yells at his wife and children."
+  },
+  {
+    "question_number": 41,
+    "question": "Upon admission, a client reports that he has always feared disapproval and rejection from others in his life. Several weeks later, the client appears anxious and worried. When asked about his behavior, he states that he feels judged by the social worker and that the social worker is being critical of him when he sees her. The client's feelings are an example of:",
+    "options": {
+      "A": "Countertransference",
+      "B": "Psychosis",
+      "C": "Paranoia",
+      "D": "Transference"
+    },
+    "correct_answer": "D",
+    "rationale": "Transference refers to redirection of a client's feelings for a significant person to a social worker. Transference is often manifested as an erotic attraction toward a social worker, but can be seen in many other forms such as rage, hatred, mistrust, parentification, extreme dependence, or even placing a social worker in an esteemed status."
+  },
+  {
+    "question_number": 42,
+    "question": "Which of the following is the MOST significant change in the DSM-5 concerning Substance Related Disorders?",
+    "options": {
+      "A": "Substance Abuse and Substance Dependence have been combined into a single Substance Use Disorder.",
+      "B": "Recurrent legal problems were added to the criteria for Substance Use Disorders.",
+      "C": "Craving or a strong desire to use a substance was deleted from Substance Dependence.",
+      "D": "Recurrent legal problems were deleted from the criteria for Substance Abuse."
+    },
+    "correct_answer": "A",
+    "rationale": "DSM-IV created separate diagnoses for \"abuse\" and \"dependence\" although substance-related problems occur on a continuum. The DSM-5 uses \"Substance Use Disorders\" as the diagnosis for people with such problems. \"Recurrent legal problems\" was deleted as a criterion for Substance Use Disorders and \"craving or a strong desire or urge to use a substance\" was added to the criteria."
+  },
+  {
+    "question_number": 43,
+    "question": "A social worker sees that a colleague is distracted when interacting with clients and is showing up for appointments late. The social worker learns that this behavior began several weeks earlier, after the death of her colleague's husband. In this instance, the social worker should:",
+    "options": {
+      "A": "Give the colleague additional time to grieve and monitor the colleague's actions to see if the behavior subsides on its own",
+      "B": "Speak to a supervisor to see if the colleague's workload could be reduced for a period of time",
+      "C": "Contact the human resources department to see if there are employee assistance services available",
+      "D": "Speak to the colleague directly about the observations to see if additional assistance is needed"
+    },
+    "correct_answer": "D",
+    "rationale": "A social worker with direct knowledge of a colleague's impairment due to personal problems, psychological stress, and so on, that interferes with practice effectiveness should consult with the colleague when feasible and assist the colleague in taking remedial action."
+  },
+  {
+    "question_number": 44,
+    "question": "Which of the following is NOT true of life crises?",
+    "options": {
+      "A": "They must be precipitated by major life events.",
+      "B": "The ways in which they are addressed significantly impact subsequent functioning.",
+      "C": "They can produce healthier behavior if understood and overcome.",
+      "D": "They produce anxiety, tension, and disequilibrium."
+    },
+    "correct_answer": "A",
+    "rationale": "Life crises do not have to be a major event. They can be the \"last straws\" in a series of events that exceed the client's ability to cope. Addressing crises appropriately significantly impacts subsequent client functioning and can assist in the development of healthy coping skills."
+  },
+  {
+    "question_number": 45,
+    "question": "Which of the following is true of BOTH networking in business and networking in social work practice?",
+    "options": {
+      "A": "It aims to educate about the problems experienced by others and thereby helps to effect system changes.",
+      "B": "It aims to attract more individuals to organizations so that these entities can prosper.",
+      "C": "It is beneficial for clients as it keeps the costs down through sharing of resources.",
+      "D": "It creates a community and builds alliances around a common interest or goal."
+    },
+    "correct_answer": "D",
+    "rationale": "The first answer is true for social work, but not for business. B is true for business networking, but the aim in social work is not to attract clients for the betterment of the agency. C may not be true in business because lower operating costs are not always passed on to clients; they may mean more profits for a company. In both business and social work, networking provides opportunities to work with others toward the achievement of common goals and helps in establishing professional relationships or alliances."
+  },
+  {
+    "question_number": 46,
+    "question": "Which of the following is the MOST important benefit of community participation in social work practice?",
+    "options": {
+      "A": "It puts the decision-making power partly or wholly with community members.",
+      "B": "It shows the media that individuals want to get involved when there is a good cause.",
+      "C": "It informs community members about the work that needs to be done to make change.",
+      "D": "It divides the workload so that it can be distributed across a larger group."
+    },
+    "correct_answer": "A",
+    "rationale": "The values and principles of social work practice should be used as the basis for selecting the most important benefit. A is based on the belief of self-determination or that individuals and groups should be in charge of taking actions that are best for them. The other response choices may be true, but they are not based on this fundamental concept in social work practice."
+  },
+  {
+    "question_number": 47,
+    "question": "If a client has a Substance Use Disorder in addition to Schizophrenia, these two disorders are considered to be:",
+    "options": {
+      "A": "Premorbid",
+      "B": "Comorbid",
+      "C": "Contraindicated",
+      "D": "Dissociated"
+    },
+    "correct_answer": "B",
+    "rationale": "Comorbid refers to two problems, conditions, or disorders that exist at the same time—such as the presence of a mental health and substance use issue, or a mental health and medical problem."
+  },
+  {
+    "question_number": 48,
+    "question": "A woman complains that her 7-year-old son \"makes things up and exaggerates.\" He often adds information when recalling experiences and talks about knights and dragons being part of his everyday world. The woman is angry about this behavior and worried that it is an indication of some mental health problem. In order to best assist, the social worker should:",
+    "options": {
+      "A": "Explain that the behaviors are associated with the preoperational thought stage of cognitive development",
+      "B": "Conduct a mental status examination on the child",
+      "C": "Refer the child for a mental health evaluation based upon the mother's concerns",
+      "D": "Determine whether this behavior is a concern to others, including his teachers"
+    },
+    "correct_answer": "A",
+    "rationale": "Magical thinking is a hallmark of Piaget's preoperational thought stage. Understanding that children learn through this process, and that it is typical, may assist the mother in better coping with this behavior. There is no indication that there are any mental health issues, so the social worker should not see the child or take other action based on this report alone."
+  },
+  {
+    "question_number": 49,
+    "question": "A social worker notices what appears to be burns on a child's arm and asks the child about these markings. The child responds that \"grandma burned me, but mommy isn't going to let me go over there anymore so it's OK.\" The social worker should:",
+    "options": {
+      "A": "Document the conversation in the file and make sure to check the child regularly in the future for burns or bruises",
+      "B": "Report the conversation immediately to child protective services",
+      "C": "Discuss the conversation with a supervisor at the next supervision session",
+      "D": "Contact the grandmother to validate this report by the child"
+    },
+    "correct_answer": "B",
+    "rationale": "Social workers are mandatory reporters and must not delay in reporting or investigating such an incident themselves. All suspected abuse situations should be reported to the child protection agency immediately."
+  },
+  {
+    "question_number": 50,
+    "question": "A client has been in therapy for about 4 months and has made substantial progress toward achieving his goals. The social worker and client believe that continued treatment would be beneficial. However, the client recently lost his job and has been informed that his insurance coverage, which has been paying for the services, will end immediately. The client states that he cannot afford to pay the rate paid by the insurance company. In order to facilitate continued progress, the social worker should:",
+    "options": {
+      "A": "Suggest that the client now only pay the amount of the copay and keep track of what would have been paid by an insurance company so a payment plan can be put in place once the client is employed again",
+      "B": "Brainstorm with the client about services that the client can provide in exchange for treatment",
+      "C": "Terminate therapy immediately, but with the understanding that it will begin immediately upon enrollment in a new insurance plan",
+      "D": "Discuss a feasible amount to be paid by the client while he is uninsured"
+    },
+    "correct_answer": "D",
+    "rationale": "A social worker can waive or reduce the fee, but cannot barter (B) or create a loan system with the client (A) because it is a conflict of interest. Both parties agree that continued treatment is needed, so C does not appear appropriate."
+  },
+  {
+    "question_number": 51,
+    "question": "Which of the following is NOT a key diagnostic criterion of Paraphilic Disorders according to the DSM-5?",
+    "options": {
+      "A": "Atypical sexual interests",
+      "B": "Personal distress about sexual interests not strictly due to societal disapproval",
+      "C": "Sexual desire or behavior that involves another person's psychological harm or from persons who are unwilling or unable to consent",
+      "D": "Legal involvement due to sexual interests or behaviors"
+    },
+    "correct_answer": "D",
+    "rationale": "Most clients with atypical sexual interests do not have mental disorders. To be diagnosed with paraphilic disorders, DSM-5 requires that clients with these interests feel personal distress about their interest, not merely distress resulting from society's disapproval, or have a sexual desire or behavior that involves another person's psychological distress, injury, or death, or a desire for sexual behaviors involving unwilling persons or persons unable to give legal consent. These desires and/or behaviors do not need to have resulted in legal involvement."
+  },
+  {
+    "question_number": 52,
+    "question": "Which of the following is a limitation when using existing case records as the data source for the evaluation of client progress?",
+    "options": {
+      "A": "It saves time because the information is already available and does not have to be gathered.",
+      "B": "There are financial benefits because there are no additional costs associated with data collection.",
+      "C": "The scope of the evaluation is restricted to that which is explicitly stated in the file.",
+      "D": "It cannot be done unless the client consents in writing to allow such use."
+    },
+    "correct_answer": "C",
+    "rationale": "The first two answers are correct and are not limitations, but benefits. C is a limitation because there may be gaps in the record or the information that is explicitly stated may not reflect all the progress that has been made. D is not true and is therefore not a limitation; consent is only required for records that are being used in formal evaluation beyond determining individual client progress, which was the circumstance described in this question."
+  },
+  {
+    "question_number": 53,
+    "question": "A client needs to access services from another organization. In order to BEST assist this client, a social worker should:",
+    "options": {
+      "A": "Let the client identify and contact agencies independently to avoid interfering with the client's right to self-determination",
+      "B": "Refer the client to an agency that the social worker has a relationship with to ensure an easy transition",
+      "C": "Work with the client to evaluate options and select an agency that the client thinks will best meet his or her needs",
+      "D": "Contact the client's insurance company to see which agencies are participating providers"
+    },
+    "correct_answer": "C",
+    "rationale": "Social workers want to respect a client's right to self-determination and should not select an agency for the client. In addition, the social worker should assist the client to gather all needed information so that the client can make an informed decision. Working with insurance companies to ensure coverage is a part of the process, but the decision should primarily be based on the ability of the agency to meet the client's needs."
+  },
+  {
+    "question_number": 54,
+    "question": "During an intake interview, a client uses derogatory language to refer to individuals of a particular ethnic group. This language causes the social worker to become angry. In order to appropriately deal with the anger, the social worker should:",
+    "options": {
+      "A": "Explain to the client in a professional manner that this language is inappropriate and upsets the social worker",
+      "B": "Suggest that the client see another social worker in the agency without giving the client an explanation",
+      "C": "Recognize the anger and discuss it later with the supervisor",
+      "D": "Tell the client about the reaction so that a decision can be made by the client about whether the social worker is the best match for the client"
+    },
+    "correct_answer": "C",
+    "rationale": "A client must feel he or she is understood and valued as a person, though his or her performance may be unsatisfactory. If a client feels judged, he or she will not speak freely during a social work interview. Hence, a social worker must be interested, genuinely concerned and encouraging, and at the same time, objective, but neither condemning nor praising. In this case vignette, the social worker should use the supervisor to process the feelings that arise as a result of the client's actions. The other response choices involve telling the client about the anger, which could interfere with the engagement process, or sending the client to another agency that does not assist him or her. Social workers must be skilled in the principles and techniques of interviewing, as well as appropriately dealing with their emotions in a manner that does not negatively impact the therapeutic process."
+  },
+  {
+    "question_number": 55,
+    "question": "A client who has Schizophrenia has not been taking his medication. He is in crisis, but does not pose a danger to himself or others. The client was recently discharged from an inpatient hospitalization after an involuntary commitment. In the social worker's opinion, the client would benefit from rehospitalization, but the client does not want to be readmitted. The social worker should:",
+    "options": {
+      "A": "Identify community resources to meet his immediate needs",
+      "B": "Contact the hospital to see if he can be readmitted",
+      "C": "Recommend that the client be involuntarily committed again to get the medication needed",
+      "D": "Determine if he has a family member or someone who can persuade him to enter the hospital again"
+    },
+    "correct_answer": "A",
+    "rationale": "The case vignette states that the client is not a danger to himself or others, so he cannot be involuntarily committed. The social worker should not contact the hospital because the client is not agreeable to admission. Using a family member or others to convince him is not appropriate. The client is in crisis, so community resources aimed at meeting his immediate needs are the priority."
+  },
+  {
+    "question_number": 56,
+    "question": "A client's insurance company threatens to discontinue to pay for services immediately if it does not receive the current treatment goals of the client. The social worker sends these goals without written consent from the client. This action by the social worker is:",
+    "options": {
+      "A": "Ethical since the client would not be able to continue services without the insurance payments",
+      "B": "Unethical because such a release requires written consent",
+      "C": "Ethical since treatment goals can be sent to an insurance company without written consent",
+      "D": "Unethical or ethical, depending upon whether the social worker spoke to the client about insurance requirements at the beginning of treatment"
+    },
+    "correct_answer": "B",
+    "rationale": "Social workers should not disclose confidential information to third-party payers unless clients have authorized such disclosure. Speaking to the client at the onset of treatment about insurance requirements does not constitute informed consent for the release of information requested."
+  },
+  {
+    "question_number": 57,
+    "question": "A social worker is running a group with adolescents. One of the group members calls the social worker because she is very upset that something that she said in group was disclosed to others in her school by another group member. The BEST method for the social worker to address this situation is to:",
+    "options": {
+      "A": "Individually contact the group member who disclosed the information to discuss the concern",
+      "B": "Terminate the group member who disclosed the information in order to create a \"safe\" environment for the other participants",
+      "C": "Suggest that the upset group member bring up her concern at the next group session",
+      "D": "Develop a confidentiality agreement to be signed by all members at the next group session"
+    },
+    "correct_answer": "C",
+    "rationale": "There is no legal mandate for group members to safeguard information disclosed in groups. However, this disclosure may be a violation of the rules that the group established for itself. It is appropriate for the group to discuss and decide what actions, if any, should take place. Such disclosures may threaten the psychotherapeutic goals of the group, but any confrontation should be done in the group context."
+  },
+  {
+    "question_number": 58,
+    "question": "Which of the following is NOT one of Freud's stages of psychosexual development?",
+    "options": {
+      "A": "Genital",
+      "B": "Latency",
+      "C": "Castration",
+      "D": "Oral"
+    },
+    "correct_answer": "C",
+    "rationale": "Freud's psychosexual stages were oral, anal, phallic, latency, and genital. They began in infancy and went through puberty into adulthood. Castration anxiety is a child's fear that his penis will be cut off for desiring his mother. It is not one of the five stages."
+  },
+  {
+    "question_number": 59,
+    "question": "Which is NOT true when an agency uses the services of a consultant?",
+    "options": {
+      "A": "The agency retains formal authority over agency practices, whereas a consultant has informal authority based on skills and knowledge.",
+      "B": "The agency must get consent for releases of information when sharing client information with a consultant.",
+      "C": "The agency is mandated to follow a consultant's recommendations.",
+      "D": "The agency must use a consultant who has demonstrated knowledge, expertise, and competence."
+    },
+    "correct_answer": "C",
+    "rationale": "Although a consultant does not have any formal authority over agency decision making, he or she has informal authority as an \"expert.\" Releases of information are needed when disclosing data to a consultant. A consultant should be competent, demonstrating knowledge and expertise. However, the agency is not required to follow the advice given by a consultant. The final decision rests with the agency administration and board of directors."
+  },
+  {
+    "question_number": 60,
+    "question": "A client expresses an attraction to the social worker during a therapy session. In order to address this issue ethically, the social worker should:",
+    "options": {
+      "A": "Explore it as a therapeutic issue, seek supervision, and document the disclosure in the client file",
+      "B": "Ignore the overture and hope that the client does not express this attraction again",
+      "C": "Immediately refer the client to another social worker in the agency because the current social worker cannot be objective once such a disclosure has occurred",
+      "D": "Terminate services immediately in case a personal relationship develops"
+    },
+    "correct_answer": "A",
+    "rationale": "A social worker must address this expression within an appropriate therapeutic context. Referring or terminating is not appropriate and ignoring it does not assist the client in understanding why these feelings are occurring. The social worker should never act on these feelings and engage in a relationship with a client."
+  },
+  {
+    "question_number": 61,
+    "question": "An agency that employs social workers has detailed job descriptions that delineate the best way to perform functions, closely supervises its employees, and ties employee pay increases to behaviors that promote the goals of the organization. This agency is MOST likely using which of the following approaches to manage its workers?",
+    "options": {
+      "A": "Scientific management",
+      "B": "Human relations",
+      "C": "Systems",
+      "D": "Contingency"
+    },
+    "correct_answer": "A",
+    "rationale": "A scientific management approach finds the one \"best way\" to perform each task; carefully matches each worker to each task; closely supervises workers, using reward and punishment as motivators; and manages and controls behavior. A systems approach considers the organization as a system composed of interrelated subsystems. A contingency approach recognizes that organizational systems are interrelated with the environment and different organizational relationships are needed depending upon the larger environmental context. A human relations approach emphasizes creativity, cohesive work groups, participatory leadership, and open communication."
+  },
+  {
+    "question_number": 62,
+    "question": "Projective tests are based on which of the following theoretical approaches?",
+    "options": {
+      "A": "Behavior management",
+      "B": "Psychoanalytic",
+      "C": "Cognitive behavioral",
+      "D": "Self psychology"
+    },
+    "correct_answer": "B",
+    "rationale": "In a projective test, a client offers responses to ambiguous scenes, words, or images. This type of test emerged from a psychoanalytic approach, which suggested that clients have unconscious thoughts or urges. Projective tests are intended to uncover unconscious desires that are hidden from conscious awareness."
+  },
+  {
+    "question_number": 63,
+    "question": "Most models of spiritual development move from an individual being egocentric to eventually becoming a(n):",
+    "options": {
+      "A": "Conformist",
+      "B": "Integrated being",
+      "C": "Dichotomous thinker",
+      "D": "Follower of blind faith"
+    },
+    "correct_answer": "B",
+    "rationale": "Individuals usually begin unwilling to accept a will greater than their own and are extremely egotistical. They then move to conforming and having blind faith. In this second stage, things are seen dichotomously— as right or wrong. Individuals then come to develop a deeper understanding of good and evil and do not accept blind faith, but integrate their beliefs into their larger worldview and behaviors."
+  },
+  {
+    "question_number": 64,
+    "question": "All of the following are true about empathetic communication EXCEPT:",
+    "options": {
+      "A": "Empathetic communication bridges the gap between the social worker and client by establishing rapport.",
+      "B": "Empathetic communication is nonjudgmental, accepting, and genuine.",
+      "C": "Empathetic communication is verbal communication in which the client is engaged in oral problem solving and processing of new information.",
+      "D": "Empathetic communication decreases defensiveness and encourages a more rational discussion of problems."
+    },
+    "correct_answer": "C",
+    "rationale": "Empathetic communication also includes the client's nonverbal messages. A social worker can observe body language and make explicit a client's feelings, as well as communicate, through eye contact and posture, interest, and understanding in what the client is saying."
+  },
+  {
+    "question_number": 65,
+    "question": "A new client comes to the first appointment and is extremely anxious. She paces while in the waiting room and states that she \"just needs to get some sleep.\" During the intake interview, the client reports that she is a recreational drug user. Based on her behavior, the client is MOST likely using:",
+    "options": {
+      "A": "Heroin",
+      "B": "Cocaine",
+      "C": "Marijuana",
+      "D": "Oxycontin"
+    },
+    "correct_answer": "B",
+    "rationale": "Cocaine use is indicated by dilated pupils, hyperactivity, euphoria, anxiety, and excessive talking. Heroin use is indicated by contracted pupils, sleeping at unusual times, sweating, vomiting, twitching, and loss of appetite. Marijuana use is indicated by glassy, red eyes; inappropriate laughter; and loss of interest and motivation. Oxycontin (oxycodone) is an opioid pain medication used to treat moderate to severe pain and its use is indicated by sleepiness, inattention, and loss of appetite."
+  },
+  {
+    "question_number": 66,
+    "question": "A woman who is in a relationship that is physically abusive would like to begin couples counseling because she believes that helping her boyfriend to see her point of view may assist in decreasing the violence. In order to appropriately address this request, the social worker should:",
+    "options": {
+      "A": "Suggest that she ask her boyfriend to come to the next session",
+      "B": "Ask if the social worker can contact the boyfriend to assess his interest in receiving couples counseling",
+      "C": "Explain to the woman that couples counseling should not take place at this time, given the physical abuse",
+      "D": "Contact the boyfriend about coming in for individual counseling with the suggestion that there be joint sessions with the two of them at times"
+    },
+    "correct_answer": "C",
+    "rationale": "Traditional marital and couples therapy are not appropriate in battering relationships. It puts victims in greater danger of further abuse."
+  },
+  {
+    "question_number": 67,
+    "question": "A client has just been diagnosed with terminal cancer. Using a systems approach, the social worker should:",
+    "options": {
+      "A": "Develop a plan for long-term care aimed at meeting the client's medical needs",
+      "B": "Work with the client on addressing the impacts of this prognosis on his or her psychological and spiritual well-being",
+      "C": "Consider whether continuing to treat the client is in the client's best interest given this prognosis",
+      "D": "Reexamine the treatment goals to see if they are still relevant or need to be revised given this health information"
+    },
+    "correct_answer": "B",
+    "rationale": "A systems approach states that all parts of well-being are interrelated or interconnected. Thus, a change in physical health will impact on psychological and spiritual functioning. The treatment should not focus on just the health issues, but ensure that these other areas are considered."
+  },
+  {
+    "question_number": 68,
+    "question": "According to Freud, an adolescent in puberty is in which stage of psychosexual development?",
+    "options": {
+      "A": "Genital",
+      "B": "Phallic",
+      "C": "Latency",
+      "D": "Anal"
+    },
+    "correct_answer": "A",
+    "rationale": "The genital stage begins in puberty and the source of pleasure is the genitals. Sexual urges return after being dormant during the latency stage, which begins at about age 5."
+  },
+  {
+    "question_number": 69,
+    "question": "Which of the following is the BEST definition of empowerment?",
+    "options": {
+      "A": "Obtaining resources to assist in improving a client's financial and social status",
+      "B": "Building skills and obtaining resources that will assist a client in controlling and making changes, if desired, in his or her own well-being",
+      "C": "Meeting basic needs in a client's life to facilitate growth toward self-actualization",
+      "D": "Creating alliances or power networks that can be used by a client to increase his or her social standing"
+    },
+    "correct_answer": "B",
+    "rationale": "Empowerment aims to ensure a sense of control over well-being and that change is possible. It is not doing something for a client, but assisting him or her to have skills or resources needed to make desired changes himself or herself."
+  },
+  {
+    "question_number": 70,
+    "question": "A client is starting a new business and really needs a partner to assist with start-up activities. Without this help, the client will experience extreme financial hardship because she will not be able to bring in needed income to her household. The social worker has a lot of business expertise that would be valuable to the client. In this situation, the social worker should:",
+    "options": {
+      "A": "Continue to serve the client, providing only emotional support during this crisis",
+      "B": "Terminate services to the client to assist with the start-up business so that the client does not experience financial loss",
+      "C": "Continue to serve the client, providing financial support in addition to emotional support during this crisis",
+      "D": "Stop billing the client for a short period while assisting the client with business start-up, with the understanding that this arrangement is time limited"
+    },
+    "correct_answer": "A",
+    "rationale": "Social workers should not terminate services to pursue social, financial, or sexual relationships with clients. Social workers should also not engage in dual relationships with clients."
+  },
+  {
+    "question_number": 71,
+    "question": "Which of the following is NOT considered as part of culturally informed intervention planning?",
+    "options": {
+      "A": "Involvement of family members in treatment",
+      "B": "Use of individual versus group treatment modalities",
+      "C": "Incorporation of alternative treatment approaches",
+      "D": "Need for informed consent procedures"
+    },
+    "correct_answer": "D",
+    "rationale": "A social worker should consider the cultural appropriateness of family involvement, individual versus group treatment, alternative treatment approaches (yoga, aromatherapy, music, and writing), medication (western, traditional, alternative), and/or location/duration of intervention. Informed consent is required for all clients, regardless of cultural background. The procedures used may vary depending upon client culture, but the need for informed consent is universal."
+  },
+  {
+    "question_number": 72,
+    "question": "Which of the following statements about gender identity and/or sexual orientation is TRUE?",
+    "options": {
+      "A": "Pansexual refers to being attracted to individuals outside or independent of gender.",
+      "B": "Individuals who cross-dress usually identify as homosexual.",
+      "C": "Sexual orientation and gender identity are related.",
+      "D": "Gender expression and gender identity must be congruent."
+    },
+    "correct_answer": "A",
+    "rationale": "Pansexuality refers to being attracted to an individual, independent or blind to gender. Most individuals who cross-dress are not homosexual or attracted to those of the same sex. Sexual orientation and gender identity are unique—individuals may view themselves as being male or female (gender identity) and be attracted to those of the same sex or a different sex. Gender expression is the way in which an individual expresses himself or herself. However, just because someone dresses, looks to be, or exhibits characteristics of a particular gender does not mean that this is the basis of his or her identity."
+  },
+  {
+    "question_number": 73,
+    "question": "A deceased client has:",
+    "options": {
+      "A": "All of the same rights to confidentiality as a living client, with the exception of billing records",
+      "B": "Some of the same rights to confidentiality as a living client as decided by the executor of the estate",
+      "C": "None of the same rights to confidentiality as a living client",
+      "D": "All of the same rights to confidentiality as a living client"
+    },
+    "correct_answer": "D",
+    "rationale": "Social workers should protect the confidentiality of deceased clients consistent with the same ethical standards that apply to those who are living."
+  },
+  {
+    "question_number": 74,
+    "question": "A social worker cannot limit a client's right to self-determination in the following circumstances EXCEPT:",
+    "options": {
+      "A": "When a client's actions violate policies set forth by the social worker's agency",
+      "B": "When the social worker does not believe that a client is making appropriate decisions",
+      "C": "When a client poses a serious and imminent risk to himself or herself or others",
+      "D": "When there are alternatives that will enhance the client's well-being"
+    },
+    "correct_answer": "C",
+    "rationale": "A social worker must respect and promote a client's right to self-determination, even when these decisions may not result in the best outcome in the social worker's opinion or when they violate agency practices. Only in instances that a client poses a serious and imminent risk to himself, herself, or others can self-determination be limited according to ethical standards and applicable laws."
+  },
+  {
+    "question_number": 75,
+    "question": "Trichotillomania is classified under which of the following in the DSM-5?",
+    "options": {
+      "A": "Disruptive, Impulse-Control, and Conduct Disorders",
+      "B": "Anxiety Disorders",
+      "C": "Trauma- and Stressor-Related Disorders",
+      "D": "Obsessive-Compulsive and Related Disorders"
+    },
+    "correct_answer": "D",
+    "rationale": "Trichotillomania is a hairpulling disorder that was classified in the DSM-IV-TR as an Impulse Control Disorder (Not Elsewhere Classified). In the DSM-5, it is listed under Obsessive-Compulsive and Related Disorders."
+  },
+  {
+    "question_number": 76,
+    "question": "Group therapy is not appropriate for all of the following client groups EXCEPT those who are:",
+    "options": {
+      "A": "Actively in crisis",
+      "B": "Paranoid or psychotic",
+      "C": "Compulsively in need of attention",
+      "D": "Isolated from others"
+    },
+    "correct_answer": "D",
+    "rationale": "Clients who are in crisis, suicidal, actively psychotic, or paranoid are not appropriate for group treatment. In addition, those who have a compulsive need for attention are also not good group participants. Clients who are isolated can benefit from the socialization and universality that groups offer."
+  },
+  {
+    "question_number": 77,
+    "question": "A client is referred to a social worker by an employee assistance program for problems at work including insubordination and not following company policies. Upon intake, the client states that he is not the one that needs help and that the social worker should be trying to \"fix\" his boss, who is the real problem. The client reports that his difficulties are a result of jealousy by his boss because the client \"knows more and is more successful.\" The client dominates the conversation during the session and spends most of the time describing his achievements, including the amount of money that he earns and spends on his possessions. The BEST diagnosis of the client is:",
+    "options": {
+      "A": "Narcissistic Personality Disorder",
+      "B": "Histrionic Personality Disorder",
+      "C": "Avoidant Personality Disorder",
+      "D": "Obsessive-Compulsive Personality Disorder"
+    },
+    "correct_answer": "A",
+    "rationale": "There are many features of Narcissistic Personality Disorder described, including not voluntarily coming into treatment, blaming others, having an exaggerated sense of self-importance, being absorbed by fantasies of unlimited success, constantly seeking attention, monopolizing the conversation, and bragging."
+  },
+  {
+    "question_number": 78,
+    "question": "A client enters a social worker's office and is outraged at an interaction that has just taken place with another agency staff member. The client is indignant and demands that the social worker \"do something.\" In this situation, the social worker should FIRST:",
+    "options": {
+      "A": "Explain to the client that it would be best for the client to address the issue directly with the staff member",
+      "B": "Get the staff member so that the client can speak to him or her and resolve the issue immediately",
+      "C": "Tell the client to go to the agency director who is in a position to take action",
+      "D": "Listen to the client's account of the situation"
+    },
+    "correct_answer": "D",
+    "rationale": "Silence is effective when faced by a client who is experiencing a high degree of emotion. The social worker should not send the client to someone else or take action until the nature of the situation is known. Listening and finding out more is the FIRST step in deciding the appropriate next steps, if any."
+  },
+  {
+    "question_number": 79,
+    "question": "Which of the following statements is true?",
+    "options": {
+      "A": "Consent and assent have the same legal meaning.",
+      "B": "When treating those who lack capacity to provide informed consent, consent should be obtained by the responsible third party and assent should be obtained by the client.",
+      "C": "All clients must receive social work services voluntarily.",
+      "D": "There is no need to get consent to audiotape or videotape services because it is always permitted if a client signs a consent form."
+    },
+    "correct_answer": "B",
+    "rationale": "\"Consent\" is a legal term that means a client is willing to, and has the legal authority to, give permission to receive treatment. Assent is a willingness to participate, but does not have the same legal meaning because it may be granted by a client who is not his or her own guardian. Some clients receive social work services involuntarily. A specific consent form should be used to outline purpose, storage, and release of audiotaping or videotaping."
+  },
+  {
+    "question_number": 80,
+    "question": "A mother comes in to see a social worker because she is concerned about cognitive delays in her child. The child is far behind her peers in academic achievement. A social worker refers this child for diagnostic testing. Given the mother's concerns, the child will MOST likely be given which of the following assessments?",
+    "options": {
+      "A": "The Minnesota Multiphasic Personality Inventory",
+      "B": "The Myers-Briggs Type Indicator",
+      "C": "The Thematic Apperception Test",
+      "D": "The Wechsler Intelligence Scale"
+    },
+    "correct_answer": "D",
+    "rationale": "The Wechsler Intelligence Scale is designed as a measure of a child's intellectual and cognitive ability. The Minnesota Multiphasic Personality Inventory is a personality test for the assessment of psychopathology. The Myers-Briggs Type Indicator attempts to classify individuals along four theoretically independent dimensions that describe personality features. The Thematic Apperception Test provides information on a client's perceptions and imagination, for use in the understanding of the subject's current needs, motives, emotions, and conflicts, both conscious and unconscious."
+  },
+  {
+    "question_number": 81,
+    "question": "A client is very worried about her financial situation. She buys a new car and tells the social worker that she made the purchase \"because the car is much less likely to break down and will save money in the long run.\" This statement MOST likely results from:",
+    "options": {
+      "A": "Ego-syntonic beliefs",
+      "B": "Isolation of affect",
+      "C": "A double bind",
+      "D": "Cognitive dissonance"
+    },
+    "correct_answer": "D",
+    "rationale": "Cognitive dissonance is a state of conflict in the mind, whereby two opposing views are present at the same time. It suggests that the mind naturally wants to eliminate dissonance whenever possible and does so by justifying or changing attitudes and beliefs. Cognitive dissonance is extremely powerful, so justification is used to reduce it."
+  },
+  {
+    "question_number": 82,
+    "question": "A social worker's ex-husband comes to her agency for therapy services. The ex-husband asks that the social worker provide these services because she is aware of his history and he feels comfortable speaking to her about his problems. They have been divorced for 15 years. The social worker refuses. Based on the professional code of ethics, this action by the social worker is:",
+    "options": {
+      "A": "Unethical because it has been more than 10 years since they were married",
+      "B": "Ethical because she had a prior sexual relationship with the client",
+      "C": "Unethical because the social worker did not respect the client's wishes with regard to the provision of treatment",
+      "D": "Ethical because the social worker does not want the client to know anything about her current life circumstances"
+    },
+    "correct_answer": "B",
+    "rationale": "Social workers should not provide clinical services to individuals with whom they have had prior sexual relationships."
+  },
+  {
+    "question_number": 83,
+    "question": "A teenager is having problems initiating conversation with peers. In order to BEST assist the teenager, the social worker should:",
+    "options": {
+      "A": "Ask the teenager to keep a journal documenting thoughts that can be used in later conversations with peers",
+      "B": "Explore with the teenager the underlying reasons for his or her problems with peer relationships",
+      "C": "Assess whether there are other social deficits that may result in appropriate diagnosis",
+      "D": "Engage in a role play with the teenager so that he or she can practice needed communication skills"
+    },
+    "correct_answer": "D",
+    "rationale": "Role playing is a very effective teaching strategy and provides active learning. None of the other answers that may be useful provides the teenager with an intervention (as the question is about the best way to assist) that allows him or her to practice communication skills that can be used with peers"
+  },
+  {
+    "question_number": 84,
+    "question": "Which of the following represents the order of client needs within a hierarchy?",
+    "options": {
+      "A": "Physiological, safety, social, esteem, and self-actualization",
+      "B": "Physiological, safety, esteem, social, and self-actualization",
+      "C": "Safety, physiological, social, esteem, and self-actualization",
+      "D": "Safety, physiological, esteem, social, and self-actualization"
+    },
+    "correct_answer": "A",
+    "rationale": "According to Maslow's hierarchy of needs, the needs of individuals are ordered as physiological, safety, social, esteem, and self-actualization."
+  },
+  {
+    "question_number": 85,
+    "question": "A client reports that he has experienced some \"ringing\" in his ears for the last week, which is causing him great distress. The social worker should FIRST:",
+    "options": {
+      "A": "Refer the client for a neurological evaluation",
+      "B": "Provide the client with coping skills to address his distress",
+      "C": "Identify whether he is reporting an auditory hallucination",
+      "D": "Explore with the client what changes in his life may have coincided with this symptom"
+    },
+    "correct_answer": "A",
+    "rationale": "\"Ringing\" or other sounds originating in the ears (tinnitus) can be a symptom of a neurologic or organic problem. The social worker needs to FIRST rule out a medical cause before determining other etiology."
+  },
+  {
+    "question_number": 86,
+    "question": "Which of the following is the basic premise of groupthink?",
+    "options": {
+      "A": "Groups make faulty decisions because they ignore alternatives due to group pressures.",
+      "B": "Groups with similar membership tend to be more cohesive and effective.",
+      "C": "Decision making by groups takes longer than individual decision making.",
+      "D": "Groups come up with creative solutions to problems using their diverse perspectives"
+    },
+    "correct_answer": "A",
+    "rationale": "Groupthink is when a group makes faulty decisions based on group pressures. Groups affected by groupthink ignore alternatives and tend to take irrational actions. A group is especially vulnerable to groupthink when its members are similar in background, when the group is insulated from outside opinions, and when there are no clear rules for decision making."
+  },
+  {
+    "question_number": 87,
+    "question": "When working with an involuntary, court-mandated client, it is useful for a social worker to FIRST do which of the following to address resistance?",
+    "options": {
+      "A": "Show the client a copy of the court order so that he or she can understand the reasons for treatment",
+      "B": "Make sure that the client sees all reports given to the court to build trust between the client and social worker",
+      "C": "Include some of the client's own goals in the service plan in addition to those that must be addressed as mandated by the court",
+      "D": "Acknowledge the client's circumstances and lack of choice in receiving services"
+    },
+    "correct_answer": "D",
+    "rationale": "The problem-solving process starts with engagement. Acknowledging the client's circumstances is an action that the social worker can take to show empathy and an understanding of the difficulty of the situation. Some of the other response choices may be useful in working with an involuntary, court-mandated client, but they are not done FIRST."
+  },
+  {
+    "question_number": 88,
+    "question": "A client who has been experiencing severe depression and previously expressed thoughts aimed at hurting herself appears less hopeless and to have a more positive affect. In this situation, the social worker should FIRST:",
+    "options": {
+      "A": "Acknowledge the recent improvement in depressive symptoms to the client",
+      "B": "Determine the coping skills that the client is using to bring about change",
+      "C": "Focus on other immediate goals that are a concern to the client",
+      "D": "Conduct a suicide risk assessment"
+    },
+    "correct_answer": "D",
+    "rationale": "A sign of a possible suicide attempt is a recent improvement in depressive symptoms. A client is also at greater risk after being discharged from the hospital or after being started on antidepressants because he or she may now have the energy to implement a suicide plan. The social worker should assess the client for suicide risk immediately."
+  },
+  {
+    "question_number": 89,
+    "question": "Which of the following stages is often described as \"a midlife crisis\" where individuals struggle between guiding the next generation and becoming self-absorbed?",
+    "options": {
+      "A": "Generativity versus stagnation",
+      "B": "Ego integrity versus despair",
+      "C": "Intimacy versus isolation",
+      "D": "Identity versus role confusion"
+    },
+    "correct_answer": "A",
+    "rationale": "Generativity versus stagnation—During middle adulthood, individuals should develop a sense of being a part of the bigger picture, as well as giving back to society. By failing to achieve these objectives, individuals become stagnant and self-absorbed."
+  },
+  {
+    "question_number": 90,
+    "question": "A mother and teenage child yell at each other almost the entire time of a session. The mother says that she is upset with her daughter's choice in boyfriend, her grades in school, her inappropriate dress, and her lack of help around the house. The daughter says that she is angry as her mother does not listen to her, does not respect her privacy, does not give her any \"space,\" and speaks to the daughter's friends in a demeaning manner. In order to BEST assist with helping them resolve their conflicts, the social worker should:",
+    "options": {
+      "A": "Work with the mother and child to prioritize their concerns",
+      "B": "Focus on both the mother's and child's strengths and skills",
+      "C": "Suggest that the mother and child increase the amount of time that they spend with one another to facilitate the problem-solving process",
+      "D": "Acknowledge the level of conflict and discord between the mother and child"
+    },
+    "correct_answer": "A",
+    "rationale": "Given that there is conflict over a number of issues, the social worker should help structure the interactions between the mother and child. Essential is deciding which of the complaints is most salient for the mother and child. Increasing time with one another in the early stages of conflict resolution can exacerbate the situation because coping and communication skills have not improved yet. Acknowledging the conflict and using the strengths and skills of each party during conflict resolution may be useful, but will not assist in helping with resolution like prioritization, given the number of issues raised."
+  },
+  {
+    "question_number": 91,
+    "question": "Which of the following is NOT congruent communication?",
+    "options": {
+      "A": "Ignoring nonverbal cues that indicate anger",
+      "B": "Smiling at a person who is being annoying",
+      "C": "Hugging a person in pain",
+      "D": "Yelling at an individual when upset"
+    },
+    "correct_answer": "B",
+    "rationale": "Congruence is when the communication of an individual matches his or her feelings. An individual who is being annoyed by someone would not smile. If the facial expression matched the individual's feelings, it would be a frown or grimace."
+  },
+  {
+    "question_number": 92,
+    "question": "Which of the following is NOT an objective of social work supervision?",
+    "options": {
+      "A": "To increase the social worker's capacity to work more effectively",
+      "B": "To assist the social worker in resolving conflicts or problems",
+      "C": "To assure the delivery of the most effective and efficient client services",
+      "D": "To ensure consistent treatment of clients"
+    },
+    "correct_answer": "D",
+    "rationale": "Social workers may use different treatment approaches with clients and individualized treatment is required. Supervision can assist in ensuring that services are tailored to specific client needs and are delivered in adherence with the professional code of ethics."
+  },
+  {
+    "question_number": 93,
+    "question": "A client is having difficulty finding a career that is fulfilling to her. She has repeatedly taken jobs that she has quit because \"they just don't fit.\" In order to assist the client in resolving this problem, which of the following tests may be used?",
+    "options": {
+      "A": "Minnesota Multiphasic Personality Inventory",
+      "B": "Myers-Briggs Type Indicator",
+      "C": "Thematic Apperception Test",
+      "D": "Wechsler Intelligence Scale"
+    },
+    "correct_answer": "B",
+    "rationale": "The Myers-Briggs Type Indicator (MBTI) attempts to describe personality features. The client may find the MBTI test useful as a way of understanding herself. The client may want to pursue careers that allow her to make use of her natural preferences. The Minnesota Multiphasic Personality Inventory is a personality test for the assessment of psychopathology. The Thematic Apperception Test provides information on a client's perceptions and imagination, for use in the understanding of the subject's current needs, motives, emotions, and conflicts, both conscious and unconscious. The Wechsler Intelligence Scale is designed as a measure of a child's intellectual and cognitive ability."
+  },
+  {
+    "question_number": 94,
+    "question": "A client is very distressed because she is physically attracted to individuals of the same gender. She has become increasingly upset by these desires and wants to find ways to eliminate them. The feelings that the client is experiencing are:",
+    "options": {
+      "A": "Latent",
+      "B": "Ego alien",
+      "C": "Ego-syntonic",
+      "D": "Rooted in the pleasure principle"
+    },
+    "correct_answer": "B",
+    "rationale": "\"Ego alien\" means these feelings are experienced as being alien to the ego and not consistent with the client's interests, conflicting with the rest of her view of herself."
+  },
+  {
+    "question_number": 95,
+    "question": "A client learns that she may have a genetic condition and would like to be tested as she and her husband are thinking about having children. All of the following are true EXCEPT:",
+    "options": {
+      "A": "The social worker should make sure that the client is fully informed of all risks/benefits of testing before it is done.",
+      "B": "The insurance provider must authorize these tests in order for them to be completed.",
+      "C": "Self-determination of the client should be respected in this situation.",
+      "D": "The social worker should be aware of the process of genetic inheritance and develop a genogram to assist in decision making."
+    },
+    "correct_answer": "B",
+    "rationale": "Although there may be some procedures for ensuring preauthorization by the client's insurance in order for the tests to be covered, they can be performed without the insurance company's consent."
+  },
+  {
+    "question_number": 96,
+    "question": "A client who has repeatedly stated that she hates her sister tells a social worker that she has just asked her sister to be the maid of honor in her wedding. The social worker points out that this action appears contradictory to her feelings about her sister. This statement by the social worker is known as a:",
+    "options": {
+      "A": "Clarification",
+      "B": "Generalization",
+      "C": "Paradoxical instruction",
+      "D": "Confrontation"
+    },
+    "correct_answer": "D",
+    "rationale": "Confrontation is calling attention to something. Clarification is reformulating a problem in the client's words to make sure there is a mutual understanding of the issue. Generalization or normalization of behavior is often used to show the client that what he or she is feeling or experiencing is typical and understandable. A paradoxical instruction is prescribing the opposite of what you want the client to do; it is commonly referred to as \"reverse psychology.\""
+  },
+  {
+    "question_number": 97,
+    "question": "Which of the following is NOT a component of a client contract?",
+    "options": {
+      "A": "The problem to be worked on and the goals to reduce the problem",
+      "B": "Authorization letter approving services by the client's insurance company",
+      "C": "Means of monitoring progress",
+      "D": "Fees and frequency of meetings"
+    },
+    "correct_answer": "B",
+    "rationale": "The contract or service plan specifies problem(s) to be worked on, the goals to reduce the problem(s), a client's and a social worker's roles in the process, the interventions or techniques to be employed, the means of monitoring progress, stipulations for renegotiating the contract, and the time, place, fee, and frequency of meetings."
+  },
+  {
+    "question_number": 98,
+    "question": "Which of the following does NOT have to be done in order for a social worker to provide services in areas that are new to him or her?",
+    "options": {
+      "A": "The social worker must engage in appropriate study of the area.",
+      "B": "The social worker must receive supervision from someone who is competent in the area.",
+      "C": "The social worker must receive training and consultation in the area as needed.",
+      "D": "The social worker must add it to his or her résumé to reflect practice in this area."
+    },
+    "correct_answer": "D",
+    "rationale": "Social workers should provide services in substantive areas or use intervention techniques or approaches that are new to them only after engaging in appropriate study, training, consultation, and receiving supervision from those who are competent in those interventions and techniques."
+  },
+  {
+    "question_number": 99,
+    "question": "Which of the following statements is TRUE about the relationship between ethical and legal actions of social workers?",
+    "options": {
+      "A": "All legal behaviors are ethical.",
+      "B": "All illegal behaviors are unethical.",
+      "C": "Some behaviors are legal, but unethical.",
+      "D": "A behavior that is illegal can never be ethical."
+    },
+    "correct_answer": "C",
+    "rationale": "There are some actions that may be legal, like accepting gifts or going to a movie with a client, but are NOT ethical. In addition, a social worker may engage in public protest, which is not legal in some locations or situations, but this behavior may be ethical."
+  },
+  {
+    "question_number": 100,
+    "question": "According to the Tarasoff decision, in order for a social worker to have a duty to warn, all of the following must be present EXCEPT:",
+    "options": {
+      "A": "The threat of danger",
+      "B": "An identifiable third party",
+      "C": "A client history of violence against others",
+      "D": "Personal harm must be imminent"
+    },
+    "correct_answer": "C",
+    "rationale": "Duty to warn has become an important mandate in social work. Generally, a social worker has to believe that a client is a danger to an identifiable third party and that the client is able to act on this danger in order for it to be considered necessary to warn and/or protect the intended victim. For example, if a client states that he or she is going to kill \"women,\" a social worker may consider this client a danger to others and take appropriate action. However, there is not an obligation to notify intended victim(s) because the threat is too broad and does not require notification to women in general. In addition, if a client who is incarcerated and not going to be released makes a threat against someone outside the prison to whom he or she does not have access, there is no imminent threat. A history of violence is not required for a social worker's duty to warn obligation."
+  },
+  {
+    "question_number": 101,
+    "question": "A social worker has been asked to evaluate client progress using a single-subject design. Which of the following designs has the fewest threats to internal validity?",
+    "options": {
+      "A": "AB",
+      "B": "A",
+      "C": "ABAB",
+      "D": "BAB"
+    },
+    "correct_answer": "C",
+    "rationale": "\"A\" stands for measures taken when treatment is not provided (such as during baseline) and \"B\" stands for measures taken when treatment is being delivered. Internal validity is the confidence that the treatment is the cause of changes in behavior seen. There are two opportunities using the ABAB design to see if the introduction of treatment coincides with changes in behavior. There is only one opportunity in A, none in B, and D does not have a baseline, so it is unclear as to the frequency or severity of the behavior before treatment started. A baseline assessment process is desired in single-subject designs, unless the client is in crisis, which necessitates the immediate starting of treatment (BAB)."
+  },
+  {
+    "question_number": 102,
+    "question": "A client became depressed a month ago due to the ending of her marriage. The BEST diagnosis for the client is:",
+    "options": {
+      "A": "Major Depression",
+      "B": "Endogenous Depression",
+      "C": "Major Depressive Disorder With Mixed Features",
+      "D": "Exogenous Depression"
+    },
+    "correct_answer": "D",
+    "rationale": "Exogenous depression is caused by external events or psychosocial stressors, such as the ending of a marriage. Endogenous depression is caused by a biochemical imbalance rather than a psychosocial stressor or external factors. The criteria for Major Depressive Disorder With Mixed Features are not explicitly stated in this case vignette and, thus, this diagnosis cannot be applied."
+  },
+  {
+    "question_number": 103,
+    "question": "The social worker learns from a client who is HIV positive that he is having unprotected sexual contact with his girlfriend who is unaware of his HIV status. In order to address this situation ethically, the social worker should:",
+    "options": {
+      "A": "Disclose to the client that the social worker must try to contact the girlfriend in this situation under the obligation of duty to warn and ask for her contact information",
+      "B": "Try to locate the girlfriend without informing the client because such notification is required under the Tarasoff decision",
+      "C": "Make no attempt to contact the girlfriend to disclose the client's HIV status",
+      "D": "Tell the client that services will need to be terminated unless this behavior ceases"
+    },
+    "correct_answer": "C",
+    "rationale": "This situation does not fall under duty to warn. The allowance to breach confidentiality if a client poses an imminent risk to an identifiable party has not generally been applied to HIV-positive clients who are engaging in unprotected sexual activity. It is the responsibility of all sexually active adults to use \"safe sex\" procedures or use proper protective measures to reduce the risk of sexually transmitted conditions. Thus, if this client's girlfriend were using such measures, there would be no risk to her."
+  },
+  {
+    "question_number": 104,
+    "question": "Which of the following is associated with negative body image?",
+    "options": {
+      "A": "Self-worth not tied to appearance",
+      "B": "Time not spent on worrying about food or weight",
+      "C": "Confidence with one's body",
+      "D": "Physical appearance tied to personal value"
+    },
+    "correct_answer": "D",
+    "rationale": "If a client believes that his or her physical appearance is linked to his or her value, negative body image is likely to emerge. A client's self-worth should not be defined by appearance."
+  },
+  {
+    "question_number": 105,
+    "question": "All of the following are true about crisis intervention EXCEPT:",
+    "options": {
+      "A": "It is time limited.",
+      "B": "It focuses on the \"here and now.\"",
+      "C": "It must follow a major life event.",
+      "D": "It involves a high level of intervention and activity by the social worker."
+    },
+    "correct_answer": "C",
+    "rationale": "A crisis does not need to be triggered by a major life event. Crisis intervention is focused on the \"here and now\" and is time limited. As the goal is to intervene quickly, there is usually a heightened level of activity by the social worker to assist clients in alleviating stress and returning to the previous level of functioning."
+  },
+  {
+    "question_number": 106,
+    "question": "A social worker providing psychotherapy in a mental health agency is concerned about protecting the confidentiality of client records. In order to provide the greatest protection for clients while adhering to best clinical practices, the social worker should:",
+    "options": {
+      "A": "Keep all psychotherapy notes in the client file in a secure and locked location",
+      "B": "Take the psychotherapy notes home to ensure that they are only seen by the social worker",
+      "C": "Store the psychotherapy notes in a secure and locked location separate from the client file",
+      "D": "Not keep any documentation, including psychotherapy notes"
+    },
+    "correct_answer": "C",
+    "rationale": "Psychotherapy notes are specifically discussed in the Health Insurance Portability and Accountability Act (HIPAA). The general rule is that a social worker may not disclose psychotherapy notes for any purpose unless a client's authorization is obtained. In order to take advantage of this extra protection afforded to psychotherapy notes, notes must be kept \"physically separate\" from the rest of a client's record. The term \"physically separate\" is not defined in the HIPAA rules, so it is not clear if this means in a separate file, a separate file cabinet, or simply in a separate part of the same file as the rest of the record. It is safer to at least keep the information in a separate file folder."
+  },
+  {
+    "question_number": 107,
+    "question": "A social worker finds that a client has poor interpersonal skills. The BEST intervention that a social worker can use to address these issues is:",
+    "options": {
+      "A": "Engaging the client in a psychoeducational group aimed at providing information about communication skills",
+      "B": "Modeling appropriate verbal and nonverbal communication skills",
+      "C": "Conducting intensive psychotherapy aimed at addressing the communication deficits",
+      "D": "Providing the client with individual instruction on appropriate interpersonal skills"
+    },
+    "correct_answer": "B",
+    "rationale": "Modeling is a very effective method for teaching and should be used whenever possible. Showing a client how to interact is better than providing individual or group instruction. In addition, the social worker should not assume that the skill deficits are a result of a deeper clinical issue."
+  },
+  {
+    "question_number": 108,
+    "question": "A school social worker is using an intervention aimed at enhancing the social functioning of an adolescent student who is acting out. The social worker collects data daily prior to the intervention and during treatment. During the holiday break, the social worker asks the parents to write down the frequency of the behaviors each day in a journal. This journal is reviewed by the social worker upon return to school, at which time the intervention is restarted and behavior is monitored. Which of the following single-subject designs is reflective of the social worker's intervention?",
+    "options": {
+      "A": "AB",
+      "B": "A",
+      "C": "ABA",
+      "D": "ABAB"
+    },
+    "correct_answer": "D",
+    "rationale": "The baseline is denoted by \"A\" and the intervention is denoted by \"B.\" In the case vignette, the social worker collected data prior to the onset of an intervention (AB). However, the holiday break represented a second baseline due to the interruption of treatment. It is an opportunity to see if the behavior changed once the intervention was removed. The intervention was then reinstituted upon the adolescent's return to school. This baseline and reintroduction is also represented as an AB design. Thus, the social worker is using an ABAB design"
+  },
+  {
+    "question_number": 109,
+    "question": "When reporting suspected abuse of a client which of the following factors is MOST important?",
+    "options": {
+      "A": "The client must give assent to the reporting of the abuse when feasible.",
+      "B": "The identity of the perpetrators must be provided so a proper investigation can be conducted.",
+      "C": "Supervision or consultation is needed for corroboration of observed indicators.",
+      "D": "Report must be made as soon as possible to the abuse hotline."
+    },
+    "correct_answer": "D",
+    "rationale": "Suspected child abuse must be reported to the authorities (e.g., the child protection agency) immediately. Many jurisdictions have hotline systems to make such reports easier. While the 2008 NASW Code of Ethics states that best practice is to disclose the need to make such reports to clients when feasible, assent (the willingness to have these reports made) and consent (a legal term authorizing their report) are not needed. Supervision is also not required to corroborate signs of abuse. If a social worker suspects abuse, he or she has a duty to report it as soon as possible."
+  },
+  {
+    "question_number": 110,
+    "question": "A mother states that her 12-year-old son is now able to stay home alone because he is aware of dangers, meets his basic needs, and problem solves when needed. This child has reached which stage of cognitive development?",
+    "options": {
+      "A": "Sensorimotor",
+      "B": "Formal operations",
+      "C": "Concrete operations",
+      "D": "Preoperational"
+    },
+    "correct_answer": "B",
+    "rationale": "Piaget defined four stages of cognitive development. They are sensorimotor, preoperational, concrete operations, and formal operations. The formal operations stage begins at about age 11 and is characterized by a higher level of abstraction, assuming adult roles, and thinking hypothetically."
+  },
+  {
+    "question_number": 111,
+    "question": "Which of the following is NOT always true when using a token economy?",
+    "options": {
+      "A": "Points or rewards must be consistently given when the targeted behavior is exhibited.",
+      "B": "For the system to be effective, a substantial number of points or rewards must be taken away for undesirable behavior.",
+      "C": "Rewards must be of value to the client.",
+      "D": "It works best when a client can see the points earned toward a reward."
+    },
+    "correct_answer": "B",
+    "rationale": "Some token economies do not include the removal of points for undesirable behavior. They only provide points or rewards when the targeted behavior is exhibited. Even when points are deducted for undesired behavior, it is usually done in a manner in which the client does not lose a substantial number because this may make the client feel hopeless or that the lost points cannot be regained by exhibiting positive behavior in the future."
+  },
+  {
+    "question_number": 112,
+    "question": "A child in an after-school program comes into a social worker's office and shows the social worker a burn that appears to have been caused by an iron. The child reports that her mother did it as punishment because she was \"being bad.\" The social worker's colleague overhears the child and tells the social worker that the child has lied many times in the past. The social worker should:",
+    "options": {
+      "A": "Make a note in the file of the incident, including the observation and the colleague's comment",
+      "B": "Ask the colleague to discuss the incident with the social worker and the agency director",
+      "C": "Report the incident to the child protection agency",
+      "D": "Investigate the incident to see if the child is telling the truth"
+    },
+    "correct_answer": "C",
+    "rationale": "A social worker is a mandatory reporter and must contact the child protection agency that is trained to conduct the investigation and determine the child's credibility. The social worker must report even when a colleague or supervisor does not have the same reasonable suspicion."
+  },
+  {
+    "question_number": 113,
+    "question": "Which of the following is NOT associated with Histrionic Personality Disorder?",
+    "options": {
+      "A": "Interacting with others using inappropriately seductive or provocative behavior",
+      "B": "Using appearance to draw attention to oneself",
+      "C": "Being highly suggestible and easily influenced by others",
+      "D": "Having close romantic and social relationships with others"
+    },
+    "correct_answer": "D",
+    "rationale": "Histrionic Personality Disorder is a pervasive pattern of excessive emotionality and attention seeking. A client with this disorder interacts with others using inappropriate sexually seductive or provocative behavior, consistently uses physical appearance to draw attention to himself or herself, is highly suggestible or easily influenced by others or circumstances, and considers relationships to be more intimate than they actually are in real life. Clients with this disorder may have difficulty achieving emotional intimacy in romantic relationships, as well as impaired relationships with same-sex friends, because of their sexually provocative behavior or their demands for constant attention."
+  },
+  {
+    "question_number": 114,
+    "question": "A social worker who does not provide adolescent services makes referrals to a very reputable agency in her community when she is contacted for such services. In exchange for each of these referrals, the agency provides a $50 gift card to the social worker. This practice is:",
+    "options": {
+      "A": "Known as \"fee splitting\" and is ethical",
+      "B": "Known as \"collateral contact\" and is unethical",
+      "C": "Known as \"collateral contact\" and is ethical",
+      "D": "Known as \"fee splitting\" and is unethical"
+    },
+    "correct_answer": "D",
+    "rationale": "A social worker should not receive a fee for making a referral because this creates a conflict of interest."
+  },
+  {
+    "question_number": 115,
+    "question": "Upon intake, a woman tells a social worker that she was brutally beaten by her boyfriend 6 months ago, but it was an isolated incident and there have been no further acts of violence. Since that time, he has been remorseful and attentive. In this situation, the social worker should FIRST:",
+    "options": {
+      "A": "Tell the client that the boyfriend's behavior was unacceptable",
+      "B": "Document the incident in the assessment, but do not include as a treatment issue since no further incidents have occurred",
+      "C": "Explore with the client the degree to which the incident affected her relationship with her boyfriend",
+      "D": "Evaluate the need for medical and protective services"
+    },
+    "correct_answer": "D",
+    "rationale": "The cycle of abuse indicates that this may be the \"honeymoon\" phase that happens after a battering incident. Just because there has not been any violence in the last 6 months does not mean that the battering will not occur in the future. The \"honeymoon\" phase leads to \"tension building\" and then violence in the future. The social worker must address the medical needs and safety issues of the client FIRST according to Maslow's hierarchy of needs."
+  },
+  {
+    "question_number": 116,
+    "question": "Upon coming in for an intake interview, a couple reports that they have not had sexual intercourse for more than a year due to the husband's inability to sustain an erection. He reports that he has had a lot of stress at work and feels overwhelmed by the pressures placed upon him. In order to best diagnose the reasons for the husband's sexual dysfunction, a social worker should FIRST:",
+    "options": {
+      "A": "Ask the husband to provide more information about his job stress",
+      "B": "Determine if the physiological changes in the husband occurred at about the same time as his overwhelming feelings",
+      "C": "Recommend that the husband see a physician to see if there are any medical problems",
+      "D": "Explore whether the couple is having any other problems in the relationship"
+    },
+    "correct_answer": "C",
+    "rationale": "It is essential to FIRST determine whether the sexual dysfunction is a result of a medical problem that is preventing the husband's ability to sustain his erection. If medical causes are ruled out by a physician, a social worker can examine psychological and/or social factors that are contributing, including work and other pressures. It also may be helpful to determine whether there are other problems in the relationship, but only after medical/biological etiology has been eliminated."
+  },
+  {
+    "question_number": 117,
+    "question": "Which of the following is the BEST definition of rapprochement?",
+    "options": {
+      "A": "A technique used to confront a client in a nonthreatening way",
+      "B": "A time in the problem-solving process that indicates the beginning of termination",
+      "C": "A feeling experienced by clients who have not formed emotional attachments to others",
+      "D": "A stage in childhood development where a small child needs reassurance from a caregiver"
+    },
+    "correct_answer": "D",
+    "rationale": "This stage in object relations theory generally occurs prior to the second birthday when a small child wants to once again become closer to the caregiver, realizing that mobility causes separateness. The child realizes that the caregiver is a separate entity and needs reassurance."
+  },
+  {
+    "question_number": 118,
+    "question": "Which of the following is NOT true regarding Delirium and Dementia?",
+    "options": {
+      "A": "Clients with Dementia are highly susceptible to Delirium.",
+      "B": "Many of the same symptoms are shared by Delirium and Dementia.",
+      "C": "In both Delirium and Dementia, there is a gradual deterioration of memory and intellect, causing confusion.",
+      "D": "Clients who have Dementia can also experience Delirium."
+    },
+    "correct_answer": "C",
+    "rationale": "Delirium is a medical condition that results in confusion and other disruptions in thinking and behavior, including changes in perception, attention, mood, and activity level. Clients living with Dementia are highly susceptible to Delirium. Unfortunately, it can easily go unrecognized because many symptoms are shared by Delirium and Dementia. Sudden changes in behavior, such as increased agitation or confusion in the late evening, may be labeled as \"sundowning\" and dismissed as the unfortunate natural progression of one's Dementia. In Dementia, changes in memory and intellect are slowly evident over months or years. Delirium is a more abrupt confusion and represents a sudden change from the client's previous status. Unlike the subtle decline of Alzheimer's disease, the confusion of delirium fluctuates over the day, at times dramatically."
+  },
+  {
+    "question_number": 119,
+    "question": "A client who has been paying a reduced fee to a social worker in private practice inherits a lot of money from a relative's estate. The client, who was previously poor, is now extremely wealthy and very appreciative of the social worker's services. The client would like to pay the social worker the amount that was discounted for prior services. This action is:",
+    "options": {
+      "A": "Ethical as long as the client only pays the amount of the discount and no more",
+      "B": "Ethical because the client now has the ability to pay for the prior services",
+      "C": "Unethical because the social worker agreed to a reduced fee for those services",
+      "D": "Unethical unless the social worker can determine that the client can afford this payment for prior services"
+    },
+    "correct_answer": "C",
+    "rationale": "A social worker can now charge the client the full amount for services, but cannot charge the client for payments associated with services already rendered."
+  },
+  {
+    "question_number": 120,
+    "question": "What immediate action must be taken when a parent is diagnosed with Munchausen syndrome by proxy?",
+    "options": {
+      "A": "Child(ren) must be removed from his or her care to ensure protection from harm.",
+      "B": "An evaluation must be completed to assess his or her ability to fulfill parenting responsibilities.",
+      "C": "Counseling must be provided to the child(ren) to help with building ongoing coping strategies.",
+      "D": "Support services must be provided to meet the basic needs of all family members."
+    },
+    "correct_answer": "A",
+    "rationale": "Munchausen syndrome by proxy is a mental health problem in which a caregiver makes up or causes an illness or injury in a person under his or her care, such as a child, an elderly adult, or a person who has a disability. Because vulnerable people are the victims, it is a form of abuse. Most instances are between mothers and children. Caregivers may lie about symptoms, change test results to make victims appear ill, or physically harm to produce symptoms. Victims need to be protected. They need to be immediately removed from direct care and may require medical care to treat complications from injuries, infections, medicines, surgeries, or tests. Because this is a form of abuse, the syndrome must be reported to the authorities."
+  },
+  {
+    "question_number": 121,
+    "question": "In the DSM-5, which of the following is NOT incorporated into Autism Spectrum Disorder?",
+    "options": {
+      "A": "Asperger's Disorder",
+      "B": "Pervasive Developmental Disorder Not Otherwise Specified",
+      "C": "Childhood Disintegrative Disorder",
+      "D": "Mental Retardation"
+    },
+    "correct_answer": "D",
+    "rationale": "Using DSM-IV, clients could be diagnosed with four separate disorders: Autistic Disorder, Asperger's Disorder, Childhood Disintegrative Disorder, or Pervasive Developmental Disorder Not Otherwise Specified. These separate diagnoses were not consistently applied across practitioners and settings. They now fall under Autism Spectrum Disorder. Mental Retardation has a new name, \"Intellectual Disability (Intellectual Developmental Disorder).\""
+  },
+  {
+    "question_number": 122,
+    "question": "In instances when clients are not literate or are having difficulty understanding the primary language used in the practice setting, all of the following are acceptable practices by a social worker EXCEPT:",
+    "options": {
+      "A": "Using a family member to translate information into the client's native language",
+      "B": "Assessing the client's comprehension to determine what additional informed consent procedures are needed",
+      "C": "Reading documents to the client and providing verbal explanations to written policies as needed",
+      "D": "Using a qualified interpreter service when possible to translate information into the client's native language"
+    },
+    "correct_answer": "A",
+    "rationale": "In instances when clients are not literate or have difficulty understanding the primary language used in the practice setting, social workers should take steps to ensure clients' comprehension. This may include providing clients with detailed verbal explanations or arranging for qualified interpreters or translators whenever possible. Using family members is not acceptable due to confidentiality concerns, as well as possibilities that interpretations or impressions of family members will be included in the translation."
+  },
+  {
+    "question_number": 123,
+    "question": "Which of the following is NOT an example of client advocacy?",
+    "options": {
+      "A": "Working with legislators to craft a bill that would fill a service gap",
+      "B": "Speaking to an agency board of directors to change a policy that negatively impacts on clients",
+      "C": "Writing a press release for a local paper about a growing community need",
+      "D": "Providing community members with a listing of service agencies that can assist them in meeting their needs"
+    },
+    "correct_answer": "D",
+    "rationale": "All of the response choices aim to affect or initiate change—the goal of client advocacy—except the last one. Examples of client advocacy activities include obtaining services or resources that would not otherwise be provided; modifying or influencing policies or practices that adversely affect groups or communities; or promoting legislation or policies that will result in the provision of requisite resources or services"
+  },
+  {
+    "question_number": 124,
+    "question": "An agency is experiencing financial hardship and social workers are upset because they have not been able to meet with their supervisors in several weeks because the supervisors have had to assist with other agency administrative tasks. In this situation, the social work administrator should:",
+    "options": {
+      "A": "Explain to social workers that this situation is not ideal, but necessary in order for the agency to continue to operate",
+      "B": "Terminate services to several clients in order to free up social work staff to provide supervision",
+      "C": "Explore the use of peer supervision",
+      "D": "Instruct the staff to pay for outside supervision if affordable"
+    },
+    "correct_answer": "C",
+    "rationale": "Social workers who are administrators should take reasonable steps to ensure that adequate agency or organizational resources are available to provide appropriate staff supervision. Peer supervision may be a feasible method for receiving feedback and input into treatment decisions that do not result in hardships to either clients or workers."
+  },
+  {
+    "question_number": 125,
+    "question": "During an initial session, a client complains that she feels like a failure because she is getting divorced and could not \"save her marriage.\" She ends by asking whether she is wrong to feel this way. In order to facilitate the therapeutic alliance, the social work should:",
+    "options": {
+      "A": "Explore with her why she thinks that the divorce is causing her to feel this way",
+      "B": "Find out more about her past relationships",
+      "C": "Tell her that such feelings are commonly felt in this situation",
+      "D": "Explain that she will have a lot of time to work through these feelings in the coming weeks"
+    },
+    "correct_answer": "C",
+    "rationale": "These statements are occurring in the first or initial session. The goal of this session is the building of a therapeutic alliance or engagement. Providing her with assurance that her feelings are not unusual and are shared with others in this situation alleviates anxiety and guilt, making her more open to speak about her difficulties. It also shows the client that the social worker understands what she is experiencing. The other response choices may be done, but are not the best responses given that the answer needed to directly relate to an action that would \"facilitate the therapeutic alliance.\""
+  },
+  {
+    "question_number": 126,
+    "question": "A social worker is reviewing a client's record and sees that a client was recently taking Zoloft after being switched from Lexapro. The client is MOST likely diagnosed as having:",
+    "options": {
+      "A": "Major Depressive Disorder",
+      "B": "Schizoaffective Disorder",
+      "C": "Autism Spectrum Disorder",
+      "D": "Attention-Deficit/Hyperactivity Disorder"
+    },
+    "correct_answer": "A",
+    "rationale": "These medications are antidepressants. The client may have one of the other diagnoses and/or more than one diagnosis, but he or she is MOST likely taking these medications for dep"
+  },
+  {
+    "question_number": 127,
+    "question": "Which of the following is NOT included in the DSM-5?",
+    "options": {
+      "A": "World Health Organization Disability Assessment Schedule 2.0 (WHODAS 2.0)",
+      "B": "Global Assessment of Functioning (GAF)",
+      "C": "Cultural Formulation Interview Guide (CFI)",
+      "D": "ICD-10 Codes"
+    },
+    "correct_answer": "B",
+    "rationale": "Initially developed as the Health-Sickness Rating Scale, the GAF was introduced as Axis V of the DSM-III and DSM-IV. The GAF was used to assist in determining medical necessity and level of disability. The APA discontinued use of the GAF in the DSM-5, and now suggests the use of the WHODAS 2.0 as a measure of disability."
+  },
+  {
+    "question_number": 128,
+    "question": "All of the following occur during termination EXCEPT:",
+    "options": {
+      "A": "Acknowledgement of loss on the part of the social worker and client",
+      "B": "Review and update of the client record to ensure completeness",
+      "C": "Identification of resources to meet future needs",
+      "D": "Review of client accomplishments"
+    },
+    "correct_answer": "B",
+    "rationale": "During termination, there should be discussion of the emotional feelings that may result from the ending of the therapeutic relationship. Termination is a time to examine evaluation results and review client accomplishments, as well as anticipate future needs of the client. The client record should be reviewed and updated on a continual basis and is not a task exclusively associated with termination."
+  },
+  {
+    "question_number": 129,
+    "question": "Which of the following is NOT assessed as part of a routine mental status examination?",
+    "options": {
+      "A": "Thought processes/reality testing",
+      "B": "Psychiatric pathology",
+      "C": "Orientation",
+      "D": "Judgment/insight"
+    },
+    "correct_answer": "B",
+    "rationale": "A mental status examination is a structured way of observing and describing a client's current state of mind, under the domains of appearance, attitude, behavior, mood and affect, speech, thought process, thought content, perception, cognition, insight, and judgment. A mental status examination is a necessary part of any client assessment no matter what the presenting problem. It is not a psychiatric evaluation and does not determine DSM diagnosis."
+  },
+  {
+    "question_number": 130,
+    "question": "According to self psychology, children need all of the following to develop a strong sense of self EXCEPT:",
+    "options": {
+      "A": "Being around others like themselves in order to feel \"belonging\"",
+      "B": "Someone to look up to who is more capable",
+      "C": "Being soothed and validated so they know their feelings matter",
+      "D": "Methods to control aggressive drives"
+    },
+    "correct_answer": "D",
+    "rationale": "As a result of receiving empathic responses from early caretakers, a child's needs are met and the child develops a strong sense of self. The needs of a child are mirroring (C), idealization (B), and twinship (A)."
+  },
+  {
+    "question_number": 131,
+    "question": "Which of the following is NOT a form of institutional discrimination?",
+    "options": {
+      "A": "Not providing translation services or agency paperwork in any language other than English",
+      "B": "Only offering therapy and other services on Saturdays",
+      "C": "Referring a client to another social worker based on his or her cultural background",
+      "D": "Not hiring individuals if they were not born in the United States"
+    },
+    "correct_answer": "C",
+    "rationale": "Institutional discrimination is when the policies or practices of an agency are discriminatory to a group of people. If proper translation does not occur, individuals who are not proficient in English will be excluded from understanding. Saturday services will preclude those who observe this day as the Sabbath. Lastly, making employment decisions based on birth location precludes those born outside the United States from being hired. Social workers may refer individuals to others based on cultural factors for appropriate therapeutic reasons. If the reason for the referral is simply based on cultural background, this may be a form of discrimination, but is not institutional discrimination unless it is a repeated practice or policy."
+  },
+  {
+    "question_number": 132,
+    "question": "A woman who uses American Sign Language (ASL) to communicate comes to a community-based agency to see a social worker who is deaf. The woman is in need of mental health services that are not provided at this agency. In this situation, the social worker should:",
+    "options": {
+      "A": "Provide the services in order to meet the client's need since it is unlikely that she will be able to find a social worker in the mental health agency who knows ASL",
+      "B": "Contact a mental health agency with the woman to see what accommodations are available",
+      "C": "Provide whatever services are available in the agency so the woman gets some help",
+      "D": "Make a referral to an advocacy organization for those who are deaf to see if they can assist"
+    },
+    "correct_answer": "B",
+    "rationale": "Choice A calls for the social worker to work outside his or her scope. C does not meet the woman's need, and referring her to an advocacy organization for those who are deaf (D) may just result in an extra step that does not result in service. The woman also may not identify with the deaf culture and may want to go to a generic mental health agency with an accommodation."
+  },
+  {
+    "question_number": 133,
+    "question": "What is the immediate goal of social work services for a client in crisis?",
+    "options": {
+      "A": "To assist the client to return to the previous level of functioning",
+      "B": "To provide the client with strategies to prevent future crises from occurring",
+      "C": "To determine whether the emotional stressors have caused the client to be a danger to self or others",
+      "D": "To develop a long-term strategy to assist the client in dealing with the impacts of the trauma caused by the crisis"
+    },
+    "correct_answer": "A",
+    "rationale": "The goals of crisis intervention are to immediately relieve the stress experienced, return the client to a previous level of functioning or assist with regaining equilibrium, and help develop coping mechanisms. A social worker may want to work with a client to identify precursors or deal with the impacts of the trauma, but these actions would occur after the crisis has subsided."
+  },
+  {
+    "question_number": 134,
+    "question": "Which of the following target populations would BEST have their needs fulfilled by participation in a psychoeducational group?",
+    "options": {
+      "A": "Older adults with high blood pressure who need to learn about healthy eating methods",
+      "B": "Teens who need peer support to address issues of addiction",
+      "C": "Mothers who feel isolated and want to meet other mothers in their area",
+      "D": "Couples who have experienced loss and are having trouble coping"
+    },
+    "correct_answer": "A",
+    "rationale": "The aim of a psychoeducational group is education. With improved education about healthy eating, older adults have information needed to make good food choices. The other target populations would benefit from psychotherapeutic groups as they could benefit from interacting with others who have experienced the same difficulties. Realizing that they are not alone can help these individuals with shame or isolation. Peer support is usually associated as a benefit from psychotherapeutic groups, not psychoeducational ones."
+  },
+  {
+    "question_number": 135,
+    "question": "Which of the following is TRUE about psychodynamic treatment modalities or approaches?",
+    "options": {
+      "A": "They are good for use in a managed care environment where change has to occur in a limited time period.",
+      "B": "They are focused only on the information that a person is paying attention to at a given time.",
+      "C": "They use dynamic intervention methods that are hands on, such as play therapy.",
+      "D": "They emphasize unconscious motives and desires, as well as the importance of childhood experiences, in shaping personality."
+    },
+    "correct_answer": "D",
+    "rationale": "Psychodynamic theories explain the origin of the personality. Although many different psychodynamic theories exist, they all emphasize unconscious motives and desires, as well as the importance of childhood experiences in shaping personality."
+  },
+  {
+    "question_number": 136,
+    "question": "A married couple reports that they feel disconnected from one another and rarely speak or provide each other with any kind of support. This is known as:",
+    "options": {
+      "A": "Negative entropy",
+      "B": "Entropy",
+      "C": "Differentiation",
+      "D": "Equifinality"
+    },
+    "correct_answer": "B",
+    "rationale": "Entropy is a closed system, whereas negative entropy is the opposite (an exchange of energy and resources to promote growth). In this example, the married couple is not using personal resources to ensure the health of their relationship."
+  },
+  {
+    "question_number": 137,
+    "question": "Which of the following observation roles poses the MOST ethical challenges for social workers?",
+    "options": {
+      "A": "Complete participant",
+      "B": "Participant as observer",
+      "C": "Complete observer",
+      "D": "Observer as participant"
+    },
+    "correct_answer": "A",
+    "rationale": "At one end of the continuum, a social worker is a full participant in the activities; at the other end, a social worker is a pure observer, seeking to be as unobtrusive as possible so as not to influence the situation being observed in any way. \"Participant as observer\" and \"observer as participant\" fall somewhere along this continuum, since a social worker is either already part of a group or context being researched or seeks to become involved in order to gain access to the information required. Participation of a social worker raises potential questions of bias and subjectivity that might undermine the reliability and validity of any information gathered. Thus, \"complete participant\" is the most problematic."
+  },
+  {
+    "question_number": 138,
+    "question": "Which of the following is NOT a dual relationship for a social worker?",
+    "options": {
+      "A": "Providing therapy to a friend",
+      "B": "Hiring a client to do repairs on the social worker's home",
+      "C": "Being an agency supervisor to a family member",
+      "D": "Going to the same outside clinical supervisor as a friend"
+    },
+    "correct_answer": "D",
+    "rationale": "Social workers should not provide services to or supervise friends or relatives. In addition, hiring a client is prohibited as it creates another relationship (employer/employee) with a client. Using the same supervisor as a friend, relative, or colleague is not a dual relationship."
+  },
+  {
+    "question_number": 139,
+    "question": "Which of the following is NOT a physical symptom of trauma?",
+    "options": {
+      "A": "Insomnia",
+      "B": "Feeling disconnected",
+      "C": "Muscle tension",
+      "D": "Aches and pains"
+    },
+    "correct_answer": "B",
+    "rationale": "All of the options are signs of trauma, but B is an emotional and psychological symptom. It is not physical."
+  },
+  {
+    "question_number": 140,
+    "question": "A client has recently learned that her child has been diagnosed with a life-threatening condition that will substantially affect her abilities in the future. For an hour, she talks to the social worker in detail about the medical condition without showing any emotion. The defense mechanism that BEST describes the client's response is:",
+    "options": {
+      "A": "Devaluation",
+      "B": "Substitution",
+      "C": "Intellectualization",
+      "D": "Rationalization"
+    },
+    "correct_answer": "C",
+    "rationale": "Intellectualization is when a person avoids uncomfortable emotions by focusing on facts and logic. In this instance, the client is not dealing with the emotions associated with this recent diagnosis, but instead focused on the rational medical details of the condition."
+  },
+  {
+    "question_number": 141,
+    "question": "At the beginning of the initial session, a client states, \"I am so glad that I am here because I really need you to tell me how to solve my problems.\" The social worker should:",
+    "options": {
+      "A": "Clarify the social worker's role in the problem-solving process with the client",
+      "B": "Not respond to the comment, but make a note to clearly delineate the social worker's role in the treatment plan",
+      "C": "Praise the client for her willingness to be open to feedback",
+      "D": "Suggest to the client that her need to solve her own problems may be an area to explore further in therapy"
+    },
+    "correct_answer": "A",
+    "rationale": "As part of engagement, the roles of the social worker and client in the problem-solving process should be discussed and clarified, if needed."
+  },
+  {
+    "question_number": 142,
+    "question": "Which of the following is NOT an aim of case management?",
+    "options": {
+      "A": "To avoid duplication and gaps in treatment in care",
+      "B": "To coordinate and monitor multiple services to ensure efficient and effective utilization",
+      "C": "To treat emotional or mental dysfunction in order to maximize wellbeing",
+      "D": "To link to services as needed to optimize functioning"
+    },
+    "correct_answer": "C",
+    "rationale": "Case management can be defined in many ways and has numerous aims. Most of them are based on the belief that clients need assistance because the service delivery system is complex, fragmented, duplicative, and uncoordinated. A major case management activity is linking to services. Case management is distinct from psychotherapy."
+  },
+  {
+    "question_number": 143,
+    "question": "Which of the following is NOT a practice that promotes cultural competence within social work organizations?",
+    "options": {
+      "A": "Recruiting multiethnic staff",
+      "B": "Including cultural competence requirements in job descriptions and performance/promotion measures",
+      "C": "Advocating for clients as major stakeholders in the development and monitoring of the service delivery system",
+      "D": "Ensuring employees get a copy of the professional code of ethics to review upon hiring and as needed thereafter"
+    },
+    "correct_answer": "D",
+    "rationale": "Some approaches within organizations to promote cultural competency include recruiting multiethnic staff, including cultural competence requirements in job descriptions and performance/promotion measures, reviewing demographic trends for the geographic area served to determine service needs, creating service delivery systems that are more appropriate to the diversity of the target population, and advocating for clients as major stakeholders in the development of service delivery systems to ensure they are reflective of their cultural heritage."
+  },
+  {
+    "question_number": 144,
+    "question": "A private pay client has made substantial progress and achieved all stated treatment goals, but wants to continue to see a social worker \"in case something comes up.\" In this situation, the social worker should:",
+    "options": {
+      "A": "Continue to see the client at the regular fee in order to respect the client's self-determination",
+      "B": "Begin termination with the client",
+      "C": "Continue to see the client, but reduce the fee since the treatment goals have been achieved",
+      "D": "Refer the client to another social worker because it appears that the client may have become dependent on the social worker"
+    },
+    "correct_answer": "B",
+    "rationale": "It is unethical to continue to treat when services are no longer needed or serve the client's interests. The fee charged is not relevant to this standard."
+  },
+  {
+    "question_number": 145,
+    "question": "A social work administrator is part of a management team who decides to close an agency program due to financial pressures. The management team receives many letters from program supporters asserting that this program is essential for other agency operations. The team does not consider other alternatives and closes the program anyway, only to encounter major problems in agency operations weeks later. The actions by the management team are an example of:",
+    "options": {
+      "A": "Groupthink",
+      "B": "Homogeneity",
+      "C": "Interdependence",
+      "D": "Group polarization"
+    },
+    "correct_answer": "A",
+    "rationale": "Groupthink is when a group makes faulty decisions because of group pressures. Groups affected by groupthink ignore alternatives and tend to take irrational actions that dehumanize other groups. A group is especially vulnerable to groupthink when its members are similar in background, when the group is insulated from outside opinions, and when there are no clear rules for decision making."
+  },
+  {
+    "question_number": 146,
+    "question": "Members of a community are concerned about rising crime rates, drug problems, and high unemployment in their neighborhood. When engaging in community organizing with this group, the social worker should FIRST:",
+    "options": {
+      "A": "Tell community members about strategies that have worked well to address these issues in other locations",
+      "B": "Work with the citizens to prioritize their concerns",
+      "C": "Contact local legislators to make them aware of the problems",
+      "D": "Identify an individual who can lead the other community members in taking action"
+    },
+    "correct_answer": "B",
+    "rationale": "Community organization aims to develop leadership so that communities can better address their problems. Using the problem-solving process, the social worker should FIRST help the members to figure out which problem they would like to address. The social worker may help the group with other actions, but they are later in the process. The social worker must also not \"take charge\" because community organizing is about empowering individuals within the community to decide on the problems and take actions to make changes."
+  },
+  {
+    "question_number": 147,
+    "question": "An agency hires a consultant to assist a social worker to become more competent in addressing substance use issues. The social worker shows the consultant a few client assessment documents and case notes to provide needed background on the kinds of substance use problems that the social worker is facing in practice. The social worker's actions are:",
+    "options": {
+      "A": "Unethical because the clients need to consent to disclosure of this information",
+      "B": "Ethical because the consultant was hired by the agency and therefore can see this information without client consent",
+      "C": "Ethical because this information is accessible to anyone in the agency and available for teaching or training purposes",
+      "D": "Unethical because the social worker should have shown the records of all clients with substance use problems to give the consultant complete information related to all the problems that the social worker is treating"
+    },
+    "correct_answer": "A",
+    "rationale": "Social workers should not disclose identifying information when discussing clients for teaching or training purposes unless the client has consented to disclosure of confidential information. In addition, social workers should not disclose identifying information when discussing clients with consultants unless the client has consented to disclosure of confidential information or there is a compelling need for such disclosure"
+  },
+  {
+    "question_number": 148,
+    "question": "Which of the following is TRUE about sexual development of individuals?",
+    "options": {
+      "A": "Children are not sexual before birth.",
+      "B": "Humans are sexual beings throughout life.",
+      "C": "Same-gender sexual behavior during childhood is directly related to sexual orientation later in life.",
+      "D": "Adults lose their desire for sexual expression later in life."
+    },
+    "correct_answer": "B",
+    "rationale": "Humans are sexual throughout the life course. Children are sexual even before birth, with males sometimes having erections in the uterus. Same-gender sexual behavior during childhood can occur as boys and girls tend to play with friends of the same gender. It is not related to sexual orientation or to whom individuals are attracted. It usually results out of exploration and access. Although there may be physiological changes that occur in older adults, they do not lose their desire to be sexual."
+  },
+  {
+    "question_number": 149,
+    "question": "Which of the following is NOT a separate stage experienced in the five stages of grief?",
+    "options": {
+      "A": "Hope",
+      "B": "Acceptance",
+      "C": "Bargaining",
+      "D": "Anger"
+    },
+    "correct_answer": "A",
+    "rationale": "Hope is not a separate stage but is possible during any of the five stages—denial and isolation, anger, bargaining, depression, and acceptance."
+  },
+  {
+    "question_number": 150,
+    "question": "A client barges into a social worker's office yelling in a loud and hostile manner. The MOST effective method for the social worker to address the situation is to:",
+    "options": {
+      "A": "Tell the client that it is not possible to speak now, but his or her concerns can be discussed during a scheduled appointment",
+      "B": "Listen to the client's concerns and provide other methods to reach the social worker in the future if problems arise",
+      "C": "Contact agency security immediately to remove the client in order not to reinforce the behavior",
+      "D": "Instruct the client on appropriate tone and voice volume when interacting with others"
+    },
+    "correct_answer": "B",
+    "rationale": "The client is clearly exhibiting a lot of emotion. In this state, providing direction or instruction will not be effective and can escalate the situation. Listening or being silent is a good technique to diffuse the hostility, but limit setting may also be needed. The client should be provided with alternate strategies for accessing the social worker if a need arises in the future."
+  },
+  {
+    "question_number": 151,
+    "question": "A client who is suffering from depression asks a social worker to read her journal. After reading it, the social worker identifies major themes of her writings including feeling isolated, not understood, and rejected by her family. The social worker speaks with the client about these issues and they decide to include them as treatment goals. These goals are based on which of the following in the journal?",
+    "options": {
+      "A": "Latent content",
+      "B": "Manifest content",
+      "C": "Explicit communication",
+      "D": "Overt writings"
+    },
+    "correct_answer": "A",
+    "rationale": "In communication, there are two types of content, manifest and latent. Manifest content is the concrete words or terms contained in the journal. Explicit and overt communication also refers to the actual statements made by the client in the journal. Latent content is that which is not visible, such as the underlying meaning or themes of the words or terms used."
+  },
+  {
+    "question_number": 152,
+    "question": "Which of the following does NOT have to occur in order for a social worker who is in private practice to terminate services to a client who is not paying an overdue balance?",
+    "options": {
+      "A": "A safety assessment to determine if the client is a danger to self or others",
+      "B": "A signed agreement that the client is willing to be seen by another social worker",
+      "C": "Documentation of conversations in which the nonpayment has been discussed with the client",
+      "D": "Billing for overdue balances"
+    },
+    "correct_answer": "B",
+    "rationale": "Social workers in fee-for-service settings may terminate services to clients who are not paying overdue balances if the financial contractual arrangements have been made clear to the clients, if clients do not pose an imminent danger to themselves or others, and if the clinical and other consequences of the current nonpayment have been addressed and discussed"
+  },
+  {
+    "question_number": 153,
+    "question": "Which of the following systems in the body is responsible for the production of hormones that control metabolism and growth?",
+    "options": {
+      "A": "Digestive",
+      "B": "Nervous",
+      "C": "Lymphatic",
+      "D": "Endocrine"
+    },
+    "correct_answer": "D",
+    "rationale": "The endocrine system produces hormones, which are chemicals that control body functions such as metabolism, growth, and sexual development. The digestive system is made up of organs that break down food into protein, vitamins, minerals, carbohydrates, and fats. The nervous system is one of the most important systems in the body because it is the body's control system. The lymphatic system is the defense system for the body"
+  },
+  {
+    "question_number": 154,
+    "question": "Which of the following is NOT a social work role?",
+    "options": {
+      "A": "Being a client's support system",
+      "B": "Advocating for change to address a social problem",
+      "C": "Assisting with locating services for a client",
+      "D": "Educating a client to assist with problem solving"
+    },
+    "correct_answer": "A",
+    "rationale": "Social workers can have many roles including, but not limited to, consultant, advocate, case manager, catalyst, enabler, broker, mediator, facilitator, and instructor. A social worker can be supportive in these roles, but is not supposed to be the client's support system. Instead, a social worker should assist the client to mobilize or build his or her own natural supports."
+  },
+  {
+    "question_number": 155,
+    "question": "Tardive dyskinesia is associated with the prescribing of:",
+    "options": {
+      "A": "Antipsychotics",
+      "B": "Antidepressants",
+      "C": "Antianxiety medications",
+      "D": "Mood stabilizers"
+    },
+    "correct_answer": "A",
+    "rationale": "Tardive dyskinesia may result from taking high doses of antipsychotic medications over a long period of time. Symptoms may persist indefinitely after discontinuation of these medications. Thus, antipsychotic use should be closely monitored and prescribed at low doses, if possible."
+  },
+  {
+    "question_number": 156,
+    "question": "A client sees a woman get brutally beaten and killed during an incident of domestic violence. Shortly after the incident, the client reports the inability to see. This client is MOST likely experiencing the defense mechanism of:",
+    "options": {
+      "A": "Conversion",
+      "B": "Acting out",
+      "C": "Compensation",
+      "D": "Reaction formation"
+    },
+    "correct_answer": "A",
+    "rationale": "Conversion is when mental conflict or disturbance is transferred into a physical symptom to relieve anxiety. The loss of eyesight after witnessing the incident may have resulted from this trauma."
+  },
+  {
+    "question_number": 157,
+    "question": "Which of the following is NOT an appropriate task for a social worker facilitating a group?",
+    "options": {
+      "A": "Modeling methods for the group in dealing with dilemmas or situations",
+      "B": "Identifying assumptions made by, or unconscious communication used by, the group",
+      "C": "Opening up new avenues of exploration to the group",
+      "D": "Providing solutions to problems that are raised by the group"
+    },
+    "correct_answer": "D",
+    "rationale": "When working with groups, a social worker should use the group as the major helping agent and not make decisions for the group. A social worker should only intervene when interactions or the communication pattern within a group is becoming fragmented or dysfunctional in some way. Social workers' interventions may involve assisting in opening up new possibilities or avenues of exploration; interpreting the assumptions, attitudes, or behavior of the group or its unconscious communication; and/or modeling ways of dealing with dilemmas or situations"
+  },
+  {
+    "question_number": 158,
+    "question": "A woman has strong feelings of resentment toward her sister. These feelings are rooted in her childhood and she has always believed that her sister was a mean person. However, throughout her childhood, she reports being inseparable from her sister and \"doing everything together.\" She also reports buying a necklace for her recently that states \"Best Sister Ever.\" This behavior by the woman is an example of:",
+    "options": {
+      "A": "Substitution",
+      "B": "Splitting",
+      "C": "Projective identification",
+      "D": "Reaction formation"
+    },
+    "correct_answer": "D",
+    "rationale": "Reaction formation is when a client adopts attitudes or engages in behaviors that are the opposite of his or her unconscious belief. The behavior of the woman growing up and recently is in contrast to the way in which she feels about her sister"
+  },
+  {
+    "question_number": 159,
+    "question": "As required by law, Individual Educational Plans (IEPs) for children with disabilities must be reviewed and revised by schools at least:",
+    "options": {
+      "A": "Daily",
+      "B": "Yearly",
+      "C": "Monthly",
+      "D": "Weekly"
+    },
+    "correct_answer": "B",
+    "rationale": "Children with disabilities needing assistance should be provided with IEPs that are revised at least annually. A team composed of social workers, teachers, administrators, and other relevant school personnel typically create these plans. The parents, and often the children, also participate. The IEPs include a statement of goals, means of attaining goals, and ways of evaluating goal attainment."
+  },
+  {
+    "question_number": 160,
+    "question": "A social worker who is in a private mental health practice recently earned a doctorate from an accredited university in an unrelated field. She adds \"Dr.\" to her name on her private practice business card. This practice is:",
+    "options": {
+      "A": "Unethical since it is not related to mental health treatment",
+      "B": "Ethical since she earned a doctorate that entitles her to list it",
+      "C": "Unethical unless she discloses that it is in another field when asked",
+      "D": "Ethical since it was from an accredited university"
+    },
+    "correct_answer": "A",
+    "rationale": "Social workers should represent themselves as competent only within the boundaries of their education, training, license, certification, consultation received, supervised experience, or other relevant professional experience. Listing herself as a \"Dr.\" on a card for mental health treatment can be misleading to clients who would believe that the degree is related to the services advertised on the card."
+  },
+  {
+    "question_number": 161,
+    "question": "A husband complains that his wife nags him too much about working around the house. Once she stops this behavior, he begins to spend more time on house maintenance. This is an example of:",
+    "options": {
+      "A": "Shaping",
+      "B": "Negative reinforcement",
+      "C": "Aversion treatment",
+      "D": "Positive reinforcement"
+    },
+    "correct_answer": "B",
+    "rationale": "In negative reinforcement, behavior increases because negative (aversive) stimulus (i.e., nagging) is removed. The word \"negative\" does not mean bad, but rather \"removal.\" In positive reinforcement, a behavior increases because of the introduction (positive) of something desirable to reward it."
+  },
+  {
+    "question_number": 162,
+    "question": "Which of the following is NOT one of social work's core values as stated in the professional code of ethics?",
+    "options": {
+      "A": "Service",
+      "B": "Integrity",
+      "C": "Loyalty",
+      "D": "Competence"
+    },
+    "correct_answer": "C",
+    "rationale": "The core values include service, social justice, dignity and worth of the person, importance of human relationships, integrity, and competence."
+  },
+  {
+    "question_number": 163,
+    "question": "A client who struggles with alcoholism is prescribed a medication that makes him feel sick every time he drinks while taking it. The use of this medication is what type of operant technique?",
+    "options": {
+      "A": "Extinction",
+      "B": "Flooding",
+      "C": "Aversion therapy",
+      "D": "In vivo desensitization"
+    },
+    "correct_answer": "C",
+    "rationale": "Aversion therapy or treatment is aimed at reducing the attractiveness of a stimulus or a behavior by pairing it with an aversive stimulus. An example of this technique is treating alcoholism with Antabuse."
+  },
+  {
+    "question_number": 164,
+    "question": "Which of the following is a TRUE statement about the relationship between expressive and receptive communication?",
+    "options": {
+      "A": "Receptive communication usually develops at an earlier age than does expressive communication.",
+      "B": "Receptive and expressive communication skills are usually equally developed in young children.",
+      "C": "Expressive communication usually develops at an earlier age than does receptive communication.",
+      "D": "Some young children develop receptive communication skills before developing expressive communication skills; for other children, it is the reverse."
+    },
+    "correct_answer": "A",
+    "rationale": "Language is a system of using words to communicate. It has two parts: using words and gestures to say what is meant (expressive communication) and understanding what others say (receptive communication). Receptive communication develops earlier than does expressive communication. Infants start learning in the womb, where they hear and respond to familiar voices."
+  },
+  {
+    "question_number": 165,
+    "question": "Which of the following is the MOST critical factor for the delivery of effective culturally competent services?",
+    "options": {
+      "A": "The social worker and client must be from the same cultural group.",
+      "B": "The social worker must have self-awareness about cultural differences with the client.",
+      "C": "The social worker must have worked with a cultural group for at least 5 years.",
+      "D": "The social worker must have a supervisor who is from a different cultural group."
+    },
+    "correct_answer": "B",
+    "rationale": "A social worker's self-awareness about his or her own attitudes, values, and beliefs about cultural differences and a willingness to acknowledge racial and cultural differences are critical factors for effectively working with diverse populations."
+  },
+  {
+    "question_number": 166,
+    "question": "Which of the following is NOT essential for implementing a strengthsbased intervention?",
+    "options": {
+      "A": "Opportunities are created so that clients can learn or display competencies.",
+      "B": "There is collaboration and partnership with the client.",
+      "C": "There is an assumption that clients can change and adapt.",
+      "D": "The inner psychological struggles that clients are experiencing must be a focus of treatment."
+    },
+    "correct_answer": "D",
+    "rationale": "A strengths-based intervention focuses on understanding clients based on strengths and mobilizing resources to improve their situations. It looks at making environment modifications when needed and the fit between the person and the environment. Focusing on interpersonal struggles is more indicative of a psychodynamic approach."
+  },
+  {
+    "question_number": 167,
+    "question": "During a session, a client is reporting on her daily activities during the last week. She looks down at the ground, not making eye contact. She also pauses repeatedly with periods of silence. The social worker should:",
+    "options": {
+      "A": "Ask the client if there is something that is bothering her",
+      "B": "Listen attentively to show acceptance of her feelings",
+      "C": "Accept this behavior as part of her communication style",
+      "D": "Document this behavior in the client's record"
+    },
+    "correct_answer": "A",
+    "rationale": "There is no indication that this behavior is typical. Nonverbal communication can be very powerful. Her behavior may be the result of something that she is reluctant to discuss. Asking her if something is bothering"
+  },
+  {
+    "question_number": 168,
+    "question": "Which of the following statements is NOT true about cultural, racial, and ethnic identity development?",
+    "options": {
+      "A": "Individuals can share the same race, but have different ethnicities.",
+      "B": "The ways in which races have been defined have been fixed over time.",
+      "C": "Some ethnic and racial identities confer privilege.",
+      "D": "Cultural, racial, and ethnic identity is not passed from one generation to the next."
+    },
+    "correct_answer": "B",
+    "rationale": "Racial definitions have changed over time—they were once based on ethnicity or nationality, religion, and so on, but are now primarily defined by skin color. Cultural, racial, and ethnic identities are passed on through customs, traditions, language, religious practice, and values. Individuals can be the same race, but different ethnicities (i.e., White and Irish or Polish)."
+  },
+  {
+    "question_number": 169,
+    "question": "In the precontemplation stage of change, resistance is BEST addressed by a social worker:",
+    "options": {
+      "A": "Looking at the pros and cons of behavior change",
+      "B": "Acknowledging a client's fears and concerns",
+      "C": "Assessing whether new developments in a client's life are causing barriers to the plan",
+      "D": "Reviewing the appropriateness of the intervention"
+    },
+    "correct_answer": "B",
+    "rationale": "Precontemplation is the first step in the change process. In precontemplation, a client is unaware, unable, and/or unwilling to change. This stage is characterized by a client arguing, interrupting, ignoring the problem, and/or avoiding talking or thinking about it. A social worker should establish a rapport, acknowledge resistance or ambivalence, try to engage a client, and recognize his or her thoughts, feelings, fears, and concerns."
+  },
+  {
+    "question_number": 170,
+    "question": "A social worker employed in a youth recreation program is concerned as a child who developed a severe rash on her arm has not returned to the program after the agency director stated that she needed medical clearance. When contacting the mother, the social worker learns that she has not brought her young child to a doctor \"for years\" and does not plan to do so. The BEST response for the social worker is to:",
+    "options": {
+      "A": "Determine what occurred to cause the mother's resistance",
+      "B": "Ask the mother about the child's developmental history",
+      "C": "Speak to the agency director about reconsidering the child's participation",
+      "D": "Report the incident to the authorities"
+    },
+    "correct_answer": "D",
+    "rationale": "Failing to provide appropriate health care, including dental care and refusal of care or ignoring medical recommendations, is considered neglect and should be reported to the authorities immediately for further investigation. It is not the role of the social worker to investigate the allegations. As there are many names for child protection organizations, generic terms such as \"the authorities\" may be used in examination questions. The child is no longer in the program and it is not the social worker's role to determine the factors which have caused the neglect."
+  }
+]

@@ -47,7 +47,7 @@ interface TestResults {
 type TestState = 'loading' | 'answering' | 'completing' | 'results';
 
 export default function PracticeTest() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [questions, setQuestions] = useState<QuestionBankRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
