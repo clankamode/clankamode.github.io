@@ -44,19 +44,34 @@ interface TestResults {
   incorrectAnswers: IncorrectAnswer[];
 }
 
-type TestState = 'loading' | 'answering' | 'completing' | 'results';
+interface SessionListItem {
+  id: string;
+  started_at: string;
+  completed_at: string | null;
+  total_questions: number;
+  correct_answers: number | null;
+  score_percentage: number | null;
+}
+
+interface SessionList {
+  incomplete: SessionListItem[];
+  completed: SessionListItem[];
+}
+
+type TestState = 'session-list' | 'loading' | 'answering' | 'completing' | 'results';
 
 export default function PracticeTest() {
   const { status } = useSession();
   const [questions, setQuestions] = useState<QuestionBankRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [testState, setTestState] = useState<TestState>('loading');
+  const [testState, setTestState] = useState<TestState>('session-list');
   
   // Session management
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [sessionList, setSessionList] = useState<SessionList | null>(null);
   
   // Answer tracking
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -66,57 +81,122 @@ export default function PracticeTest() {
   // Results
   const [results, setResults] = useState<TestResults | null>(null);
 
-  // Initialize session and load questions
+  // Load sessions on mount
   useEffect(() => {
     if (status !== 'authenticated') return;
 
-    async function initializeTest() {
+    async function loadSessions() {
       try {
         setLoading(true);
+        const response = await fetch('/api/test-session/list');
+        if (!response.ok) throw new Error('Failed to load sessions');
         
-        // Fetch all questions
-        const { data: questionsData, error: questionsError } = await supabase
-          .from('QuestionBank')
-          .select('question_number, question, options, correct_answer, rationale')
-          .order('question_number', { ascending: true });
-
-        if (questionsError) throw questionsError;
-
-        if (!questionsData || questionsData.length === 0) {
-          setError('No questions found in the database.');
-          return;
-        }
-
-        setQuestions(questionsData);
-
-        // Get or create session
-        const response = await fetch('/api/test-session');
-        if (!response.ok) throw new Error('Failed to get session');
-        
-        const sessionData: SessionData = await response.json();
-        setSessionId(sessionData.sessionId);
-        setAnsweredQuestions(new Set(sessionData.answeredQuestions));
-
-        // Find first unanswered question
-        const answeredSet = new Set(sessionData.answeredQuestions);
-        const firstUnanswered = questionsData.findIndex(
-          q => !answeredSet.has(q.question_number)
-        );
-        
-        setCurrentQuestionIndex(firstUnanswered >= 0 ? firstUnanswered : 0);
-        setTestState('answering');
-        questionStartTime.current = Date.now();
-
+        const data: SessionList = await response.json();
+        setSessionList(data);
+        setTestState('session-list');
       } catch (err) {
-        console.error('Error initializing test:', err);
-        setError('Failed to load test. Please try again later.');
+        console.error('Error loading sessions:', err);
+        setError('Failed to load sessions. Please try again later.');
       } finally {
         setLoading(false);
       }
     }
 
-    initializeTest();
+    loadSessions();
   }, [status]);
+
+  const startNewTest = async () => {
+    try {
+      setLoading(true);
+      setTestState('loading');
+      
+      // Fetch all questions
+      const { data: questionsData, error: questionsError } = await supabase
+        .from('QuestionBank')
+        .select('question_number, question, options, correct_answer, rationale')
+        .order('question_number', { ascending: true });
+
+      if (questionsError) throw questionsError;
+
+      if (!questionsData || questionsData.length === 0) {
+        setError('No questions found in the database.');
+        return;
+      }
+
+      setQuestions(questionsData);
+
+      // Create new session
+      const response = await fetch('/api/test-session', {
+        method: 'POST',
+      });
+      if (!response.ok) throw new Error('Failed to create session');
+      
+      const sessionData: SessionData = await response.json();
+      setSessionId(sessionData.sessionId);
+      setAnsweredQuestions(new Set());
+      setCurrentQuestionIndex(0);
+      setSelectedAnswer(null);
+      setTestState('answering');
+      questionStartTime.current = Date.now();
+
+    } catch (err) {
+      console.error('Error starting test:', err);
+      setError('Failed to start test. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const continueTest = async (session: SessionListItem) => {
+    try {
+      setLoading(true);
+      setTestState('loading');
+      
+      // Fetch all questions
+      const { data: questionsData, error: questionsError } = await supabase
+        .from('QuestionBank')
+        .select('question_number, question, options, correct_answer, rationale')
+        .order('question_number', { ascending: true });
+
+      if (questionsError) throw questionsError;
+
+      if (!questionsData || questionsData.length === 0) {
+        setError('No questions found in the database.');
+        return;
+      }
+
+      setQuestions(questionsData);
+
+      // Get answers for this session
+      const { data: answers, error: answersError } = await supabase
+        .from('TestAnswer')
+        .select('question_number')
+        .eq('session_id', session.id)
+        .order('question_number', { ascending: true });
+
+      if (answersError) throw answersError;
+
+      const answeredSet = new Set(answers?.map(a => a.question_number) || []);
+      setSessionId(session.id);
+      setAnsweredQuestions(answeredSet);
+
+      // Find first unanswered question
+      const firstUnanswered = questionsData.findIndex(
+        q => !answeredSet.has(q.question_number)
+      );
+      
+      setCurrentQuestionIndex(firstUnanswered >= 0 ? firstUnanswered : 0);
+      setSelectedAnswer(null);
+      setTestState('answering');
+      questionStartTime.current = Date.now();
+
+    } catch (err) {
+      console.error('Error continuing test:', err);
+      setError('Failed to continue test. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAnswerSelect = (option: string) => {
     setSelectedAnswer(option);
@@ -203,41 +283,121 @@ export default function PracticeTest() {
   };
 
   const handleTakeTestAgain = async () => {
+    setResults(null);
+    await startNewTest();
+  };
+
+  const backToSessionList = async () => {
     try {
       setLoading(true);
+      setTestState('loading');
+      const response = await fetch('/api/test-session/list');
+      if (!response.ok) throw new Error('Failed to load sessions');
       
-      // Create new session
-      const response = await fetch('/api/test-session', {
-        method: 'POST',
-      });
-
-      if (!response.ok) throw new Error('Failed to create new session');
-
-      const sessionData: SessionData = await response.json();
-      setSessionId(sessionData.sessionId);
-      setAnsweredQuestions(new Set());
-      setCurrentQuestionIndex(0);
-      setSelectedAnswer(null);
+      const data: SessionList = await response.json();
+      setSessionList(data);
+      setTestState('session-list');
       setResults(null);
-      setTestState('answering');
-      questionStartTime.current = Date.now();
-
+      setSessionId(null);
+      setAnsweredQuestions(new Set());
     } catch (err) {
-      console.error('Error creating new session:', err);
-      setError('Failed to start new test. Please try again.');
+      console.error('Error loading sessions:', err);
+      setError('Failed to load sessions. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
+  // Session list state
+  if (testState === 'session-list' && sessionList) {
+    return (
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
+          <h1 className="text-3xl font-bold text-white mb-6">Practice Tests</h1>
+          
+          {/* Incomplete Sessions */}
+          {sessionList.incomplete.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-[#2cbb5d] mb-4">Continue Where You Left Off</h2>
+              <div className="space-y-3">
+                {sessionList.incomplete.map((session) => (
+                  <div key={session.id} className="bg-[#1a1a1a] rounded-lg p-4 border-2 border-[#2cbb5d]/30">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-white font-medium">In Progress</p>
+                        <p className="text-gray-400 text-sm">
+                          Started: {new Date(session.started_at).toLocaleDateString()} at{' '}
+                          {new Date(session.started_at).toLocaleTimeString()}
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          {session.total_questions} question{session.total_questions !== 1 ? 's' : ''} answered
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => continueTest(session)}
+                        className="bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Start New Test Button */}
+          <button
+            onClick={startNewTest}
+            className="w-full bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-4 px-6 rounded-lg transition-colors mb-8"
+          >
+            Start New Practice Test
+          </button>
+
+          {/* Completed Sessions */}
+          {sessionList.completed.length > 0 && (
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-4">Previous Tests</h2>
+              <div className="space-y-3">
+                {sessionList.completed.map((session) => (
+                  <div key={session.id} className="bg-[#1a1a1a] rounded-lg p-4 border-2 border-[#3e3e3e]">
+                    <div className="flex justify-between items-center">
+                      <div className="flex-1">
+                        <p className="text-white font-medium">
+                          Completed: {new Date(session.completed_at!).toLocaleDateString()} at{' '}
+                          {new Date(session.completed_at!).toLocaleTimeString()}
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          {session.total_questions} questions
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-[#2cbb5d]">
+                          {session.score_percentage}%
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          {session.correct_answers}/{session.total_questions} correct
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   // Loading state
-  if (loading || status === 'loading') {
+  if (loading || status === 'loading' || testState === 'loading') {
     return (
       <div className="max-w-3xl mx-auto px-4">
         <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
           <div className="flex flex-col items-center justify-center space-y-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2cbb5d]"></div>
-            <p className="text-white text-lg">Loading test...</p>
+            <p className="text-white text-lg">Loading...</p>
           </div>
         </div>
       </div>
@@ -259,7 +419,7 @@ export default function PracticeTest() {
   }
 
   // Error state
-  if (error || questions.length === 0) {
+  if (error) {
     return (
       <div className="max-w-3xl mx-auto px-4">
         <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
@@ -267,13 +427,13 @@ export default function PracticeTest() {
             <div className="text-5xl mb-4">⚠️</div>
             <h2 className="text-2xl font-bold text-white mb-4">Error</h2>
             <p className="text-gray-400 mb-6">
-              {error || 'No questions available.'}
+              {error}
             </p>
             <button
-              onClick={() => window.location.reload()}
+              onClick={backToSessionList}
               className="bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
             >
-              Retry
+              Back to Tests
             </button>
           </div>
         </div>
@@ -356,12 +516,20 @@ export default function PracticeTest() {
             </div>
           )}
 
-          <button
-            onClick={handleTakeTestAgain}
-            className="w-full bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-          >
-            Take Test Again
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={handleTakeTestAgain}
+              className="w-full bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            >
+              Take Test Again
+            </button>
+            <button
+              onClick={backToSessionList}
+              className="w-full bg-[#3e3e3e] hover:bg-[#4e4e4e] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            >
+              Back to Tests
+            </button>
+          </div>
         </div>
       </div>
     );
