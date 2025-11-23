@@ -20,10 +20,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get all answers for this session
-    const { data: answers, error: answersError } = await supabase
+    // Get all answers for this session (already graded on-the-fly)
+    const { data: allAnswers, error: answersError } = await supabase
       .from('TestAnswer')
-      .select('id, question_number, user_answer')
+      .select('question_number, user_answer, is_correct')
       .eq('session_id', sessionId);
 
     if (answersError) {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       throw answersError;
     }
 
-    if (!answers || answers.length === 0) {
+    if (!allAnswers || allAnswers.length === 0) {
       return NextResponse.json(
         { error: 'No answers found for this session' },
         { status: 404 }
@@ -47,23 +47,13 @@ export async function POST(req: NextRequest) {
       .select('question_number, correct_answer, question, options, rationale, unit, knowledge_area')
       .in('question_number', questionNumbers);
 
-    if (questionsError) {
-      console.error('Error fetching questions:', questionsError);
-      throw questionsError;
-    }
-
-    // Create a map for quick lookup
-    const questionsMap = new Map(
-      questions?.map(q => [q.question_number, q]) || []
-    );
-
-    // Calculate correctness and prepare updates
-    let correctCount = 0;
+    // Get only incorrect answers for detailed feedback
+    const incorrectAnswersList = allAnswers.filter(a => !a.is_correct);
     const incorrectAnswers = [];
     const unitBreakdown: Record<string, { correct: number; total: number }> = {};
 
-    for (const answer of answers) {
-      const question = questionsMap.get(answer.question_number);
+    if (incorrectAnswersList.length > 0) {
+      const incorrectQuestionNumbers = incorrectAnswersList.map(a => a.question_number);
       
       if (!question) {
         console.error(`Question ${answer.question_number} not found`);
@@ -97,15 +87,26 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // Update is_correct for this answer
-      await supabase
-        .from('TestAnswer')
-        .update({ is_correct: isCorrect })
-        .eq('id', answer.id);
-    }
+      // Create a map for quick lookup
+      const questionsMap = new Map(
+        questions?.map(q => [q.question_number, q]) || []
+      );
 
-    const totalQuestions = answers.length;
-    const scorePercentage = (correctCount / totalQuestions) * 100;
+      for (const answer of incorrectAnswersList) {
+        const question = questionsMap.get(answer.question_number);
+        
+        if (question) {
+          incorrectAnswers.push({
+            questionNumber: answer.question_number,
+            question: question.question,
+            options: question.options,
+            userAnswer: answer.user_answer,
+            correctAnswer: question.correct_answer,
+            rationale: question.rationale,
+          });
+        }
+      }
+    }
 
     // Update session with completion data
     const { error: updateError } = await supabase

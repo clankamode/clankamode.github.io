@@ -438,8 +438,8 @@ export default function PracticeTest() {
               <h2 className="text-xl font-semibold text-white mb-4">Previous Tests</h2>
               <div className="space-y-3">
                 {sessionList.completed.map((session) => (
-                  <div key={session.id} className="bg-[#1a1a1a] rounded-lg p-4 border-2 border-[#3e3e3e]">
-                    <div className="flex justify-between items-center">
+                  <div key={session.id} className="bg-[#1a1a1a] rounded-lg p-4 border-2 border-[#3e3e3e] hover:border-[#2cbb5d]/50 transition-colors">
+                    <div className="flex justify-between items-center gap-4">
                       <div className="flex-1">
                         <p className="text-white font-medium">
                           Completed: {new Date(session.completed_at!).toLocaleDateString()} at{' '}
