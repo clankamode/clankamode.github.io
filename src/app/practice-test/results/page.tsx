@@ -44,6 +44,7 @@ function ResultsContent() {
   const [results, setResults] = useState<TestResults | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState<string>('ALL');
 
   useEffect(() => {
     if (status !== 'authenticated') {
@@ -127,6 +128,11 @@ function ResultsContent() {
   const incorrectCount = results.incorrectAnswers.length;
   const passingScore = 70;
   const passed = results.scorePercentage >= passingScore;
+
+  const uniqueUnits = Array.from(new Set(results.incorrectAnswers.map(a => a.unit))).sort();
+  const filteredIncorrectAnswers = selectedUnit === 'ALL' 
+    ? results.incorrectAnswers 
+    : results.incorrectAnswers.filter(a => a.unit === selectedUnit);
 
   return (
     <div className="max-w-4xl mx-auto px-4">
@@ -241,12 +247,41 @@ function ResultsContent() {
         {/* Incorrect Answers Review */}
         {results.incorrectAnswers.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-4">
-              📝 Review Incorrect Answers ({results.incorrectAnswers.length})
-            </h2>
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+              <h2 className="text-2xl font-bold text-white">
+                📝 Review Incorrect Answers ({filteredIncorrectAnswers.length})
+              </h2>
+              
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setSelectedUnit('ALL')}
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    selectedUnit === 'ALL' 
+                      ? 'bg-[#2cbb5d] text-white' 
+                      : 'bg-[#3e3e3e] text-gray-300 hover:bg-[#4e4e4e]'
+                  }`}
+                >
+                  All
+                </button>
+                {uniqueUnits.map(unit => (
+                  <button
+                    key={unit}
+                    onClick={() => setSelectedUnit(unit)}
+                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                      selectedUnit === unit 
+                        ? 'bg-[#2cbb5d] text-white' 
+                        : 'bg-[#3e3e3e] text-gray-300 hover:bg-[#4e4e4e]'
+                    }`}
+                  >
+                    {unit}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="space-y-4">
-              {results.incorrectAnswers.map((item, index) => (
-                <div key={index} className="bg-[#1a1a1a] rounded-lg p-6 border-2 border-red-500/30">
+              {filteredIncorrectAnswers.map((item) => (
+                <div key={item.questionNumber} className="bg-[#1a1a1a] rounded-lg p-6 border-2 border-red-500/30">
                   <div className="mb-3">
                     <span className="text-red-400 font-semibold">Question {item.questionNumber}</span>
                     <h3 className="text-white font-medium mt-2">{item.question}</h3>
@@ -277,13 +312,12 @@ function ResultsContent() {
                   </div>
                   
                   <div className="bg-[#0a0a0a] p-4 rounded border-l-4 border-[#2cbb5d]">
-                    <div className="mb-3 pb-3 border-b border-gray-700">
-                      <p className="text-xs font-semibold text-blue-400 mb-1">{item.unit}</p>
-                      <p className="text-xs text-gray-400">{item.knowledgeArea}</p>
-                    </div>
-                    <p className="text-gray-300 text-sm">
+                    <p className="text-gray-300 text-sm mb-4">
                       <span className="font-semibold text-[#2cbb5d]">Explanation:</span> {item.rationale}
                     </p>
+                    <div className="pt-3 border-t border-gray-700">
+                        <p className="text-xs text-gray-400">{item.knowledgeArea}</p>
+                    </div>
                   </div>
                 </div>
               ))}
