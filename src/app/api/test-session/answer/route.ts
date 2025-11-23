@@ -21,7 +21,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Insert answer
+    // Fetch the correct answer from QuestionBank
+    const { data: question, error: questionError } = await supabase
+      .from('QuestionBank')
+      .select('correct_answer')
+      .eq('question_number', questionNumber)
+      .single();
+
+    if (questionError) {
+      console.error('Error fetching question:', questionError);
+      return NextResponse.json(
+        { error: 'Question not found' },
+        { status: 404 }
+      );
+    }
+
+    // Grade the answer immediately
+    const isCorrect = userAnswer === question.correct_answer;
+
+    // Insert answer with is_correct already set
     const { error: insertError } = await supabase
       .from('TestAnswer')
       .insert({
@@ -29,6 +47,7 @@ export async function POST(req: NextRequest) {
         email: userEmail,
         question_number: questionNumber,
         user_answer: userAnswer,
+        is_correct: isCorrect,
         time_spent_seconds: timeSpentSeconds || null,
       });
 
