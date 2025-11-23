@@ -204,7 +204,7 @@ export default function PracticeTest() {
     }
   };
 
-  const continueTest = async (session: SessionListItem) => {
+  const continueTest = async () => {
     try {
       setLoading(true);
       setTestState('loading');
@@ -452,7 +452,7 @@ export default function PracticeTest() {
                           </p>
                         </div>
                         <button
-                          onClick={() => continueTest(session)}
+                          onClick={() => continueTest()}
                           className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
                             isComplete
                               ? 'bg-blue-600 hover:bg-blue-700 text-white'
