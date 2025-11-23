@@ -20,23 +20,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get all answers for this session with correct answers from QuestionBank
+    // Get all answers for this session
     const { data: answers, error: answersError } = await supabase
       .from('TestAnswer')
-      .select(`
-        id,
-        question_number,
-        user_answer,
-        QuestionBank!TestAnswer_question_number_fkey (
-          correct_answer,
-          question,
-          options,
-          rationale
-        )
-      `)
+      .select('id, question_number, user_answer')
       .eq('session_id', sessionId);
 
-    if (answersError) throw answersError;
+    if (answersError) {
+      console.error('Error fetching answers:', answersError);
+      throw answersError;
+    }
 
     if (!answers || answers.length === 0) {
       return NextResponse.json(
@@ -45,27 +38,49 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Get all question numbers
+    const questionNumbers = answers.map(a => a.question_number);
+    
+    // Fetch question bank data
+    const { data: questions, error: questionsError } = await supabase
+      .from('QuestionBank')
+      .select('question_number, correct_answer, question, options, rationale')
+      .in('question_number', questionNumbers);
+
+    if (questionsError) {
+      console.error('Error fetching questions:', questionsError);
+      throw questionsError;
+    }
+
+    // Create a map for quick lookup
+    const questionsMap = new Map(
+      questions?.map(q => [q.question_number, q]) || []
+    );
+
     // Calculate correctness and prepare updates
     let correctCount = 0;
     const incorrectAnswers = [];
 
     for (const answer of answers) {
-      const questionBank = Array.isArray(answer.QuestionBank) 
-        ? answer.QuestionBank[0] 
-        : answer.QuestionBank;
+      const question = questionsMap.get(answer.question_number);
       
-      const isCorrect = answer.user_answer === questionBank.correct_answer;
+      if (!question) {
+        console.error(`Question ${answer.question_number} not found`);
+        continue;
+      }
+      
+      const isCorrect = answer.user_answer === question.correct_answer;
       
       if (isCorrect) {
         correctCount++;
       } else {
         incorrectAnswers.push({
           questionNumber: answer.question_number,
-          question: questionBank.question,
-          options: questionBank.options,
+          question: question.question,
+          options: question.options,
           userAnswer: answer.user_answer,
-          correctAnswer: questionBank.correct_answer,
-          rationale: questionBank.rationale,
+          correctAnswer: question.correct_answer,
+          rationale: question.rationale,
         });
       }
 

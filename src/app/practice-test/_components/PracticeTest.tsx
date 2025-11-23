@@ -72,6 +72,7 @@ export default function PracticeTest() {
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [sessionList, setSessionList] = useState<SessionList | null>(null);
+  const [totalQuestionsInBank, setTotalQuestionsInBank] = useState<number>(0);
   
   // Answer tracking
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -88,6 +89,15 @@ export default function PracticeTest() {
     async function loadSessions() {
       try {
         setLoading(true);
+        
+        // Fetch total question count
+        const { count, error: countError } = await supabase
+          .from('QuestionBank')
+          .select('*', { count: 'exact', head: true });
+        
+        if (countError) throw countError;
+        setTotalQuestionsInBank(count || 0);
+
         const response = await fetch('/api/test-session/list');
         if (!response.ok) throw new Error('Failed to load sessions');
         
@@ -180,6 +190,13 @@ export default function PracticeTest() {
       setSessionId(session.id);
       setAnsweredQuestions(answeredSet);
 
+      // Check if all questions are answered
+      if (answeredSet.size === questionsData.length) {
+        // All questions answered, complete the test
+        await completeTestForSession(session.id);
+        return;
+      }
+
       // Find first unanswered question
       const firstUnanswered = questionsData.findIndex(
         q => !answeredSet.has(q.question_number)
@@ -195,6 +212,29 @@ export default function PracticeTest() {
       setError('Failed to continue test. Please try again later.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const completeTestForSession = async (sid: string) => {
+    try {
+      setTestState('completing');
+
+      const response = await fetch('/api/test-session/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: sid }),
+      });
+
+      if (!response.ok) throw new Error('Failed to complete test');
+
+      const resultsData: TestResults = await response.json();
+      setResults(resultsData);
+      setTestState('results');
+
+    } catch (err) {
+      console.error('Error completing test:', err);
+      setError('Failed to complete test. Please try again.');
+      setTestState('session-list');
     }
   };
 
@@ -291,6 +331,15 @@ export default function PracticeTest() {
     try {
       setLoading(true);
       setTestState('loading');
+      
+      // Fetch total question count
+      const { count, error: countError } = await supabase
+        .from('QuestionBank')
+        .select('*', { count: 'exact', head: true });
+      
+      if (countError) throw countError;
+      setTotalQuestionsInBank(count || 0);
+
       const response = await fetch('/api/test-session/list');
       if (!response.ok) throw new Error('Failed to load sessions');
       
@@ -320,28 +369,41 @@ export default function PracticeTest() {
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-[#2cbb5d] mb-4">Continue Where You Left Off</h2>
               <div className="space-y-3">
-                {sessionList.incomplete.map((session) => (
-                  <div key={session.id} className="bg-[#1a1a1a] rounded-lg p-4 border-2 border-[#2cbb5d]/30">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="text-white font-medium">In Progress</p>
-                        <p className="text-gray-400 text-sm">
-                          Started: {new Date(session.started_at).toLocaleDateString()} at{' '}
-                          {new Date(session.started_at).toLocaleTimeString()}
-                        </p>
-                        <p className="text-gray-400 text-sm">
-                          {session.total_questions} question{session.total_questions !== 1 ? 's' : ''} answered
-                        </p>
+                {sessionList.incomplete.map((session) => {
+                  const isComplete = session.total_questions === totalQuestionsInBank && totalQuestionsInBank > 0;
+                  
+                  return (
+                    <div key={session.id} className={`bg-[#1a1a1a] rounded-lg p-4 border-2 ${
+                      isComplete ? 'border-blue-500/30' : 'border-[#2cbb5d]/30'
+                    }`}>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-white font-medium">
+                            {isComplete ? 'Ready to Grade' : 'In Progress'}
+                          </p>
+                          <p className="text-gray-400 text-sm">
+                            Started: {new Date(session.started_at).toLocaleDateString()} at{' '}
+                            {new Date(session.started_at).toLocaleTimeString()}
+                          </p>
+                          <p className="text-gray-400 text-sm">
+                            {session.total_questions} question{session.total_questions !== 1 ? 's' : ''} answered
+                            {isComplete && ' ✓'}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => continueTest(session)}
+                          className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
+                            isComplete
+                              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                              : 'bg-[#2cbb5d] hover:bg-[#25a352] text-white'
+                          }`}
+                        >
+                          {isComplete ? 'View Results' : 'Continue'}
+                        </button>
                       </div>
-                      <button
-                        onClick={() => continueTest(session)}
-                        className="bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-2 px-6 rounded-lg transition-colors"
-                      >
-                        Continue
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -443,35 +505,91 @@ export default function PracticeTest() {
 
   // Results state
   if (testState === 'results' && results) {
+    const incorrectCount = results.incorrectAnswers.length;
+    const passingScore = 70;
+    const passed = results.scorePercentage >= passingScore;
+
     return (
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
-          <h1 className="text-3xl font-bold text-white mb-6 text-center">
-            Test Complete!
-          </h1>
+          {/* Header with emoji */}
+          <div className="text-center mb-6">
+            <div className="text-6xl mb-3">
+              {passed ? '🎉' : '📚'}
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {passed ? 'Congratulations!' : 'Test Complete'}
+            </h1>
+            <p className="text-gray-400">
+              {passed 
+                ? 'You passed the practice test!' 
+                : 'Keep studying and try again!'}
+            </p>
+          </div>
           
           {/* Score Summary */}
-          <div className="bg-[#1a1a1a] rounded-lg p-6 mb-6">
-            <div className="text-center">
-              <div className="text-5xl font-bold text-[#2cbb5d] mb-2">
-                {results.correctAnswers}/{results.totalQuestions}
-              </div>
-              <div className="text-2xl text-white mb-4">
+          <div className="bg-[#1a1a1a] rounded-lg p-6 mb-6 border-2 border-[#2cbb5d]/30">
+            <div className="text-center mb-4">
+              <div className="text-6xl font-bold text-[#2cbb5d] mb-2">
                 {results.scorePercentage}%
               </div>
-              <p className="text-gray-400">
-                {results.scorePercentage >= 70 
-                  ? 'Great job! You passed the practice test.' 
-                  : 'Keep practicing! Review the material and try again.'}
+              <p className="text-xl text-white font-semibold">
+                {results.correctAnswers} out of {results.totalQuestions} correct
+              </p>
+            </div>
+
+            {/* Progress bar */}
+            <div className="w-full bg-[#0a0a0a] rounded-full h-4 mb-4">
+              <div
+                className="bg-[#2cbb5d] h-4 rounded-full transition-all duration-500"
+                style={{ width: `${results.scorePercentage}%` }}
+              />
+            </div>
+
+            {/* Statistics Grid */}
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold text-green-400 mb-1">
+                  {results.correctAnswers}
+                </div>
+                <p className="text-gray-400 text-sm">Correct Answers</p>
+              </div>
+              <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
+                <div className="text-3xl font-bold text-red-400 mb-1">
+                  {incorrectCount}
+                </div>
+                <p className="text-gray-400 text-sm">Incorrect Answers</p>
+              </div>
+            </div>
+
+            {/* Pass/Fail Indicator */}
+            <div className={`mt-6 p-4 rounded-lg text-center ${
+              passed 
+                ? 'bg-green-500/10 border-2 border-green-500/30' 
+                : 'bg-orange-500/10 border-2 border-orange-500/30'
+            }`}>
+              <p className={`font-semibold ${passed ? 'text-green-400' : 'text-orange-400'}`}>
+                {passed 
+                  ? `✓ Passed (${passingScore}% required)` 
+                  : `Need ${passingScore}% to pass (${passingScore - results.scorePercentage}% short)`}
               </p>
             </div>
           </div>
+
+          {/* Perfect Score Message */}
+          {results.incorrectAnswers.length === 0 && (
+            <div className="mb-6 bg-green-500/10 border-2 border-green-500/30 rounded-lg p-6 text-center">
+              <div className="text-4xl mb-2">✨</div>
+              <h2 className="text-2xl font-bold text-green-400 mb-2">Perfect Score!</h2>
+              <p className="text-gray-300">You answered all questions correctly. Excellent work!</p>
+            </div>
+          )}
 
           {/* Incorrect Answers Review */}
           {results.incorrectAnswers.length > 0 && (
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-white mb-4">
-                Review Incorrect Answers ({results.incorrectAnswers.length})
+                📝 Review Incorrect Answers ({results.incorrectAnswers.length})
               </h2>
               <div className="space-y-4">
                 {results.incorrectAnswers.map((item, index) => (
