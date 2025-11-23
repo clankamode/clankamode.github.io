@@ -17,6 +17,8 @@ interface Question {
   };
   correct_answer: string;
   rationale: string;
+  knowledge_area: string;
+  unit: string;
 }
 
 async function uploadQuestions() {

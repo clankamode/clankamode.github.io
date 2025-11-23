@@ -10,95 +10,122 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const userEmail = token.email;
     const { searchParams } = new URL(req.url);
     const sessionId = searchParams.get('sessionId');
 
     if (!sessionId) {
-      return NextResponse.json(
-        { error: 'Missing sessionId' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing sessionId' }, { status: 400 });
     }
 
-    // Verify session belongs to user
+    // Verify session belongs to user and is completed
     const { data: session, error: sessionError } = await supabase
       .from('TestSession')
-      .select('id, email, completed_at, correct_answers, score_percentage, total_questions')
+      .select('id, completed_at, correct_answers, total_questions, score_percentage')
       .eq('id', sessionId)
-      .eq('email', token.email)
+      .eq('email', userEmail)
+      .not('completed_at', 'is', null) // Ensure it's a completed session
       .single();
 
     if (sessionError || !session) {
-      return NextResponse.json(
-        { error: 'Session not found' },
-        { status: 404 }
-      );
+      console.error('Error fetching session or session not found/completed:', sessionError);
+      return NextResponse.json({ error: 'Session not found or not completed' }, { status: 404 });
     }
 
-    if (!session.completed_at) {
-      return NextResponse.json(
-        { error: 'Session not completed yet' },
-        { status: 400 }
-      );
-    }
-
-    // Get all answers for this session (only incorrect ones need full details)
-    const { data: answers, error: answersError } = await supabase
+    // Get ALL answers for this session
+    const { data: allAnswersData, error: answersError } = await supabase
       .from('TestAnswer')
-      .select('id, question_number, user_answer, is_correct')
+      .select('question_number, user_answer, is_correct')
       .eq('session_id', sessionId)
-      .eq('is_correct', false);  // Only fetch incorrect answers
+      .order('question_number', { ascending: true });
 
     if (answersError) {
       console.error('Error fetching answers:', answersError);
       throw answersError;
     }
 
-    // If there are incorrect answers, fetch the question details
     const incorrectAnswers = [];
-    if (answers && answers.length > 0) {
-      const questionNumbers = answers.map(a => a.question_number);
-      
+    const unitBreakdown: Record<string, { correct: number; total: number }> = {};
+
+    if (allAnswersData && allAnswersData.length > 0) {
+      const allQuestionNumbers = allAnswersData.map(a => a.question_number);
+
+      // Fetch question details for all answered questions
       const { data: questions, error: questionsError } = await supabase
         .from('QuestionBank')
-        .select('question_number, correct_answer, question, options, rationale')
-        .in('question_number', questionNumbers);
+        .select('question_number, correct_answer, question, options, rationale, unit, knowledge_area')
+        .in('question_number', allQuestionNumbers);
 
       if (questionsError) {
         console.error('Error fetching questions:', questionsError);
         throw questionsError;
       }
 
-      // Create a map for quick lookup
       const questionsMap = new Map(
         questions?.map(q => [q.question_number, q]) || []
       );
 
-      for (const answer of answers) {
+      // Build incorrect answers list and unit breakdown
+      for (const answer of allAnswersData) {
         const question = questionsMap.get(answer.question_number);
-        
         if (question) {
-          incorrectAnswers.push({
-            questionNumber: answer.question_number,
-            question: question.question,
-            options: question.options,
-            userAnswer: answer.user_answer,
-            correctAnswer: question.correct_answer,
-            rationale: question.rationale,
-          });
+          const unit = question.unit || 'Unknown';
+          
+          // Initialize unit in breakdown if not exists
+          if (!unitBreakdown[unit]) {
+            unitBreakdown[unit] = { correct: 0, total: 0 };
+          }
+          
+          // Update unit statistics
+          unitBreakdown[unit].total += 1;
+          if (answer.is_correct) {
+            unitBreakdown[unit].correct += 1;
+          }
+
+          // Add to incorrect answers if wrong
+          if (!answer.is_correct) {
+            incorrectAnswers.push({
+              questionNumber: answer.question_number,
+              question: question.question,
+              options: question.options,
+              userAnswer: answer.user_answer,
+              correctAnswer: question.correct_answer,
+              rationale: question.rationale,
+              unit: question.unit,
+              knowledgeArea: question.knowledge_area,
+            });
+          }
         }
       }
+
+      // Sort incorrect answers by question number
+      incorrectAnswers.sort((a, b) => a.questionNumber - b.questionNumber);
     }
+
+    // Convert unit breakdown to array and sort by unit name
+    const unitBreakdownArray = Object.entries(unitBreakdown)
+      .map(([unit, stats]) => ({
+        unit,
+        correct: stats.correct,
+        total: stats.total,
+        percentage: Math.round((stats.correct / stats.total) * 100),
+      }))
+      .sort((a, b) => {
+        // Sort by unit order (I, II, III, IV)
+        const unitOrder = { 'Unit I': 1, 'Unit II': 2, 'Unit III': 3, 'Unit IV': 4 };
+        return (unitOrder[a.unit as keyof typeof unitOrder] || 999) - (unitOrder[b.unit as keyof typeof unitOrder] || 999);
+      });
 
     return NextResponse.json({
       totalQuestions: session.total_questions,
       correctAnswers: session.correct_answers,
-      scorePercentage: Math.round(session.score_percentage || 0),
+      scorePercentage: Math.round(session.score_percentage),
       incorrectAnswers,
+      unitBreakdown: unitBreakdownArray,
     });
 
   } catch (error) {
-    console.error('Error fetching session results:', error);
+    console.error('Error in test-session/results GET:', error);
     return NextResponse.json(
       { error: 'Failed to fetch session results' },
       { status: 500 }

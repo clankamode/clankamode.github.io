@@ -38,49 +38,67 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Count correct/incorrect (already graded!)
-    const correctCount = allAnswers.filter(a => a.is_correct).length;
+    // Get all question numbers
+    const questionNumbers = allAnswers.map(a => a.question_number);
+    
+    // Fetch question bank data
+    const { data: questions, error: questionsError } = await supabase
+      .from('QuestionBank')
+      .select('question_number, correct_answer, question, options, rationale, unit, knowledge_area')
+      .in('question_number', questionNumbers);
+
+    if (questionsError) {
+      console.error('Error fetching questions:', questionsError);
+      throw questionsError;
+    }
+
+    // Create a map for quick lookup
+    const questionsMap = new Map(
+      questions?.map(q => [q.question_number, q]) || []
+    );
+
+    let correctCount = 0;
     const totalQuestions = allAnswers.length;
-    const scorePercentage = (correctCount / totalQuestions) * 100;
-
-    // Get only incorrect answers for detailed feedback
-    const incorrectAnswersList = allAnswers.filter(a => !a.is_correct);
     const incorrectAnswers = [];
+    const unitBreakdown: Record<string, { correct: number; total: number }> = {};
 
-    if (incorrectAnswersList.length > 0) {
-      const incorrectQuestionNumbers = incorrectAnswersList.map(a => a.question_number);
+    for (const answer of allAnswers) {
+      const question = questionsMap.get(answer.question_number);
       
-      // Fetch question details for incorrect answers only
-      const { data: questions, error: questionsError } = await supabase
-        .from('QuestionBank')
-        .select('question_number, correct_answer, question, options, rationale')
-        .in('question_number', incorrectQuestionNumbers);
-
-      if (questionsError) {
-        console.error('Error fetching questions:', questionsError);
-        throw questionsError;
+      if (!question) {
+        console.error(`Question ${answer.question_number} not found`);
+        continue;
       }
-
-      // Create a map for quick lookup
-      const questionsMap = new Map(
-        questions?.map(q => [q.question_number, q]) || []
-      );
-
-      for (const answer of incorrectAnswersList) {
-        const question = questionsMap.get(answer.question_number);
-        
-        if (question) {
-          incorrectAnswers.push({
-            questionNumber: answer.question_number,
-            question: question.question,
-            options: question.options,
-            userAnswer: answer.user_answer,
-            correctAnswer: question.correct_answer,
-            rationale: question.rationale,
-          });
-        }
+      
+      const isCorrect = answer.user_answer === question.correct_answer;
+      const unit = question.unit || 'Unknown';
+      
+      // Initialize unit in breakdown if not exists
+      if (!unitBreakdown[unit]) {
+        unitBreakdown[unit] = { correct: 0, total: 0 };
+      }
+      
+      // Update unit statistics
+      unitBreakdown[unit].total += 1;
+      
+      if (isCorrect) {
+        correctCount++;
+        unitBreakdown[unit].correct += 1;
+      } else {
+        incorrectAnswers.push({
+          questionNumber: answer.question_number,
+          question: question.question,
+          options: question.options,
+          userAnswer: answer.user_answer,
+          correctAnswer: question.correct_answer,
+          rationale: question.rationale,
+          unit: question.unit,
+          knowledgeArea: question.knowledge_area,
+        });
       }
     }
+
+    const scorePercentage = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
 
     // Update session with completion data
     const { error: updateError } = await supabase
@@ -94,11 +112,26 @@ export async function POST(req: NextRequest) {
 
     if (updateError) throw updateError;
 
+    // Convert unit breakdown to array and sort by unit name
+    const unitBreakdownArray = Object.entries(unitBreakdown)
+      .map(([unit, stats]) => ({
+        unit,
+        correct: stats.correct,
+        total: stats.total,
+        percentage: Math.round((stats.correct / stats.total) * 100),
+      }))
+      .sort((a, b) => {
+        // Sort by unit order (I, II, III, IV)
+        const unitOrder = { 'Unit I': 1, 'Unit II': 2, 'Unit III': 3, 'Unit IV': 4 };
+        return (unitOrder[a.unit as keyof typeof unitOrder] || 999) - (unitOrder[b.unit as keyof typeof unitOrder] || 999);
+      });
+
     return NextResponse.json({
       totalQuestions,
       correctAnswers: correctCount,
       scorePercentage: Math.round(scorePercentage),
       incorrectAnswers,
+      unitBreakdown: unitBreakdownArray,
     });
 
   } catch (error) {
