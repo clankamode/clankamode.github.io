@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 interface QuestionBankRow {
@@ -29,6 +30,8 @@ interface IncorrectAnswer {
   userAnswer: string;
   correctAnswer: string;
   rationale: string;
+  unit: string;
+  knowledgeArea: string;
 }
 
 interface SessionData {
@@ -37,11 +40,19 @@ interface SessionData {
   totalQuestions: number;
 }
 
+interface UnitBreakdown {
+  unit: string;
+  correct: number;
+  total: number;
+  percentage: number;
+}
+
 interface TestResults {
   totalQuestions: number;
   correctAnswers: number;
   scorePercentage: number;
   incorrectAnswers: IncorrectAnswer[];
+  unitBreakdown: UnitBreakdown[];
 }
 
 interface SessionListItem {
@@ -62,6 +73,7 @@ type TestState = 'session-list' | 'loading' | 'answering' | 'completing' | 'resu
 
 export default function PracticeTest() {
   const { status } = useSession();
+  const router = useRouter();
   const [questions, setQuestions] = useState<QuestionBankRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -357,6 +369,10 @@ export default function PracticeTest() {
     }
   };
 
+  const viewPreviousResults = (sid: string) => {
+    router.push(`/practice-test/results?sessionId=${sid}`);
+  };
+
   // Session list state
   if (testState === 'session-list' && sessionList) {
     return (
@@ -432,15 +448,21 @@ export default function PracticeTest() {
                         <p className="text-gray-400 text-sm">
                           {session.total_questions} questions
                         </p>
+                        <div className="mt-2">
+                          <p className="text-2xl font-bold text-[#2cbb5d]">
+                            {session.score_percentage}%
+                          </p>
+                          <p className="text-gray-400 text-sm">
+                            {session.correct_answers}/{session.total_questions} correct
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-[#2cbb5d]">
-                          {session.score_percentage}%
-                        </p>
-                        <p className="text-gray-400 text-sm">
-                          {session.correct_answers}/{session.total_questions} correct
-                        </p>
-                      </div>
+                      <button
+                        onClick={() => viewPreviousResults(session.id)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                      >
+                        View Results
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -576,6 +598,40 @@ export default function PracticeTest() {
             </div>
           </div>
 
+          {/* Unit Breakdown */}
+          {results.unitBreakdown && results.unitBreakdown.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-white mb-4">📊 Performance by Unit</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {results.unitBreakdown.map((unitStats) => (
+                  <div key={unitStats.unit} className="bg-[#1a1a1a] rounded-lg p-5 border-2 border-[#3e3e3e]">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{unitStats.unit}</h3>
+                        <p className="text-gray-400 text-sm">
+                          {unitStats.correct}/{unitStats.total} correct
+                        </p>
+                      </div>
+                      <div className={`text-2xl font-bold ${
+                        unitStats.percentage >= 70 ? 'text-green-400' : 'text-orange-400'
+                      }`}>
+                        {unitStats.percentage}%
+                      </div>
+                    </div>
+                    <div className="w-full bg-[#0a0a0a] rounded-full h-3">
+                      <div
+                        className={`h-3 rounded-full transition-all duration-500 ${
+                          unitStats.percentage >= 70 ? 'bg-green-500' : 'bg-orange-500'
+                        }`}
+                        style={{ width: `${unitStats.percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Perfect Score Message */}
           {results.incorrectAnswers.length === 0 && (
             <div className="mb-6 bg-green-500/10 border-2 border-green-500/30 rounded-lg p-6 text-center">
@@ -624,6 +680,10 @@ export default function PracticeTest() {
                     </div>
                     
                     <div className="bg-[#0a0a0a] p-4 rounded border-l-4 border-[#2cbb5d]">
+                      <div className="mb-3 pb-3 border-b border-gray-700">
+                        <p className="text-xs font-semibold text-blue-400 mb-1">{item.unit}</p>
+                        <p className="text-xs text-gray-400">{item.knowledgeArea}</p>
+                      </div>
                       <p className="text-gray-300 text-sm">
                         <span className="font-semibold text-[#2cbb5d]">Explanation:</span> {item.rationale}
                       </p>
