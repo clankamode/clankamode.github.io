@@ -33,6 +33,13 @@ export async function middleware(req: NextRequest) {
             }
         }
 
+        // Check if the route is AI-related
+        if (req.nextUrl.pathname.startsWith('/ai') || req.nextUrl.pathname.startsWith('/api/chat')) {
+            if (!hasRole(userRole, UserRole.EDITOR)) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+        }
+
         // Check if the route is practice-test-related
         if (req.nextUrl.pathname.startsWith('/practice-test') || req.nextUrl.pathname.startsWith('/api/test-session')) {
             if (!hasRole(userRole, UserRole.USER)) {
@@ -48,5 +55,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/analytics', '/thumbnails/:path*', '/api/thumbnail_job/:path*', '/practice-test', '/api/test-session/:path*'],
+    matcher: ['/analytics', '/thumbnails/:path*', '/api/thumbnail_job/:path*', '/practice-test', '/api/test-session/:path*', '/ai', '/api/chat'],
 }

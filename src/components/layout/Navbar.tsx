@@ -59,6 +59,9 @@ export default function Navbar() {
             </Link>
             {isLoggedIn && (isEditor || isAdmin) && (
               <>
+                <Link href="/ai" className={`px-3 py-2 ${isActive('/ai') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                  AI
+                </Link>
                 <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Thumbnails
                 </Link>
@@ -155,6 +158,15 @@ export default function Navbar() {
           </li>
           {isLoggedIn && (isEditor || isAdmin) && (
             <>
+              <li>
+                <Link 
+                  href="/ai" 
+                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/ai') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  AI
+                </Link>
+              </li>
               <li>
                 <Link 
                   href="/thumbnails" 
