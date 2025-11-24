@@ -65,9 +65,6 @@ export default function Navbar() {
                 <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Thumbnails
                 </Link>
-                <Link href="/tools" className={`px-3 py-2 ${isActive('/tools') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-                  Tools
-                </Link>
               </>
             )}
           </div>
@@ -174,15 +171,6 @@ export default function Navbar() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Thumbnails
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/tools" 
-                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/tools') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Tools
                 </Link>
               </li>
             </>

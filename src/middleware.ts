@@ -26,13 +26,6 @@ export async function middleware(req: NextRequest) {
             }
         }
 
-        // Check if the route is tools-related
-        if (req.nextUrl.pathname.startsWith('/tools')) {
-            if (!hasRole(userRole, UserRole.EDITOR)) {
-                return NextResponse.redirect(new URL('/', req.url));
-            }
-        }
-
         // Check if the route is AI-related
         if (req.nextUrl.pathname.startsWith('/ai') || req.nextUrl.pathname.startsWith('/api/chat')) {
             if (!hasRole(userRole, UserRole.EDITOR)) {
