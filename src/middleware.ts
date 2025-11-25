@@ -9,6 +9,19 @@ export async function middleware(req: NextRequest) {
             req,
         });
         
+        // Special handling for home page
+        if (req.nextUrl.pathname === '/') {
+            // If user is logged in and is an editor, redirect to /ai
+            if (token && token.role === UserRole.EDITOR) {
+                console.log('Redirecting editor to /ai from home page');
+                return NextResponse.redirect(new URL('/ai', req.url));
+            }
+            console.log('Home page access - Role:', token?.role);
+            // Otherwise, allow access to home page
+            return NextResponse.next();
+        }
+        
+        // For all other protected routes, require authentication
         if (!token) {
             return NextResponse.redirect(new URL('/', req.url));
         }
@@ -48,5 +61,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/analytics', '/thumbnails/:path*', '/api/thumbnail_job/:path*', '/practice-test', '/api/test-session/:path*', '/ai', '/api/chat'],
+    matcher: ['/', '/analytics', '/thumbnails/:path*', '/api/thumbnail_job/:path*', '/practice-test', '/api/test-session/:path*', '/ai', '/api/chat'],
 }

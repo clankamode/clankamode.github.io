@@ -17,7 +17,7 @@ export default function Sidebar({ currentView, setCurrentView, statusCounts, sid
 
     return (
         <div
-        className={`w-64 h-screen bg-[#282828] shadow-lg transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+        className={`w-64 h-full bg-[#282828] shadow-lg transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
       >
   
         <nav className="mt-8">

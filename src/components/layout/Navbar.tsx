@@ -27,7 +27,8 @@ export default function Navbar() {
   const isLoggedIn = !!session;
   const userRole = (session?.user?.role as UserRole) || UserRole.USER;
   const isAdmin = hasRole(userRole, UserRole.ADMIN);
-  const isEditor = hasRole(userRole, UserRole.EDITOR);
+  const isEditor = userRole === UserRole.EDITOR; // Exact match for editor, not including admin
+  
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
       <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
@@ -48,16 +49,8 @@ export default function Navbar() {
         {/* Navigation - center */}
         <div className="hidden md:flex items-center justify-center justify-self-center">
           <div className="flex space-x-4">
-            <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-              Home
-            </Link>
-            <Link href="/peralta75" className={`px-3 py-2 ${isActive('/peralta75') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-              Peralta 75
-            </Link>
-            <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-              Videos
-            </Link>
-            {isLoggedIn && (isEditor || isAdmin) && (
+            {/* Editors only see AI and Thumbnails tabs */}
+            {isLoggedIn && isEditor ? (
               <>
                 <Link href="/ai" className={`px-3 py-2 ${isActive('/ai') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   AI
@@ -65,6 +58,29 @@ export default function Navbar() {
                 <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Thumbnails
                 </Link>
+              </>
+            ) : (
+              <>
+                {/* Regular users and admins see all tabs */}
+                <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                  Home
+                </Link>
+                <Link href="/peralta75" className={`px-3 py-2 ${isActive('/peralta75') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                  Peralta 75
+                </Link>
+                <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                  Videos
+                </Link>
+                {isLoggedIn && isAdmin && (
+                  <>
+                    <Link href="/ai" className={`px-3 py-2 ${isActive('/ai') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                      AI
+                    </Link>
+                    <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                      Thumbnails
+                    </Link>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -117,43 +133,8 @@ export default function Navbar() {
       {/* Mobile menu */}
       <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
         <ul className="flex flex-col font-medium border border-[#3e3e3e] rounded-lg bg-[#282828] mt-4">
-          <li>
-            <Link 
-              href="/" 
-              className={`block py-2 pl-3 pr-4 rounded ${isActive('/') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link 
-              href="/peralta75" 
-              className={`block py-2 pl-3 pr-4 rounded ${isActive('/peralta75') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Peralta 75
-            </Link>
-          </li>
-          <li>
-            <Link 
-              href="/videos" 
-              className={`block py-2 pl-3 pr-4 rounded ${isActive('/videos') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Videos
-            </Link>
-          </li>
-          <li>
-            <Link 
-              href="/mocks" 
-              className={`block py-2 pl-3 pr-4 rounded ${isActive('/mocks') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Mocks
-            </Link>
-          </li>
-          {isLoggedIn && (isEditor || isAdmin) && (
+          {/* Editors only see AI and Thumbnails */}
+          {isLoggedIn && isEditor ? (
             <>
               <li>
                 <Link 
@@ -173,6 +154,68 @@ export default function Navbar() {
                   Thumbnails
                 </Link>
               </li>
+            </>
+          ) : (
+            <>
+              {/* Regular users and admins see all tabs */}
+              <li>
+                <Link 
+                  href="/" 
+                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/peralta75" 
+                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/peralta75') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Peralta 75
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/videos" 
+                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/videos') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Videos
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/mocks" 
+                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/mocks') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Mocks
+                </Link>
+              </li>
+              {isLoggedIn && isAdmin && (
+                <>
+                  <li>
+                    <Link 
+                      href="/ai" 
+                      className={`block py-2 pl-3 pr-4 rounded ${isActive('/ai') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      AI
+                    </Link>
+                  </li>
+                  <li>
+                    <Link 
+                      href="/thumbnails" 
+                      className={`block py-2 pl-3 pr-4 rounded ${isActive('/thumbnails') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Thumbnails
+                    </Link>
+                  </li>
+                </>
+              )}
             </>
           )}
           {!isLoggedIn && (

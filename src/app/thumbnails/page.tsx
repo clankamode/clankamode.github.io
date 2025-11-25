@@ -93,7 +93,7 @@ export default function ThumbnailDashboard() {
   const statusCounts = getStatusCounts()
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] flex">
+    <div className="h-[calc(100vh-3.5rem)] bg-[#1a1a1a] flex">
       {/* Sidebar */}
       <Sidebar 
         currentView={currentView} 
@@ -127,7 +127,7 @@ export default function ThumbnailDashboard() {
       )}
 
       {/* Main content */}
-      <div className="flex-1 lg:ml-0 h-screen flex flex-col overflow-hidden">
+      <div className="flex-1 lg:ml-0 h-full flex flex-col overflow-hidden">
         {/* Mobile header */}
         <div className="lg:hidden bg-[#282828] shadow-sm px-4 py-3 flex items-center justify-between">
           <button onClick={() => setSidebarOpen(true)} className="text-gray-300 hover:text-white">

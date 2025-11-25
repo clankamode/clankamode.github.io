@@ -2,9 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Message, ChatConversation, ChatMessage } from '@/types/chat';
+import { suggestedQueries } from './suggestedQueries';
 
 const MODELS = [
-  { id: 'gpt-4.1-2025-04-14', name: 'GPT-4.1' },
+  { id: 'gpt-4.1-2025-04-14', name: 'ChatGPT 4.1' },
+  { id: 'gpt-4-turbo-2024-04-09', name: 'ChatGPT 4 Turbo' },
+  { id: 'gpt-4', name: 'ChatGPT 4' },
+  { id: 'gpt-3.5-turbo', name: 'ChatGPT 3.5' },
 ] as const;
 
 export default function ChatInterface() {
@@ -31,6 +35,15 @@ export default function ChatInterface() {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleSuggestedQueryClick = (query: string) => {
+    setInput(query);
+    scrollToBottom();
+    // Use setTimeout to ensure the textarea is rendered before focusing
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 100);
   };
 
   useEffect(() => {
@@ -462,13 +475,10 @@ export default function ChatInterface() {
                 />
               </svg>
             </button>
-            <h1 className="text-2xl font-semibold">AI Chat</h1>
-          </div>
-          <div className="flex gap-3 items-center">
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] cursor-pointer"
+              className="px-4 py-2 text-2xl font-semibold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] cursor-pointer"
               disabled={isLoading || (currentConversationId !== null && messages.length > 0)}
             >
               {MODELS.map((model) => (
@@ -492,22 +502,14 @@ export default function ChatInterface() {
                   Ask me anything or start a conversation
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
-                  {[
-                    { title: 'Explain a concept', query: 'Explain how async/await works in JavaScript' },
-                    { title: 'Write code', query: 'Write a React component for a todo list' },
-                    { title: 'Debug code', query: 'Help me debug a JavaScript error' },
-                    { title: 'Best practices', query: 'What are React best practices?' },
-                  ].map((example, idx) => (
+                  {suggestedQueries.map((example, idx) => (
                     <button
                       key={idx}
-                      onClick={() => setInput(example.query)}
+                      onClick={() => handleSuggestedQueryClick(example.query)}
                       className="p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                     >
-                      <div className="font-semibold text-sm mb-1 text-gray-800 dark:text-gray-200">
+                      <div className="font-semibold text-sm text-gray-800 dark:text-gray-200">
                         {example.title}
-                      </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">
-                        {example.query}
                       </div>
                     </button>
                   ))}

@@ -53,19 +53,27 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
+      // Fetch the role from the database on every session request
+      // This ensures role changes are reflected immediately
+      const role = await getRole(session.user?.email || '');
+      
       return {
         ...session,
         user: {
           ...session.user,
           id: token.id,
-          role: token.role
+          role: role
         },
       };
     },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = await getRole(user.email || '');
+      }
+      // Always fetch the role from the database to keep the JWT token updated
+      // This ensures middleware has access to the current role
+      if (token.email) {
+        token.role = await getRole(token.email as string);
       }
       return token;
     },
