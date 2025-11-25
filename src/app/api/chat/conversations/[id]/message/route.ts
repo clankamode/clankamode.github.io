@@ -17,11 +17,11 @@ export async function POST(
     const userEmail = token.email;
     const { id: conversationId } = await params;
     const body = await req.json();
-    const { role, content, token_count } = body;
+    const { role, content, token_count, attachments } = body;
 
-    if (!role || !content) {
+    if (!role || (!content && !attachments)) {
       return NextResponse.json(
-        { error: 'Role and content are required' },
+        { error: 'Role and content or attachments are required' },
         { status: 400 }
       );
     }
@@ -63,6 +63,7 @@ export async function POST(
         role,
         content,
         token_count: token_count || 0,
+        metadata: attachments ? { attachments } : undefined,
       })
       .select()
       .single();

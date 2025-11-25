@@ -1,7 +1,7 @@
 import ChatInterface from './_components/ChatInterface';
 
 export const metadata = {
-  title: 'AI Chat | James Peralta',
+  title: 'AI',
   description: 'Chat with AI assistant',
 };
 

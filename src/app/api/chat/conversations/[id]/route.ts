@@ -54,9 +54,15 @@ export async function GET(
       );
     }
 
+    // Map messages to include attachments from metadata
+    const messagesWithAttachments = messages?.map(msg => ({
+      ...msg,
+      attachments: msg.metadata?.attachments || undefined,
+    })) || [];
+
     return NextResponse.json({
       ...conversation,
-      messages: messages || [],
+      messages: messagesWithAttachments,
     });
   } catch (error) {
     console.error('Error in GET /api/chat/conversations/[id]:', error);

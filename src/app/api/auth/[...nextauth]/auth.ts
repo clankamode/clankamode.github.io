@@ -56,7 +56,7 @@ export const authOptions: NextAuthOptions = {
       // Fetch the role from the database on every session request
       // This ensures role changes are reflected immediately
       const role = await getRole(session.user?.email || '');
-      
+      console.log(session.user?.image);
       return {
         ...session,
         user: {
@@ -70,6 +70,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
       }
+      console.log(user);
       // Always fetch the role from the database to keep the JWT token updated
       // This ensures middleware has access to the current role
       if (token.email) {

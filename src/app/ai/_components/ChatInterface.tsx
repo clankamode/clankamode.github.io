@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Message, ChatConversation, ChatMessage } from '@/types/chat';
+import { upload } from '@vercel/blob/client';
+import { Message, ChatConversation, ChatMessage, MessageAttachment } from '@/types/chat';
 import { suggestedQueries } from './suggestedQueries';
 
 const MODELS = [
@@ -22,6 +23,9 @@ export default function ChatInterface() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>(MODELS[0].id);
+  const [attachments, setAttachments] = useState<MessageAttachment[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
   
   // UI state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -32,6 +36,8 @@ export default function ChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounter = useRef(0);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -96,6 +102,7 @@ export default function ChatInterface() {
       setMessages(data.messages?.map((msg: ChatMessage) => ({
         role: msg.role,
         content: msg.content,
+        attachments: msg.attachments,
       })) || []);
       setSelectedModel(data.model);
     } catch (error) {
@@ -137,6 +144,7 @@ export default function ChatInterface() {
         body: JSON.stringify({
           role: message.role,
           content: message.content,
+          attachments: message.attachments,
         }),
       });
     } catch (error) {
@@ -194,15 +202,212 @@ export default function ChatInterface() {
     setCurrentConversationId(null);
     setMessages([]);
     setInput('');
+    setAttachments([]);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        // Determine file type
+        const attachmentType = file.type.startsWith('image/') ? 'image' : 'pdf';
+
+        if (attachmentType === 'pdf') {
+          // Upload PDF to both Vercel Blob (for preview) and OpenAI Files API (for chat) in parallel
+          
+          const formData = new FormData();
+          formData.append('file', file);
+
+          // Upload to both services in parallel
+          const [blob, openaiResponse] = await Promise.all([
+            // 1. Upload to Vercel Blob for preview
+            upload(file.name, file, {
+              access: 'public',
+              handleUploadUrl: '/api/chat/upload',
+            }),
+            // 2. Upload to OpenAI Files API for chat
+            fetch('/api/chat/upload-pdf', {
+              method: 'POST',
+              body: formData,
+            }),
+          ]);
+
+          if (!openaiResponse.ok) {
+            const errorData = await openaiResponse.json();
+            throw new Error(errorData.error || 'Failed to upload PDF');
+          }
+
+          const data = await openaiResponse.json();
+
+          // Switch to GPT-4.1 if not already selected
+          if (selectedModel !== 'gpt-4.1-2025-04-14') {
+            setSelectedModel('gpt-4.1-2025-04-14');
+          }
+
+          return {
+            id: crypto.randomUUID(),
+            type: 'pdf' as const,
+            url: blob.url, // For preview
+            file_id: data.file_id, // For OpenAI chat
+            name: file.name,
+            size: file.size,
+          };
+        } else {
+          // Upload images to Vercel Blob
+          const blob = await upload(file.name, file, {
+            access: 'public',
+            handleUploadUrl: '/api/chat/upload',
+          });
+
+          return {
+            id: crypto.randomUUID(),
+            type: 'image' as const,
+            url: blob.url,
+            name: file.name,
+            size: file.size,
+          };
+        }
+      });
+
+      const uploadedFiles = await Promise.all(uploadPromises);
+      setAttachments((prev) => [...prev, ...uploadedFiles]);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      alert(error instanceof Error ? error.message : 'Failed to upload files');
+    } finally {
+      setIsUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const removeAttachment = (id: string) => {
+    setAttachments((prev) => prev.filter((att) => att.id !== id));
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter') {
+      dragCounter.current += 1;
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      dragCounter.current -= 1;
+      if (dragCounter.current === 0) {
+        setDragActive(false);
+      }
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    dragCounter.current = 0;
+
+    const droppedFiles = e.dataTransfer.files;
+    if (!droppedFiles || droppedFiles.length === 0) return;
+
+    // Filter for allowed file types
+    const allowedFiles = Array.from(droppedFiles).filter(file => 
+      file.type.startsWith('image/') || file.type === 'application/pdf'
+    );
+
+    if (allowedFiles.length === 0) {
+      alert('Please drop only image or PDF files');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const uploadPromises = allowedFiles.map(async (file) => {
+        // Determine file type
+        const attachmentType = file.type.startsWith('image/') ? 'image' : 'pdf';
+
+        if (attachmentType === 'pdf') {
+          // Upload PDF to both Vercel Blob (for preview) and OpenAI Files API (for chat) in parallel
+          
+          const formData = new FormData();
+          formData.append('file', file);
+
+          // Upload to both services in parallel
+          const [blob, openaiResponse] = await Promise.all([
+            // 1. Upload to Vercel Blob for preview
+            upload(file.name, file, {
+              access: 'public',
+              handleUploadUrl: '/api/chat/upload',
+            }),
+            // 2. Upload to OpenAI Files API for chat
+            fetch('/api/chat/upload-pdf', {
+              method: 'POST',
+              body: formData,
+            }),
+          ]);
+
+          if (!openaiResponse.ok) {
+            const errorData = await openaiResponse.json();
+            throw new Error(errorData.error || 'Failed to upload PDF');
+          }
+
+          const data = await openaiResponse.json();
+
+          // Switch to GPT-4.1 if not already selected
+          if (selectedModel !== 'gpt-4.1-2025-04-14') {
+            setSelectedModel('gpt-4.1-2025-04-14');
+          }
+
+          return {
+            id: crypto.randomUUID(),
+            type: 'pdf' as const,
+            url: blob.url, // For preview
+            file_id: data.file_id, // For OpenAI chat
+            name: file.name,
+            size: file.size,
+          };
+        } else {
+          // Upload images to Vercel Blob
+          const blob = await upload(file.name, file, {
+            access: 'public',
+            handleUploadUrl: '/api/chat/upload',
+          });
+
+          return {
+            id: crypto.randomUUID(),
+            type: 'image' as const,
+            url: blob.url,
+            name: file.name,
+            size: file.size,
+          };
+        }
+      });
+
+      const uploadedFiles = await Promise.all(uploadPromises);
+      setAttachments((prev) => [...prev, ...uploadedFiles]);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      alert(error instanceof Error ? error.message : 'Failed to upload files');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if ((!input.trim() && attachments.length === 0) || isLoading) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    const userMessage: Message = { 
+      role: 'user', 
+      content: input,
+      attachments: attachments.length > 0 ? [...attachments] : undefined
+    };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setAttachments([]);
     setIsLoading(true);
 
     let conversationId = currentConversationId;
@@ -479,7 +684,7 @@ export default function ChatInterface() {
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
               className="px-4 py-2 text-2xl font-semibold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] cursor-pointer"
-              disabled={isLoading || (currentConversationId !== null && messages.length > 0)}
+              disabled={isLoading || (currentConversationId !== null && messages.length > 0) || attachments.some(att => att.type === 'pdf')}
             >
               {MODELS.map((model) => (
                 <option key={model.id} value={model.id}>
@@ -487,6 +692,11 @@ export default function ChatInterface() {
                 </option>
               ))}
             </select>
+            {attachments.some(att => att.type === 'pdf') && (
+              <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                (PDF requires GPT-4.1)
+              </span>
+            )}
           </div>
         </div>
 
@@ -530,6 +740,64 @@ export default function ChatInterface() {
                         : 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
                     }`}
                   >
+                    {message.attachments && message.attachments.length > 0 && (
+                      <div className="mb-3 space-y-2">
+                        {message.attachments.map((attachment) => (
+                          <div key={attachment.id}>
+                            {attachment.type === 'image' ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={attachment.url}
+                                alt={attachment.name}
+                                className="max-w-full rounded-lg max-h-64 object-contain"
+                              />
+                            ) : (
+                              <div className="space-y-2">
+                                {attachment.url && (
+                                  <iframe
+                                    src={attachment.url}
+                                    className="w-full h-96 rounded-lg border border-gray-300 dark:border-gray-600"
+                                    title={attachment.name}
+                                  />
+                                )}
+                                <div
+                                  className={`flex items-center gap-2 p-2 rounded ${
+                                    message.role === 'user'
+                                      ? 'bg-[#25a352]'
+                                      : 'bg-gray-300 dark:bg-gray-700'
+                                  }`}
+                                >
+                                  <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                                    />
+                                  </svg>
+                                  <span className="text-sm truncate">{attachment.name}</span>
+                                  {attachment.url && (
+                                    <a
+                                      href={attachment.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-xs underline ml-auto"
+                                    >
+                                      Open in new tab
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div className="whitespace-pre-wrap break-words">
                       {message.content}
                     </div>
@@ -553,8 +821,117 @@ export default function ChatInterface() {
         </div>
 
         {/* Input Form */}
-        <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+        <div 
+          className="border-t border-gray-200 dark:border-gray-700 p-4 relative"
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+        >
+          {/* Drag Overlay */}
+          {dragActive && (
+            <div 
+              className="absolute inset-0 bg-[#2cbb5d]/10 border-2 border-dashed border-[#2cbb5d] rounded-lg z-10 flex items-center justify-center"
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+            >
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg pointer-events-none">
+                <div className="flex flex-col items-center gap-3">
+                  <svg className="w-12 h-12 text-[#2cbb5d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Drop files here</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Images and PDFs supported</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Attachments Preview */}
+          {attachments.length > 0 && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {attachments.map((attachment) => (
+                <div
+                  key={attachment.id}
+                  className="relative group"
+                >
+                  {attachment.type === 'image' ? (
+                    <div className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={attachment.url}
+                        alt={attachment.name}
+                        className="h-20 w-20 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                      />
+                      <button
+                        onClick={() => removeAttachment(attachment.id)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="relative flex flex-col gap-2">
+                      {attachment.url && (
+                        <iframe
+                          src={attachment.url}
+                          className="w-48 h-32 rounded-lg border border-gray-300 dark:border-gray-600"
+                          title={attachment.name}
+                        />
+                      )}
+                      <div className="relative flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+                        <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        <div className="flex flex-col">
+                          <span className="text-sm text-gray-700 dark:text-gray-300 truncate max-w-[150px]">{attachment.name}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">Ready to send</span>
+                        </div>
+                        <button
+                          onClick={() => removeAttachment(attachment.id)}
+                          className="ml-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="flex gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.pdf"
+              multiple
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading || isUploading}
+              className="px-3 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+              title="Upload files"
+            >
+              {isUploading ? (
+                <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+              )}
+            </button>
             <div className="flex-1 relative">
               <textarea
                 ref={textareaRef}
@@ -569,7 +946,7 @@ export default function ChatInterface() {
             </div>
             <button
               type="submit"
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || (!input.trim() && attachments.length === 0)}
               className="px-6 py-3 bg-[#2cbb5d] text-white rounded-lg hover:bg-[#25a352] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
             >
               Send

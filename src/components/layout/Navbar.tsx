@@ -34,12 +34,20 @@ export default function Navbar() {
       <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
         {/* Logo - left side */}
         <div className="flex-shrink-0 justify-self-start">
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center gap-3">
+            {isLoggedIn && session.user?.image && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={session.user.image}
+                alt={session.user.name || "User"}
+                className="w-7 h-7 rounded-full border-2 border-white/30"
+              />
+            )}
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
             {isLoggedIn ? session.user?.name : "James Peralta"}
             </span>
             {isLoggedIn && session.user?.role && (
-              <span className="ml-2 mt-1 px-2 py-0.5 rounded text-xs bg-white/20 text-white border border-white/30">
+              <span className="ml-3 mt-1 px-2 py-0.5 rounded text-xs bg-white/20 text-white border border-white/30">
                 {session.user.role}
               </span>
             )}
