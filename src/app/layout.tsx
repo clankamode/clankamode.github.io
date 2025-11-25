@@ -5,6 +5,8 @@ import Navbar from "@/components/layout/Navbar";
 import { VideoProvider } from "@/context/VideoContext";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import Providers from "./providers";
+import { Analytics } from '@vercel/analytics/next';
+ 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +33,7 @@ export default function RootLayout({
             </VideoProvider>
           </AuthProvider>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
