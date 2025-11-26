@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { upload } from '@vercel/blob/client';
 import { Message, ChatConversation, ChatMessage, MessageAttachment } from '@/types/chat';
 import { suggestedQueries } from './suggestedQueries';
+import RichText from './RichText';
 
 const MODELS = [
   { id: 'gpt-4.1-2025-04-14', name: 'ChatGPT 4.1' },
@@ -798,9 +799,7 @@ export default function ChatInterface() {
                         ))}
                       </div>
                     )}
-                    <div className="whitespace-pre-wrap break-words">
-                      {message.content}
-                    </div>
+                    <RichText content={message.content} />
                   </div>
                 </div>
               ))}
