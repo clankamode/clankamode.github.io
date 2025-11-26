@@ -76,7 +76,10 @@ export default function ChatInterface() {
   const [promptQuery, setPromptQuery] = useState('');
   
   // UI state
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.innerWidth >= 1024; // Keep desktop open, collapse mobile on load
+  });
   const [editingConversationId, setEditingConversationId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -607,7 +610,7 @@ export default function ChatInterface() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)]">
+    <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
       {/* Sidebar */}
       <div
         className={`${
@@ -745,10 +748,10 @@ export default function ChatInterface() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-0">
         {/* Header */}
-        <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
+        <div className="border-b border-gray-200 dark:border-gray-700 p-3 md:p-4 flex flex-wrap gap-3 justify-between items-center">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
@@ -770,7 +773,7 @@ export default function ChatInterface() {
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="px-4 py-2 text-2xl font-semibold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] cursor-pointer"
+              className="px-3 md:px-4 py-2 text-lg md:text-2xl font-semibold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] cursor-pointer"
               disabled={isLoading || (currentConversationId !== null && messages.length > 0) || attachments.some(att => att.type === 'pdf')}
             >
               {MODELS.map((model) => (
@@ -788,7 +791,7 @@ export default function ChatInterface() {
         </div>
 
         {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full text-center">
               <div>

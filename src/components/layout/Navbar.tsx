@@ -31,10 +31,10 @@ export default function Navbar() {
   
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
-      <div className="max-w-screen-xl flex justify-between items-center mx-auto p-2">
+      <div className="max-w-screen-xl flex justify-between items-center mx-auto px-3 py-2 gap-3">
         {/* Logo - left side */}
         <div className="flex-shrink-0 justify-self-start">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2">
             {isLoggedIn && session.user?.image && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -43,11 +43,11 @@ export default function Navbar() {
                 className="w-7 h-7 rounded-full border-2 border-white/30"
               />
             )}
-            <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
+            <span className="self-center text-lg md:text-2xl font-semibold whitespace-nowrap text-white leading-tight">
             {isLoggedIn ? session.user?.name : "James Peralta"}
             </span>
             {isLoggedIn && session.user?.role && (
-              <span className="ml-3 mt-1 px-2 py-0.5 rounded text-xs bg-white/20 text-white border border-white/30">
+              <span className="ml-2 md:ml-3 mt-1 px-2 py-0.5 rounded text-[10px] md:text-xs bg-white/20 text-white border border-white/30">
                 {session.user.role}
               </span>
             )}
@@ -95,14 +95,14 @@ export default function Navbar() {
         </div>
 
         {/* Right side - Auth & Subscribe buttons */}
-        <div className="flex items-center justify-self-end">
+        <div className="flex items-center justify-self-end gap-2">
           {status === 'loading' ? (
             <div className="h-10 w-24 bg-gray-700 animate-pulse rounded"></div>
           ) : session ? (
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4">
               <button
                 onClick={handleSignOut}
-                className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition-colors"
+                className="text-white bg-red-600 hover:bg-red-700 px-3 md:px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
               >
                 Logout
               </button>
@@ -110,7 +110,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="hidden md:flex text-white bg-[#ff7f50] hover:bg-[#ff6347] px-4 py-2 rounded-lg text-sm transition-colors"
+              className="hidden md:flex text-white bg-[#ff7f50] hover:bg-[#ff6347] px-3 md:px-4 py-2 rounded-lg text-sm transition-colors"
             >
               Login
             </Link>
