@@ -13,6 +13,50 @@ const MODELS = [
   { id: 'gpt-3.5-turbo', name: 'ChatGPT 3.5' },
 ] as const;
 
+const SYSTEM_PROMPTS = [
+  {
+    id: 'resume-review',
+    title: 'Resume Review',
+    description: 'Provide targeted feedback to improve a resume',
+    content: `You are an uncompromising resume reviewer. Deliver strict, concise, and actionable feedback.
+
+Formatting & structure
+1) Confirm clear sections: Education, Experience, Projects, Leadership, Skills.
+2) Enforce one-page length for typical candidates.
+3) Flag bad formatting: messy order, long paragraphs, unclear headings.
+
+Content basics
+4) Confirm graduation date is present. If missing, call it out explicitly.
+5) Require internships, projects, leadership, and open-source/coding competitions/hackathons. Missing items must be flagged.
+6) Remove fluff or irrelevant info.
+
+Experience bullets (apply to EVERY bullet under Experience)
+7) Each bullet MUST follow “Accomplished [X] as measured by [Y] by doing [Z].”
+8) Each bullet MUST include metrics and impact.
+9) Bullets MUST be results-oriented, not responsibilities. Flag weak/empty bullets.
+
+Tailoring & quality
+10) Each line MUST start with a strong action verb.
+11) MUST be tailored to the target company/role (keywords, tech stack, relevant impact). Call out generic lines.
+
+Gut check
+12) State clearly: Would you refer/interview this person based on what’s written? If not, specify whether it’s missing info (e.g., no projects) or lack of impact.
+
+Output requirements
+- Be blunt and explicit; do NOT soften critiques.
+- Evaluate bullet-by-bullet under Experience so no bullet escapes scrutiny.
+- Use a numbered checklist with pass/fail notes and concrete rewrites where possible.
+- Keep the review tight and direct.`,
+  },
+  {
+    id: 'timestamp-generator',
+    title: 'Timestamp Generator',
+    description: 'Generate YouTube-style timestamps from content',
+    content:
+      'You create organized timestamp lists. Given notes or a transcript, produce chronological timestamps with short, descriptive labels. Use mm:ss formatting unless hours are present.',
+  },
+] as const;
+
 export default function ChatInterface() {
   // Conversation state
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
@@ -27,6 +71,9 @@ export default function ChatInterface() {
   const [attachments, setAttachments] = useState<MessageAttachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [selectedSystemPrompt, setSelectedSystemPrompt] = useState<(typeof SYSTEM_PROMPTS)[number] | null>(null);
+  const [isPromptMenuOpen, setIsPromptMenuOpen] = useState(false);
+  const [promptQuery, setPromptQuery] = useState('');
   
   // UI state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -51,6 +98,34 @@ export default function ChatInterface() {
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 100);
+  };
+
+  const handleInputChange = (value: string) => {
+    setInput(value);
+
+    const match = value.match(/\/([^\s]*)$/);
+    if (match) {
+      setPromptQuery(match[1]);
+      setIsPromptMenuOpen(true);
+    } else {
+      setIsPromptMenuOpen(false);
+      setPromptQuery('');
+    }
+  };
+
+  const handleSystemPromptSelect = (promptId: string) => {
+    const prompt = SYSTEM_PROMPTS.find((p) => p.id === promptId) || null;
+    setSelectedSystemPrompt(prompt);
+    setIsPromptMenuOpen(false);
+    setPromptQuery('');
+    setInput((prev) => prev.replace(/\/[^\s]*$/, ''));
+
+    // Focus back on the textarea for quick typing after selection
+    textareaRef.current?.focus();
+  };
+
+  const clearSystemPrompt = () => {
+    setSelectedSystemPrompt(null);
   };
 
   useEffect(() => {
@@ -401,8 +476,11 @@ export default function ChatInterface() {
     e.preventDefault();
     if ((!input.trim() && attachments.length === 0) || isLoading) return;
 
-    const userMessage: Message = { 
-      role: 'user', 
+    setIsPromptMenuOpen(false);
+    setPromptQuery('');
+
+    const userMessage: Message = {
+      role: 'user',
       content: input,
       attachments: attachments.length > 0 ? [...attachments] : undefined
     };
@@ -430,7 +508,9 @@ export default function ChatInterface() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMessage],
+          messages: selectedSystemPrompt
+            ? [{ role: 'system', content: selectedSystemPrompt.content }, ...messages, userMessage]
+            : [...messages, userMessage],
           model: selectedModel,
         }),
       });
@@ -510,6 +590,12 @@ export default function ChatInterface() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (isPromptMenuOpen && e.key === 'Escape') {
+      setIsPromptMenuOpen(false);
+      setPromptQuery('');
+      return;
+    }
+
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
@@ -935,13 +1021,42 @@ export default function ChatInterface() {
               <textarea
                 ref={textareaRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => handleInputChange(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type your message... (Shift+Enter for new line)"
                 className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] dark:bg-gray-800 dark:text-white resize-none max-h-32 min-h-[3rem]"
                 disabled={isLoading}
                 rows={1}
               />
+              {isPromptMenuOpen && (
+                <div className="absolute bottom-14 left-0 w-72 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                  <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">Insert a system prompt</div>
+                  <div className="max-h-56 overflow-y-auto">
+                    {SYSTEM_PROMPTS.filter(
+                      (prompt) =>
+                        prompt.title.toLowerCase().includes(promptQuery.toLowerCase()) ||
+                        prompt.description.toLowerCase().includes(promptQuery.toLowerCase())
+                    ).map((prompt) => (
+                      <button
+                        key={prompt.id}
+                        type="button"
+                        onClick={() => handleSystemPromptSelect(prompt.id)}
+                        className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                            /
+                          </span>
+                          <div>
+                            <div className="font-medium text-gray-900 dark:text-gray-100">{prompt.title}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">{prompt.description}</div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <button
               type="submit"
@@ -951,6 +1066,22 @@ export default function ChatInterface() {
               Send
             </button>
           </form>
+          {selectedSystemPrompt && (
+            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-200">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                /
+              </span>
+              <span className="font-medium">{selectedSystemPrompt.title}</span>
+              <button
+                type="button"
+                onClick={clearSystemPrompt}
+                className="text-gray-500 transition hover:text-gray-700 dark:hover:text-gray-300"
+                aria-label="Clear system prompt"
+              >
+                ×
+              </button>
+            </div>
+          )}
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
             Press Enter to send, Shift+Enter for new line
           </p>
