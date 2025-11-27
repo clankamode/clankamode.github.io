@@ -85,7 +85,6 @@ export async function POST(req: NextRequest) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             input: transformedMessages as any,
             stream: true,
-            temperature: 0.7,
             max_output_tokens: 2000,
         });
 

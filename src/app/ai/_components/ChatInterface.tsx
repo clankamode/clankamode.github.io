@@ -8,10 +8,8 @@ import { suggestedQueries } from './suggestedQueries';
 import RichText from './RichText';
 
 const MODELS = [
+  { id: 'gpt-5-2025-08-07', name: 'ChatGPT 5' },
   { id: 'gpt-4.1-2025-04-14', name: 'ChatGPT 4.1' },
-  { id: 'gpt-4-turbo-2024-04-09', name: 'ChatGPT 4 Turbo' },
-  { id: 'gpt-4', name: 'ChatGPT 4' },
-  { id: 'gpt-3.5-turbo', name: 'ChatGPT 3.5' },
 ] as const;
 
 const SYSTEM_PROMPTS = [
