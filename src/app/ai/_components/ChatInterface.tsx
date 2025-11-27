@@ -164,6 +164,7 @@ export default function ChatInterface() {
       // Load conversations for the current (possibly proxied) user
       loadConversations();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user?.email, session?.isProxying]);
 
   const loadConversations = async () => {

@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import OpenAI from 'openai';
-import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -23,12 +22,12 @@ interface IncomingMessage {
     attachments?: MessageAttachment[];
 }
 
-type ContentPart = 
-    | { type: 'text'; text: string }
-    | { type: 'image_url'; image_url: { url: string } }
-    | { type: 'file'; file: { file_id: string } };
+type ContentPart =
+    | { type: 'input_text'; text: string }
+    | { type: 'input_image'; image_url: string }
+    | { type: 'input_file'; file_id: string };
 
-type TransformedMessage = 
+type TransformedMessage =
     | { role: 'user' | 'assistant' | 'system'; content: string }
     | { role: 'user'; content: ContentPart[] };
 
@@ -43,57 +42,51 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Transform messages to support vision API format
+        // Transform messages to support vision and file inputs for the Responses API
         const transformedMessages: TransformedMessage[] = messages.map((msg: IncomingMessage): TransformedMessage => {
             if (msg.attachments && msg.attachments.length > 0) {
                 const content: ContentPart[] = [];
-                
-                // Add text content if present
+
                 if (msg.content) {
                     content.push({
-                        type: 'text',
+                        type: 'input_text',
                         text: msg.content,
                     });
                 }
-                
-                // Add image and PDF attachments
+
                 msg.attachments.forEach((attachment: MessageAttachment) => {
                     if (attachment.type === 'image' && attachment.url) {
                         content.push({
-                            type: 'image_url',
-                            image_url: {
-                                url: attachment.url,
-                            },
+                            type: 'input_image',
+                            image_url: attachment.url,
                         });
                     } else if (attachment.type === 'pdf' && attachment.file_id) {
-                        // For PDFs, use file type with nested file object containing file_id
                         content.push({
-                            type: 'file',
-                            file: {
-                                file_id: attachment.file_id,
-                            },
+                            type: 'input_file',
+                            file_id: attachment.file_id,
                         });
                     }
                 });
-                
+
                 return {
                     role: 'user',
                     content,
                 };
             }
-            
+
             return {
                 role: msg.role,
                 content: msg.content,
             };
         });
 
-        const stream = await openai.chat.completions.create({
+        const stream = await openai.responses.create({
             model: model,
-            messages: transformedMessages as ChatCompletionMessageParam[],
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            input: transformedMessages as any,
             stream: true,
             temperature: 0.7,
-            max_tokens: 2000,
+            max_output_tokens: 2000,
         });
 
         // Create a readable stream for the response
@@ -101,10 +94,11 @@ export async function POST(req: NextRequest) {
         const customStream = new ReadableStream({
             async start(controller) {
                 try {
-                    for await (const chunk of stream) {
-                        const content = chunk.choices[0]?.delta?.content || '';
-                        if (content) {
-                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
+                    for await (const event of stream) {
+                        if (event.type === 'response.output_text.delta' && 'delta' in event && event.delta) {
+                            controller.enqueue(
+                                encoder.encode(`data: ${JSON.stringify({ content: event.delta })}\n\n`)
+                            );
                         }
                     }
                     controller.enqueue(encoder.encode('data: [DONE]\n\n'));
