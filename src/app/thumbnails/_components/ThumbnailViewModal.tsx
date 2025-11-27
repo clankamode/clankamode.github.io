@@ -4,6 +4,7 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { upload } from '@vercel/blob/client';
 import Image from "next/image"
+import type { ThumbnailActivity } from '@/types/ThumbnailActivity'
 
 interface ThumbnailViewModalProps {
   isOpen: boolean
@@ -31,6 +32,31 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
   const [dragActive, setDragActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [activity, setActivity] = useState<ThumbnailActivity[]>([])
+  const [isActivityLoading, setIsActivityLoading] = useState(true)
+  const [activityError, setActivityError] = useState<string | null>(null)
+  const [comment, setComment] = useState('')
+  const [commentAuthor, setCommentAuthor] = useState('')
+
+  const fetchActivity = async (jobId: string) => {
+    try {
+      setIsActivityLoading(true)
+      const response = await fetch(`/api/thumbnail_job/${jobId}/activity`)
+      if (!response.ok) {
+        throw new Error('Failed to load activity')
+      }
+      const data = await response.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
+      setActivity(data.data || [])
+      setActivityError(null)
+    } catch (error) {
+      setActivityError(error instanceof Error ? error.message : 'Failed to load activity')
+    } finally {
+      setIsActivityLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (isOpen && thumbnailId) {
@@ -59,6 +85,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
       }
 
       fetchThumbnail()
+      fetchActivity(thumbnailId)
     }
   }, [isOpen, thumbnailId])
 
@@ -113,6 +140,9 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
     try {
       const response = await fetch(`/api/thumbnail_job/${thumbnailId}`, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           thumbnail: formData.thumbnail_url,
           notes: formData.notes,
@@ -123,11 +153,14 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
         throw new Error('Failed to submit thumbnail')
       }
 
-      setIsSubmitting(false)
       onSubmitSuccess()
       onClose()
+      if (thumbnailId) {
+        fetchActivity(thumbnailId)
+      }
     } catch (error) {
       console.error('Error submitting thumbnail:', error)
+    } finally {
       setIsSubmitting(false)
     }
   }
@@ -136,7 +169,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
     try {
       const response = await fetch(formData.thumbnail_url || '')
       if (!response.ok) throw new Error('Download failed')
-      
+
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -149,6 +182,36 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
     } catch (error) {
       console.error('Error downloading thumbnail:', error)
       alert('Failed to download thumbnail')
+    }
+  }
+
+  const handleCommentSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!thumbnailId || !comment.trim()) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/thumbnail_job/${thumbnailId}/activity`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: comment.trim(),
+          author: commentAuthor.trim() || undefined,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to add comment')
+      }
+
+      setComment('')
+      fetchActivity(thumbnailId)
+    } catch (error) {
+      console.error('Error adding comment:', error)
+      setActivityError(error instanceof Error ? error.message : 'Failed to add comment')
     }
   }
 
@@ -372,6 +435,80 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                 </button>
               </div>
             </form>
+
+            {/* Activity Section */}
+            <div className="mt-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-white">Activity</h2>
+                {isActivityLoading && (
+                  <span className="text-sm text-gray-400">Loading...</span>
+                )}
+              </div>
+
+              {activityError && (
+                <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/40 text-red-200 px-4 py-3 text-sm">
+                  {activityError}
+                </div>
+              )}
+
+              <div className="space-y-4 mb-6">
+                {activity.length === 0 && !isActivityLoading ? (
+                  <p className="text-gray-400">No activity yet. Start by adding a comment.</p>
+                ) : (
+                  activity.map((item) => (
+                    <div
+                      key={item.id}
+                      className="border border-[#3e3e3e] rounded-lg p-4 bg-[#1f1f1f]"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs font-semibold uppercase tracking-wide text-[#2cbb5d]">
+                            {item.type.replaceAll('_', ' ')}
+                          </span>
+                          {item.actor && (
+                            <span className="text-xs text-gray-400">• {item.actor}</span>
+                          )}
+                        </div>
+                        {item.created_at && (
+                          <span className="text-xs text-gray-500">
+                            {new Date(item.created_at).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-white whitespace-pre-line">{item.message}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <form onSubmit={handleCommentSubmit} className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="text"
+                    value={commentAuthor}
+                    onChange={(e) => setCommentAuthor(e.target.value)}
+                    placeholder="Your name (optional)"
+                    className="w-1/3 px-4 py-2 border border-[#3e3e3e] rounded-lg bg-[#1a1a1a] text-white placeholder:text-gray-500 focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d]"
+                  />
+                  <span className="text-gray-500 text-sm">Leave a note for this thumbnail</span>
+                </div>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Add your comment or feedback"
+                  className="w-full h-24 px-4 py-3 border border-[#3e3e3e] rounded-lg focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d] resize-vertical bg-[#1a1a1a] text-white placeholder:text-gray-500"
+                />
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={!comment.trim()}
+                    className="px-6 py-2 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d]/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Add Comment
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>
