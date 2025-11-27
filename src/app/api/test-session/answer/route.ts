@@ -6,11 +6,13 @@ export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
     
-    if (!token?.email) {
+    const effectiveEmail = (token?.proxyEmail as string | null) || token?.email;
+
+    if (!effectiveEmail) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    const userEmail = effectiveEmail;
     const body = await req.json();
     const { sessionId, questionNumber, userAnswer, timeSpentSeconds } = body;
 
@@ -18,6 +20,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
+      );
+    }
+
+    // Ensure the session belongs to the effective user
+    const { data: sessionOwner, error: sessionOwnerError } = await supabase
+      .from('TestSession')
+      .select('email')
+      .eq('id', sessionId)
+      .single();
+
+    if (sessionOwnerError || !sessionOwner) {
+      console.error('Error verifying session ownership:', sessionOwnerError);
+      return NextResponse.json(
+        { error: 'Session not found' },
+        { status: 404 }
+      );
+    }
+
+    if (sessionOwner.email !== userEmail) {
+      return NextResponse.json(
+        { error: 'Forbidden' },
+        { status: 403 }
       );
     }
 

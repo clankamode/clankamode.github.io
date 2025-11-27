@@ -53,30 +53,74 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      // Fetch the role from the database on every session request
-      // This ensures role changes are reflected immediately
-      const role = await getRole(session.user?.email || '');
-      console.log(session.user?.image);
+      const effectiveRole = (token.proxyRole as UserRole) || (token.role as UserRole);
+      const effectiveEmail = (token.proxyEmail as string) || (token.email as string | null);
+      const effectiveName = (token.proxyName as string) || (session.user?.name ?? token.name ?? null);
+      const effectiveImage = (token.proxyImage as string) || (session.user?.image ?? (token as { image?: string }).image ?? null);
+
       return {
         ...session,
         user: {
           ...session.user,
           id: token.id,
-          role: role
+          role: effectiveRole,
+          email: effectiveEmail,
+          name: effectiveName,
+          image: effectiveImage
         },
+        proxy: token.proxyEmail
+          ? {
+              email: token.proxyEmail as string,
+              role: token.proxyRole as UserRole,
+              name: (token.proxyName as string | undefined) || undefined,
+              image: (token.proxyImage as string | undefined) || undefined
+            }
+          : null,
+        originalUser: {
+          email: (token.originalEmail as string | null) || (token.email as string | null) || null,
+          name: (token.originalName as string | null) || null,
+          image: (token.originalImage as string | null) || null,
+          role: (token.role as UserRole) || UserRole.USER
+        },
+        isProxying: !!token.proxyEmail
       };
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
+        token.email = token.email || user.email;
+        token.name = token.name || user.name;
+        (token as { image?: string | null }).image = (token as { image?: string | null }).image || user.image;
+        token.originalEmail = token.originalEmail || user.email;
+        token.originalName = token.originalName || user.name;
+        token.originalImage = (token as { originalImage?: string | null }).originalImage || user.image;
       }
-      console.log(user);
+
       // Always fetch the role from the database to keep the JWT token updated
       // This ensures middleware has access to the current role
       if (token.email) {
         token.role = await getRole(token.email as string);
+        token.originalRole = token.originalRole || token.role;
+      }
+
+      if (trigger === 'update' && session && 'proxyEmail' in session) {
+        const requestedProxyEmail = (session as { proxyEmail?: string | null }).proxyEmail;
+
+        // Clear proxy when admin submits an empty value
+        if (!requestedProxyEmail) {
+          delete (token as { proxyEmail?: string | null }).proxyEmail;
+          delete (token as { proxyRole?: string | null }).proxyRole;
+          delete (token as { proxyName?: string | null }).proxyName;
+          delete (token as { proxyImage?: string | null }).proxyImage;
+        } else if (token.role === UserRole.ADMIN) {
+          const proxyRole = await getRole(requestedProxyEmail);
+          (token as { proxyEmail?: string }).proxyEmail = requestedProxyEmail;
+          (token as { proxyRole?: UserRole }).proxyRole = proxyRole;
+          (token as { proxyName?: string }).proxyName = (session as { proxyName?: string }).proxyName || requestedProxyEmail;
+          (token as { proxyImage?: string | null }).proxyImage = (session as { proxyImage?: string | null }).proxyImage || null;
+        }
       }
       return token;
     },
   },
-}; 
+};

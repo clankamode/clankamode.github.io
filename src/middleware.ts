@@ -9,14 +9,16 @@ export async function middleware(req: NextRequest) {
             req,
         });
         
+        const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+
         // Special handling for home page
         if (req.nextUrl.pathname === '/') {
             // If user is logged in and is an editor, redirect to /ai
-            if (token && token.role === UserRole.EDITOR) {
+            if (token && effectiveRole === UserRole.EDITOR) {
                 console.log('Redirecting editor to /ai from home page');
                 return NextResponse.redirect(new URL('/ai', req.url));
             }
-            console.log('Home page access - Role:', token?.role);
+            console.log('Home page access - Role:', effectiveRole);
             // Otherwise, allow access to home page
             return NextResponse.next();
         }
@@ -26,7 +28,7 @@ export async function middleware(req: NextRequest) {
             return NextResponse.redirect(new URL('/', req.url));
         }
         
-        const userRole = token.role as UserRole;
+        const userRole = effectiveRole;
         
         // Check if the route is thumbnail-related
         if (req.nextUrl.pathname.startsWith('/thumbnails') || req.nextUrl.pathname.startsWith('/api/thumbnail_job')) {

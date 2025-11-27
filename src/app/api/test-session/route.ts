@@ -6,11 +6,13 @@ export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req });
     
-    if (!token?.email) {
+    const effectiveEmail = (token?.proxyEmail as string | null) || token?.email;
+
+    if (!effectiveEmail) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    const userEmail = effectiveEmail;
 
     // Check for existing incomplete session by email
     const { data: existingSession, error: sessionError } = await supabase
@@ -129,11 +131,13 @@ export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
     
-    if (!token?.email) {
+    const effectiveEmail = (token?.proxyEmail as string | null) || token?.email;
+
+    if (!effectiveEmail) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    const userEmail = effectiveEmail;
 
     // Check for existing incomplete sessions
     const { data: incompleteSessions, error: incompleteError } = await supabase

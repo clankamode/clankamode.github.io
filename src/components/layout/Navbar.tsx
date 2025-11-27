@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { UserRole, hasRole } from '@/types/roles';
+import AdminProxyControls from '../auth/AdminProxyControls';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,9 +26,11 @@ export default function Navbar() {
   };
 
   const isLoggedIn = !!session;
-  const userRole = (session?.user?.role as UserRole) || UserRole.USER;
-  const isAdmin = hasRole(userRole, UserRole.ADMIN);
-  const isEditor = userRole === UserRole.EDITOR; // Exact match for editor, not including admin
+  const effectiveRole = (session?.user?.role as UserRole) || UserRole.USER;
+  const originalRole = (session?.originalUser?.role as UserRole) || effectiveRole;
+  const isAdmin = hasRole(originalRole, UserRole.ADMIN);
+  const isEffectiveAdmin = hasRole(effectiveRole, UserRole.ADMIN);
+  const isEditor = effectiveRole === UserRole.EDITOR; // Exact match for editor, not including admin
   
   return (
     <nav className="bg-[#2cbb5d] backdrop-blur-md fixed w-full z-20 top-0 left-0 border-b border-[#2cbb5d]/20">
@@ -79,7 +82,7 @@ export default function Navbar() {
                 <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Videos
                 </Link>
-                {isLoggedIn && isAdmin && (
+                {isLoggedIn && isEffectiveAdmin && (
                   <>
                     <Link href="/ai" className={`px-3 py-2 ${isActive('/ai') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                       AI
@@ -100,6 +103,9 @@ export default function Navbar() {
             <div className="h-10 w-24 bg-gray-700 animate-pulse rounded"></div>
           ) : session ? (
             <div className="flex items-center space-x-2 md:space-x-4">
+              <div className="hidden sm:block">
+                <AdminProxyControls />
+              </div>
               <button
                 onClick={handleSignOut}
                 className="text-white bg-red-600 hover:bg-red-700 px-3 md:px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
@@ -194,18 +200,18 @@ export default function Navbar() {
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/mocks" 
+                <Link
+                  href="/mocks"
                   className={`block py-2 pl-3 pr-4 rounded ${isActive('/mocks') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Mocks
                 </Link>
               </li>
-              {isLoggedIn && isAdmin && (
+              {isLoggedIn && isEffectiveAdmin && (
                 <>
                   <li>
-                    <Link 
+                    <Link
                       href="/ai" 
                       className={`block py-2 pl-3 pr-4 rounded ${isActive('/ai') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
                       onClick={() => setIsMenuOpen(false)}
@@ -228,8 +234,8 @@ export default function Navbar() {
           )}
           {!isLoggedIn && (
             <li>
-              <a 
-                href="/login" 
+              <a
+                href="/login"
                 className="block py-2 pl-3 pr-4 text-white rounded bg-[#ff7f50] hover:bg-[#ff6347]"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -237,8 +243,15 @@ export default function Navbar() {
               </a>
             </li>
           )}
+          {isLoggedIn && isAdmin && (
+            <li className="border-t border-[#3e3e3e] bg-[#1f1f1f]">
+              <div className="p-3">
+                <AdminProxyControls />
+              </div>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
   );
-} 
+}

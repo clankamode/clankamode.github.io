@@ -6,11 +6,13 @@ export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req });
     
-    if (!token?.email) {
+    const effectiveEmail = (token?.proxyEmail as string | null) || token?.email;
+
+    if (!effectiveEmail) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    const userEmail = effectiveEmail;
 
     // Fetch all sessions for the user
     const { data: sessions, error: sessionsError } = await supabase

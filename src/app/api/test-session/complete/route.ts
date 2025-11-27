@@ -6,7 +6,9 @@ export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
     
-    if (!token?.email) {
+    const effectiveEmail = (token?.proxyEmail as string | null) || token?.email;
+
+    if (!effectiveEmail) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -17,6 +19,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Missing sessionId' },
         { status: 400 }
+      );
+    }
+
+    // Verify the session belongs to the effective user
+    const { data: sessionOwner, error: sessionOwnerError } = await supabase
+      .from('TestSession')
+      .select('email')
+      .eq('id', sessionId)
+      .single();
+
+    if (sessionOwnerError || !sessionOwner) {
+      console.error('Error verifying session ownership:', sessionOwnerError);
+      return NextResponse.json(
+        { error: 'Session not found' },
+        { status: 404 }
+      );
+    }
+
+    if (sessionOwner.email !== effectiveEmail) {
+      return NextResponse.json(
+        { error: 'Forbidden' },
+        { status: 403 }
       );
     }
 

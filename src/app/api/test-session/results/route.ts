@@ -6,11 +6,13 @@ export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req });
     
-    if (!token?.email) {
+    const effectiveEmail = (token?.proxyEmail as string | null) || token?.email;
+
+    if (!effectiveEmail) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    const userEmail = effectiveEmail;
     const { searchParams } = new URL(req.url);
     const sessionId = searchParams.get('sessionId');
 
