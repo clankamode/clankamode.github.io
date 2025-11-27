@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { upload } from '@vercel/blob/client';
 import { Message, ChatConversation, ChatMessage, MessageAttachment } from '@/types/chat';
 import { suggestedQueries } from './suggestedQueries';
@@ -58,6 +59,8 @@ Output requirements
 ] as const;
 
 export default function ChatInterface() {
+  const { data: session } = useSession();
+  
   // Conversation state
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
@@ -149,10 +152,19 @@ export default function ChatInterface() {
     }
   }, [editingConversationId]);
 
-  // Load conversations on mount
+  // Load conversations on mount and when session changes (e.g., proxy user changes)
   useEffect(() => {
-    loadConversations();
-  }, []);
+    if (session) {
+      // Clear current conversation and messages when switching users
+      setCurrentConversationId(null);
+      setMessages([]);
+      setInput('');
+      setAttachments([]);
+      
+      // Load conversations for the current (possibly proxied) user
+      loadConversations();
+    }
+  }, [session?.user?.email, session?.isProxying]);
 
   const loadConversations = async () => {
     try {

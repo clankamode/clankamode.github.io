@@ -14,7 +14,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    // Use proxyEmail if admin is proxying, otherwise use their own email
+    const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
 
     // Get the conversation
@@ -85,7 +86,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    // Use proxyEmail if admin is proxying, otherwise use their own email
+    const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
     const body = await req.json();
     const { title } = body;
@@ -145,7 +147,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    // Use proxyEmail if admin is proxying, otherwise use their own email
+    const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
 
     // Delete the conversation (messages will cascade delete)

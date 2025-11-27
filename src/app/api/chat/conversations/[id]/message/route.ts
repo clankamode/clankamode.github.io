@@ -14,7 +14,8 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    // Use proxyEmail if admin is proxying, otherwise use their own email
+    const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
     const body = await req.json();
     const { role, content, token_count, attachments } = body;

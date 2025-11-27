@@ -11,7 +11,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    // Use proxyEmail if admin is proxying, otherwise use their own email
+    const userEmail = (token.proxyEmail as string) || token.email;
 
     // Get all conversations for the user, ordered by most recent
     const { data: conversations, error } = await supabase
@@ -48,7 +49,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userEmail = token.email;
+    // Use proxyEmail if admin is proxying, otherwise use their own email
+    const userEmail = (token.proxyEmail as string) || token.email;
     const body = await req.json();
     const { title, model } = body;
 
