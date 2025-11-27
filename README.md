@@ -107,6 +107,26 @@ To enable Google login functionality:
 - **Topics**: Update the topics section in `src/app/page.tsx` to highlight your areas of expertise.
 - **Links**: Update social media links in the community section.
 
+## Supabase tables for Live Q&A
+
+The live question feature expects two tables in Supabase:
+
+- **LiveQuestions**
+  - `id`: uuid, primary key, default `uuid_generate_v4()`
+  - `content`: text, required
+  - `user_email`: text, required
+  - `user_name`: text, nullable
+  - `created_at`: timestamp with time zone, default `now()`
+  - `is_archived`: boolean, default `false` - marks questions as answered/archived
+  - `video_url`: text, nullable - URL to the video where the question was answered
+
+- **LiveQuestionVotes**
+  - `id`: uuid, primary key, default `uuid_generate_v4()`
+  - `question_id`: uuid, foreign key to `LiveQuestions.id`, `on delete cascade`
+  - `user_email`: text, required
+  - `created_at`: timestamp with time zone, default `now()`
+  - Unique constraint on (`question_id`, `user_email`) to prevent duplicate votes
+
 ## Deployment
 
 This project can be easily deployed to Vercel:
