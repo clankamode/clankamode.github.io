@@ -8,8 +8,9 @@ import { suggestedQueries } from './suggestedQueries';
 import RichText from './RichText';
 
 const MODELS = [
-  { id: 'gpt-5-2025-08-07', name: 'ChatGPT 5' },
-  { id: 'gpt-4.1-2025-04-14', name: 'ChatGPT 4.1' },
+  { id: 'gpt-4.1-2025-04-14', name: 'ChatGPT 4.1', type: 'chat' },
+  { id: 'gpt-5-2025-08-07', name: 'ChatGPT 5', type: 'chat' },
+  { id: 'gemini-3-pro-image-preview', name: 'Gemini Image Generation', type: 'image' },
 ] as const;
 
 const SYSTEM_PROMPTS = [
@@ -193,6 +194,7 @@ export default function ChatInterface() {
         role: msg.role,
         content: msg.content,
         attachments: msg.attachments,
+        generatedImages: msg.generatedImages,
       })) || []);
       setSelectedModel(data.model);
     } catch (error) {
@@ -235,6 +237,7 @@ export default function ChatInterface() {
           role: message.role,
           content: message.content,
           attachments: message.attachments,
+          generatedImages: message.generatedImages,
         }),
       });
     } catch (error) {
@@ -518,16 +521,34 @@ export default function ChatInterface() {
     await saveMessage(conversationId, userMessage);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: selectedSystemPrompt
-            ? [{ role: 'system', content: selectedSystemPrompt.content }, ...messages, userMessage]
-            : [...messages, userMessage],
-          model: selectedModel,
-        }),
-      });
+      // Check if this is an image generation request
+      const isImageGeneration = selectedModel === 'gemini-3-pro-image-preview';
+      
+      // For image generation, check if there's an uploaded image to edit
+      const inputImageUrl = isImageGeneration && attachments.length > 0 && attachments[0].type === 'image' 
+        ? attachments[0].url 
+        : undefined;
+      
+      const response = await fetch(
+        isImageGeneration ? '/api/chat/generate-image' : '/api/chat',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(
+            isImageGeneration
+              ? { 
+                  prompt: input,
+                  inputImageUrl,
+                }
+              : {
+                  messages: selectedSystemPrompt
+                    ? [{ role: 'system', content: selectedSystemPrompt.content }, ...messages, userMessage]
+                    : [...messages, userMessage],
+                  model: selectedModel,
+                }
+          ),
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to get response');
@@ -541,7 +562,8 @@ export default function ChatInterface() {
       }
 
       let assistantMessage = '';
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+      const generatedImages: { id: string; url: string; mimeType?: string }[] = [];
+      setMessages(prev => [...prev, { role: 'assistant', content: '', generatedImages: [] }]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -558,16 +580,51 @@ export default function ChatInterface() {
             }
             try {
               const parsed = JSON.parse(data);
-              if (parsed.content) {
-                assistantMessage += parsed.content;
-                setMessages(prev => {
-                  const newMessages = [...prev];
-                  newMessages[newMessages.length - 1] = {
-                    role: 'assistant',
-                    content: assistantMessage,
-                  };
-                  return newMessages;
-                });
+              
+              if (isImageGeneration) {
+                // Handle image generation responses
+                if (parsed.type === 'image') {
+                  generatedImages.push({
+                    id: crypto.randomUUID(),
+                    url: parsed.url,
+                    mimeType: parsed.mimeType,
+                  });
+                  setMessages(prev => {
+                    const newMessages = [...prev];
+                    newMessages[newMessages.length - 1] = {
+                      role: 'assistant',
+                      content: assistantMessage,
+                      generatedImages: [...generatedImages],
+                    };
+                    return newMessages;
+                  });
+                } else if (parsed.type === 'text') {
+                  assistantMessage += parsed.content;
+                  setMessages(prev => {
+                    const newMessages = [...prev];
+                    newMessages[newMessages.length - 1] = {
+                      role: 'assistant',
+                      content: assistantMessage,
+                      generatedImages: [...generatedImages],
+                    };
+                    return newMessages;
+                  });
+                } else if (parsed.type === 'error') {
+                  throw new Error(parsed.error);
+                }
+              } else {
+                // Handle regular chat responses
+                if (parsed.content) {
+                  assistantMessage += parsed.content;
+                  setMessages(prev => {
+                    const newMessages = [...prev];
+                    newMessages[newMessages.length - 1] = {
+                      role: 'assistant',
+                      content: assistantMessage,
+                    };
+                    return newMessages;
+                  });
+                }
               }
             } catch {
               // Skip invalid JSON
@@ -577,8 +634,12 @@ export default function ChatInterface() {
       }
 
       // Save assistant message
-      if (conversationId && assistantMessage) {
-        await saveMessage(conversationId, { role: 'assistant', content: assistantMessage });
+      if (conversationId && (assistantMessage || generatedImages.length > 0)) {
+        await saveMessage(conversationId, { 
+          role: 'assistant', 
+          content: assistantMessage || 'Generated image',
+          generatedImages: generatedImages.length > 0 ? generatedImages : undefined,
+        });
         
         // Update conversation's updated_at in the list
         setConversations(prev =>
@@ -798,12 +859,38 @@ export default function ChatInterface() {
                 (PDF requires GPT-4.1)
               </span>
             )}
+            {selectedModel === 'gemini-3-pro-image-preview' && (
+              <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                {attachments.length > 0 && attachments[0].type === 'image' 
+                  ? '(Image editing mode)' 
+                  : '(Image generation mode)'}
+              </span>
+            )}
           </div>
         </div>
 
         {/* Messages Container */}
         <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
-          {messages.length === 0 ? (
+          {/* Image Generation Info Banner */}
+          {selectedModel === 'gemini-3-pro-image-preview' && messages.length === 0 && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+              <div className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">Image Generation Mode</h3>
+                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>• <strong>Generate:</strong> Describe the image you want to create</li>
+                    <li>• <strong>Edit:</strong> Upload an image, then describe how to modify it</li>
+                    <li>• Examples: &quot;A futuristic city&quot;, &quot;Make it black and white&quot;, &quot;Add a sunset background&quot;</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {messages.length === 0 && selectedModel !== 'gemini-3-pro-image-preview' ? (
             <div className="flex items-center justify-center h-full text-center">
               <div>
                 <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">
@@ -895,6 +982,29 @@ export default function ChatInterface() {
                                 </div>
                               </div>
                             )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {message.generatedImages && message.generatedImages.length > 0 && (
+                      <div className="mb-3 space-y-2">
+                        {message.generatedImages.map((image) => (
+                          <div key={image.id} className="space-y-2">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={image.url}
+                              alt="Generated image"
+                              className="max-w-md w-full rounded-lg object-contain max-h-96 cursor-pointer hover:opacity-90 transition-opacity"
+                              onClick={() => window.open(image.url, '_blank')}
+                            />
+                            <a
+                              href={image.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs underline block hover:text-blue-600 dark:hover:text-blue-400"
+                            >
+                              Open full size in new tab
+                            </a>
                           </div>
                         ))}
                       </div>
@@ -1009,17 +1119,17 @@ export default function ChatInterface() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*,.pdf"
-              multiple
+              accept={selectedModel === 'gemini-3-pro-image-preview' ? 'image/*' : 'image/*,.pdf'}
+              multiple={selectedModel !== 'gemini-3-pro-image-preview'}
               onChange={handleFileUpload}
               className="hidden"
             />
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              disabled={isLoading || isUploading}
+              disabled={isLoading || isUploading || (selectedModel === 'gemini-3-pro-image-preview' && attachments.length > 0)}
               className="px-3 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
-              title="Upload files"
+              title={selectedModel === 'gemini-3-pro-image-preview' ? 'Upload image to edit' : 'Upload files'}
             >
               {isUploading ? (
                 <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1037,7 +1147,13 @@ export default function ChatInterface() {
                 value={input}
                 onChange={(e) => handleInputChange(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Type your message... (Shift+Enter for new line)"
+                placeholder={
+                  selectedModel === 'gemini-3-pro-image-preview'
+                    ? attachments.length > 0 && attachments[0].type === 'image'
+                      ? 'Describe how to edit the image... (e.g., "make it black and white", "add a sunset")'
+                      : 'Describe the image you want to generate...'
+                    : 'Type your message... (Shift+Enter for new line)'
+                }
                 className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] dark:bg-gray-800 dark:text-white resize-none max-h-32 min-h-[3rem]"
                 disabled={isLoading}
                 rows={1}

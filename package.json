@@ -16,11 +16,13 @@
     "update_sessions": "tsx scripts/src/update_test_sessions.ts"
   },
   "dependencies": {
+    "@google/genai": "^1.30.0",
     "@supabase/supabase-js": "^2.56.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/blob": "^1.1.1",
     "chart.js": "^4.4.1",
     "dotenv": "^17.2.1",
+    "mime": "^4.1.0",
     "next": "15.3.0",
     "next-auth": "^4.24.11",
     "node-fetch": "^3.3.2",

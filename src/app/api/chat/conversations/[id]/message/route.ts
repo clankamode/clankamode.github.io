@@ -18,11 +18,11 @@ export async function POST(
     const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
     const body = await req.json();
-    const { role, content, token_count, attachments } = body;
+    const { role, content, token_count, attachments, generatedImages } = body;
 
-    if (!role || (!content && !attachments)) {
+    if (!role || (!content && !attachments && !generatedImages)) {
       return NextResponse.json(
-        { error: 'Role and content or attachments are required' },
+        { error: 'Role and content, attachments, or generatedImages are required' },
         { status: 400 }
       );
     }
@@ -56,6 +56,15 @@ export async function POST(
       );
     }
 
+    // Build metadata object
+    const metadata: Record<string, unknown> = {};
+    if (attachments) {
+      metadata.attachments = attachments;
+    }
+    if (generatedImages) {
+      metadata.generatedImages = generatedImages;
+    }
+
     // Insert the message
     const { data: message, error: messageError } = await supabase
       .from('ChatMessages')
@@ -64,7 +73,7 @@ export async function POST(
         role,
         content,
         token_count: token_count || 0,
-        metadata: attachments ? { attachments } : undefined,
+        metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
       })
       .select()
       .single();

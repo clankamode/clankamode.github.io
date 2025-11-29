@@ -55,10 +55,11 @@ export async function GET(
       );
     }
 
-    // Map messages to include attachments from metadata
+    // Map messages to include attachments and generatedImages from metadata
     const messagesWithAttachments = messages?.map(msg => ({
       ...msg,
       attachments: msg.metadata?.attachments || undefined,
+      generatedImages: msg.metadata?.generatedImages || undefined,
     })) || [];
 
     return NextResponse.json({

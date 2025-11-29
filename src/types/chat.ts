@@ -20,6 +20,7 @@ export interface ChatMessage {
   metadata?: Record<string, unknown>;
   parent_message_id?: string | null;
   attachments?: MessageAttachment[];
+  generatedImages?: GeneratedImage[];
 }
 
 // For API responses
@@ -35,16 +36,25 @@ export interface ConversationListItem extends ChatConversation {
 // For the ChatInterface component
 export interface MessageAttachment {
   id: string;
-  type: 'image' | 'pdf';
+  type: 'image' | 'pdf' | 'generated-image';
   url?: string; // Optional for PDFs (which use file_id)
   file_id?: string; // OpenAI Files API ID for PDFs
   name: string;
-  size: number;
+  size?: number;
+  mimeType?: string; // For generated images
 }
 
 export interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
   attachments?: MessageAttachment[];
+  generatedImages?: GeneratedImage[];
+}
+
+export interface GeneratedImage {
+  id: string;
+  url: string;
+  mimeType?: string;
+  prompt?: string;
 }
 

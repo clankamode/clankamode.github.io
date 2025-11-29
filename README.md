@@ -11,6 +11,8 @@ A modern personal website showcasing videos, blog posts, and portfolio items. Bu
 - Mobile-friendly navigation
 - Infinite scrolling on videos page to load more content as you scroll
 - Google OAuth authentication
+- AI Chat interface with multiple models (GPT-4.1, GPT-5)
+- **AI Image Generation & Editing** powered by Google Gemini with real-time streaming
 - Fix the themes. Make it editable in one spot.
 
 ## Getting Started
@@ -99,6 +101,27 @@ To enable Google login functionality:
    ```
 
 8. Now you should be able to sign in with Google.
+
+## Setting Up Google Gemini Image Generation
+
+To enable AI image generation in the chat interface:
+
+1. Go to [Google AI Studio](https://aistudio.google.com/).
+2. Sign in with your Google account.
+3. Navigate to "Get API Key" in the left sidebar.
+4. Create a new API key or use an existing one.
+5. Add the API key to your `.env.local` file:
+   ```
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+6. The image generation model will now be available in the chat interface.
+   - Select "Gemini Image Generation" from the model dropdown
+   - **Generate**: Type your image prompt and press Send
+   - **Edit**: Upload an image, then describe how to modify it (e.g., "make it black and white", "add a sunset")
+   - Generated/edited images will stream in real-time and be automatically uploaded to Vercel Blob storage
+
+**Note**: Make sure you have Vercel Blob storage configured for image uploads. The generated images are stored using the same upload endpoint as other chat attachments.
 
 ## Customization
 

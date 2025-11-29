@@ -82,9 +82,6 @@ export default function Navbar() {
                 <Link href="/peralta75" className={`px-3 py-2 ${isActive('/peralta75') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Peralta 75
                 </Link>
-                <Link href="/questions" className={`px-3 py-2 ${isActive('/questions') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-                  Career Q&A
-                </Link>
                 <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Videos
                 </Link>
@@ -206,15 +203,6 @@ export default function Navbar() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Peralta 75
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/questions"
-                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/questions') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Career Q&A
                 </Link>
               </li>
               <li>
