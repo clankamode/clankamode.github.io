@@ -127,6 +127,15 @@ The live question feature expects two tables in Supabase:
   - `created_at`: timestamp with time zone, default `now()`
   - Unique constraint on (`question_id`, `user_email`) to prevent duplicate votes
 
+## Supabase tables for Gallery
+
+The gallery feature expects one table in Supabase:
+
+- **HeadShots**
+  - `id`: uuid, primary key, default `uuid_generate_v4()`
+  - `url`: text, required - The public URL of the uploaded headshot image
+  - `created_at`: timestamp with time zone, default `now()`
+
 ## Deployment
 
 This project can be easily deployed to Vercel:

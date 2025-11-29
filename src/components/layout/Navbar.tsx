@@ -69,6 +69,9 @@ export default function Navbar() {
                 <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Thumbnails
                 </Link>
+                <Link href="/gallery" className={`px-3 py-2 ${isActive('/gallery') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                  Gallery
+                </Link>
               </>
             ) : (
               <>
@@ -92,6 +95,9 @@ export default function Navbar() {
                     </Link>
                     <Link href="/thumbnails" className={`px-3 py-2 ${isActive('/thumbnails') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                       Thumbnails
+                    </Link>
+                    <Link href="/gallery" className={`px-3 py-2 ${isActive('/gallery') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                      Gallery
                     </Link>
                   </>
                 )}
@@ -154,8 +160,8 @@ export default function Navbar() {
           {isLoggedIn && isEditor ? (
             <>
               <li>
-                <Link 
-                  href="/ai" 
+                <Link
+                  href="/ai"
                   className={`block py-2 pl-3 pr-4 rounded ${isActive('/ai') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -169,6 +175,15 @@ export default function Navbar() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Thumbnails
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/gallery"
+                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/gallery') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Gallery
                 </Link>
               </li>
             </>
@@ -224,7 +239,7 @@ export default function Navbar() {
                 <>
                   <li>
                     <Link
-                      href="/ai" 
+                      href="/ai"
                       className={`block py-2 pl-3 pr-4 rounded ${isActive('/ai') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -238,6 +253,15 @@ export default function Navbar() {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Thumbnails
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/gallery"
+                      className={`block py-2 pl-3 pr-4 rounded ${isActive('/gallery') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Gallery
                     </Link>
                   </li>
                 </>
