@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface MarkdownBlock {
-  type: 'paragraph' | 'heading' | 'list' | 'code' | 'blockquote' | 'video';
+  type: 'paragraph' | 'heading' | 'list' | 'code' | 'blockquote' | 'video' | 'preformatted';
   content: string | string[];
   level?: number;
   ordered?: boolean;
@@ -103,7 +103,19 @@ const parseMarkdown = (content: string): MarkdownBlock[] => {
 
   const flushParagraph = () => {
     if (paragraphLines.length > 0) {
-      blocks.push({ type: 'paragraph', content: paragraphLines.join(' ') });
+      // Preserve newlines for content that looks like timestamps or structured data
+      // (lines starting with time codes, numbers, or short structured entries)
+      const looksLikeStructuredContent = paragraphLines.some(line => 
+        /^\d{1,2}:\d{2}(:\d{2})?/.test(line.trim()) || // Timestamps like 00:00:00 or 0:00
+        /^#\w/.test(line.trim()) // Hashtags like #resumetips
+      );
+      
+      if (looksLikeStructuredContent) {
+        // Use preformatted type to preserve line breaks without extra spacing
+        blocks.push({ type: 'preformatted', content: paragraphLines.join('\n') });
+      } else {
+        blocks.push({ type: 'paragraph', content: paragraphLines.join(' ') });
+      }
       paragraphLines = [];
     }
   };
@@ -429,6 +441,17 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
           className="border-l-4 border-[#2cbb5d] pl-3 italic text-gray-700 dark:text-gray-300"
           dangerouslySetInnerHTML={{ __html: formatInline(block.content as string) }}
         />
+      );
+    }
+    case 'preformatted': {
+      // Render content with preserved line breaks but no extra spacing
+      const lines = (block.content as string).split('\n');
+      return (
+        <div key={index} className="text-gray-900 dark:text-gray-100">
+          {lines.map((line, idx) => (
+            <div key={idx} dangerouslySetInnerHTML={{ __html: formatInline(line) }} />
+          ))}
+        </div>
       );
     }
     default: {
