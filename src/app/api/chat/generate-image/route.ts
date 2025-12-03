@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60; // Allow up to 5 minutes for image generation in production
 
 interface ImageGenerationRequest {
   prompt: string;
