@@ -57,6 +57,144 @@ Output requirements
   },
 ] as const;
 
+const TUTORIAL_PROMPT_TEMPLATE = `Reusable Prompt: “Teach Me to Derive the Optimal Solution (n Candidate Solutions)”
+
+You are my algorithm tutor. Your job is to help me arrive at the optimal solution myself, not just present the final answer.
+
+You must reason from my attempts → insight → optimal approach, even if I provided many attempts.
+
+---
+
+Inputs
+
+Problem statement:
+[PROBLEM_STATEMENT]
+
+Constraints + examples (if any):
+[CONSTRAINTS_AND_EXAMPLES]
+
+My candidate solutions (1..n):
+[CANDIDATE_SOLUTIONS]
+
+(If helpful, include expected time/space complexity per solution.)
+
+Known optimal solution / editorial hint (optional):
+[KNOWN_OPTIMAL_SOLUTION]
+
+---
+
+Your Output Format (follow exactly)
+
+1) Rephrase + Goal
+	•	Restate the problem in your own words in 2–3 lines.
+	•	Identify what is being optimized (min/max/count/existence).
+	•	Extract the real constraints that determine the required complexity.
+
+---
+
+2) Solution Landscape (Big Picture)
+Before analyzing individual solutions:
+	•	Describe the naive baseline.
+	•	Describe what kind of problem this is (e.g., automaton, greedy with invariant, DP on remainders, graph shortest path, sliding window).
+	•	State what class of optimizations we should expect.
+
+---
+
+3) Candidate Solution Audit (Systematic)
+For each candidate solution (1..n), do the following in order:
+
+Solution i:
+	•	Core idea / invariant it’s trying to maintain.
+	•	Why this approach is tempting or reasonable.
+	•	Correctness analysis:
+	•	When it works
+	•	When it breaks (edge cases, hidden assumptions).
+	•	Performance analysis:
+	•	True time complexity (what actually grows).
+	•	Why it risks TLE/MLE if applicable.
+	•	Classification:
+	•	❌ Fundamentally flawed
+	•	⚠️ Correct but inefficient
+	•	✅ Correct and near-optimal
+	•	One concrete improvement that would move it closer to optimal.
+
+---
+
+4) Pattern Extraction Across Solutions
+	•	What patterns repeat across my attempts?
+	•	What do all slow solutions have in common?
+	•	What information is being recomputed unnecessarily?
+	•	What quantity actually matters, and what doesn’t?
+
+(This section should connect my failed ideas to the final insight.)
+
+---
+
+5) Bridge to the Optimal Insight (Socratic)
+Guide me to the key idea without jumping:
+	•	Ask 3–7 leading questions that force the realization.
+	•	After each question, immediately provide a short answer.
+	•	Explicitly name the algorithmic pattern when it appears
+(e.g., “remainder DP”, “monotonic structure”, “prefix compression”, “state minimization”).
+
+---
+
+6) Derivation of the Optimal Solution
+Derive the solution step-by-step:
+	1.	Start from the naive approach.
+	2.	Identify the bottleneck precisely.
+	3.	Introduce the key invariant / transformation.
+	4.	Show why it preserves correctness.
+	5.	Show how it removes the bottleneck.
+	6.	Explain why this is asymptotically optimal.
+
+No leaps. No “magic”.
+
+---
+
+7) Final Algorithm
+	•	High-level algorithm steps (bullet points).
+	•	Time complexity with justification.
+	•	Space complexity with justification.
+
+---
+
+8) Implementation Notes (Competitive-Programming Focus)
+	•	Common pitfalls and how to avoid them.
+	•	Edge-case checklist.
+	•	If numbers grow large, explain how to keep state bounded (e.g., modulo, rolling state).
+	•	Language-specific gotchas if relevant.
+
+---
+
+9) “I Can Now Solve Variants”
+Give 5 meaningful variants, and for each:
+	•	What changes?
+	•	Does the same approach still work?
+	•	What needs to be modified?
+
+---
+
+10) Quick Self-Test
+	•	5 short questions testing understanding of the insight.
+	•	Provide an answer key at the end.
+
+---
+
+Style Rules (Mandatory)
+	•	Use my solutions as teaching material.
+	•	Prefer invariants and mental models over recipes.
+	•	If one of my solutions is close, show a minimal refactor path.
+	•	If a technique is mentioned, include a tiny illustrative example.
+	•	Be precise. Assume I’m aiming for contest-level mastery.`;
+
+type TutorialFormState = {
+  problemStatement: string;
+  constraintsAndExamples: string;
+  candidateSolutions: string[];
+  knownOptimalSolution: string;
+};
+
 export default function ChatInterface() {
   const { data: session } = useSession();
   
@@ -76,6 +214,17 @@ export default function ChatInterface() {
   const [selectedSystemPrompt, setSelectedSystemPrompt] = useState<(typeof SYSTEM_PROMPTS)[number] | null>(null);
   const [isPromptMenuOpen, setIsPromptMenuOpen] = useState(false);
   const [promptQuery, setPromptQuery] = useState('');
+
+  const [isTutorialModalOpen, setIsTutorialModalOpen] = useState(false);
+  const [tutorialForm, setTutorialForm] = useState<TutorialFormState>({
+    problemStatement: '',
+    constraintsAndExamples: '',
+    candidateSolutions: [''],
+    knownOptimalSolution: '',
+  });
+
+  const [isTimestampModalOpen, setIsTimestampModalOpen] = useState(false);
+  const [timestampTranscript, setTimestampTranscript] = useState('');
   
   // UI state
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
@@ -118,12 +267,36 @@ export default function ChatInterface() {
     }
   };
 
+  const buildTutorialPrompt = ({
+    problemStatement,
+    constraintsAndExamples,
+    candidateSolutions,
+    knownOptimalSolution,
+  }: TutorialFormState) => {
+    const formattedCandidates = candidateSolutions
+      .map((solution, index) => `• Solution ${index + 1}: ${solution || '[empty]'}`)
+      .join('\n');
+
+    return TUTORIAL_PROMPT_TEMPLATE
+      .replace('[PROBLEM_STATEMENT]', problemStatement || '[PASTE HERE]')
+      .replace('[CONSTRAINTS_AND_EXAMPLES]', constraintsAndExamples || '[PASTE HERE]')
+      .replace('[CANDIDATE_SOLUTIONS]', formattedCandidates || '• Solution 1: [code or description]')
+      .replace('[KNOWN_OPTIMAL_SOLUTION]', knownOptimalSolution || 'unknown');
+  };
+
   const handleSystemPromptSelect = (promptId: string) => {
     const prompt = SYSTEM_PROMPTS.find((p) => p.id === promptId) || null;
-    setSelectedSystemPrompt(prompt);
     setIsPromptMenuOpen(false);
     setPromptQuery('');
     setInput((prev) => prev.replace(/\/[^\s]*$/, ''));
+
+    // Open modal for timestamp-generator instead of just selecting the prompt
+    if (promptId === 'timestamp-generator') {
+      setIsTimestampModalOpen(true);
+      return;
+    }
+
+    setSelectedSystemPrompt(prompt);
 
     // Focus back on the textarea for quick typing after selection
     textareaRef.current?.focus();
@@ -131,6 +304,40 @@ export default function ChatInterface() {
 
   const clearSystemPrompt = () => {
     setSelectedSystemPrompt(null);
+  };
+
+  const handleTutorialFieldChange = (field: keyof TutorialFormState, value: string) => {
+    setTutorialForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleCandidateSolutionChange = (index: number, value: string) => {
+    setTutorialForm((prev) => {
+      const nextSolutions = [...prev.candidateSolutions];
+      nextSolutions[index] = value;
+      return { ...prev, candidateSolutions: nextSolutions };
+    });
+  };
+
+  const addCandidateSolution = () => {
+    setTutorialForm((prev) => ({
+      ...prev,
+      candidateSolutions: [...prev.candidateSolutions, ''],
+    }));
+  };
+
+  const removeCandidateSolution = (index: number) => {
+    setTutorialForm((prev) => {
+      if (prev.candidateSolutions.length === 1) {
+        return prev;
+      }
+      return {
+        ...prev,
+        candidateSolutions: prev.candidateSolutions.filter((_, i) => i !== index),
+      };
+    });
   };
 
   useEffect(() => {
@@ -489,17 +696,19 @@ export default function ChatInterface() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if ((!input.trim() && attachments.length === 0) || isLoading) return;
+  const submitMessage = async (
+    content: string,
+    messageAttachments: MessageAttachment[]
+  ) => {
+    if ((!content.trim() && messageAttachments.length === 0) || isLoading) return;
 
     setIsPromptMenuOpen(false);
     setPromptQuery('');
 
     const userMessage: Message = {
       role: 'user',
-      content: input,
-      attachments: attachments.length > 0 ? [...attachments] : undefined
+      content,
+      attachments: messageAttachments.length > 0 ? [...messageAttachments] : undefined
     };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
@@ -510,7 +719,7 @@ export default function ChatInterface() {
 
     // Create conversation if this is the first message
     if (!conversationId) {
-      conversationId = await createConversation(input);
+      conversationId = await createConversation(content);
       if (!conversationId) {
         setIsLoading(false);
         return;
@@ -525,8 +734,8 @@ export default function ChatInterface() {
       const isImageGeneration = selectedModel === 'gemini-3-pro-image-preview';
       
       // For image generation, check if there's an uploaded image to edit
-      const inputImageUrl = isImageGeneration && attachments.length > 0 && attachments[0].type === 'image' 
-        ? attachments[0].url 
+      const inputImageUrl = isImageGeneration && messageAttachments.length > 0 && messageAttachments[0].type === 'image' 
+        ? messageAttachments[0].url 
         : undefined;
       
       const response = await fetch(
@@ -537,7 +746,7 @@ export default function ChatInterface() {
           body: JSON.stringify(
             isImageGeneration
               ? { 
-                  prompt: input,
+                  prompt: content,
                   inputImageUrl,
                 }
               : {
@@ -662,6 +871,39 @@ export default function ChatInterface() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await submitMessage(input, attachments);
+  };
+
+  const handleTutorialSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const prompt = buildTutorialPrompt(tutorialForm);
+    setIsTutorialModalOpen(false);
+    setTutorialForm({
+      problemStatement: '',
+      constraintsAndExamples: '',
+      candidateSolutions: [''],
+      knownOptimalSolution: '',
+    });
+    await submitMessage(prompt, []);
+  };
+
+  const handleTimestampSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!timestampTranscript.trim()) return;
+
+    // Find the timestamps query template and replace the placeholder with the actual transcript
+    const timestampQuery = suggestedQueries.find((q) => q.title === 'Generate Chapters & Timestamps');
+    const prompt = timestampQuery
+      ? timestampQuery.query.replace('Insert Transcript Here', timestampTranscript)
+      : `Please generate chapters and timestamps for this transcript:\n\n${timestampTranscript}`;
+
+    setIsTimestampModalOpen(false);
+    setTimestampTranscript('');
+    await submitMessage(prompt, []);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -903,7 +1145,14 @@ export default function ChatInterface() {
                   {suggestedQueries.map((example, idx) => (
                     <button
                       key={idx}
-                      onClick={() => handleSuggestedQueryClick(example.query)}
+                      onClick={() => {
+                        // Open timestamp modal for the timestamps query
+                        if (example.title === 'Generate Chapters & Timestamps') {
+                          setIsTimestampModalOpen(true);
+                        } else {
+                          handleSuggestedQueryClick(example.query);
+                        }
+                      }}
                       className="p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                     >
                       <div className="font-semibold text-sm text-gray-800 dark:text-gray-200">
@@ -911,6 +1160,15 @@ export default function ChatInterface() {
                       </div>
                     </button>
                   ))}
+                  <button
+                    type="button"
+                    onClick={() => setIsTutorialModalOpen(true)}
+                    className="p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <div className="font-semibold text-sm text-gray-800 dark:text-gray-200">
+                      Algorithms Tutor
+                    </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1217,6 +1475,176 @@ export default function ChatInterface() {
           </p>
         </div>
       </div>
+
+      {isTutorialModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-3xl rounded-xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Start a detailed tutorial</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Provide your prompt and attempts so the AI can generate the full guided walkthrough.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsTutorialModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                aria-label="Close tutorial modal"
+              >
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleTutorialSubmit} className="px-6 py-5 space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                  Problem statement / question prompt
+                </label>
+                <textarea
+                  value={tutorialForm.problemStatement}
+                  onChange={(e) => handleTutorialFieldChange('problemStatement', e.target.value)}
+                  rows={4}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+                  placeholder="Paste the problem statement here..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                  Constraints + examples (optional)
+                </label>
+                <textarea
+                  value={tutorialForm.constraintsAndExamples}
+                  onChange={(e) => handleTutorialFieldChange('constraintsAndExamples', e.target.value)}
+                  rows={3}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+                  placeholder="Paste constraints, example inputs/outputs, etc."
+                />
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+                    Candidate solutions (1..n)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={addCandidateSolution}
+                    className="text-sm text-[#2cbb5d] hover:text-[#25a352] font-medium"
+                  >
+                    + Add another
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {tutorialForm.candidateSolutions.map((solution, index) => (
+                    <div key={index} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                          Solution {index + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeCandidateSolution(index)}
+                          className="text-xs text-gray-500 hover:text-red-500"
+                          disabled={tutorialForm.candidateSolutions.length === 1}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <textarea
+                        value={solution}
+                        onChange={(e) => handleCandidateSolutionChange(index, e.target.value)}
+                        rows={3}
+                        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+                        placeholder="Paste code or describe the approach..."
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                  Final solution + intuition (optional)
+                </label>
+                <textarea
+                  value={tutorialForm.knownOptimalSolution}
+                  onChange={(e) => handleTutorialFieldChange('knownOptimalSolution', e.target.value)}
+                  rows={3}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+                  placeholder="Paste your final solution or intuition if you have one."
+                />
+              </div>
+              <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsTutorialModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 text-sm font-semibold text-white bg-[#2cbb5d] rounded-lg hover:bg-[#25a352] transition-colors"
+                >
+                  Start tutorial chat
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isTimestampModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl rounded-xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Generate Timestamps</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Paste your transcript or notes to generate YouTube-style timestamps.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsTimestampModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                aria-label="Close timestamp modal"
+              >
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleTimestampSubmit} className="px-6 py-5 space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                  Transcript / Notes
+                </label>
+                <textarea
+                  value={timestampTranscript}
+                  onChange={(e) => setTimestampTranscript(e.target.value)}
+                  rows={12}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] font-mono text-sm"
+                  placeholder="Paste your transcript or notes here..."
+                  autoFocus
+                />
+              </div>
+              <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsTimestampModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!timestampTranscript.trim()}
+                  className="px-5 py-2 text-sm font-semibold text-white bg-[#2cbb5d] rounded-lg hover:bg-[#25a352] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  Generate Timestamps
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
