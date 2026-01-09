@@ -291,7 +291,7 @@ export default function GalleryPage() {
       {canUpload && selectedFile && previewUrl && (
         <div className="bg-[#1f1f1f] border border-white/10 rounded-xl p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="aspect-[4/3] w-full md:w-64 bg-black/40 rounded-lg overflow-hidden flex-shrink-0">
+            <div className="aspect-video w-full md:w-64 bg-black/40 rounded-lg overflow-hidden flex-shrink-0">
               <img 
                 src={previewUrl} 
                 alt={selectedFile.name} 
@@ -342,7 +342,7 @@ export default function GalleryPage() {
           {items.map((item) => (
             <div 
               key={item.url} 
-              className="relative aspect-square bg-black/40 rounded-lg overflow-hidden group cursor-pointer"
+              className="relative aspect-video bg-black/40 rounded-lg overflow-hidden group cursor-pointer"
               onClick={() => copyUrl(item.url)}
             >
               <img 
