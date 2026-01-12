@@ -1,18 +1,12 @@
-import { ChannelStats, formatCount } from '@/lib/youtube';
+import { ChannelStats } from '@/lib/youtube';
 import Image from 'next/image';
 
 interface HeroSectionProps {
   channelStats: ChannelStats | null;
   channelId: string;
-  totalDuration?: number;
 }
 
-const formatDurationHours = (seconds: number): string => {
-  const hours = Math.round(seconds / 3600);
-  return `${hours}`;
-}
-
-export default function HeroSection({ channelStats, channelId, totalDuration = 0 }: HeroSectionProps) {
+export default function HeroSection({ channelStats, channelId }: HeroSectionProps) {
   return (
     <section className="relative bg-[#282828] overflow-hidden">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
@@ -41,28 +35,43 @@ export default function HeroSection({ channelStats, channelId, totalDuration = 0
         </p>
         
         {/* Channel Stats */}
-        {channelStats && (
-          <div className="flex justify-center mb-8">
-            <div className="flex space-x-4 md:space-x-8">
-              <div className="flex flex-col items-center">
-                <span className="text-xl md:text-3xl font-bold text-[#2cbb5d]">{formatCount(channelStats.subscriberCount)}</span>
-                <span className="text-xs md:text-sm text-gray-400">Subscribers</span>
+        <div className="flex justify-center mb-8">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-10">
+            <a href="https://www.youtube.com/@jamesperaltaSWE" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center hover:opacity-80 transition-opacity">
+              <div className="flex items-center gap-2">
+                <svg className="h-6 w-6 text-[#ff0000]" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path fill="currentColor" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+                <span className="text-xl md:text-3xl font-bold text-white">200K</span>
               </div>
-              <div className="flex flex-col items-center">
-                <span className="text-xl md:text-3xl font-bold text-white">{formatCount(channelStats.videoCount)}</span>
-                <span className="text-xs md:text-sm text-gray-400">Videos</span>
+              <span className="text-xs md:text-sm text-gray-400">Subscribers</span>
+            </a>
+            <a href="https://leetcode.com/u/jamesperaltaSWE" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center hover:opacity-80 transition-opacity">
+              <div className="flex items-center gap-2">
+                <Image 
+                  src="/leetcode.svg" 
+                  alt="Logo" 
+                  width={50} 
+                  height={50} 
+                  className="h-6 w-6"
+                />
+                <span className="text-xl md:text-3xl font-bold text-white">1641</span>
               </div>
-              <div className="flex flex-col items-center">
-                <span className="text-xl md:text-3xl font-bold text-white">{formatCount(channelStats.viewCount)}</span>
-                <span className="text-xs md:text-sm text-gray-400">Views</span>
+              <span className="text-xs md:text-sm text-gray-400">LeetCode Rating</span>
+            </a>
+            <a href="https://codeforces.com/profile/jamesperaltaSWE" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center hover:opacity-80 transition-opacity">
+              <div className="flex items-center gap-2">
+                <svg className="h-6 w-6" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <rect x="2" y="9" width="5" height="11" fill="#ffc107" />
+                  <rect x="9.5" y="5" width="5" height="15" fill="#03a9f4" />
+                  <rect x="17" y="7" width="5" height="13" fill="#f44336" />
+                </svg>
+                <span className="text-xl md:text-3xl font-bold text-white">415</span>
               </div>
-              <div className="flex flex-col items-center">
-                <span className="text-xl md:text-3xl font-bold text-white">{formatDurationHours(totalDuration)}h</span>
-                <span className="text-xs md:text-sm text-gray-400">of Content</span>
-              </div>
-            </div>
+              <span className="text-xs md:text-sm text-gray-400">Codeforces Rating</span>
+            </a>
           </div>
-        )}
+        </div>
         
         <div className="flex flex-col mb-8 lg:mb-16 space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
           <a
