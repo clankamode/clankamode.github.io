@@ -66,7 +66,7 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
                   <rect x="9.5" y="5" width="5" height="15" fill="#03a9f4" />
                   <rect x="17" y="7" width="5" height="13" fill="#f44336" />
                 </svg>
-                <span className="text-xl md:text-3xl font-bold text-white">415</span>
+                <span className="text-xl md:text-3xl font-bold text-white">752</span>
               </div>
               <span className="text-xs md:text-sm text-gray-400">Codeforces Rating</span>
             </a>
