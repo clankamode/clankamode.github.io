@@ -55,7 +55,7 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
                   height={50} 
                   className="h-6 w-6"
                 />
-                <span className="text-xl md:text-3xl font-bold text-white">1641</span>
+                <span className="text-xl md:text-3xl font-bold text-white">1679</span>
               </div>
               <span className="text-xs md:text-sm text-gray-400">LeetCode Rating</span>
             </a>
