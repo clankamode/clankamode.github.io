@@ -19,6 +19,7 @@ const levels = [
     badgeColor: 'bg-[#2cbb5d]/10 text-[#2cbb5d]',
     iconBg: 'bg-[#2cbb5d]/10',
     iconColor: 'text-[#2cbb5d]',
+    dotColor: 'bg-[#2cbb5d]',
     buttonGradient: 'bg-gradient-to-r from-[#2cbb5d] to-[#25a24f]',
   },
   {
@@ -35,6 +36,7 @@ const levels = [
     badgeColor: 'bg-yellow-500/10 text-yellow-500',
     iconBg: 'bg-yellow-500/10',
     iconColor: 'text-yellow-500',
+    dotColor: 'bg-yellow-500',
     buttonGradient: 'bg-gradient-to-r from-yellow-500 to-orange-500',
   },
   {
@@ -52,6 +54,7 @@ const levels = [
     badgeColor: 'bg-red-500/10 text-red-500',
     iconBg: 'bg-red-500/10',
     iconColor: 'text-red-500',
+    dotColor: 'bg-red-500',
     buttonGradient: 'bg-gradient-to-r from-pink-500 to-red-500',
   },
 ];
@@ -162,13 +165,13 @@ export default function AssessmentClient() {
               {/* Content */}
               <div className="flex-1">
                 <h2 className="text-xl font-bold text-white mb-2">{level.title}</h2>
-                <p className="text-sm text-gray-400 mb-4 leading-relaxed">{level.description}</p>
-                
-                {/* Question Info */}
-                <div className="flex items-center gap-2 mb-6">
-                  <span className={`w-2 h-2 rounded-full ${level.iconBg.replace('/10', '')}`}></span>
-                  <span className="text-sm text-gray-500">{level.questionInfo}</span>
-                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">{level.description}</p>
+              </div>
+
+              {/* Question Info */}
+              <div className="flex items-center gap-2 mt-4 mb-4">
+                <span className={`w-2 h-2 rounded-full ${level.dotColor}`}></span>
+                <span className="text-sm text-gray-500">{level.questionInfo}</span>
               </div>
 
               {/* Button */}
