@@ -79,11 +79,14 @@ export default function Navbar() {
                 <Link href="/" className={`px-3 py-2 ${isActive('/') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Home
                 </Link>
+                <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                  Videos
+                </Link>
                 <Link href="/peralta75" className={`px-3 py-2 ${isActive('/peralta75') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
                   Peralta 75
                 </Link>
-                <Link href="/videos" className={`px-3 py-2 ${isActive('/videos') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
-                  Videos
+                <Link href="/assessment" className={`px-3 py-2 ${isActive('/assessment') ? 'text-green-800' : 'text-white hover:text-green-800'}`}>
+                  Assessment
                 </Link>
                 {isLoggedIn && isEffectiveAdmin && (
                   <>
@@ -198,15 +201,6 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href="/peralta75"
-                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/peralta75') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Peralta 75
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/videos"
                   className={`block py-2 pl-3 pr-4 rounded ${isActive('/videos') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
                   onClick={() => setIsMenuOpen(false)}
@@ -216,11 +210,20 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href="/mocks"
-                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/mocks') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                  href="/peralta75"
+                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/peralta75') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Mocks
+                  Peralta 75
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/assessment"
+                  className={`block py-2 pl-3 pr-4 rounded ${isActive('/assessment') ? 'text-[#2cbb5d] bg-[#2cbb5d]/20' : 'text-white'} hover:text-[#2cbb5d]`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Assessment
                 </Link>
               </li>
               {isLoggedIn && isEffectiveAdmin && (
