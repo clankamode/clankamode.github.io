@@ -2,218 +2,65 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { upload } from '@vercel/blob/client';
-import { Message, ChatConversation, ChatMessage, MessageAttachment } from '@/types/chat';
+import { MessageAttachment } from '@/types/chat';
+import { MODELS, SYSTEM_PROMPTS, TUTORIAL_PROMPT_TEMPLATE } from './constants';
 import { suggestedQueries } from './suggestedQueries';
-import RichText from './RichText';
-
-const MODELS = [
-  { id: 'gpt-4.1-2025-04-14', name: 'ChatGPT 4.1', type: 'chat' },
-  { id: 'gpt-5-2025-08-07', name: 'ChatGPT 5', type: 'chat' },
-  { id: 'gemini-3-pro-image-preview', name: 'Gemini Image Generation', type: 'image' },
-] as const;
-
-const SYSTEM_PROMPTS = [
-  {
-    id: 'resume-review',
-    title: 'Resume Review',
-    description: 'Provide targeted feedback to improve a resume',
-    content: `You are an uncompromising resume reviewer. Deliver strict, concise, and actionable feedback.
-
-Formatting & structure
-1) Confirm clear sections: Education, Experience, Projects, Leadership, Skills.
-2) Enforce one-page length for typical candidates.
-3) Flag bad formatting: messy order, long paragraphs, unclear headings.
-
-Content basics
-4) Confirm graduation date is present. If missing, call it out explicitly.
-5) Require internships, projects, leadership, and open-source/coding competitions/hackathons. Missing items must be flagged.
-6) Remove fluff or irrelevant info.
-
-Experience bullets (apply to EVERY bullet under Experience)
-7) Each bullet MUST follow “Accomplished [X] as measured by [Y] by doing [Z].”
-8) Each bullet MUST include metrics and impact.
-9) Bullets MUST be results-oriented, not responsibilities. Flag weak/empty bullets.
-
-Tailoring & quality
-10) Each line MUST start with a strong action verb.
-11) MUST be tailored to the target company/role (keywords, tech stack, relevant impact). Call out generic lines.
-
-Gut check
-12) State clearly: Would you refer/interview this person based on what’s written? If not, specify whether it’s missing info (e.g., no projects) or lack of impact.
-
-Output requirements
-- Be blunt and explicit; do NOT soften critiques.
-- Evaluate bullet-by-bullet under Experience so no bullet escapes scrutiny.
-- Use a numbered checklist with pass/fail notes and concrete rewrites where possible.
-- Keep the review tight and direct.`,
-  },
-  {
-    id: 'timestamp-generator',
-    title: 'Timestamp Generator',
-    description: 'Generate YouTube-style timestamps from content',
-    content:
-      'You create organized timestamp lists. Given notes or a transcript, produce chronological timestamps with short, descriptive labels. Use mm:ss formatting unless hours are present.',
-  },
-] as const;
-
-const TUTORIAL_PROMPT_TEMPLATE = `Reusable Prompt: “Teach Me to Derive the Optimal Solution (n Candidate Solutions)”
-
-You are my algorithm tutor. Your job is to help me arrive at the optimal solution myself, not just present the final answer.
-
-You must reason from my attempts → insight → optimal approach, even if I provided many attempts.
-
----
-
-Inputs
-
-Problem statement:
-[PROBLEM_STATEMENT]
-
-Constraints + examples (if any):
-[CONSTRAINTS_AND_EXAMPLES]
-
-My candidate solutions (1..n):
-[CANDIDATE_SOLUTIONS]
-
-(If helpful, include expected time/space complexity per solution.)
-
-Known optimal solution / editorial hint (optional):
-[KNOWN_OPTIMAL_SOLUTION]
-
----
-
-Your Output Format (follow exactly)
-
-1) Rephrase + Goal
-	•	Restate the problem in your own words in 2–3 lines.
-	•	Identify what is being optimized (min/max/count/existence).
-	•	Extract the real constraints that determine the required complexity.
-
----
-
-2) Solution Landscape (Big Picture)
-Before analyzing individual solutions:
-	•	Describe the naive baseline.
-	•	Describe what kind of problem this is (e.g., automaton, greedy with invariant, DP on remainders, graph shortest path, sliding window).
-	•	State what class of optimizations we should expect.
-
----
-
-3) Candidate Solution Audit (Systematic)
-For each candidate solution (1..n), do the following in order:
-
-Solution i:
-	•	Core idea / invariant it’s trying to maintain.
-	•	Why this approach is tempting or reasonable.
-	•	Correctness analysis:
-	•	When it works
-	•	When it breaks (edge cases, hidden assumptions).
-	•	Performance analysis:
-	•	True time complexity (what actually grows).
-	•	Why it risks TLE/MLE if applicable.
-	•	Classification:
-	•	❌ Fundamentally flawed
-	•	⚠️ Correct but inefficient
-	•	✅ Correct and near-optimal
-	•	One concrete improvement that would move it closer to optimal.
-
----
-
-4) Pattern Extraction Across Solutions
-	•	What patterns repeat across my attempts?
-	•	What do all slow solutions have in common?
-	•	What information is being recomputed unnecessarily?
-	•	What quantity actually matters, and what doesn’t?
-
-(This section should connect my failed ideas to the final insight.)
-
----
-
-5) Bridge to the Optimal Insight (Socratic)
-Guide me to the key idea without jumping:
-	•	Ask 3–7 leading questions that force the realization.
-	•	After each question, immediately provide a short answer.
-	•	Explicitly name the algorithmic pattern when it appears
-(e.g., “remainder DP”, “monotonic structure”, “prefix compression”, “state minimization”).
-
----
-
-6) Derivation of the Optimal Solution
-Derive the solution step-by-step:
-	1.	Start from the naive approach.
-	2.	Identify the bottleneck precisely.
-	3.	Introduce the key invariant / transformation.
-	4.	Show why it preserves correctness.
-	5.	Show how it removes the bottleneck.
-	6.	Explain why this is asymptotically optimal.
-
-No leaps. No “magic”.
-
----
-
-7) Final Algorithm
-	•	High-level algorithm steps (bullet points).
-	•	Time complexity with justification.
-	•	Space complexity with justification.
-
----
-
-8) Implementation Notes (Competitive-Programming Focus)
-	•	Common pitfalls and how to avoid them.
-	•	Edge-case checklist.
-	•	If numbers grow large, explain how to keep state bounded (e.g., modulo, rolling state).
-	•	Language-specific gotchas if relevant.
-
----
-
-9) “I Can Now Solve Variants”
-Give 5 meaningful variants, and for each:
-	•	What changes?
-	•	Does the same approach still work?
-	•	What needs to be modified?
-
----
-
-10) Quick Self-Test
-	•	5 short questions testing understanding of the insight.
-	•	Provide an answer key at the end.
-
----
-
-Style Rules (Mandatory)
-	•	Use my solutions as teaching material.
-	•	Prefer invariants and mental models over recipes.
-	•	If one of my solutions is close, show a minimal refactor path.
-	•	If a technique is mentioned, include a tiny illustrative example.
-	•	Be precise. Assume I’m aiming for contest-level mastery.`;
-
-type TutorialFormState = {
-  problemStatement: string;
-  constraintsAndExamples: string;
-  candidateSolutions: string[];
-  knownOptimalSolution: string;
-};
+import { TutorialFormState } from './types';
+import { useChat } from './hooks/useChat';
+import { useConversations } from './hooks/useConversations';
+import { ChatSidebar } from './ChatSidebar';
+import { MessageList } from './MessageList';
+import { TutorialModal } from './TutorialModal';
+import { TimestampModal } from './TimestampModal';
+import { uploadFile } from './utils/uploadFile';
 
 export default function ChatInterface() {
   const { data: session } = useSession();
   
-  // Conversation state
-  const [conversations, setConversations] = useState<ChatConversation[]>([]);
-  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
-  const [isLoadingConversations, setIsLoadingConversations] = useState(true);
-  
   // Message state
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<string>(MODELS[0].id);
   const [attachments, setAttachments] = useState<MessageAttachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedSystemPrompt, setSelectedSystemPrompt] = useState<(typeof SYSTEM_PROMPTS)[number] | null>(null);
   const [isPromptMenuOpen, setIsPromptMenuOpen] = useState(false);
   const [promptQuery, setPromptQuery] = useState('');
+
+  const {
+    conversations,
+    currentConversationId,
+    isLoadingConversations,
+    loadConversations,
+    loadConversation,
+    createConversation,
+    saveMessage,
+    deleteConversation,
+    renameConversation,
+    startNewChat,
+    setConversations,
+  } = useConversations({
+    setInput,
+    setAttachments,
+  });
+
+  const {
+    messages,
+    setMessages,
+    isLoading,
+    selectedModel,
+    setSelectedModel,
+    selectedSystemPrompt,
+    setSelectedSystemPrompt,
+    submitMessage,
+  } = useChat({
+    currentConversationId,
+    createConversation,
+    saveMessage,
+    setConversations,
+    setInput,
+    setAttachments,
+    setIsPromptMenuOpen,
+    setPromptQuery,
+  });
 
   const [isTutorialModalOpen, setIsTutorialModalOpen] = useState(false);
   const [tutorialForm, setTutorialForm] = useState<TutorialFormState>({
@@ -248,7 +95,6 @@ export default function ChatInterface() {
   const handleSuggestedQueryClick = (query: string) => {
     setInput(query);
     scrollToBottom();
-    // Use setTimeout to ensure the textarea is rendered before focusing
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 100);
@@ -361,148 +207,31 @@ export default function ChatInterface() {
   // Load conversations on mount and when session changes (e.g., proxy user changes)
   useEffect(() => {
     if (session) {
-      // Clear current conversation and messages when switching users
-      setCurrentConversationId(null);
+      startNewChat();
       setMessages([]);
-      setInput('');
-      setAttachments([]);
-      
       // Load conversations for the current (possibly proxied) user
       loadConversations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user?.email, session?.isProxying]);
 
-  const loadConversations = async () => {
-    try {
-      setIsLoadingConversations(true);
-      const response = await fetch('/api/chat/conversations');
-      if (!response.ok) throw new Error('Failed to load conversations');
-      const data = await response.json();
-      setConversations(data);
-    } catch (error) {
-      console.error('Error loading conversations:', error);
-    } finally {
-      setIsLoadingConversations(false);
-    }
-  };
-
-  const loadConversation = async (conversationId: string) => {
-    try {
-      const response = await fetch(`/api/chat/conversations/${conversationId}`);
-      if (!response.ok) throw new Error('Failed to load conversation');
-      const data = await response.json();
-      
-      console.log('Loaded conversation data:', data);
-      console.log('Messages:', data.messages);
-      
-      setCurrentConversationId(conversationId);
-      setMessages(data.messages?.map((msg: ChatMessage) => ({
-        role: msg.role,
-        content: msg.content,
-        attachments: msg.attachments,
-        generatedImages: msg.generatedImages,
-      })) || []);
-      setSelectedModel(data.model);
-    } catch (error) {
-      console.error('Error loading conversation:', error);
-    }
-  };
-
-  const createConversation = async (firstMessage: string): Promise<string | null> => {
-    try {
-      const title = firstMessage.slice(0, 60) + (firstMessage.length > 60 ? '...' : '');
-      const response = await fetch('/api/chat/conversations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          model: selectedModel,
-        }),
-      });
-      
-      if (!response.ok) throw new Error('Failed to create conversation');
-      const data = await response.json();
-      
-      // Add to conversations list
-      setConversations(prev => [data, ...prev]);
-      setCurrentConversationId(data.id);
-      
-      return data.id;
-    } catch (error) {
-      console.error('Error creating conversation:', error);
-      return null;
-    }
-  };
-
-  const saveMessage = async (conversationId: string, message: Message) => {
-    try {
-      await fetch(`/api/chat/conversations/${conversationId}/message`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          role: message.role,
-          content: message.content,
-          attachments: message.attachments,
-          generatedImages: message.generatedImages,
-        }),
-      });
-    } catch (error) {
-      console.error('Error saving message:', error);
-    }
-  };
-
-  const deleteConversation = async (conversationId: string) => {
-    if (!confirm('Are you sure you want to delete this conversation?')) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/chat/conversations/${conversationId}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) throw new Error('Failed to delete conversation');
-      
-      // Remove from list
-      setConversations(prev => prev.filter(c => c.id !== conversationId));
-      
-      // If this was the current conversation, clear it
-      if (currentConversationId === conversationId) {
-        setCurrentConversationId(null);
-        setMessages([]);
-      }
-    } catch (error) {
-      console.error('Error deleting conversation:', error);
-    }
-  };
-
-  const renameConversation = async (conversationId: string, newTitle: string) => {
-    try {
-      const response = await fetch(`/api/chat/conversations/${conversationId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newTitle }),
-      });
-      
-      if (!response.ok) throw new Error('Failed to rename conversation');
-      
-      // Update in list
-      setConversations(prev =>
-        prev.map(c => c.id === conversationId ? { ...c, title: newTitle } : c)
-      );
-      
-      setEditingConversationId(null);
-    } catch (error) {
-      console.error('Error renaming conversation:', error);
-    }
-  };
-
-  const startNewChat = () => {
-    setCurrentConversationId(null);
+  const handleStartNewChat = () => {
+    startNewChat();
     setMessages([]);
-    setInput('');
-    setAttachments([]);
+  };
+
+  const handleLoadConversation = async (conversationId: string) => {
+    const data = await loadConversation(conversationId);
+    if (!data) return;
+    setMessages(data.messages);
+    setSelectedModel(data.model);
+  };
+
+  const handleDeleteConversation = async (conversationId: string) => {
+    const removedCurrent = await deleteConversation(conversationId);
+    if (removedCurrent) {
+      setMessages([]);
+    }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -511,68 +240,14 @@ export default function ChatInterface() {
 
     setIsUploading(true);
     try {
-      const uploadPromises = Array.from(files).map(async (file) => {
-        // Determine file type
-        const attachmentType = file.type.startsWith('image/') ? 'image' : 'pdf';
-
-        if (attachmentType === 'pdf') {
-          // Upload PDF to both Vercel Blob (for preview) and OpenAI Files API (for chat) in parallel
-          
-          const formData = new FormData();
-          formData.append('file', file);
-
-          // Upload to both services in parallel
-          const [blob, openaiResponse] = await Promise.all([
-            // 1. Upload to Vercel Blob for preview
-            upload(file.name, file, {
-              access: 'public',
-              handleUploadUrl: '/api/chat/upload',
-            }),
-            // 2. Upload to OpenAI Files API for chat
-            fetch('/api/chat/upload-pdf', {
-              method: 'POST',
-              body: formData,
-            }),
-          ]);
-
-          if (!openaiResponse.ok) {
-            const errorData = await openaiResponse.json();
-            throw new Error(errorData.error || 'Failed to upload PDF');
-          }
-
-          const data = await openaiResponse.json();
-
-          // Switch to GPT-4.1 if not already selected
-          if (selectedModel !== 'gpt-4.1-2025-04-14') {
-            setSelectedModel('gpt-4.1-2025-04-14');
-          }
-
-          return {
-            id: crypto.randomUUID(),
-            type: 'pdf' as const,
-            url: blob.url, // For preview
-            file_id: data.file_id, // For OpenAI chat
-            name: file.name,
-            size: file.size,
-          };
-        } else {
-          // Upload images to Vercel Blob
-          const blob = await upload(file.name, file, {
-            access: 'public',
-            handleUploadUrl: '/api/chat/upload',
-          });
-
-          return {
-            id: crypto.randomUUID(),
-            type: 'image' as const,
-            url: blob.url,
-            name: file.name,
-            size: file.size,
-          };
-        }
-      });
-
+      const uploadPromises = Array.from(files).map(uploadFile);
       const uploadedFiles = await Promise.all(uploadPromises);
+      if (
+        uploadedFiles.some((file) => file.type === 'pdf') &&
+        selectedModel !== 'gpt-4.1-2025-04-14'
+      ) {
+        setSelectedModel('gpt-4.1-2025-04-14');
+      }
       setAttachments((prev) => [...prev, ...uploadedFiles]);
     } catch (error) {
       console.error('Error uploading files:', error);
@@ -625,251 +300,20 @@ export default function ChatInterface() {
 
     setIsUploading(true);
     try {
-      const uploadPromises = allowedFiles.map(async (file) => {
-        // Determine file type
-        const attachmentType = file.type.startsWith('image/') ? 'image' : 'pdf';
-
-        if (attachmentType === 'pdf') {
-          // Upload PDF to both Vercel Blob (for preview) and OpenAI Files API (for chat) in parallel
-          
-          const formData = new FormData();
-          formData.append('file', file);
-
-          // Upload to both services in parallel
-          const [blob, openaiResponse] = await Promise.all([
-            // 1. Upload to Vercel Blob for preview
-            upload(file.name, file, {
-              access: 'public',
-              handleUploadUrl: '/api/chat/upload',
-            }),
-            // 2. Upload to OpenAI Files API for chat
-            fetch('/api/chat/upload-pdf', {
-              method: 'POST',
-              body: formData,
-            }),
-          ]);
-
-          if (!openaiResponse.ok) {
-            const errorData = await openaiResponse.json();
-            throw new Error(errorData.error || 'Failed to upload PDF');
-          }
-
-          const data = await openaiResponse.json();
-
-          // Switch to GPT-4.1 if not already selected
-          if (selectedModel !== 'gpt-4.1-2025-04-14') {
-            setSelectedModel('gpt-4.1-2025-04-14');
-          }
-
-          return {
-            id: crypto.randomUUID(),
-            type: 'pdf' as const,
-            url: blob.url, // For preview
-            file_id: data.file_id, // For OpenAI chat
-            name: file.name,
-            size: file.size,
-          };
-        } else {
-          // Upload images to Vercel Blob
-          const blob = await upload(file.name, file, {
-            access: 'public',
-            handleUploadUrl: '/api/chat/upload',
-          });
-
-          return {
-            id: crypto.randomUUID(),
-            type: 'image' as const,
-            url: blob.url,
-            name: file.name,
-            size: file.size,
-          };
-        }
-      });
-
+      const uploadPromises = allowedFiles.map(uploadFile);
       const uploadedFiles = await Promise.all(uploadPromises);
+      if (
+        uploadedFiles.some((file) => file.type === 'pdf') &&
+        selectedModel !== 'gpt-4.1-2025-04-14'
+      ) {
+        setSelectedModel('gpt-4.1-2025-04-14');
+      }
       setAttachments((prev) => [...prev, ...uploadedFiles]);
     } catch (error) {
       console.error('Error uploading files:', error);
       alert(error instanceof Error ? error.message : 'Failed to upload files');
     } finally {
       setIsUploading(false);
-    }
-  };
-
-  const submitMessage = async (
-    content: string,
-    messageAttachments: MessageAttachment[]
-  ) => {
-    if ((!content.trim() && messageAttachments.length === 0) || isLoading) return;
-
-    setIsPromptMenuOpen(false);
-    setPromptQuery('');
-
-    const userMessage: Message = {
-      role: 'user',
-      content,
-      attachments: messageAttachments.length > 0 ? [...messageAttachments] : undefined
-    };
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
-    setAttachments([]);
-    setIsLoading(true);
-
-    let conversationId = currentConversationId;
-
-    // Create conversation if this is the first message
-    if (!conversationId) {
-      conversationId = await createConversation(content);
-      if (!conversationId) {
-        setIsLoading(false);
-        return;
-      }
-    }
-
-    // Save user message
-    await saveMessage(conversationId, userMessage);
-
-    try {
-      // Check if this is an image generation request
-      const isImageGeneration = selectedModel === 'gemini-3-pro-image-preview';
-      
-      // For image generation, check if there's an uploaded image to edit
-      const inputImageUrl = isImageGeneration && messageAttachments.length > 0 && messageAttachments[0].type === 'image' 
-        ? messageAttachments[0].url 
-        : undefined;
-      
-      const response = await fetch(
-        isImageGeneration ? '/api/chat/generate-image' : '/api/chat',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(
-            isImageGeneration
-              ? { 
-                  prompt: content,
-                  inputImageUrl,
-                }
-              : {
-                  messages: selectedSystemPrompt
-                    ? [{ role: 'system', content: selectedSystemPrompt.content }, ...messages, userMessage]
-                    : [...messages, userMessage],
-                  model: selectedModel,
-                }
-          ),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
-
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (!reader) {
-        throw new Error('No reader available');
-      }
-
-      let assistantMessage = '';
-      const generatedImages: { id: string; url: string; mimeType?: string }[] = [];
-      setMessages(prev => [...prev, { role: 'assistant', content: '', generatedImages: [] }]);
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') {
-              break;
-            }
-            try {
-              const parsed = JSON.parse(data);
-              
-              if (isImageGeneration) {
-                // Handle image generation responses
-                if (parsed.type === 'image') {
-                  generatedImages.push({
-                    id: crypto.randomUUID(),
-                    url: parsed.url,
-                    mimeType: parsed.mimeType,
-                  });
-                  setMessages(prev => {
-                    const newMessages = [...prev];
-                    newMessages[newMessages.length - 1] = {
-                      role: 'assistant',
-                      content: assistantMessage,
-                      generatedImages: [...generatedImages],
-                    };
-                    return newMessages;
-                  });
-                } else if (parsed.type === 'text') {
-                  assistantMessage += parsed.content;
-                  setMessages(prev => {
-                    const newMessages = [...prev];
-                    newMessages[newMessages.length - 1] = {
-                      role: 'assistant',
-                      content: assistantMessage,
-                      generatedImages: [...generatedImages],
-                    };
-                    return newMessages;
-                  });
-                } else if (parsed.type === 'error') {
-                  throw new Error(parsed.error);
-                }
-              } else {
-                // Handle regular chat responses
-                if (parsed.content) {
-                  assistantMessage += parsed.content;
-                  setMessages(prev => {
-                    const newMessages = [...prev];
-                    newMessages[newMessages.length - 1] = {
-                      role: 'assistant',
-                      content: assistantMessage,
-                    };
-                    return newMessages;
-                  });
-                }
-              }
-            } catch {
-              // Skip invalid JSON
-            }
-          }
-        }
-      }
-
-      // Save assistant message
-      if (conversationId && (assistantMessage || generatedImages.length > 0)) {
-        await saveMessage(conversationId, { 
-          role: 'assistant', 
-          content: assistantMessage || 'Generated image',
-          generatedImages: generatedImages.length > 0 ? generatedImages : undefined,
-        });
-        
-        // Update conversation's updated_at in the list
-        setConversations(prev =>
-          prev.map(c =>
-            c.id === conversationId
-              ? { ...c, updated_at: new Date().toISOString() }
-              : c
-          ).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-        );
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setMessages(prev => [
-        ...prev.slice(0, -1),
-        {
-          role: 'assistant',
-          content: 'Sorry, I encountered an error. Please try again.',
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -919,147 +363,29 @@ export default function ChatInterface() {
     }
   };
 
-  const filteredConversations = conversations.filter(conv =>
-    conv.title?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
     <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
-      {/* Sidebar */}
-      <div
-        className={`${
-          isSidebarOpen ? 'w-64' : 'w-0'
-        } transition-all duration-300 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col`}
-      >
-        {/* Sidebar Header */}
-        <div className="p-3 border-b border-gray-200 dark:border-gray-700">
-          <button
-            onClick={startNewChat}
-            className="w-full px-4 py-2 bg-[#2cbb5d] text-white rounded-lg hover:bg-[#25a352] transition-colors font-medium text-sm"
-          >
-            + New Chat
-          </button>
-        </div>
-
-        {/* Search */}
-        <div className="p-3 border-b border-gray-200 dark:border-gray-700">
-          <input
-            type="text"
-            placeholder="Search conversations..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
-          />
-        </div>
-
-        {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto">
-          {isLoadingConversations ? (
-            <div className="p-4 text-center text-sm text-gray-500">Loading...</div>
-          ) : filteredConversations.length === 0 ? (
-            <div className="p-4 text-center text-sm text-gray-500">
-              {searchQuery ? 'No conversations found' : 'No conversations yet'}
-            </div>
-          ) : (
-            <div className="p-2 space-y-1">
-              {filteredConversations.map((conv) => (
-                <div
-                  key={conv.id}
-                  className={`group relative rounded-lg ${
-                    currentConversationId === conv.id
-                      ? 'bg-gray-200 dark:bg-gray-800'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                  }`}
-                >
-                  {editingConversationId === conv.id ? (
-                    <div className="p-2">
-                      <input
-                        ref={editInputRef}
-                        type="text"
-                        value={editingTitle}
-                        onChange={(e) => setEditingTitle(e.target.value)}
-                        onBlur={() => {
-                          if (editingTitle.trim()) {
-                            renameConversation(conv.id, editingTitle);
-                          } else {
-                            setEditingConversationId(null);
-                          }
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            if (editingTitle.trim()) {
-                              renameConversation(conv.id, editingTitle);
-                            }
-                          } else if (e.key === 'Escape') {
-                            setEditingConversationId(null);
-                          }
-                        }}
-                        className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex items-center">
-                      <button
-                        onClick={() => loadConversation(conv.id)}
-                        className="flex-1 text-left p-3 text-sm text-gray-900 dark:text-gray-100 truncate"
-                      >
-                        {conv.title || 'Untitled conversation'}
-                      </button>
-                      <div className="flex items-center gap-1 pr-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingConversationId(conv.id);
-                            setEditingTitle(conv.title || '');
-                          }}
-                          className="p-1 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
-                          title="Rename"
-                        >
-                          <svg
-                            className="w-4 h-4 text-gray-600 dark:text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteConversation(conv.id);
-                          }}
-                          className="p-1 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
-                          title="Delete"
-                        >
-                          <svg
-                            className="w-4 h-4 text-gray-600 dark:text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+      <ChatSidebar
+        isOpen={isSidebarOpen}
+        onNewChat={handleStartNewChat}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        isLoading={isLoadingConversations}
+        conversations={conversations}
+        currentConversationId={currentConversationId}
+        editingConversationId={editingConversationId}
+        editingTitle={editingTitle}
+        onEditTitleChange={setEditingTitle}
+        onEditStart={(id, title) => {
+          setEditingConversationId(id);
+          setEditingTitle(title);
+        }}
+        onEditCancel={() => setEditingConversationId(null)}
+        onRename={renameConversation}
+        onDelete={handleDeleteConversation}
+        onSelect={handleLoadConversation}
+        editInputRef={editInputRef}
+      />
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-h-0">
@@ -1111,181 +437,15 @@ export default function ChatInterface() {
           </div>
         </div>
 
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
-          {/* Image Generation Info Banner */}
-          {selectedModel === 'gemini-3-pro-image-preview' && messages.length === 0 && (
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">Image Generation Mode</h3>
-                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                    <li>• <strong>Generate:</strong> Describe the image you want to create</li>
-                    <li>• <strong>Edit:</strong> Upload an image, then describe how to modify it</li>
-                    <li>• Examples: &quot;A futuristic city&quot;, &quot;Make it black and white&quot;, &quot;Add a sunset background&quot;</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {messages.length === 0 && selectedModel !== 'gemini-3-pro-image-preview' ? (
-            <div className="flex items-center justify-center h-full text-center">
-              <div>
-                <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">
-                  How can I help you today?
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8">
-                  Ask me anything or start a conversation
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
-                  {suggestedQueries.map((example, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        // Open timestamp modal for the timestamps query
-                        if (example.title === 'Generate Chapters & Timestamps') {
-                          setIsTimestampModalOpen(true);
-                        } else {
-                          handleSuggestedQueryClick(example.query);
-                        }
-                      }}
-                      className="p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    >
-                      <div className="font-semibold text-sm text-gray-800 dark:text-gray-200">
-                        {example.title}
-                      </div>
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => setIsTutorialModalOpen(true)}
-                    className="p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  >
-                    <div className="font-semibold text-sm text-gray-800 dark:text-gray-200">
-                      Algorithms Tutor
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              {messages.map((message, idx) => (
-                <div
-                  key={idx}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-lg p-4 ${
-                      message.role === 'user'
-                        ? 'bg-[#2cbb5d] text-white'
-                        : 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
-                    }`}
-                  >
-                    {message.attachments && message.attachments.length > 0 && (
-                      <div className="mb-3 space-y-2">
-                        {message.attachments.map((attachment) => (
-                          <div key={attachment.id}>
-                            {attachment.type === 'image' ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={attachment.url}
-                                alt={attachment.name}
-                                className="max-w-full rounded-lg max-h-64 object-contain"
-                              />
-                            ) : (
-                              <div className="space-y-2">
-                                {attachment.url && (
-                                  <iframe
-                                    src={attachment.url}
-                                    className="w-full h-96 rounded-lg border border-gray-300 dark:border-gray-600"
-                                    title={attachment.name}
-                                  />
-                                )}
-                                <div
-                                  className={`flex items-center gap-2 p-2 rounded ${
-                                    message.role === 'user'
-                                      ? 'bg-[#25a352]'
-                                      : 'bg-gray-300 dark:bg-gray-700'
-                                  }`}
-                                >
-                                  <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                                    />
-                                  </svg>
-                                  <span className="text-sm truncate">{attachment.name}</span>
-                                  {attachment.url && (
-                                    <a
-                                      href={attachment.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-xs underline ml-auto"
-                                    >
-                                      Open in new tab
-                                    </a>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {message.generatedImages && message.generatedImages.length > 0 && (
-                      <div className="mb-3 space-y-2">
-                        {message.generatedImages.map((image) => (
-                          <div key={image.id} className="space-y-2">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={image.url}
-                              alt="Generated image"
-                              className="max-w-md w-full rounded-lg object-contain max-h-96 cursor-pointer hover:opacity-90 transition-opacity"
-                              onClick={() => window.open(image.url, '_blank')}
-                            />
-                            <a
-                              href={image.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-xs underline block hover:text-blue-600 dark:hover:text-blue-400"
-                            >
-                              Open full size in new tab
-                            </a>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <RichText content={message.content} />
-                  </div>
-                </div>
-              ))}
-              {isLoading && messages[messages.length - 1]?.role === 'user' && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-200 dark:bg-gray-800 rounded-lg p-4">
-                    <div className="flex space-x-2">
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </>
-          )}
-        </div>
+        <MessageList
+          messages={messages}
+          isLoading={isLoading}
+          selectedModel={selectedModel}
+          onSuggestedQueryClick={handleSuggestedQueryClick}
+          onOpenTimestampModal={() => setIsTimestampModalOpen(true)}
+          onOpenTutorialModal={() => setIsTutorialModalOpen(true)}
+          messagesEndRef={messagesEndRef}
+        />
 
         {/* Input Form */}
         <div 
@@ -1476,175 +636,24 @@ export default function ChatInterface() {
         </div>
       </div>
 
-      {isTutorialModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-3xl rounded-xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Start a detailed tutorial</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Provide your prompt and attempts so the AI can generate the full guided walkthrough.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsTutorialModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                aria-label="Close tutorial modal"
-              >
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleTutorialSubmit} className="px-6 py-5 space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-                  Problem statement / question prompt
-                </label>
-                <textarea
-                  value={tutorialForm.problemStatement}
-                  onChange={(e) => handleTutorialFieldChange('problemStatement', e.target.value)}
-                  rows={4}
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
-                  placeholder="Paste the problem statement here..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-                  Constraints + examples (optional)
-                </label>
-                <textarea
-                  value={tutorialForm.constraintsAndExamples}
-                  onChange={(e) => handleTutorialFieldChange('constraintsAndExamples', e.target.value)}
-                  rows={3}
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
-                  placeholder="Paste constraints, example inputs/outputs, etc."
-                />
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                    Candidate solutions (1..n)
-                  </label>
-                  <button
-                    type="button"
-                    onClick={addCandidateSolution}
-                    className="text-sm text-[#2cbb5d] hover:text-[#25a352] font-medium"
-                  >
-                    + Add another
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  {tutorialForm.candidateSolutions.map((solution, index) => (
-                    <div key={index} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
-                          Solution {index + 1}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => removeCandidateSolution(index)}
-                          className="text-xs text-gray-500 hover:text-red-500"
-                          disabled={tutorialForm.candidateSolutions.length === 1}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <textarea
-                        value={solution}
-                        onChange={(e) => handleCandidateSolutionChange(index, e.target.value)}
-                        rows={3}
-                        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
-                        placeholder="Paste code or describe the approach..."
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-                  Final solution + intuition (optional)
-                </label>
-                <textarea
-                  value={tutorialForm.knownOptimalSolution}
-                  onChange={(e) => handleTutorialFieldChange('knownOptimalSolution', e.target.value)}
-                  rows={3}
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
-                  placeholder="Paste your final solution or intuition if you have one."
-                />
-              </div>
-              <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsTutorialModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 text-sm font-semibold text-white bg-[#2cbb5d] rounded-lg hover:bg-[#25a352] transition-colors"
-                >
-                  Start tutorial chat
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <TutorialModal
+        isOpen={isTutorialModalOpen}
+        form={tutorialForm}
+        onClose={() => setIsTutorialModalOpen(false)}
+        onSubmit={handleTutorialSubmit}
+        onFieldChange={handleTutorialFieldChange}
+        onCandidateChange={handleCandidateSolutionChange}
+        onAddCandidate={addCandidateSolution}
+        onRemoveCandidate={removeCandidateSolution}
+      />
 
-      {isTimestampModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-2xl rounded-xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Generate Timestamps</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Paste your transcript or notes to generate YouTube-style timestamps.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsTimestampModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                aria-label="Close timestamp modal"
-              >
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleTimestampSubmit} className="px-6 py-5 space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-                  Transcript / Notes
-                </label>
-                <textarea
-                  value={timestampTranscript}
-                  onChange={(e) => setTimestampTranscript(e.target.value)}
-                  rows={12}
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] font-mono text-sm"
-                  placeholder="Paste your transcript or notes here..."
-                  autoFocus
-                />
-              </div>
-              <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsTimestampModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!timestampTranscript.trim()}
-                  className="px-5 py-2 text-sm font-semibold text-white bg-[#2cbb5d] rounded-lg hover:bg-[#25a352] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
-                  Generate Timestamps
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <TimestampModal
+        isOpen={isTimestampModalOpen}
+        transcript={timestampTranscript}
+        onClose={() => setIsTimestampModalOpen(false)}
+        onSubmit={handleTimestampSubmit}
+        onTranscriptChange={setTimestampTranscript}
+      />
     </div>
   );
 }
