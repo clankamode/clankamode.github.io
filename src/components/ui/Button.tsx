@@ -20,7 +20,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             // Gradient of Mastery Specifics (Cinematic Glows)
             novice: 'bg-brand-green text-white hover:bg-brand-green/90 shadow-[0_0_20px_-5px_rgba(44,187,93,0.4)] hover:shadow-[0_0_30px_-5px_rgba(44,187,93,0.6)] border border-brand-green/20 transition-all duration-300',
             intermediate: 'bg-brand-amber text-white hover:bg-brand-amber/90 shadow-[0_0_20px_-5px_rgba(245,158,11,0.4)] hover:shadow-[0_0_30px_-5px_rgba(245,158,11,0.6)] border border-brand-amber/20 transition-all duration-300',
-            advanced: 'bg-brand-gold text-white hover:bg-brand-gold/90 shadow-[0_0_20px_-5px_rgba(217,119,6,0.4)] hover:shadow-[0_0_30px_-5px_rgba(217,119,6,0.6)] border border-brand-gold/20 transition-all duration-300',
+            advanced: 'bg-brand-red text-white hover:bg-brand-red/90 shadow-[0_0_20px_-5px_rgba(239,68,68,0.4)] hover:shadow-[0_0_30px_-5px_rgba(239,68,68,0.6)] border border-brand-red/20 transition-all duration-300',
             expert: 'bg-brand-charcoal text-white hover:bg-brand-charcoal/90 shadow-[0_0_20px_-5px_rgba(82,82,82,0.4)] hover:shadow-[0_0_30px_-5px_rgba(82,82,82,0.6)] border border-white/10 transition-all duration-300',
         };
 

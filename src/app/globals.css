@@ -8,6 +8,8 @@
   /* Intermediate */
   --color-brand-gold: #d97706;
   /* Advanced */
+  --color-brand-red: #ef4444;
+  /* FAANG */
   --color-brand-charcoal: #525252;
   /* Expert */
 
@@ -110,6 +112,7 @@
   --color-brand-green: var(--color-brand-green);
   --color-brand-amber: var(--color-brand-amber);
   --color-brand-gold: var(--color-brand-gold);
+  --color-brand-red: var(--color-brand-red);
   --color-brand-charcoal: var(--color-brand-charcoal);
 
   /* Fonts */

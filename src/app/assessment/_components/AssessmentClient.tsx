@@ -164,13 +164,13 @@ export default function AssessmentClient() {
                 "hover:shadow-[0_0_30px_-5px_rgba(255,255,255,0.05)]",
                 level.id === 'noob' && "hover:border-brand-green/30 hover:shadow-[0_0_30px_-5px_rgba(44,187,93,0.1)]",
                 level.id === 'intermediate' && "hover:border-brand-amber/30 hover:shadow-[0_0_30px_-5px_rgba(245,158,11,0.1)]",
-                level.id === 'faang' && "hover:border-brand-gold/30 hover:shadow-[0_0_30px_-5px_rgba(217,119,6,0.1)]"
+                level.id === 'faang' && "hover:border-brand-red/30 hover:shadow-[0_0_30px_-5px_rgba(239,68,68,0.1)]"
               )}
             >
               <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
                 level.id === 'noob' && "bg-gradient-to-br from-brand-green/5 to-transparent",
                 level.id === 'intermediate' && "bg-gradient-to-br from-brand-amber/5 to-transparent",
-                level.id === 'faang' && "bg-gradient-to-br from-brand-gold/5 to-transparent"
+                level.id === 'faang' && "bg-gradient-to-br from-brand-red/5 to-transparent"
               )} />
 
               <CardHeader className="pb-4 relative z-10">
@@ -179,7 +179,7 @@ export default function AssessmentClient() {
                     "flex h-14 w-14 items-center justify-center rounded-2xl shadow-inner transition-all duration-300 group-hover:scale-110",
                     level.variant === 'novice' && "bg-brand-green/10 text-brand-green shadow-[0_0_15px_-5px_rgba(44,187,93,0.3)]",
                     level.variant === 'intermediate' && "bg-brand-amber/10 text-brand-amber shadow-[0_0_15px_-5px_rgba(245,158,11,0.3)]",
-                    level.variant === 'advanced' && "bg-brand-gold/10 text-brand-gold shadow-[0_0_15px_-5px_rgba(217,119,6,0.3)]"
+                    level.variant === 'advanced' && "bg-brand-red/10 text-brand-red shadow-[0_0_15px_-5px_rgba(239,68,68,0.3)]"
                   )}>
                     {level.icon}
                   </div>

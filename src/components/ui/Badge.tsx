@@ -15,7 +15,7 @@ export function Badge({ className, variant = 'default', dot = false, children, .
         // Gradient of Mastery Translucent Styles
         novice: 'border-transparent bg-brand-green/10 text-brand-green border border-brand-green/20',
         intermediate: 'border-transparent bg-brand-amber/10 text-brand-amber border border-brand-amber/20',
-        advanced: 'border-transparent bg-brand-gold/10 text-brand-gold border border-brand-gold/20',
+        advanced: 'border-transparent bg-brand-red/10 text-brand-red border border-brand-red/20',
         expert: 'border-transparent bg-brand-charcoal text-white border border-brand-gold/20',
     };
 
@@ -25,7 +25,7 @@ export function Badge({ className, variant = 'default', dot = false, children, .
         outline: 'bg-foreground',
         novice: 'bg-brand-green',
         intermediate: 'bg-brand-amber',
-        advanced: 'bg-brand-gold',
+        advanced: 'bg-brand-red',
         expert: 'bg-brand-gold',
     };
 

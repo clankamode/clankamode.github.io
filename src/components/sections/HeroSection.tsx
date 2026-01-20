@@ -90,7 +90,7 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
               <div className="w-1.5 h-2.5 bg-[#F44336] rounded-sm drop-shadow-[0_0_4px_rgba(244,67,54,0.4)]" />
             </div>
             <div className="text-left leading-none">
-              <span className="block text-sm font-bold text-foreground group-hover:text-blue-400 transition-colors">935</span>
+              <span className="block text-sm font-bold text-foreground group-hover:text-blue-400 transition-colors">936</span>
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Codeforces Rating</span>
             </div>
           </a>
