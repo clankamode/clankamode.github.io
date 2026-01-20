@@ -12,7 +12,6 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const youtubeChannelUrl = "https://www.youtube.com/@jamesperaltaSWE?sub_confirmation=1";
   const { data: session, status } = useSession();
 
   useEffect(() => {
@@ -197,26 +196,13 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="pt-6 border-t border-border space-y-4">
-            {!isLoggedIn && (
-              <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                <Button className="w-full justify-center" variant="outline">Login</Button>
-              </Link>
-            )}
-            <a href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer" className="block">
-              <Button className="w-full justify-center bg-red-600 hover:bg-red-700 text-white">
-                Subscribe on YouTube
-              </Button>
-            </a>
-            {isLoggedIn && isAdmin && (
-              <div className="pt-4">
-                <AdminProxyControls />
-              </div>
-            )}
-          </div>
+          {isLoggedIn && isAdmin && (
+            <div className="pt-6 border-t border-border">
+              <AdminProxyControls />
+            </div>
+          )}
         </div>
       </div>
     </>
   );
 }
-
