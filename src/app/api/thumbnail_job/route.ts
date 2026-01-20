@@ -43,9 +43,16 @@ export async function POST(request: Request) {
     }, { status: 400 })
   }
 
+  const trimmedTitle = String(video_title).trim();
+  if (!trimmedTitle) {
+    return NextResponse.json({
+      error: 'Video Title is required',
+    }, { status: 400 })
+  }
+
   const { data, error } = await supabase.from(TABLE_NAME).insert({
     video_url,
-    video_title,
+    video_title: trimmedTitle,
     status: ThumbnailJobStatus.TODO,
   }).select();
 
