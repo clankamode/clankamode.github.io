@@ -76,7 +76,7 @@ export default function ChatInterface() {
   // UI state
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     if (typeof window === 'undefined') return true;
-    return window.innerWidth >= 1024; // Keep desktop open, collapse mobile on load
+    return window.innerWidth >= 1024;
   });
   const [editingConversationId, setEditingConversationId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
@@ -136,15 +136,12 @@ export default function ChatInterface() {
     setPromptQuery('');
     setInput((prev) => prev.replace(/\/[^\s]*$/, ''));
 
-    // Open modal for timestamp-generator instead of just selecting the prompt
     if (promptId === 'timestamp-generator') {
       setIsTimestampModalOpen(true);
       return;
     }
 
     setSelectedSystemPrompt(prompt);
-
-    // Focus back on the textarea for quick typing after selection
     textareaRef.current?.focus();
   };
 
@@ -254,7 +251,6 @@ export default function ChatInterface() {
       alert(error instanceof Error ? error.message : 'Failed to upload files');
     } finally {
       setIsUploading(false);
-      // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -288,7 +284,6 @@ export default function ChatInterface() {
     const droppedFiles = e.dataTransfer.files;
     if (!droppedFiles || droppedFiles.length === 0) return;
 
-    // Filter for allowed file types
     const allowedFiles = Array.from(droppedFiles).filter(file => 
       file.type.startsWith('image/') || file.type === 'application/pdf'
     );

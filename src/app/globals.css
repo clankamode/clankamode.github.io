@@ -1,26 +1,149 @@
 @import "tailwindcss";
 
 :root {
+  /* Brand -- The Gradient of Mastery */
+  --color-brand-green: #2cbb5d;
+  /* Novice / Primary */
+  --color-brand-amber: #f59e0b;
+  /* Intermediate */
+  --color-brand-gold: #d97706;
+  /* Advanced */
+  --color-brand-charcoal: #525252;
+  /* Expert */
+
+  /* Base Colors - Light Mode Defaults */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #09090b;
+  /* Zinc 950 */
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+  --primary: #2cbb5d;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  /* Zinc 100 */
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  /* Zinc 500 */
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #e4e4e7;
+  /* Zinc 200 */
+  --input: #e4e4e7;
+  --ring: #2cbb5d;
+
+  /* Surfaces (Light Mode) */
+  --surface-1: rgba(255, 255, 255, 0.5);
+  --surface-2: rgba(255, 255, 255, 0.7);
+  --surface-3: rgba(255, 255, 255, 0.9);
+
+  --border-subtle: rgba(0, 0, 0, 0.05);
+  --border-muted: rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Base Colors - Dark Mode Defaults - Richer Zinc/Slate */
+    --background: #09090b;
+    /* Zinc 950 - deeper than #0a0a0a */
+    --foreground: #fafafa;
+    /* Zinc 50 */
+    --card: #18181b;
+    /* Zinc 900 */
+    --card-foreground: #fafafa;
+    --popover: #18181b;
+    --popover-foreground: #fafafa;
+    --primary: #2cbb5d;
+    --primary-foreground: #ffffff;
+    --secondary: #27272a;
+    /* Zinc 800 */
+    --secondary-foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    /* Zinc 400 */
+    --accent: #27272a;
+    --accent-foreground: #fafafa;
+    --destructive: #7f1d1d;
+    --destructive-foreground: #fafafa;
+    --border: #27272a;
+    --input: #27272a;
+    --ring: #2cbb5d;
+
+    /* Surfaces (Cinematic Dark Mode) */
+    --surface-1: rgba(255, 255, 255, 0.03);
+    /* Ambient */
+    --surface-2: rgba(255, 255, 255, 0.05);
+    /* Interactive */
+    --surface-3: rgba(255, 255, 255, 0.08);
+    /* Dense/Focus */
+
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    --border-muted: rgba(255, 255, 255, 0.1);
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-brand-green: var(--color-brand-green);
+  --color-brand-amber: var(--color-brand-amber);
+  --color-brand-gold: var(--color-brand-gold);
+  --color-brand-charcoal: var(--color-brand-charcoal);
+
+  /* Fonts */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+
+  /* Surfaces - Semantic Layers */
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+
+  /* Semantic Borders */
+  --color-border-subtle: var(--border-subtle);
+  --color-border-muted: var(--border-muted);
+
+  /* Cinematic Glows */
+  --shadow-glow-green-sm: 0 0 15px -5px rgba(44, 187, 93, 0.3);
+  --shadow-glow-green-md: 0 0 25px -5px rgba(44, 187, 93, 0.4);
+  --shadow-glow-green-lg: 0 0 40px -10px rgba(44, 187, 93, 0.5);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+  font-weight: 700;
 }

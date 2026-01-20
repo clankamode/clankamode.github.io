@@ -45,10 +45,12 @@ src/
 - Use Supabase client from `@/lib/supabase`
 
 ### Styling
-- Use Tailwind CSS classes
-- Dark theme by default (bg-[#1a1a1a], text-white)
-- Primary color: #2cbb5d (green)
-- Use consistent spacing and responsive breakpoints
+- **CRITICAL**: Refer to **[docs/DESIGN_PRINCIPLES.md](docs/DESIGN_PRINCIPLES.md)** for all styling decisions and design tokens.
+- Use Tailwind CSS 4.
+- **Current Theme**: "Cinematic Dark Mode" (base: `bg-[#09090b]`, surfaces: glassmorphism).
+- **Primary Brand**: Gradient of Mastery (Green -> Emerald -> Blue).
+- **Typography**: Editorial (Inter/Jakarta), tight tracking.
+- Do NOT use flat colors like `#1a1a1a`.
 
 ### Authentication
 - Protected routes check for session in middleware

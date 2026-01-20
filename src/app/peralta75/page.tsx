@@ -78,74 +78,72 @@ export default function Component() {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Easy":
-        return "bg-[#2cbb5d]/10 text-[#2cbb5d]"
+        return "bg-brand-green/10 text-brand-green border-brand-green/20"
       case "Medium":
-        return "bg-yellow-500/10 text-yellow-500"
+        return "bg-brand-amber/10 text-brand-amber border-brand-amber/20"
       case "Hard":
-        return "bg-red-500/10 text-red-500"
+        return "bg-brand-gold/10 text-brand-gold border-brand-gold/20"
       default:
-        return "bg-gray-500/10 text-gray-400"
+        return "bg-muted text-muted-foreground border-transparent"
     }
   }
 
   const toggleCategory = (category: string) => {
     const newExpanded = new Set(expandedCategories)
     if (newExpanded.has(category)) {
-        newExpanded.delete(category)
+      newExpanded.delete(category)
     } else {
-        newExpanded.add(category)
+      newExpanded.add(category)
     }
     setExpandedCategories(newExpanded)
   }
   return (
     <>
       <style>{gradientAnimation}</style>
-      <div className="min-h-screen bg-[#1a1a1a]">
+      <div className="min-h-screen bg-background text-foreground">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
 
           {/* Epic Header */}
           <div className="relative">
             {/* Animated Gradient Background */}
-            <div 
-              className="absolute inset-0 bg-gradient-to-br from-[#2cbb5d]/20 via-[#1a1a1a] to-[#1a1a1a] rounded-3xl -z-10
-                animate-[gradient-shift_12s_ease-in-out_infinite] bg-[length:200%_200%]" 
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-brand-green/10 via-background to-background rounded-3xl -z-10
+                animate-[gradient-shift_12s_ease-in-out_infinite] bg-[length:200%_200%]"
             />
-            
+
             {/* Content with staggered animations */}
             <div className="text-center py-12 px-6">
               {/* Title with animated gradient */}
-              <h1 
-                className={`text-6xl font-black mb-6 text-transparent bg-clip-text 
-                  bg-gradient-to-r from-[#2cbb5d] via-[#25a24f] to-[#2cbb5d] bg-[length:200%_auto]
-                  animate-[gradient-shift_12s_ease-in-out_infinite]
+              <h1
+                className={`text-6xl font-black mb-6 text-foreground font-sans tracking-tighter
                   transition-all duration-1500 transform
                   ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
               >
-                PERALTA 75
+                PERALTA <span className="text-brand-green">75</span>
               </h1>
-              
+
               {/* Subtitle with fade-in and slide-up */}
-              <div className="max-w-3xl mx-auto space-y-6">
-                <p 
-                  className={`text-xl text-gray-300 font-medium leading-relaxed
+              <div className="max-w-3xl mx-auto space-y-6 text-muted-foreground">
+                <p
+                  className={`text-xl font-medium leading-relaxed
                     transition-all duration-1500 delay-450 transform
                     ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
-                  After solving 650+ LeetCode problems, reaching the top 0.5% of LeetCode users worldwide, and landing offers at Meta, Amazon, Bloomberg, 
+                  After solving 650+ LeetCode problems, reaching the top 0.5% of LeetCode users worldwide, and landing offers at Meta, Amazon, Bloomberg,
                   and various Silicon Valley startups - I&apos;ve decided to curate a list of questions that were pivotal in my algorthmic journey.
                 </p>
 
-                <p 
-                  className={`text-xl text-gray-300 font-medium leading-relaxed
+                <p
+                  className={`text-xl font-medium leading-relaxed
                     transition-all duration-1500 delay-450 transform
                     ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
-                    No gotchas, no obscure tricks – just pure, practical problems that will transform how you think about coding and prepare you for any technical interview.
+                  No gotchas, no obscure tricks – just pure, practical problems that will transform how you think about coding and prepare you for any technical interview.
                 </p>
 
                 {/* Animated underline */}
-                <div 
-                  className={`h-1 w-24 mx-auto bg-gradient-to-r from-[#2cbb5d] to-[#25a24f]
+                <div
+                  className={`h-1 w-24 mx-auto bg-brand-green
                     transition-all duration-1500 delay-750 transform origin-left
                     ${isVisible ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'}`}
                 />
@@ -157,24 +155,23 @@ export default function Component() {
           <div className={`mb-4 transition-all duration-1000 transform
             ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
           >
-            <div className="bg-[#282828] rounded-lg border border-[#3e3e3e] p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold text-white">Progress</span>
-                  <span className="text-sm text-gray-400">
-                    {solvedQuestions.size} / {PERALTA_75_LIST.length} problems solved
+            <div className="bg-card/20 backdrop-blur-md rounded-xl border border-white/5 p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-lg font-bold text-foreground tracking-tight">Progress</span>
+                  <span className="text-sm text-muted-foreground font-mono">
+                    {solvedQuestions.size} / {PERALTA_75_LIST.length}
                   </span>
                 </div>
-                <span className="text-lg font-semibold text-[#2cbb5d]">
+                <span className="text-lg font-bold text-brand-green drop-shadow-[0_0_8px_rgba(44,187,93,0.5)]">
                   {Math.round((solvedQuestions.size / PERALTA_75_LIST.length) * 100)}%
                 </span>
               </div>
-              <div className="h-2 bg-[#1a1a1a] rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-[#2cbb5d] rounded-full transition-all duration-500 ease-out"
-                  style={{ 
+              <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div
+                  className="h-full bg-brand-green rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(44,187,93,0.5)]"
+                  style={{
                     width: `${(solvedQuestions.size / PERALTA_75_LIST.length) * 100}%`,
-                    backgroundImage: 'linear-gradient(90deg, #2cbb5d 0%, #25a24f 100%)'
                   }}
                 />
               </div>
@@ -184,46 +181,47 @@ export default function Component() {
           {/* Questions List */}
           <div className="space-y-4">
             {sortedCategories.map((category) => (
-              <div key={category} className="bg-[#282828] rounded-lg border border-[#3e3e3e] shadow-sm">
+              <div key={category} className="bg-card/30 backdrop-blur-md rounded-xl border border-white/5 shadow-md overflow-hidden transition-all duration-300 hover:border-white/10">
                 {/* Category Header */}
                 <button
                   onClick={() => toggleCategory(category)}
-                  className="w-full p-6 hover:bg-[#1a1a1a] transition-colors"
+                  className="w-full p-6 hover:bg-white/5 transition-colors group"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       {/* Animated Chevron */}
-                      <div 
-                        className={`w-6 h-6 flex items-center justify-center transition-transform duration-300
-                          ${expandedCategories.has(category) ? 'rotate-180' : 'rotate-0'}`}
+                      <div
+                        className={`w-8 h-8 flex items-center justify-center rounded-full bg-white/5 transition-all duration-300 group-hover:bg-brand-green/20 group-hover:text-brand-green
+                          ${expandedCategories.has(category) ? 'rotate-180 bg-brand-green/20 text-brand-green' : 'rotate-0 text-muted-foreground'}`}
                       >
-                        <svg 
-                          className="w-5 h-5 text-gray-400" 
-                          fill="none" 
-                          stroke="currentColor" 
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
                             d="M5 15l7-7 7 7"
                           />
                         </svg>
                       </div>
-                      <h3 className="text-lg font-semibold text-white">{category}</h3>
-                      <span className="ml-2 px-2 py-1 text-xs font-medium bg-[#1a1a1a] text-gray-400 rounded-full">
+                      <h3 className="text-xl font-bold text-foreground font-display tracking-tight group-hover:text-brand-green transition-colors">{category}</h3>
+                      <span className={`px-2.5 py-0.5 text-xs font-mono font-medium rounded-full transition-colors
+                        ${expandedCategories.has(category) ? 'bg-brand-green/20 text-brand-green' : 'bg-white/5 text-muted-foreground'}`}>
                         {groupedQuestions[category].length}
                       </span>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2">
                       {["Easy", "Medium", "Hard"].map((difficulty) => {
                         const count = groupedQuestions[category].filter((q) => q.difficulty === difficulty).length
                         if (count === 0) return null
                         return (
                           <span
                             key={difficulty}
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(difficulty)}`}
+                            className={`px-3 py-1 text-[10px] uppercase font-bold tracking-wider rounded-full border ${getDifficultyColor(difficulty)} bg-opacity-10 backdrop-blur-sm`}
                           >
                             {count}
                           </span>
@@ -235,48 +233,49 @@ export default function Component() {
 
                 {/* Category Content */}
                 {expandedCategories.has(category) && (
-                  <div className="px-6 pb-6">
-                    <div className="space-y-2">
+                  <div className="px-6 pb-6 bg-black/20">
+                    <div className="space-y-3 pt-4">
                       {groupedQuestions[category].map((question) => (
                         <div
                           key={question.id}
-                          className={`bg-[#1a1a1a] rounded-lg border border-[#3e3e3e] hover:border-[#2cbb5d] transition-colors
-                            ${solvedQuestions.has(question.id) ? 'opacity-60' : ''}`}
+                          className={`rounded-lg border transition-all duration-300 group
+                            ${solvedQuestions.has(question.id)
+                              ? 'bg-brand-green/5 border-brand-green/20 opacity-70 hover:opacity-100'
+                              : 'bg-white/5 border-transparent hover:border-brand-green/30 hover:bg-white/10 hover:shadow-[0_0_15px_-5px_rgba(44,187,93,0.1)]'}`}
                         >
-                          <div className="p-3">
+                          <div className="p-4">
                             <div className="flex items-center justify-between gap-4">
                               <div className="flex items-center gap-4 flex-1 min-w-0">
                                 {/* Checkbox */}
                                 <button
                                   onClick={(e) => toggleSolved(question.id, e)}
-                                  className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0
-                                    transition-colors duration-200
-                                    ${solvedQuestions.has(question.id) 
-                                      ? 'bg-[#2cbb5d] border-[#2cbb5d]' 
-                                      : 'border-gray-500 hover:border-[#2cbb5d]'}`}
+                                  className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0
+                                    transition-all duration-300
+                                    ${solvedQuestions.has(question.id)
+                                      ? 'bg-brand-green border-brand-green shadow-[0_0_10px_rgba(44,187,93,0.4)]'
+                                      : 'border-muted-foreground/50 hover:border-brand-green hover:shadow-[0_0_10px_-2px_rgba(44,187,93,0.3)]'}`}
                                 >
                                   {solvedQuestions.has(question.id) && (
-                                    <svg 
-                                      className="w-3 h-3 text-white" 
-                                      fill="none" 
-                                      stroke="currentColor" 
+                                    <svg
+                                      className="w-3.5 h-3.5 text-white"
+                                      fill="none"
+                                      stroke="currentColor"
                                       viewBox="0 0 24 24"
                                     >
-                                      <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={3} 
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={3}
                                         d="M5 13l4 4L19 7"
                                       />
                                     </svg>
                                   )}
                                 </button>
                                 <div className="min-w-0">
-                                  <h4 className={`font-medium truncate ${
-                                    solvedQuestions.has(question.id) 
-                                      ? 'text-gray-500 line-through' 
-                                      : 'text-white'
-                                  }`}>
+                                  <h4 className={`font-medium truncate font-sans text-base transition-colors ${solvedQuestions.has(question.id)
+                                    ? 'text-muted-foreground line-through decoration-brand-green/50'
+                                    : 'text-foreground group-hover:text-brand-green'
+                                    }`}>
                                     {question.title}
                                   </h4>
                                 </div>
@@ -284,7 +283,7 @@ export default function Component() {
                                   href={question.leetcodeUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex-shrink-0 text-gray-400 hover:text-[#ffa116] transition-colors duration-200"
+                                  className="flex-shrink-0 text-muted-foreground hover:text-white transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
                                   title="View on LeetCode"
                                 >
                                   <svg
@@ -297,28 +296,19 @@ export default function Component() {
                                     <path
                                       strokeLinecap="round"
                                       strokeLinejoin="round"
-                                      d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6m0 0v6m0-6L10 14"
+                                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                                     />
                                   </svg>
                                 </a>
                               </div>
                               <div className="flex items-center gap-3 flex-shrink-0">
                                 <span
-                                  className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(
+                                  className={`px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full border bg-opacity-10 ${getDifficultyColor(
                                     question.difficulty,
                                   )}`}
                                 >
                                   {question.difficulty}
                                 </span>
-                                {/* <a
-                                  href={question.leetcodeUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 px-3 py-1 text-sm font-medium text-white bg-[#2cbb5d] hover:bg-[#25a24f] rounded-md transition-colors"
-                                >
-                                  Solve
-                                </a> */}
-                                {/* LeetCode Link Icon */}
                               </div>
                             </div>
                           </div>

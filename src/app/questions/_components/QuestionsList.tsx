@@ -25,8 +25,8 @@ const getYouTubeThumbnail = (videoId: string): string => {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 };
 
-// Video Card Component
-const VideoCard = ({ videoId, videoUrl }: { videoId: string; videoUrl: string }) => {
+// Video Answer Preview - inline thumbnail for answered questions
+const VideoAnswerPreview = ({ videoId, videoUrl }: { videoId: string; videoUrl: string }) => {
   const [videoTitle, setVideoTitle] = useState<string | null>(null);
   const [isLoadingTitle, setIsLoadingTitle] = useState(true);
   const thumbnailUrl = getYouTubeThumbnail(videoId);
@@ -317,7 +317,7 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
                   if (videoId) {
                     return (
                       <div className="mt-3">
-                        <VideoCard videoId={videoId} videoUrl={question.videoUrl} />
+                        <VideoAnswerPreview videoId={videoId} videoUrl={question.videoUrl} />
                       </div>
                     );
                   }

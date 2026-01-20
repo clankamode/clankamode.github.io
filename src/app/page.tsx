@@ -15,29 +15,29 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#1a1a1a]">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* Use HeroSection Component */}
       <HeroSection channelStats={channelStats} channelId={channelId} />
 
       {/* Use VideoSection for Latest Videos */}
-      <VideoSection 
+      <VideoSection
         title="Latest Videos"
         videos={latestVideos}
         viewAllHref="/videos"
         emptyStateTitle="No Latest Videos Found"
         emptyStateMessage="Please check your YouTube API key and channel ID in the .env.local file."
-        sectionBgClass="bg-[#1a1a1a]"
-        emptyStateBgClass="bg-[#282828]"
+        sectionBgClass="bg-background"
+        emptyStateBgClass="bg-muted"
       />
 
       {/* Use VideoSection for Popular Videos */}
-      <VideoSection 
+      <VideoSection
         title="Popular Videos"
         videos={popularVideos}
         emptyStateTitle="No Popular Videos Found"
         emptyStateMessage="Could not fetch popular videos at this time."
-        sectionBgClass="bg-[#282828]"
-        emptyStateBgClass="bg-[#1a1a1a]"
+        sectionBgClass="bg-muted/30"
+        emptyStateBgClass="bg-background"
       />
     </div>
   );

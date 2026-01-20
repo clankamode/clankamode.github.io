@@ -1,14 +1,27 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import { VideoProvider } from "@/context/VideoContext";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import Providers from "./providers";
 import { Analytics } from '@vercel/analytics/next';
- 
+import Footer from "@/components/layout/Footer";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+});
 
 export const metadata: Metadata = {
   title: "James Peralta",
@@ -22,14 +35,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${jakarta.variable} ${jetbrains.variable} antialiased`}>
         <Providers>
           <AuthProvider>
             <VideoProvider channelId={process.env.YOUTUBE_CHANNEL_ID || ''}>
               <Navbar />
-              <main className="min-h-screen pt-14">
-                {children}
-              </main>
+              <div className="min-h-screen pt-14 flex flex-col">
+                <main className="flex-grow">
+                  {children}
+                </main>
+                <Footer />
+              </div>
             </VideoProvider>
           </AuthProvider>
         </Providers>
