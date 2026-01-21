@@ -55,7 +55,23 @@ export async function PATCH(
   // ADMIN and EDITOR ROLES ONLY
   
   const body = await request.json()
-  const { thumbnail, notes, status } = body;
+  const { thumbnail, notes, status, favorite } = body;
+
+  const now = new Date().toISOString();
+
+  // If favorite is provided, update the favorite field
+  if (favorite !== undefined) {
+    const { data, error } = await supabase
+      .from('ThumbnailJob')
+      .update({ favorite: Boolean(favorite), updated_at: now })
+      .eq('id', id)
+      .select();
+
+    return NextResponse.json({
+      data,
+      error,
+    })
+  }
 
   // If status is provided, only update the status
   if (status !== undefined) {
@@ -74,7 +90,7 @@ export async function PATCH(
 
     const { data, error } = await supabase
       .from('ThumbnailJob')
-      .update({ status })
+      .update({ status, updated_at: now })
       .eq('id', id)
       .select();
 
@@ -110,6 +126,7 @@ export async function PATCH(
     .update({
       thumbnail,
       notes,
+      updated_at: now,
     })
     .eq('id', id)
     .select();
@@ -137,11 +154,17 @@ export async function DELETE(
   const { id } = await params
 
   // ADMIN and EDITOR ROLES ONLY
+  // Soft delete by setting deleted_at timestamp
+  const now = new Date().toISOString();
   const { data, error } = await supabase
     .from('ThumbnailJob')
-    .delete()
+    .update({ deleted_at: now, updated_at: now })
     .eq('id', id)
     .select();
+
+  if (!error) {
+    await logThumbnailActivity(id, 'STATUS_CHANGE', 'Thumbnail job deleted');
+  }
 
   return NextResponse.json({
     data,

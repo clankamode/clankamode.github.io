@@ -6,12 +6,14 @@ import Image from "next/image"
 
 interface ThumbnailCardProps {
   thumbnail: Thumbnail
-  status: ThumbnailJobStatus,
+  status: ThumbnailJobStatus
   onStatusChange?: (thumbnailId: string, newStatus: ThumbnailJobStatus) => void
   onViewClick?: (thumbnailId: string) => void
+  onToggleFavorite?: (thumbnailId: string) => void
+  onDelete?: (thumbnailId: string) => void
 }
 
-export default function ThumbnailCard({ thumbnail, status, onStatusChange, onViewClick }: ThumbnailCardProps) {
+export default function ThumbnailCard({ thumbnail, status, onStatusChange, onViewClick, onToggleFavorite, onDelete }: ThumbnailCardProps) {
   const handleDownload = async () => {
     try {
       const response = await fetch(thumbnail.thumbnailUrl || '')
@@ -75,6 +77,27 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
             >
               View Video
             </button>
+            <button
+              onClick={() => onToggleFavorite?.(thumbnail.id)}
+              className={`text-sm font-medium p-1 rounded-full transition-colors ${thumbnail.favorite ? "text-yellow-300 hover:text-yellow-200" : "text-gray-400 hover:text-gray-200"}`}
+              title={thumbnail.favorite ? "Remove favorite" : "Add favorite"}
+              aria-pressed={thumbnail.favorite}
+              aria-label={thumbnail.favorite ? "Remove favorite" : "Add favorite"}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill={thumbnail.favorite ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </button>
             {thumbnail.thumbnailUrl && (
               <button
                 onClick={handleDownload}
@@ -98,6 +121,29 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
                 </svg>
               </button>
             )}
+            <button
+              onClick={() => onDelete?.(thumbnail.id)}
+              className="text-red-400 hover:text-red-300 text-sm font-medium p-1 rounded-full hover:bg-red-400/10 transition-colors"
+              title="Delete Thumbnail"
+              aria-label="Delete Thumbnail"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+              </svg>
+            </button>
           </div>
           {status === ThumbnailJobStatus.TODO && onStatusChange && thumbnail.thumbnailUrl && (
             <button
@@ -128,4 +174,3 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
     </div>
   )
 }
-

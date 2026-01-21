@@ -20,6 +20,8 @@ export type ThumbnailJob = {
     suggested_thumbnails?: string[];
     thumbnail_suggestion_status?: ThumbnailSuggestionStatus;
     notes?: string;
+    favorite?: boolean;
+    deleted_at?: string;
     created_at?: string;
     updated_at?: string;
 }
@@ -31,5 +33,6 @@ export interface Thumbnail {
   thumbnailUrl?: string
   notes?: string
   status: ThumbnailJobStatus
+  favorite: boolean
   updatedAt?: string
 }

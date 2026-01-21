@@ -9,6 +9,7 @@ import ThumbnailOverview from './_components/ThumbnailOverview';
 import CreateJobModal from './_components/CreateJobModal';
 import ThumbnailViewModal from './_components/ThumbnailViewModal';
 import { Thumbnail } from "@/types/ThumbnailJob"
+import { type ThumbnailView } from "@/app/thumbnails/types"
 
 // Function to convert API data to our frontend format
 const convertApiDataToThumbnail = (job: ThumbnailJob): Thumbnail => {
@@ -19,12 +20,13 @@ const convertApiDataToThumbnail = (job: ThumbnailJob): Thumbnail => {
     thumbnailUrl: job.thumbnail,
     notes: job.notes || '',
     status: job.status,
+    favorite: job.favorite ?? false,
     updatedAt: job.updated_at,
   }
 }
 
 export default function ThumbnailDashboard() {
-  const [currentView, setCurrentView] = useState<ThumbnailJobStatus>(ThumbnailJobStatus.TODO)
+  const [currentView, setCurrentView] = useState<ThumbnailView>(ThumbnailJobStatus.TODO)
   const [thumbnails, setThumbnails] = useState<Thumbnail[]>([])
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -82,11 +84,71 @@ export default function ThumbnailDashboard() {
     setViewModalOpen(true)
   }
 
+  const handleToggleFavorite = async (thumbnailId: string) => {
+    const thumbnail = thumbnails.find((t) => t.id === thumbnailId)
+    if (!thumbnail) return
+
+    const newFavoriteValue = !thumbnail.favorite
+
+    // Optimistically update the UI
+    setThumbnails((prev) =>
+      prev.map((t) =>
+        t.id === thumbnailId ? { ...t, favorite: newFavoriteValue } : t
+      )
+    )
+
+    try {
+      const response = await fetch(`/api/thumbnail_job/${thumbnailId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ favorite: newFavoriteValue }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update favorite status')
+      }
+    } catch (error) {
+      console.error('Error updating favorite status:', error)
+      // Revert on error
+      setThumbnails((prev) =>
+        prev.map((t) =>
+          t.id === thumbnailId ? { ...t, favorite: !newFavoriteValue } : t
+        )
+      )
+    }
+  }
+
+  const handleDelete = async (thumbnailId: string) => {
+    if (!confirm('Are you sure you want to delete this thumbnail?')) {
+      return
+    }
+
+    // Optimistically remove from UI
+    setThumbnails((prev) => prev.filter((t) => t.id !== thumbnailId))
+
+    try {
+      const response = await fetch(`/api/thumbnail_job/${thumbnailId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete thumbnail')
+      }
+    } catch (error) {
+      console.error('Error deleting thumbnail:', error)
+      // Revert on error by refetching
+      fetchThumbnails()
+    }
+  }
+
   const getStatusCounts = () => {
     return {
       todo: thumbnails.filter((t) => t.status === ThumbnailJobStatus.TODO).length,
       "in-review": thumbnails.filter((t) => t.status === ThumbnailJobStatus.IN_REVIEW).length,
       completed: thumbnails.filter((t) => t.status === ThumbnailJobStatus.COMPLETED).length,
+      favorites: thumbnails.filter((t) => t.favorite).length,
     }
   }
 
@@ -148,6 +210,8 @@ export default function ThumbnailDashboard() {
             error={error}
             onThumbnailsChange={fetchThumbnails}
             onViewClick={handleViewClick}
+            onToggleFavorite={handleToggleFavorite}
+            onDelete={handleDelete}
           />
         </div>
       </div>

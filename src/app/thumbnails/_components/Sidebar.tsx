@@ -1,13 +1,15 @@
 import type React from "react"
 import { ThumbnailJobStatus } from "@/types/ThumbnailJob"
+import { FAVORITES_VIEW, type ThumbnailView } from "@/app/thumbnails/types"
 
 type SidebarProps = {
-    currentView: ThumbnailJobStatus
-    setCurrentView: (view: ThumbnailJobStatus) => void
+    currentView: ThumbnailView
+    setCurrentView: (view: ThumbnailView) => void
     statusCounts: {
         todo: number
         "in-review": number
         completed: number
+        favorites: number
     }
     sidebarOpen: boolean
     onCreateClick: () => void
@@ -35,6 +37,7 @@ export default function Sidebar({ currentView, setCurrentView, statusCounts, sid
               { key: ThumbnailJobStatus.TODO, label: "To Do", icon: "📋", count: statusCounts.todo },
               { key: ThumbnailJobStatus.IN_REVIEW, label: "In Review", icon: "👀", count: statusCounts["in-review"] },
               { key: ThumbnailJobStatus.COMPLETED, label: "Completed", icon: "✅", count: statusCounts.completed },
+              { key: FAVORITES_VIEW, label: "Favorites", icon: "⭐", count: statusCounts.favorites },
             ].map((item) => (
               <button
                 key={item.key}

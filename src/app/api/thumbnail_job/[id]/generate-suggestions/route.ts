@@ -49,7 +49,10 @@ export async function POST(
   // Set status to generating before starting background task
   await supabase
     .from(TABLE_NAME)
-    .update({ thumbnail_suggestion_status: ThumbnailSuggestionStatus.GENERATING })
+    .update({ 
+      thumbnail_suggestion_status: ThumbnailSuggestionStatus.GENERATING,
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', id);
 
   // Generate suggestions in background and return immediately
@@ -59,7 +62,10 @@ export async function POST(
       // Set status to failed on error
       await supabase
         .from(TABLE_NAME)
-        .update({ thumbnail_suggestion_status: ThumbnailSuggestionStatus.FAILED })
+        .update({ 
+          thumbnail_suggestion_status: ThumbnailSuggestionStatus.FAILED,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', job.id);
     }
   );
@@ -140,13 +146,17 @@ async function generateThumbnailSuggestions(
       .update({
         suggested_thumbnails: imageUrls,
         thumbnail_suggestion_status: ThumbnailSuggestionStatus.COMPLETED,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', jobId);
   } else {
     // No images generated, mark as failed
     await supabase
       .from(TABLE_NAME)
-      .update({ thumbnail_suggestion_status: ThumbnailSuggestionStatus.FAILED })
+      .update({ 
+        thumbnail_suggestion_status: ThumbnailSuggestionStatus.FAILED,
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', jobId);
   }
 }

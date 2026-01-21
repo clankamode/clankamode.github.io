@@ -3,19 +3,22 @@ import ThumbnailCard from "./ThumbnailCard"
 import { ThumbnailJobStatus } from "@/types/ThumbnailJob"
 import { Thumbnail } from "@/types/ThumbnailJob"
 import Loading from '@/components/ui/Loading';
+import { FAVORITES_VIEW, type ThumbnailView } from "@/app/thumbnails/types"
 
 type ThumbnailOverviewProps = {
   thumbnails: Thumbnail[]
-  status: ThumbnailJobStatus
+  status: ThumbnailView
   isLoading: boolean
   error: string | null
   onThumbnailsChange: () => void
   onViewClick?: (thumbnailId: string) => void
+  onToggleFavorite?: (thumbnailId: string) => void
+  onDelete?: (thumbnailId: string) => void
 }
 
-export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange, onViewClick }: ThumbnailOverviewProps) {
+export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange, onViewClick, onToggleFavorite, onDelete }: ThumbnailOverviewProps) {
   const filteredThumbnails = thumbnails
-    .filter((t) => t.status === status)
+    .filter((t) => status === FAVORITES_VIEW ? t.favorite : t.status === status)
     .sort((a, b) => {
       const dateA = new Date(a.updatedAt || 0).getTime()
       const dateB = new Date(b.updatedAt || 0).getTime()
@@ -26,6 +29,7 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
     [ThumbnailJobStatus.TODO]: "To Do",
     [ThumbnailJobStatus.IN_REVIEW]: "In Review",
     [ThumbnailJobStatus.COMPLETED]: "Completed",
+    [FAVORITES_VIEW]: "Favorites",
   }
 
   const handleStatusChange = async (thumbnailId: string, newStatus: ThumbnailJobStatus) => {
@@ -100,12 +104,13 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
             </svg>
           </div>
           <h3 className="text-lg font-medium text-white mb-2">
-            No thumbnails {status === ThumbnailJobStatus.TODO ? "to do" : status}
+            No thumbnails {status === ThumbnailJobStatus.TODO ? "to do" : status === FAVORITES_VIEW ? "favorited yet" : status}
           </h3>
           <p className="text-gray-400">
             {status === ThumbnailJobStatus.TODO && "New video requests will appear here"}
             {status === ThumbnailJobStatus.IN_REVIEW && "Submitted thumbnails will appear here for review"}
             {status === ThumbnailJobStatus.COMPLETED && "Approved thumbnails will appear here"}
+            {status === FAVORITES_VIEW && "Tap the star on any thumbnail to save it here"}
           </p>
         </div>
       ) : (
@@ -114,9 +119,11 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
             <ThumbnailCard 
               key={thumbnail.id} 
               thumbnail={thumbnail} 
-              status={status}
+              status={thumbnail.status}
               onStatusChange={handleStatusChange}
               onViewClick={onViewClick}
+              onToggleFavorite={onToggleFavorite}
+              onDelete={onDelete}
             />
           ))}
         </div>

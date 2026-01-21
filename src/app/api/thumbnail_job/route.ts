@@ -11,10 +11,12 @@ export async function GET(): Promise<NextResponse<{
 }>> {
   // ADMIN and EDITOR ROLES ONLY
   try {
-    // Get query parameters
+    // Get query parameters - only return non-deleted jobs, sorted by updated_at desc
     const { data } = await supabase
         .from(TABLE_NAME)
         .select('*')
+        .is('deleted_at', null)
+        .order('updated_at', { ascending: false, nullsFirst: false })
 
     return NextResponse.json({
         data: data as ThumbnailJob[],
@@ -50,10 +52,12 @@ export async function POST(request: Request) {
     }, { status: 400 })
   }
 
+  const now = new Date().toISOString();
   const { data, error } = await supabase.from(TABLE_NAME).insert({
     video_url,
     video_title: trimmedTitle,
     status: ThumbnailJobStatus.TODO,
+    updated_at: now,
   }).select();
 
   return NextResponse.json({
