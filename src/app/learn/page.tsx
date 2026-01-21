@@ -1,0 +1,35 @@
+import PillarCard from './_components/PillarCard';
+import { getLearningLibrary } from '@/lib/content';
+
+export const dynamic = 'force-dynamic';
+
+export default async function LearnPage() {
+  const library = await getLearningLibrary(false);
+
+  const pillarCards = library.map((pillar) => ({
+    pillar,
+    articleCount: pillar.topics.reduce((sum, topic) => sum + topic.articles.length, 0),
+  }));
+
+  return (
+    <div className="min-h-screen bg-background pt-24 pb-24">
+      <section className="mx-auto max-w-6xl px-6">
+        <div className="mb-14 max-w-3xl">
+          <p className="text-xs uppercase tracking-[0.3em] text-text-muted">The Library</p>
+          <h1 className="mt-4 text-5xl md:text-6xl font-bold tracking-tight text-text-primary">
+            Structured paths for deliberate mastery.
+          </h1>
+          <p className="mt-6 text-lg text-text-secondary leading-relaxed">
+            Four pillars. Clear progression. Everything you need to build the skills that compound.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {pillarCards.map(({ pillar, articleCount }) => (
+            <PillarCard key={pillar.id} pillar={pillar} articleCount={articleCount} />
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}

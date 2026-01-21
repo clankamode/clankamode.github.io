@@ -38,7 +38,7 @@ function ProfileImage({ src, alt, title }: { src: string; alt: string; title?: s
 
 export default function HeroSection({ channelStats, channelId }: HeroSectionProps) {
   return (
-    <section className="relative bg-background pt-32 pb-20 px-4 md:px-8 overflow-x-hidden overflow-y-visible min-h-[90vh] flex items-center justify-center">
+    <section className="relative bg-background pt-24 pb-16 px-4 md:px-8 overflow-x-hidden overflow-y-visible min-h-[80vh] flex items-center justify-center">
       {/* Ambient Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -55,7 +55,7 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
         )}
 
         {/* Headline - Editorial Style */}
-        <h1 className="mb-8 text-7xl md:text-9xl lg:text-[10rem] tracking-tighter font-sans font-black text-foreground w-full overflow-visible">
+        <h1 className="mb-6 text-6xl md:text-8xl lg:text-9xl tracking-tighter font-sans font-black text-foreground w-full overflow-visible">
           <span className="block bg-gradient-to-br from-gray-100 via-gray-200 to-gray-400 dark:from-gray-200 dark:via-gray-300 dark:to-gray-500 bg-clip-text text-transparent pb-2">
             JAMES
           </span>
@@ -65,7 +65,7 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
         </h1>
 
         {/* Subline */}
-        <p className="mb-12 max-w-2xl text-xl md:text-2xl text-muted-foreground font-light leading-relaxed">
+        <p className="mb-10 max-w-2xl text-lg md:text-xl text-muted-foreground font-light leading-relaxed">
           {channelStats?.description || "No fluff. No theory. Just the exact steps, resources, and mindset I used to break into Big Tech and scale my career."}
         </p>
 

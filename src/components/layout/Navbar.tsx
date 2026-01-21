@@ -98,8 +98,9 @@ export default function Navbar() {
   const originalRole = (session?.originalUser?.role as UserRole) || effectiveRole;
   const isAdmin = hasRole(originalRole, UserRole.ADMIN);
   const isEffectiveAdmin = hasRole(effectiveRole, UserRole.ADMIN);
-  const isEditor = effectiveRole === UserRole.EDITOR;
-  const isEditorSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai'].some((path) => isActive(path));
+  const isEditor = hasRole(effectiveRole, UserRole.EDITOR);
+  const isEditorSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content'].some((path) => isActive(path));
+  const isPracticeSectionActive = ['/peralta75', '/assessment'].some((path) => isActive(path));
 
   return (
     <>
@@ -119,7 +120,7 @@ export default function Navbar() {
                   name={session.user.name || "User"}
                 />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-surface-interactive border border-border-subtle flex items-center justify-center text-foreground font-bold text-base">
+                <div className="w-8 h-8 rounded-full bg-surface-interactive border border-border-subtle flex items-center justify-center text-foreground font-bold text-sm">
                   J
                 </div>
               )}
@@ -140,51 +141,66 @@ export default function Navbar() {
           <div className="hidden md:flex items-center justify-center flex-1">
             <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-border-subtle backdrop-blur-md' : ''
               }`}>
-              {/* Editors only see Editor dropdown with AI and Thumbnails tabs */}
-              {isLoggedIn && isEditor ? (
+              {isLoggedIn && isEditor && !isEffectiveAdmin ? (
                 <>
+                  <Link href="/admin/content" className={navLinkClass('/admin/content')}>
+                    Content
+                  </Link>
+                  <Link href="/ai" className={navLinkClass('/ai')}>
+                    AI Tools
+                  </Link>
+                  <Link href="/thumbnails" className={navLinkClass('/thumbnails')}>
+                    Thumbnails
+                  </Link>
+                  <Link href="/gallery" className={navLinkClass('/gallery')}>
+                    Gallery
+                  </Link>
+                  <Link href="/clips" className={navLinkClass('/clips')}>
+                    Clips
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
+                  <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
                   <div className="relative group">
-                    <button type="button" className={navButtonClass(isEditorSectionActive)}>
-                      Editor
+                    <button type="button" className={navButtonClass(isPracticeSectionActive)}>
+                      Practice
                       <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
                       </svg>
                     </button>
-                    <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                    <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                       <div className="py-2">
-                        <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
-                        <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
-                        <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
-                        <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
+                        <Link href="/peralta75" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">
+                          <span className="block text-foreground font-medium">Peralta 75</span>
+                          <span className="block text-xs text-muted-foreground">75 curated LeetCode problems</span>
+                        </Link>
+                        <Link href="/assessment" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">
+                          <span className="block text-foreground font-medium">Assessment</span>
+                          <span className="block text-xs text-muted-foreground">Test your skills on demand</span>
+                        </Link>
                       </div>
                     </div>
                   </div>
-                </>
-              ) : (
-                <>
-                  <Link href="/" className={navLinkClass('/')}>Home</Link>
-                  <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
-                  <Link href="/peralta75" className={navLinkClass('/peralta75')}>Peralta 75</Link>
-                  <Link href="/assessment" className={navLinkClass('/assessment')}>Assessment</Link>
-                  {isLoggedIn && isEffectiveAdmin && (
-                    <>
-                      <div className="relative group">
-                        <button type="button" className={navButtonClass(isEditorSectionActive)}>
-                          Editor
-                          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
-                          </svg>
-                        </button>
-                        <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
-                          <div className="py-2">
-                            <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
-                            <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
-                            <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
-                            <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
-                          </div>
+                  {isLoggedIn && isEditor && (
+                    <div className="relative group">
+                      <button type="button" className={navButtonClass(isEditorSectionActive)}>
+                        Editor
+                        <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                      <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                        <div className="py-2">
+                          <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
+                          <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
+                          <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
+                          <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
+                          <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Learning Content</Link>
                         </div>
                       </div>
-                    </>
+                    </div>
                   )}
                 </>
               )}
@@ -245,32 +261,33 @@ export default function Navbar() {
       >
         <div className="p-6 space-y-4">
           <div className="space-y-2">
-            {isLoggedIn && isEditor ? (
-              <>
-                <div className="space-y-1">
-                  <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>
-                  <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
-                  <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
-                  <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
-                  <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
-                </div>
-              </>
+            {isLoggedIn && isEditor && !isEffectiveAdmin ? (
+              <div className="space-y-1">
+                <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>
+                <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
+                <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
+                <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
+                <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
+                <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)}>Learning Content</Link>
+              </div>
             ) : (
               <>
-                <Link href="/" className={mobileNavLinkClass('/')} onClick={() => setIsMenuOpen(false)}>Home</Link>
                 <Link href="/videos" className={mobileNavLinkClass('/videos')} onClick={() => setIsMenuOpen(false)}>Videos</Link>
-                <Link href="/peralta75" className={mobileNavLinkClass('/peralta75')} onClick={() => setIsMenuOpen(false)}>Peralta 75</Link>
-                <Link href="/assessment" className={mobileNavLinkClass('/assessment')} onClick={() => setIsMenuOpen(false)}>Assessment</Link>
-                {isLoggedIn && isEffectiveAdmin && (
-                  <>
-                    <div className="space-y-1">
-                      <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>
-                      <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
-                      <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
-                      <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
-                      <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
-                    </div>
-                  </>
+                <Link href="/learn" className={mobileNavLinkClass('/learn')} onClick={() => setIsMenuOpen(false)}>Learn</Link>
+                <div className="space-y-1 pt-3">
+                  <span className="block px-4 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Practice</span>
+                  <Link href="/peralta75" className={mobileNavLinkClass('/peralta75')} onClick={() => setIsMenuOpen(false)}>Peralta 75</Link>
+                  <Link href="/assessment" className={mobileNavLinkClass('/assessment')} onClick={() => setIsMenuOpen(false)}>Assessment</Link>
+                </div>
+                {isLoggedIn && isEditor && (
+                  <div className="space-y-1">
+                    <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>
+                    <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
+                    <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
+                    <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
+                    <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
+                    <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)}>Learning Content</Link>
+                  </div>
                 )}
               </>
             )}

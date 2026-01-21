@@ -30,6 +30,13 @@ export async function middleware(req: NextRequest) {
         
         const userRole = effectiveRole;
         
+        // Check if the route is admin-related
+        if (req.nextUrl.pathname.startsWith('/admin')) {
+            if (!hasRole(userRole, UserRole.EDITOR)) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+        }
+
         // Check if the route is thumbnail-related
         if (req.nextUrl.pathname.startsWith('/thumbnails') || req.nextUrl.pathname.startsWith('/api/thumbnail_job')) {
             if (!hasRole(userRole, UserRole.EDITOR)) {
@@ -63,5 +70,15 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/analytics', '/thumbnails/:path*', '/api/thumbnail_job/:path*', '/practice-test', '/api/test-session/:path*', '/ai', '/api/chat'],
+    matcher: [
+        '/',
+        '/admin/:path*',
+        '/analytics',
+        '/thumbnails/:path*',
+        '/api/thumbnail_job/:path*',
+        '/practice-test',
+        '/api/test-session/:path*',
+        '/ai',
+        '/api/chat',
+    ],
 }

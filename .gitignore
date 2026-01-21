@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# npm cache
+.npm-cache
+
 # testing
 /coverage
 /playwright-report

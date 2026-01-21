@@ -1,0 +1,50 @@
+'use client';
+
+import { useState } from 'react';
+import type { LearningTopicWithArticles } from '@/types/content';
+import ArticleCard from './ArticleCard';
+
+interface TopicAccordionProps {
+  pillarSlug: string;
+  topic: LearningTopicWithArticles;
+  defaultOpen?: boolean;
+}
+
+export default function TopicAccordion({ pillarSlug, topic, defaultOpen = false }: TopicAccordionProps) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="border-b border-border-subtle py-6">
+      <button
+        type="button"
+        className="flex w-full items-center justify-between gap-4 text-left"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <div>
+          <h3 className="text-2xl font-semibold tracking-tight text-text-primary">
+            {topic.name}
+          </h3>
+          {topic.description && (
+            <p className="mt-2 text-base text-text-secondary">
+              {topic.description}
+            </p>
+          )}
+        </div>
+        <span className="text-text-muted text-xl">{open ? '−' : '+'}</span>
+      </button>
+
+      {open && (
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {topic.articles.map((article) => (
+            <ArticleCard key={article.id} pillarSlug={pillarSlug} article={article} />
+          ))}
+          {topic.articles.length === 0 && (
+            <div className="text-text-muted text-sm">
+              No articles yet.
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
