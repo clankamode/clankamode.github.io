@@ -4,8 +4,8 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { upload } from '@vercel/blob/client';
 import Image from "next/image"
-import type { ThumbnailActivity } from '@/types/ThumbnailActivity'
 import { ThumbnailSuggestionStatus } from '@/types/ThumbnailJob'
+import CommentsSection from './CommentsSection'
 
 interface ThumbnailViewModalProps {
   isOpen: boolean
@@ -37,33 +37,9 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
   const [dragActive, setDragActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [activity, setActivity] = useState<ThumbnailActivity[]>([])
-  const [isActivityLoading, setIsActivityLoading] = useState(true)
-  const [activityError, setActivityError] = useState<string | null>(null)
-  const [comment, setComment] = useState('')
-  const [commentAuthor, setCommentAuthor] = useState('')
   const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false)
   const [suggestionError, setSuggestionError] = useState<string | null>(null)
-
-  const fetchActivity = async (jobId: string) => {
-    try {
-      setIsActivityLoading(true)
-      const response = await fetch(`/api/thumbnail_job/${jobId}/activity`)
-      if (!response.ok) {
-        throw new Error('Failed to load activity')
-      }
-      const data = await response.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
-      setActivity(data.data || [])
-      setActivityError(null)
-    } catch (error) {
-      setActivityError(error instanceof Error ? error.message : 'Failed to load activity')
-    } finally {
-      setIsActivityLoading(false)
-    }
-  }
+  const [isSuggestionsExpanded, setIsSuggestionsExpanded] = useState(false)
 
   useEffect(() => {
     if (isOpen && thumbnailId) {
@@ -105,7 +81,6 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
       }
 
       fetchThumbnail()
-      fetchActivity(thumbnailId)
     }
   }, [isOpen, thumbnailId])
 
@@ -175,9 +150,6 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
 
       onSubmitSuccess()
       onClose()
-      if (thumbnailId) {
-        fetchActivity(thumbnailId)
-      }
     } catch (error) {
       console.error('Error submitting thumbnail:', error)
     } finally {
@@ -287,36 +259,6 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
     }
   }
 
-  const handleCommentSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-    if (!thumbnailId || !comment.trim()) {
-      return
-    }
-
-    try {
-      const response = await fetch(`/api/thumbnail_job/${thumbnailId}/activity`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: comment.trim(),
-          author: commentAuthor.trim() || undefined,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to add comment')
-      }
-
-      setComment('')
-      fetchActivity(thumbnailId)
-    } catch (error) {
-      console.error('Error adding comment:', error)
-      setActivityError(error instanceof Error ? error.message : 'Failed to add comment')
-    }
-  }
-
   if (!isOpen) return null
 
   return (
@@ -325,7 +267,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
       onClick={onClose}
     >
       <div 
-        className="bg-[#282828] rounded-lg shadow-lg w-full max-w-4xl my-8 border border-[#3e3e3e]"
+        className="bg-[#282828] rounded-lg shadow-lg w-full max-w-6xl xl:max-w-7xl my-8 border border-[#3e3e3e]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -350,417 +292,376 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
             <div className="text-gray-400">Loading thumbnail data...</div>
           </div>
         ) : (
-          <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
-            {/* Video Link Section */}
-            <div className="mb-8">
-              <div className="bg-[#1a1a1a] rounded-lg p-4 border-l-4 border-[#2cbb5d]">
-                <p className="text-base text-gray-400 mb-2">Please watch this video before creating the thumbnail:</p>
-                <a
-                  href={formData.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#2cbb5d] hover:text-[#25a24f] font-medium break-all"
-                >
-                  {formData.videoUrl}
-                </a>
-                <div className="mt-2">
-                  <a
-                    href={formData.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-[#2cbb5d] text-white text-base font-medium rounded-lg hover:bg-[#28a754] transition-colors"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                      />
-                    </svg>
-                    Open Video
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Suggested Thumbnails */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xl font-semibold text-white">Suggested thumbnails</h2>
-                <div className="flex items-center gap-3">
-                  {isGeneratingSuggestions && (
-                    <span className="text-sm text-fg-muted flex items-center">
-                      <svg
-                        className="animate-spin mr-2 h-4 w-4"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Generating suggestions…
-                    </span>
-                  )}
-                  {formData.suggestedThumbnails.length > 0 && !isGeneratingSuggestions && (
-                    <button
-                      type="button"
-                      onClick={handleGenerateSuggestions}
-                      disabled={isGeneratingSuggestions}
-                      className="inline-flex items-center px-3 py-1.5 text-sm bg-surface-dense border border-border-interactive text-fg rounded-lg hover:bg-surface-interactive focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          <div className="p-6 max-h-[calc(100vh-200px)] overflow-hidden">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10 h-full">
+              <div className="flex-1 min-w-0 overflow-y-auto max-h-[calc(100vh-250px)] pr-6">
+                {/* Video Link Section */}
+                <div className="mb-8">
+                  <div className="bg-[#1a1a1a] rounded-lg p-4 border-l-4 border-[#2cbb5d]">
+                    <p className="text-base text-gray-400 mb-2">Please watch this video before creating the thumbnail:</p>
+                    <a
+                      href={formData.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#2cbb5d] hover:text-[#25a24f] font-medium break-all"
                     >
-                      <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Regenerate
-                    </button>
-                  )}
-                </div>
-              </div>
-              {suggestionError && (
-                <div className="mb-3 rounded-lg bg-red-500/10 border border-red-500/40 text-red-200 px-4 py-3 text-sm">
-                  {suggestionError}
-                </div>
-              )}
-              {formData.suggestedThumbnails.length === 0 ? (
-                <div className="border border-dashed border-border-interactive rounded-lg p-6 text-center bg-surface-interactive">
-                  <p className="text-fg-muted mb-4">
-                    Generate AI thumbnail suggestions using your headshots and the video title.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleGenerateSuggestions}
-                    disabled={isGeneratingSuggestions}
-                    className="inline-flex items-center px-4 py-2 bg-surface-dense border border-border-interactive text-fg rounded-lg hover:bg-surface-interactive focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {isGeneratingSuggestions ? (
-                      <>
-                        <svg
-                          className="animate-spin -ml-1 mr-2 h-4 w-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          />
-                        </svg>
-                        Generating…
-                      </>
-                    ) : (
-                      <>
+                      {formData.videoUrl}
+                    </a>
+                    <div className="mt-2">
+                      <a
+                        href={formData.videoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-4 py-2 bg-[#2cbb5d] text-white text-base font-medium rounded-lg hover:bg-[#28a754] transition-colors"
+                      >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        Generate Suggestions
-                      </>
-                    )}
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {formData.suggestedThumbnails.map((url, index) => (
-                    <div
-                      key={`${url}-${index}`}
-                      className="bg-surface-interactive border border-border-subtle rounded-lg overflow-hidden"
-                    >
-                      <div className="relative w-full aspect-video">
-                        <Image
-                          src={url}
-                          alt={`Suggested thumbnail ${index + 1}`}
-                          className="object-cover"
-                          fill
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                        />
-                      </div>
-                      <div className="p-3 flex items-center justify-between">
-                        <span className="text-sm text-gray-300">Option {index + 1}</span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleDownload(url, `${formData.videoTitle || 'thumbnail'}-suggestion-${index + 1}.png`)}
-                            className="text-fg-muted hover:text-fg p-1.5 rounded-lg hover:bg-surface-dense transition-colors"
-                            title="Download"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="18"
-                              height="18"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                              <polyline points="7 10 12 15 17 10" />
-                              <line x1="12" y1="15" x2="12" y2="3" />
-                            </svg>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setFormData((prev) => ({ ...prev, thumbnail_url: url }))}
-                            className="text-sm px-3 py-1 rounded-lg bg-[#2cbb5d] text-black font-semibold hover:bg-[#26a653]"
-                          >
-                            Use this
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* File Upload Section */}
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-2xl font-semibold text-white">Upload Thumbnail</h2>
-                  {formData.thumbnail_url && (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        handleDownload()
-                      }}
-                      type="button"
-                      className="text-blue-400 hover:text-blue-300 text-base font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
-                      title="Download Thumbnail"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-                <div
-                  className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                    dragActive ? "border-[#2cbb5d] bg-[#2cbb5d]/5" : "border-[#3e3e3e] hover:border-[#2cbb5d] bg-[#1a1a1a]"
-                  }`}
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={inputFileRef}
-                    onChange={(e) => handleFileChange(e)}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-
-                  {formData.thumbnail_url ? (
-                    <div className="space-y-4">
-                      <div className="relative w-full max-w-2xl mx-auto aspect-video">
-                        <Image
-                          src={formData.thumbnail_url || "/placeholder.svg"}
-                          alt="Thumbnail preview"
-                          className="rounded-lg shadow-md object-contain"
-                          fill
-                          sizes="(max-width: 768px) 100vw, 672px"
-                        />
-                      </div>
-                      <div className="flex items-center justify-center space-x-2 text-green-600">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="w-16 h-16 bg-[#282828] rounded-full flex items-center justify-center mx-auto">
-                        <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                           />
                         </svg>
-                      </div>
-                      <div>
-                        <p className="text-xl font-medium text-white">Drop your thumbnail here</p>
-                        <p className="text-gray-400">or click to browse files</p>
-                      </div>
-                      <p className="text-base text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                        Open Video
+                      </a>
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Notes Section */}
-              <div>
-                <label htmlFor="notes" className="block text-2xl font-semibold text-white mb-3">
-                  Notes & Timestamps
-                </label>
-                <p className="text-gray-300 mb-3">
-                  Add any notes, timestamps, or key moments from the video that should be included in the description.
-                </p>
-                <textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Example:&#10;0:30 - Introduction to the topic&#10;2:15 - Main demonstration begins&#10;5:45 - Key takeaway&#10;&#10;Additional notes:&#10;- Great energy in this video&#10;- Consider highlighting the demo section"
-                  className="w-full h-40 px-4 py-3 border border-[#3e3e3e] rounded-lg focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d] resize-vertical bg-[#1a1a1a] text-white placeholder:text-gray-500"
-                  rows={8}
-                />
-                <p className="text-base text-gray-500 mt-2">{formData.notes.length} characters</p>
-              </div>
-
-              {/* Submit Button */}
-              <div className="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-6 py-2 text-gray-300 hover:text-white transition-colors"
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!formData.thumbnail_url || isSubmitting}
-                  className="px-8 py-3 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d]/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center">
+                {/* Suggested Thumbnails - Collapsible */}
+                <div className="mb-8 border border-[#3e3e3e] rounded-lg overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setIsSuggestionsExpanded(!isSuggestionsExpanded)}
+                    className="w-full flex items-center justify-between p-4 bg-[#1a1a1a] hover:bg-[#222] transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
                       <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
+                        className={`w-5 h-5 text-gray-400 transition-transform ${isSuggestionsExpanded ? 'rotate-90' : ''}`}
                         fill="none"
+                        stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                      Submitting...
+                      <h2 className="text-xl font-semibold text-white">Suggested thumbnails</h2>
+                      {formData.suggestedThumbnails.length > 0 && (
+                        <span className="text-sm text-gray-400">({formData.suggestedThumbnails.length})</span>
+                      )}
                     </div>
-                  ) : (
-                    "Submit Thumbnail"
-                  )}
-                </button>
-              </div>
-            </form>
+                    <div className="flex items-center gap-3">
+                      {isGeneratingSuggestions && (
+                        <span className="text-sm text-fg-muted flex items-center">
+                          <svg
+                            className="animate-spin mr-2 h-4 w-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          Generating…
+                        </span>
+                      )}
+                    </div>
+                  </button>
 
-            {/* Activity Section */}
-            <div className="mt-10">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-semibold text-white">Activity</h2>
-                {isActivityLoading && (
-                  <span className="text-base text-gray-400">Loading...</span>
-                )}
-              </div>
-
-              {activityError && (
-                <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/40 text-red-200 px-4 py-3 text-base">
-                  {activityError}
-                </div>
-              )}
-
-              <div className="space-y-4 mb-6">
-                {activity.length === 0 && !isActivityLoading ? (
-                  <p className="text-gray-400">No activity yet. Start by adding a comment.</p>
-                ) : (
-                  activity.map((item) => (
-                    <div
-                      key={item.id}
-                      className="border border-[#3e3e3e] rounded-lg p-4 bg-[#1f1f1f]"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm font-semibold uppercase tracking-wide text-[#2cbb5d]">
-                            {item.type.replaceAll('_', ' ')}
-                          </span>
-                          {item.actor && (
-                            <span className="text-sm text-gray-400">• {item.actor}</span>
-                          )}
-                        </div>
-                        {item.created_at && (
-                          <span className="text-sm text-gray-500">
-                            {new Date(item.created_at).toLocaleString()}
-                          </span>
+                  {isSuggestionsExpanded && (
+                    <div className="p-4 border-t border-[#3e3e3e]">
+                      <div className="flex items-center justify-end mb-3">
+                        {formData.suggestedThumbnails.length > 0 && !isGeneratingSuggestions && (
+                          <button
+                            type="button"
+                            onClick={handleGenerateSuggestions}
+                            disabled={isGeneratingSuggestions}
+                            className="inline-flex items-center px-3 py-1.5 text-sm bg-surface-dense border border-border-interactive text-fg rounded-lg hover:bg-surface-interactive focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Regenerate
+                          </button>
                         )}
                       </div>
-                      <p className="text-base text-white whitespace-pre-line">{item.message}</p>
+                      {suggestionError && (
+                        <div className="mb-3 rounded-lg bg-red-500/10 border border-red-500/40 text-red-200 px-4 py-3 text-sm">
+                          {suggestionError}
+                        </div>
+                      )}
+                      {formData.suggestedThumbnails.length === 0 ? (
+                        <div className="border border-dashed border-border-interactive rounded-lg p-6 text-center bg-surface-interactive">
+                          <p className="text-fg-muted mb-4">
+                            Generate AI thumbnail suggestions using your headshots and the video title.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleGenerateSuggestions}
+                            disabled={isGeneratingSuggestions}
+                            className="inline-flex items-center px-4 py-2 bg-surface-dense border border-border-interactive text-fg rounded-lg hover:bg-surface-interactive focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            {isGeneratingSuggestions ? (
+                              <>
+                                <svg
+                                  className="animate-spin -ml-1 mr-2 h-4 w-4"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  />
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  />
+                                </svg>
+                                Generating…
+                              </>
+                            ) : (
+                              <>
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                Generate Suggestions
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {formData.suggestedThumbnails.map((url, index) => (
+                            <div
+                              key={`${url}-${index}`}
+                              className="bg-surface-interactive border border-border-subtle rounded-lg overflow-hidden"
+                            >
+                              <div className="relative w-full aspect-video">
+                                <Image
+                                  src={url}
+                                  alt={`Suggested thumbnail ${index + 1}`}
+                                  className="object-cover"
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                />
+                              </div>
+                              <div className="p-3 flex items-center justify-between">
+                                <span className="text-sm text-gray-300">Option {index + 1}</span>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDownload(url, `${formData.videoTitle || 'thumbnail'}-suggestion-${index + 1}.png`)}
+                                    className="text-fg-muted hover:text-fg p-1.5 rounded-lg hover:bg-surface-dense transition-colors"
+                                    title="Download"
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="18"
+                                      height="18"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                      <polyline points="7 10 12 15 17 10" />
+                                      <line x1="12" y1="15" x2="12" y2="3" />
+                                    </svg>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setFormData((prev) => ({ ...prev, thumbnail_url: url }))}
+                                    className="text-sm px-3 py-1 rounded-lg bg-[#2cbb5d] text-black font-semibold hover:bg-[#26a653]"
+                                  >
+                                    Use this
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  ))
-                )}
+                  )}
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* File Upload Section */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h2 className="text-2xl font-semibold text-white">Upload Thumbnail</h2>
+                      {formData.thumbnail_url && (
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            handleDownload()
+                          }}
+                          type="button"
+                          className="text-blue-400 hover:text-blue-300 text-base font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
+                          title="Download Thumbnail"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    <div
+                      className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                        dragActive ? "border-[#2cbb5d] bg-[#2cbb5d]/5" : "border-[#3e3e3e] hover:border-[#2cbb5d] bg-[#1a1a1a]"
+                      }`}
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
+                    >
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={inputFileRef}
+                        onChange={(e) => handleFileChange(e)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+
+                      {formData.thumbnail_url ? (
+                        <div className="space-y-4">
+                          <div className="relative w-full max-w-2xl mx-auto aspect-video">
+                            <Image
+                              src={formData.thumbnail_url || "/placeholder.svg"}
+                              alt="Thumbnail preview"
+                              className="rounded-lg shadow-md object-contain"
+                              fill
+                              sizes="(max-width: 768px) 100vw, 672px"
+                            />
+                          </div>
+                          <div className="flex items-center justify-center space-x-2 text-green-600">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="w-16 h-16 bg-[#282828] rounded-full flex items-center justify-center mx-auto">
+                            <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-xl font-medium text-white">Drop your thumbnail here</p>
+                            <p className="text-gray-400">or click to browse files</p>
+                          </div>
+                          <p className="text-base text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Notes Section */}
+                  <div>
+                    <label htmlFor="notes" className="block text-2xl font-semibold text-white mb-3">
+                      Notes & Timestamps
+                    </label>
+                    <p className="text-gray-300 mb-3">
+                      Add any notes, timestamps, or key moments from the video that should be included in the description.
+                    </p>
+                    <textarea
+                      id="notes"
+                      value={formData.notes}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
+                      placeholder="Example:&#10;0:30 - Introduction to the topic&#10;2:15 - Main demonstration begins&#10;5:45 - Key takeaway&#10;&#10;Additional notes:&#10;- Great energy in this video&#10;- Consider highlighting the demo section"
+                      className="w-full h-40 px-4 py-3 border border-[#3e3e3e] rounded-lg focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d] resize-vertical bg-[#1a1a1a] text-white placeholder:text-gray-500"
+                      rows={8}
+                    />
+                    <p className="text-base text-gray-500 mt-2">{formData.notes.length} characters</p>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="px-6 py-2 text-gray-300 hover:text-white transition-colors"
+                      disabled={isSubmitting}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!formData.thumbnail_url || isSubmitting}
+                      className="px-8 py-3 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d]/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center">
+                          <svg
+                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Submitting...
+                        </div>
+                      ) : (
+                        "Submit Thumbnail"
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
 
-              <form onSubmit={handleCommentSubmit} className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="text"
-                    value={commentAuthor}
-                    onChange={(e) => setCommentAuthor(e.target.value)}
-                    placeholder="Your name (optional)"
-                    className="w-1/3 px-4 py-2 border border-[#3e3e3e] rounded-lg bg-[#1a1a1a] text-white placeholder:text-gray-500 focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d]"
-                  />
-                  <span className="text-gray-500 text-base">Leave a note for this thumbnail</span>
-                </div>
-                <textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Add your comment or feedback"
-                  className="w-full h-24 px-4 py-3 border border-[#3e3e3e] rounded-lg focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d] resize-vertical bg-[#1a1a1a] text-white placeholder:text-gray-500"
-                />
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={!comment.trim()}
-                    className="px-6 py-2 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d]/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Add Comment
-                  </button>
-                </div>
-              </form>
+              {/* Comments Section */}
+              <div className="w-full lg:w-96 xl:w-[420px] border-t border-[#3e3e3e] lg:border-t-0 lg:border-l lg:pl-6 pt-6 lg:pt-0 flex flex-col max-h-full">
+                {thumbnailId && <CommentsSection thumbnailId={thumbnailId} />}
+              </div>
             </div>
           </div>
         )}

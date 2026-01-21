@@ -14,9 +14,10 @@ type ThumbnailOverviewProps = {
   onViewClick?: (thumbnailId: string) => void
   onToggleFavorite?: (thumbnailId: string) => void
   onDelete?: (thumbnailId: string) => void
+  isAdmin?: boolean
 }
 
-export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange, onViewClick, onToggleFavorite, onDelete }: ThumbnailOverviewProps) {
+export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange, onViewClick, onToggleFavorite, onDelete, isAdmin }: ThumbnailOverviewProps) {
   const filteredThumbnails = thumbnails
     .filter((t) => status === FAVORITES_VIEW ? t.favorite : t.status === status)
     .sort((a, b) => {
@@ -124,6 +125,7 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
               onViewClick={onViewClick}
               onToggleFavorite={onToggleFavorite}
               onDelete={onDelete}
+              isAdmin={isAdmin}
             />
           ))}
         </div>

@@ -11,9 +11,10 @@ interface ThumbnailCardProps {
   onViewClick?: (thumbnailId: string) => void
   onToggleFavorite?: (thumbnailId: string) => void
   onDelete?: (thumbnailId: string) => void
+  isAdmin?: boolean
 }
 
-export default function ThumbnailCard({ thumbnail, status, onStatusChange, onViewClick, onToggleFavorite, onDelete }: ThumbnailCardProps) {
+export default function ThumbnailCard({ thumbnail, status, onStatusChange, onViewClick, onToggleFavorite, onDelete, isAdmin }: ThumbnailCardProps) {
   const handleDownload = async () => {
     try {
       const response = await fetch(thumbnail.thumbnailUrl || '')
@@ -77,27 +78,29 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
             >
               View Video
             </button>
-            <button
-              onClick={() => onToggleFavorite?.(thumbnail.id)}
-              className={`text-sm font-medium p-1 rounded-full transition-colors ${thumbnail.favorite ? "text-yellow-300 hover:text-yellow-200" : "text-gray-400 hover:text-gray-200"}`}
-              title={thumbnail.favorite ? "Remove favorite" : "Add favorite"}
-              aria-pressed={thumbnail.favorite}
-              aria-label={thumbnail.favorite ? "Remove favorite" : "Add favorite"}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill={thumbnail.favorite ? "currentColor" : "none"}
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            {isAdmin && (
+              <button
+                onClick={() => onToggleFavorite?.(thumbnail.id)}
+                className={`text-sm font-medium p-1 rounded-full transition-colors ${thumbnail.favorite ? "text-yellow-300 hover:text-yellow-200" : "text-gray-400 hover:text-gray-200"}`}
+                title={thumbnail.favorite ? "Remove favorite" : "Add favorite"}
+                aria-pressed={thumbnail.favorite}
+                aria-label={thumbnail.favorite ? "Remove favorite" : "Add favorite"}
               >
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill={thumbnail.favorite ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </button>
+            )}
             {thumbnail.thumbnailUrl && (
               <button
                 onClick={handleDownload}

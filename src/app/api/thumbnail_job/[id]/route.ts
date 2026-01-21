@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 import type { ThumbnailActivityType } from '@/types/ThumbnailActivity';
 import { supabase } from '@/lib/supabase';
+import { hasRole, UserRole } from '@/types/roles';
 
 
 type PathParams = {
@@ -59,8 +62,19 @@ export async function PATCH(
 
   const now = new Date().toISOString();
 
-  // If favorite is provided, update the favorite field
+  // If favorite is provided, update the favorite field (ADMIN ONLY)
   if (favorite !== undefined) {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.role) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userRole = session.user.role as UserRole;
+    if (!hasRole(userRole, UserRole.ADMIN)) {
+      return NextResponse.json({ error: 'Forbidden - Admin access required to favorite thumbnails' }, { status: 403 });
+    }
+
     const { data, error } = await supabase
       .from('ThumbnailJob')
       .update({ favorite: Boolean(favorite), updated_at: now })

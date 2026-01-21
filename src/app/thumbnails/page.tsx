@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
 import type { ThumbnailJob } from '@/types/ThumbnailJob';
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 import Sidebar from './_components/Sidebar';
@@ -10,6 +11,7 @@ import CreateJobModal from './_components/CreateJobModal';
 import ThumbnailViewModal from './_components/ThumbnailViewModal';
 import { Thumbnail } from "@/types/ThumbnailJob"
 import { type ThumbnailView } from "@/app/thumbnails/types"
+import { hasRole, UserRole } from "@/types/roles"
 
 // Function to convert API data to our frontend format
 const convertApiDataToThumbnail = (job: ThumbnailJob): Thumbnail => {
@@ -34,6 +36,9 @@ export default function ThumbnailDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [selectedThumbnailId, setSelectedThumbnailId] = useState<string | null>(null)
+  const { data: session } = useSession()
+
+  const isAdmin = session?.user?.role ? hasRole(session.user.role as UserRole, UserRole.ADMIN) : false
 
   const fetchThumbnails = async () => {
     try {
@@ -212,6 +217,7 @@ export default function ThumbnailDashboard() {
             onViewClick={handleViewClick}
             onToggleFavorite={handleToggleFavorite}
             onDelete={handleDelete}
+            isAdmin={isAdmin}
           />
         </div>
       </div>
