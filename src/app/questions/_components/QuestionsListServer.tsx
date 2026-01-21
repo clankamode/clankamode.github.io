@@ -77,10 +77,10 @@ export default function QuestionsListServer({ questions, tab }: QuestionsListSer
               >
                 <path d="M12 4l-7 8h4v6h6v-6h4z" />
               </svg>
-              <span className="mt-1 text-sm font-semibold">{question.voteCount}</span>
+              <span className="mt-1 text-base font-semibold">{question.voteCount}</span>
             </div>
             <div className="flex-1 space-y-3">
-              <h3 className={`text-xl font-bold leading-snug ${question.isArchived ? 'text-gray-400' : 'text-white'}`}>
+              <h3 className={`text-2xl font-bold leading-snug ${question.isArchived ? 'text-gray-400' : 'text-white'}`}>
                 {question.content}
               </h3>
               {question.isArchived && question.videoUrl && videoId && thumbnailUrl && (
@@ -109,10 +109,10 @@ export default function QuestionsListServer({ questions, tab }: QuestionsListSer
                   </a>
                 </div>
               )}
-              <div className="flex items-center justify-between gap-2 text-sm text-gray-400">
+              <div className="flex items-center justify-between gap-2 text-base text-gray-400">
                 <div className="flex items-center gap-2">
                   {question.isArchived && (
-                    <span className="px-2 py-0.5 bg-yellow-600/20 text-yellow-400 rounded text-xs font-semibold">
+                    <span className="px-2 py-0.5 bg-yellow-600/20 text-yellow-400 rounded text-sm font-semibold">
                       Answered
                     </span>
                   )}

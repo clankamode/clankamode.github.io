@@ -144,10 +144,10 @@ export default function AssessmentClient() {
           </a>
 
           <div className="space-y-2 max-w-2xl">
-            <h1 className="text-4xl md:text-5xl font-bold font-sans tracking-tight text-foreground">
+            <h1 className="text-5xl md:text-6xl font-bold font-sans tracking-tight text-foreground">
               Peralta Mock Assessment
             </h1>
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p className="text-muted-foreground text-xl leading-relaxed">
               Real interview-level questions pulled straight from James’s own prep.
               No theory dumps. No inflated difficulty. Just problems that actually show up.
             </p>
@@ -187,18 +187,18 @@ export default function AssessmentClient() {
                     {level.difficulty}
                   </Badge>
                 </div>
-                <CardTitle className="text-xl font-bold font-display tracking-tight mt-2">{level.title}</CardTitle>
-                <CardDescription className="line-clamp-3 text-base leading-relaxed">
+                <CardTitle className="text-2xl font-bold font-display tracking-tight mt-2">{level.title}</CardTitle>
+                <CardDescription className="line-clamp-3 text-lg leading-relaxed">
                   {level.description}
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="flex-1 pb-4 relative z-10">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white/5 border border-white/5 p-3 rounded-lg backdrop-blur-md">
+                <div className="flex items-center gap-2 text-base text-muted-foreground bg-white/5 border border-white/5 p-3 rounded-lg backdrop-blur-md">
                   <svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
-                  <span className="font-mono text-xs uppercase tracking-wide opacity-80">{level.questionInfo}</span>
+                  <span className="font-mono text-sm uppercase tracking-wide opacity-80">{level.questionInfo}</span>
                 </div>
               </CardContent>
 
@@ -217,7 +217,7 @@ export default function AssessmentClient() {
         </div>
 
         {error && (
-          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive text-center font-medium animate-in fade-in slide-in-from-bottom-2">
+          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-base text-destructive text-center font-medium animate-in fade-in slide-in-from-bottom-2">
             {error}
           </div>
         )}
@@ -228,7 +228,7 @@ export default function AssessmentClient() {
           <Card className="w-full max-w-lg shadow-2xl border-none ring-1 ring-border">
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
-                <CardTitle className="text-xl">Your {selectedLevelLabel} assessment</CardTitle>
+                <CardTitle className="text-2xl">Your {selectedLevelLabel} assessment</CardTitle>
                 <CardDescription>Two non-premium LeetCode questions ready to go.</CardDescription>
               </div>
               <Button variant="ghost" size="sm" onClick={handleClose} className="h-8 w-8 p-0 rounded-full">
@@ -238,7 +238,7 @@ export default function AssessmentClient() {
 
             <CardContent className="space-y-3 pt-4">
               {questions.length === 0 ? (
-                <div className="rounded-lg border border-border bg-muted/30 p-4 text-center text-sm text-muted-foreground">
+                <div className="rounded-lg border border-border bg-muted/30 p-4 text-center text-base text-muted-foreground">
                   No questions returned yet. Please close and try again.
                 </div>
               ) : (
@@ -252,7 +252,7 @@ export default function AssessmentClient() {
                         {question.title}
                       </p>
                       <span className={cn(
-                        "text-xs px-2 py-0.5 rounded-full mt-1 inline-block",
+                        "text-sm px-2 py-0.5 rounded-full mt-1 inline-block",
                         question.difficulty === 'Easy' && "bg-brand-green/10 text-brand-green",
                         question.difficulty === 'Medium' && "bg-brand-amber/10 text-brand-amber",
                         question.difficulty === 'Hard' && "bg-brand-gold/10 text-brand-gold"

@@ -40,12 +40,12 @@ export default function CreateJobModal({ isOpen, onClose, onSubmit }: CreateJobM
         className="bg-[#282828] rounded-lg p-6 w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-semibold text-white mb-4">Create New Thumbnail Job</h2>
+        <h2 className="text-2xl font-semibold text-white mb-4">Create New Thumbnail Job</h2>
         
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="videoTitle" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="videoTitle" className="block text-base font-medium text-gray-300 mb-2">
                 Video Title
               </label>
               <input
@@ -60,7 +60,7 @@ export default function CreateJobModal({ isOpen, onClose, onSubmit }: CreateJobM
             </div>
 
             <div>
-              <label htmlFor="videoUrl" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="videoUrl" className="block text-base font-medium text-gray-300 mb-2">
                 YouTube Video URL
               </label>
               <input
@@ -76,7 +76,7 @@ export default function CreateJobModal({ isOpen, onClose, onSubmit }: CreateJobM
           </div>
 
           {error && (
-            <div className="mt-4 text-red-400 text-sm">
+            <div className="mt-4 text-red-400 text-base">
               {error}
             </div>
           )}

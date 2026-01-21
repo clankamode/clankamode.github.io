@@ -21,8 +21,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#1a1a1a] p-4">
       <div className="w-full max-w-md space-y-8 rounded-lg border border-[#3e3e3e] bg-[#282828] p-8 shadow-lg">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-white">Sign in to your account</h2>
-          <p className="mt-2 text-sm text-gray-400">
+          <h2 className="mt-6 text-4xl font-bold text-white">Sign in to your account</h2>
+          <p className="mt-2 text-base text-gray-400">
             Please sign in to access your account
           </p>
         </div>

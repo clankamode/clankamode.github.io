@@ -84,7 +84,7 @@ export default function AdminProxyControls() {
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="flex items-center space-x-2 rounded-md border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-white/20"
+        className="flex items-center space-x-2 rounded-md border border-white/15 bg-white/10 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-white/20"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -94,9 +94,9 @@ export default function AdminProxyControls() {
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-72 rounded-lg border border-white/10 bg-[#1f1f1f] p-3 shadow-lg">
-          <form onSubmit={handleSubmit} className="flex flex-col space-y-2 text-sm text-white">
+          <form onSubmit={handleSubmit} className="flex flex-col space-y-2 text-base text-white">
             <label className="flex flex-col space-y-1">
-              <span className="text-xs uppercase tracking-wide text-white/70">Proxy as user</span>
+              <span className="text-sm uppercase tracking-wide text-white/70">Proxy as user</span>
               <input
                 type="email"
                 value={proxyEmail}
@@ -110,7 +110,7 @@ export default function AdminProxyControls() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-md bg-[#2cbb5d] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#24a653] disabled:opacity-70"
+                className="rounded-md bg-[#2cbb5d] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#24a653] disabled:opacity-70"
               >
                 {isProxying ? 'Update proxy' : 'Start proxying'}
               </button>
@@ -119,21 +119,21 @@ export default function AdminProxyControls() {
                   type="button"
                   onClick={handleClear}
                   disabled={isSubmitting}
-                  className="rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700 disabled:opacity-70"
+                  className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-70"
                 >
                   Stop proxy
                 </button>
               )}
             </div>
             {session?.proxy?.email && (
-              <p className="text-xs text-white/80">
+              <p className="text-sm text-white/80">
                 Viewing as <strong>{session.proxy.email}</strong>
                 {session.originalUser?.email && (
                   <span className="text-white/60"> (originally {session.originalUser.email})</span>
                 )}
               </p>
             )}
-            {statusMessage && <p className="text-xs text-white/70">{statusMessage}</p>}
+            {statusMessage && <p className="text-sm text-white/70">{statusMessage}</p>}
           </form>
         </div>
       )}

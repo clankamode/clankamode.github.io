@@ -54,13 +54,13 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => (
                         d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="text-sm truncate">{attachment.name}</span>
+                    <span className="text-base truncate">{attachment.name}</span>
                     {attachment.url && (
                       <a
                         href={attachment.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs underline ml-auto"
+                        className="text-sm underline ml-auto"
                       >
                         Open in new tab
                       </a>
@@ -87,7 +87,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => (
                 href={image.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs underline block hover:text-blue-600 dark:hover:text-blue-400"
+                className="text-sm underline block hover:text-blue-600 dark:hover:text-blue-400"
               >
                 Open full size in new tab
               </a>

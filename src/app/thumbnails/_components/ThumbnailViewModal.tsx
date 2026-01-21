@@ -339,7 +339,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-white">
               {isLoading ? "Loading..." : formData.videoTitle}
             </h1>
           </div>
@@ -354,7 +354,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
             {/* Video Link Section */}
             <div className="mb-8">
               <div className="bg-[#1a1a1a] rounded-lg p-4 border-l-4 border-[#2cbb5d]">
-                <p className="text-sm text-gray-400 mb-2">Please watch this video before creating the thumbnail:</p>
+                <p className="text-base text-gray-400 mb-2">Please watch this video before creating the thumbnail:</p>
                 <a
                   href={formData.videoUrl}
                   target="_blank"
@@ -368,7 +368,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                     href={formData.videoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-[#2cbb5d] text-white text-sm font-medium rounded-lg hover:bg-[#28a754] transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-[#2cbb5d] text-white text-base font-medium rounded-lg hover:bg-[#28a754] transition-colors"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -539,7 +539,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
               {/* File Upload Section */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-xl font-semibold text-white">Upload Thumbnail</h2>
+                  <h2 className="text-2xl font-semibold text-white">Upload Thumbnail</h2>
                   {formData.thumbnail_url && (
                     <button
                       onClick={(e) => {
@@ -547,7 +547,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                         handleDownload()
                       }}
                       type="button"
-                      className="text-blue-400 hover:text-blue-300 text-sm font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
+                      className="text-blue-400 hover:text-blue-300 text-base font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
                       title="Download Thumbnail"
                     >
                       <svg
@@ -615,10 +615,10 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                         </svg>
                       </div>
                       <div>
-                        <p className="text-lg font-medium text-white">Drop your thumbnail here</p>
+                        <p className="text-xl font-medium text-white">Drop your thumbnail here</p>
                         <p className="text-gray-400">or click to browse files</p>
                       </div>
-                      <p className="text-sm text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                      <p className="text-base text-gray-400">PNG, JPG, GIF up to 10MB</p>
                     </div>
                   )}
                 </div>
@@ -626,7 +626,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
 
               {/* Notes Section */}
               <div>
-                <label htmlFor="notes" className="block text-xl font-semibold text-white mb-3">
+                <label htmlFor="notes" className="block text-2xl font-semibold text-white mb-3">
                   Notes & Timestamps
                 </label>
                 <p className="text-gray-300 mb-3">
@@ -640,7 +640,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                   className="w-full h-40 px-4 py-3 border border-[#3e3e3e] rounded-lg focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d] resize-vertical bg-[#1a1a1a] text-white placeholder:text-gray-500"
                   rows={8}
                 />
-                <p className="text-sm text-gray-500 mt-2">{formData.notes.length} characters</p>
+                <p className="text-base text-gray-500 mt-2">{formData.notes.length} characters</p>
               </div>
 
               {/* Submit Button */}
@@ -692,14 +692,14 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
             {/* Activity Section */}
             <div className="mt-10">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-white">Activity</h2>
+                <h2 className="text-2xl font-semibold text-white">Activity</h2>
                 {isActivityLoading && (
-                  <span className="text-sm text-gray-400">Loading...</span>
+                  <span className="text-base text-gray-400">Loading...</span>
                 )}
               </div>
 
               {activityError && (
-                <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/40 text-red-200 px-4 py-3 text-sm">
+                <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/40 text-red-200 px-4 py-3 text-base">
                   {activityError}
                 </div>
               )}
@@ -715,20 +715,20 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <span className="text-xs font-semibold uppercase tracking-wide text-[#2cbb5d]">
+                          <span className="text-sm font-semibold uppercase tracking-wide text-[#2cbb5d]">
                             {item.type.replaceAll('_', ' ')}
                           </span>
                           {item.actor && (
-                            <span className="text-xs text-gray-400">• {item.actor}</span>
+                            <span className="text-sm text-gray-400">• {item.actor}</span>
                           )}
                         </div>
                         {item.created_at && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-sm text-gray-500">
                             {new Date(item.created_at).toLocaleString()}
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-white whitespace-pre-line">{item.message}</p>
+                      <p className="text-base text-white whitespace-pre-line">{item.message}</p>
                     </div>
                   ))
                 )}
@@ -743,7 +743,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                     placeholder="Your name (optional)"
                     className="w-1/3 px-4 py-2 border border-[#3e3e3e] rounded-lg bg-[#1a1a1a] text-white placeholder:text-gray-500 focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d]"
                   />
-                  <span className="text-gray-500 text-sm">Leave a note for this thumbnail</span>
+                  <span className="text-gray-500 text-base">Leave a note for this thumbnail</span>
                 </div>
                 <textarea
                   value={comment}

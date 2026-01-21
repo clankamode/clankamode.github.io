@@ -31,7 +31,7 @@ export const MessageList = ({
           </svg>
           <div className="flex-1">
             <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">Image Generation Mode</h3>
-            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+            <ul className="text-base text-blue-800 dark:text-blue-200 space-y-1">
               <li>• <strong>Generate:</strong> Describe the image you want to create</li>
               <li>• <strong>Edit:</strong> Upload an image, then describe how to modify it</li>
               <li>• Examples: &quot;A futuristic city&quot;, &quot;Make it black and white&quot;, &quot;Add a sunset background&quot;</li>
@@ -44,7 +44,7 @@ export const MessageList = ({
     {messages.length === 0 && selectedModel !== 'gemini-3-pro-image-preview' ? (
       <div className="flex items-center justify-center h-full text-center">
         <div>
-          <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+          <h2 className="text-4xl font-bold mb-4 text-gray-800 dark:text-gray-200">
             How can I help you today?
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-8">
@@ -63,7 +63,7 @@ export const MessageList = ({
                 }}
                 className="p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                <div className="font-semibold text-sm text-gray-800 dark:text-gray-200">
+                <div className="font-semibold text-base text-gray-800 dark:text-gray-200">
                   {example.title}
                 </div>
               </button>
@@ -73,7 +73,7 @@ export const MessageList = ({
               onClick={onOpenTutorialModal}
               className="p-4 text-left border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
-              <div className="font-semibold text-sm text-gray-800 dark:text-gray-200">
+              <div className="font-semibold text-base text-gray-800 dark:text-gray-200">
                 Algorithms Tutor
               </div>
             </button>

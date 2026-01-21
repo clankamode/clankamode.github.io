@@ -72,7 +72,7 @@ export default function MocksRatingClient({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h3 className="text-xl font-bold text-white mb-2">No Videos Found</h3>
+        <h3 className="text-2xl font-bold text-white mb-2">No Videos Found</h3>
         <p className="text-gray-400 mb-4">
           Could not fetch videos. Please check the channel ID or API key.
         </p>
@@ -98,12 +98,12 @@ export default function MocksRatingClient({
       
       {isLastVideo && (
         <div className="mt-8 text-center p-6 bg-[#282828] rounded-lg">
-          <h2 className="text-2xl font-bold text-white mb-4">All Done!</h2>
+          <h2 className="text-3xl font-bold text-white mb-4">All Done!</h2>
           <p className="text-gray-400">You&apos;ve rated all available mock interview videos.</p>
           
           {Object.keys(ratings).length > 0 && (
             <div className="mt-6">
-              <h3 className="text-xl text-white mb-4">Your Ratings Summary:</h3>
+              <h3 className="text-2xl text-white mb-4">Your Ratings Summary:</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                 {Object.entries(ratings).map(([videoId, rating]) => {
                   const video = videos.find(v => v.id === videoId);

@@ -94,7 +94,7 @@ function ResultsContent() {
         <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
           <div className="flex flex-col items-center justify-center space-y-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2cbb5d]"></div>
-            <p className="text-white text-lg">Loading results...</p>
+            <p className="text-white text-xl">Loading results...</p>
           </div>
         </div>
       </div>
@@ -107,8 +107,8 @@ function ResultsContent() {
       <div className="max-w-3xl mx-auto px-4">
         <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
           <div className="text-center">
-            <div className="text-5xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-white mb-4">Error</h2>
+            <div className="text-6xl mb-4">⚠️</div>
+            <h2 className="text-3xl font-bold text-white mb-4">Error</h2>
             <p className="text-gray-400 mb-6">
               {error || 'No results found'}
             </p>
@@ -139,10 +139,10 @@ function ResultsContent() {
       <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
         {/* Header with emoji */}
         <div className="text-center mb-6">
-          <div className="text-6xl mb-3">
+          <div className="text-7xl mb-3">
             {passed ? '🎉' : '📚'}
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2">
             {passed ? 'Congratulations!' : 'Test Complete'}
           </h1>
           <p className="text-gray-400">
@@ -155,10 +155,10 @@ function ResultsContent() {
         {/* Score Summary */}
         <div className="bg-[#1a1a1a] rounded-lg p-6 mb-6 border-2 border-[#2cbb5d]/30">
           <div className="text-center mb-4">
-            <div className="text-6xl font-bold text-[#2cbb5d] mb-2">
+            <div className="text-7xl font-bold text-[#2cbb5d] mb-2">
               {results.scorePercentage}%
             </div>
-            <p className="text-xl text-white font-semibold">
+            <p className="text-2xl text-white font-semibold">
               {results.correctAnswers} out of {results.totalQuestions} correct
             </p>
           </div>
@@ -174,16 +174,16 @@ function ResultsContent() {
           {/* Statistics Grid */}
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-green-400 mb-1">
+              <div className="text-4xl font-bold text-green-400 mb-1">
                 {results.correctAnswers}
               </div>
-              <p className="text-gray-400 text-sm">Correct Answers</p>
+              <p className="text-gray-400 text-base">Correct Answers</p>
             </div>
             <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-red-400 mb-1">
+              <div className="text-4xl font-bold text-red-400 mb-1">
                 {incorrectCount}
               </div>
-              <p className="text-gray-400 text-sm">Incorrect Answers</p>
+              <p className="text-gray-400 text-base">Incorrect Answers</p>
             </div>
           </div>
 
@@ -204,18 +204,18 @@ function ResultsContent() {
         {/* Unit Breakdown */}
         {results.unitBreakdown && results.unitBreakdown.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-4">📊 Performance by Unit</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">📊 Performance by Unit</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {results.unitBreakdown.map((unitStats) => (
                 <div key={unitStats.unit} className="bg-[#1a1a1a] rounded-lg p-5 border-2 border-[#3e3e3e]">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{unitStats.unit}</h3>
-                      <p className="text-gray-400 text-sm">
+                      <h3 className="text-xl font-semibold text-white">{unitStats.unit}</h3>
+                      <p className="text-gray-400 text-base">
                         {unitStats.correct}/{unitStats.total} correct
                       </p>
                     </div>
-                    <div className={`text-2xl font-bold ${
+                    <div className={`text-3xl font-bold ${
                       unitStats.percentage >= 70 ? 'text-green-400' : 'text-orange-400'
                     }`}>
                       {unitStats.percentage}%
@@ -239,7 +239,7 @@ function ResultsContent() {
         {results.incorrectAnswers.length === 0 && (
           <div className="mb-6 bg-green-500/10 border-2 border-green-500/30 rounded-lg p-6 text-center">
             <div className="text-4xl mb-2">✨</div>
-            <h2 className="text-2xl font-bold text-green-400 mb-2">Perfect Score!</h2>
+            <h2 className="text-3xl font-bold text-green-400 mb-2">Perfect Score!</h2>
             <p className="text-gray-300">You answered all questions correctly. Excellent work!</p>
           </div>
         )}
@@ -248,14 +248,14 @@ function ResultsContent() {
         {results.incorrectAnswers.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-3xl font-bold text-white">
                 📝 Review Incorrect Answers ({filteredIncorrectAnswers.length})
               </h2>
               
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSelectedUnit('ALL')}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-3 py-1 rounded-full text-base font-medium transition-colors ${
                     selectedUnit === 'ALL' 
                       ? 'bg-[#2cbb5d] text-white' 
                       : 'bg-[#3e3e3e] text-gray-300 hover:bg-[#4e4e4e]'
@@ -267,7 +267,7 @@ function ResultsContent() {
                   <button
                     key={unit}
                     onClick={() => setSelectedUnit(unit)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    className={`px-3 py-1 rounded-full text-base font-medium transition-colors ${
                       selectedUnit === unit 
                         ? 'bg-[#2cbb5d] text-white' 
                         : 'bg-[#3e3e3e] text-gray-300 hover:bg-[#4e4e4e]'
@@ -312,7 +312,7 @@ function ResultsContent() {
                   </div>
                   
                   <div className="bg-[#0a0a0a] p-4 rounded border-l-4 border-[#2cbb5d]">
-                    <p className="text-gray-300 text-sm mb-4">
+                    <p className="text-gray-300 text-base mb-4">
                       <span className="font-semibold text-[#2cbb5d]">Explanation:</span> {item.rationale}
                     </p>
                     <div className="pt-3 border-t border-gray-700">
@@ -353,7 +353,7 @@ export default function ResultsPage() {
           <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2cbb5d]"></div>
-              <p className="text-white text-lg">Loading results...</p>
+              <p className="text-white text-xl">Loading results...</p>
             </div>
           </div>
         </div>

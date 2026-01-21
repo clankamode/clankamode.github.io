@@ -408,7 +408,7 @@ export default function ChatInterface() {
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="px-3 md:px-4 py-2 text-lg md:text-2xl font-semibold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] cursor-pointer"
+              className="px-3 md:px-4 py-2 text-xl md:text-3xl font-semibold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] cursor-pointer"
               disabled={isLoading || (currentConversationId !== null && messages.length > 0) || attachments.some(att => att.type === 'pdf')}
             >
               {MODELS.map((model) => (
@@ -418,12 +418,12 @@ export default function ChatInterface() {
               ))}
             </select>
             {attachments.some(att => att.type === 'pdf') && (
-              <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+              <span className="text-base text-gray-600 dark:text-gray-400 ml-2">
                 (PDF requires GPT-4.1)
               </span>
             )}
             {selectedModel === 'gemini-3-pro-image-preview' && (
-              <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+              <span className="text-base text-gray-600 dark:text-gray-400 ml-2">
                 {attachments.length > 0 && attachments[0].type === 'image' 
                   ? '(Image editing mode)' 
                   : '(Image generation mode)'}
@@ -464,8 +464,8 @@ export default function ChatInterface() {
                   <svg className="w-12 h-12 text-[#2cbb5d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Drop files here</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Images and PDFs supported</p>
+                  <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">Drop files here</p>
+                  <p className="text-base text-gray-600 dark:text-gray-400">Images and PDFs supported</p>
                 </div>
               </div>
             </div>
@@ -510,8 +510,8 @@ export default function ChatInterface() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                         <div className="flex flex-col">
-                          <span className="text-sm text-gray-700 dark:text-gray-300 truncate max-w-[150px]">{attachment.name}</span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">Ready to send</span>
+                          <span className="text-base text-gray-700 dark:text-gray-300 truncate max-w-[150px]">{attachment.name}</span>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">Ready to send</span>
                         </div>
                         <button
                           onClick={() => removeAttachment(attachment.id)}
@@ -573,7 +573,7 @@ export default function ChatInterface() {
               />
               {isPromptMenuOpen && (
                 <div className="absolute bottom-14 left-0 w-72 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
-                  <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">Insert a system prompt</div>
+                  <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">Insert a system prompt</div>
                   <div className="max-h-56 overflow-y-auto">
                     {SYSTEM_PROMPTS.filter(
                       (prompt) =>
@@ -587,12 +587,12 @@ export default function ChatInterface() {
                         className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
                             /
                           </span>
                           <div>
                             <div className="font-medium text-gray-900 dark:text-gray-100">{prompt.title}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">{prompt.description}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">{prompt.description}</div>
                           </div>
                         </div>
                       </button>
@@ -610,8 +610,8 @@ export default function ChatInterface() {
             </button>
           </form>
           {selectedSystemPrompt && (
-            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-200">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
                 /
               </span>
               <span className="font-medium">{selectedSystemPrompt.title}</span>
@@ -625,7 +625,7 @@ export default function ChatInterface() {
               </button>
             </div>
           )}
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
             Press Enter to send, Shift+Enter for new line
           </p>
         </div>

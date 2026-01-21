@@ -74,16 +74,16 @@ export function Sidebar({
                     placeholder="Search conversations..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/50 placeholder:text-muted-foreground"
+                    className="w-full px-3 py-2 text-base border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/50 placeholder:text-muted-foreground"
                 />
             </div>
 
             {/* Conversations List */}
             <div className="flex-1 overflow-y-auto">
                 {isLoading ? (
-                    <div className="p-4 text-center text-sm text-muted-foreground">Loading...</div>
+                    <div className="p-4 text-center text-base text-muted-foreground">Loading...</div>
                 ) : filteredConversations.length === 0 ? (
-                    <div className="p-4 text-center text-sm text-muted-foreground">
+                    <div className="p-4 text-center text-base text-muted-foreground">
                         {searchQuery ? 'No conversations found' : 'No conversations yet'}
                     </div>
                 ) : (
@@ -113,14 +113,14 @@ export function Sidebar({
                                                     setEditingConversationId(null);
                                                 }
                                             }}
-                                            className="w-full px-2 py-1 text-sm border border-brand-green/50 rounded bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-brand-green"
+                                            className="w-full px-2 py-1 text-base border border-brand-green/50 rounded bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-brand-green"
                                         />
                                     </div>
                                 ) : (
                                     <div className="flex items-center">
                                         <button
                                             onClick={() => onSelectConversation(conv.id)}
-                                            className="flex-1 text-left p-3 text-sm text-foreground truncate font-medium"
+                                            className="flex-1 text-left p-3 text-base text-foreground truncate font-medium"
                                         >
                                             {conv.title || 'Untitled conversation'}
                                         </button>

@@ -10,12 +10,15 @@ interface VideoCardProps {
   date: string;
   viewCount?: string;
   /** Compact variant hides description and footer button */
-  variant?: 'default' | 'compact';
+  variant?: 'default' | 'compact' | 'featured';
 }
 
 /** Format view count with K/M suffixes for compact display */
 function formatViewCount(count: string): string {
-  const num = parseInt(count);
+  const num = parseInt(count, 10);
+  if (Number.isNaN(num) || num < 0) {
+    return '0';
+  }
   if (num >= 1_000_000) {
     return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
   }
@@ -47,6 +50,17 @@ export default function VideoCard({
   const formattedViewCount = viewCount ? formatViewCount(viewCount) : '';
   const formattedDate = formatDate(date);
   const isCompact = variant === 'compact';
+  const isFeatured = variant === 'featured';
+  const titleSizeClass = isFeatured
+    ? 'text-2xl mb-3'
+    : isCompact
+      ? 'text-lg'
+      : 'text-xl mb-2';
+  const contentPaddingClass = isCompact
+    ? 'p-4'
+    : isFeatured
+      ? 'p-6'
+      : 'p-5';
 
   return (
     <Card className="group overflow-hidden border-white/5 bg-card/30 backdrop-blur-sm hover:bg-card/40 hover:border-brand-green/30 hover:shadow-[0_0_40px_-10px_rgba(44,187,93,0.15)] transition-all duration-500 h-full flex flex-col">
@@ -79,15 +93,15 @@ export default function VideoCard({
         </div>
       </a>
 
-      <CardContent className={`flex flex-col flex-grow ${isCompact ? 'p-4' : 'p-5'}`}>
+      <CardContent className={`flex flex-col flex-grow ${contentPaddingClass}`}>
         <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="group-hover:text-brand-green transition-colors duration-300">
-          <h3 className={`line-clamp-2 font-bold leading-tight font-sans tracking-tight text-foreground group-hover:text-brand-green/90 ${isCompact ? 'text-base' : 'text-lg mb-2'}`}>
+          <h3 className={`line-clamp-2 font-bold leading-tight font-sans tracking-tight text-foreground group-hover:text-brand-green/90 ${titleSizeClass}`}>
             {title}
           </h3>
         </a>
 
         {!isCompact && description && (
-          <p className="line-clamp-2 text-sm text-muted-foreground leading-relaxed mt-2">
+          <p className={`text-base text-muted-foreground leading-relaxed mt-2 ${isFeatured ? 'line-clamp-3' : 'line-clamp-2'}`}>
             {description}
           </p>
         )}

@@ -237,7 +237,7 @@ export default function GalleryPage() {
   if (!hasAccess) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-10 text-white">
-        <h1 className="text-3xl font-semibold mb-4">Gallery</h1>
+        <h1 className="text-4xl font-semibold mb-4">Gallery</h1>
         <p className="text-gray-300">You don&apos;t have permission to view this page.</p>
       </div>
     );
@@ -260,11 +260,11 @@ export default function GalleryPage() {
         >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <p className="text-lg font-medium">Upload new headshots</p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-xl font-medium">Upload new headshots</p>
+            <p className="text-gray-400 text-base">
               {dragActive ? 'Drop file here' : 'Drag and drop an image here, or click to choose a file'}
             </p>
-            <p className="text-gray-500 text-xs mt-1">PNG, JPG, or WEBP up to 10MB (one file at a time)</p>
+            <p className="text-gray-500 text-sm mt-1">PNG, JPG, or WEBP up to 10MB (one file at a time)</p>
           </div>
           <div className="flex items-center gap-3">
             <input
@@ -283,8 +283,8 @@ export default function GalleryPage() {
             </button>
           </div>
         </div>
-        {statusMessage && <p className="text-sm text-green-400 mt-3">{statusMessage}</p>}
-        {error && <p className="text-sm text-red-400 mt-3">{error}</p>}
+        {statusMessage && <p className="text-base text-green-400 mt-3">{statusMessage}</p>}
+        {error && <p className="text-base text-red-400 mt-3">{error}</p>}
         </div>
       )}
 
@@ -300,8 +300,8 @@ export default function GalleryPage() {
             </div>
             <div className="flex-1 flex flex-col justify-between">
               <div>
-                <p className="text-lg font-semibold mb-2">{selectedFile.name}</p>
-                <p className="text-sm text-gray-400">{formatFileSize(selectedFile.size)}</p>
+                <p className="text-xl font-semibold mb-2">{selectedFile.name}</p>
+                <p className="text-base text-gray-400">{formatFileSize(selectedFile.size)}</p>
               </div>
               <div className="flex gap-2">
                 <button
@@ -312,14 +312,14 @@ export default function GalleryPage() {
                       fileInputRef.current.value = "";
                     }
                   }}
-                  className="mt-4 px-4 py-2 rounded-lg border border-white/20 text-white hover:border-white/40 text-sm"
+                  className="mt-4 px-4 py-2 rounded-lg border border-white/20 text-white hover:border-white/40 text-base"
                 >
                   Remove
                 </button>
                 <button
                   onClick={handleUpload}
                   disabled={isUploading || !selectedFile}
-                  className="mt-4 px-4 py-2 rounded-lg bg-[#2cbb5d] text-black font-semibold hover:bg-[#26a653] disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="mt-4 px-4 py-2 rounded-lg bg-[#2cbb5d] text-black font-semibold hover:bg-[#26a653] disabled:opacity-50 disabled:cursor-not-allowed text-base"
                 >
                   {isUploading ? "Uploading…" : "Upload"}
                 </button>
@@ -330,7 +330,7 @@ export default function GalleryPage() {
       )}
 
       <div className="flex items-center justify-between mb-4">
-        {isLoading && <span className="text-sm text-gray-400">Loading gallery…</span>}
+        {isLoading && <span className="text-base text-gray-400">Loading gallery…</span>}
       </div>
 
       {items.length === 0 && !isLoading ? (
@@ -356,7 +356,7 @@ export default function GalleryPage() {
                     e.stopPropagation();
                     handleDownload(item.url);
                   }}
-                  className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white text-sm font-medium backdrop-blur-sm"
+                  className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white text-base font-medium backdrop-blur-sm"
                   title="Download"
                 >
                   Download
@@ -367,7 +367,7 @@ export default function GalleryPage() {
                       e.stopPropagation();
                       handleDelete(item.url);
                     }}
-                    className="px-4 py-2 rounded-lg bg-red-600/80 hover:bg-red-600 text-white text-sm font-medium backdrop-blur-sm"
+                    className="px-4 py-2 rounded-lg bg-red-600/80 hover:bg-red-600 text-white text-base font-medium backdrop-blur-sm"
                     title="Delete"
                   >
                     Delete

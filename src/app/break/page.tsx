@@ -157,8 +157,8 @@ export default function BreakPage() {
 
       {/* Title and Subtitle/Timer Display */}
       <div className="text-center mb-10"> {/* Added margin-bottom */}
-        <h1 className="text-5xl font-bold mb-4">TAKING A BREAK</h1>
-        <div className="text-3xl font-mono font-bold"> {/* Container for subtitle and timer */}
+        <h1 className="text-6xl font-bold mb-4">TAKING A BREAK</h1>
+        <div className="text-4xl font-mono font-bold"> {/* Container for subtitle and timer */}
           be back in: {formatTime(time)}
         </div>
       </div>
@@ -241,7 +241,7 @@ export default function BreakPage() {
       {/* <div className="max-w-md w-full">
         <div className="bg-[#2d2d2d] rounded-lg p-6">
           <div className="text-center mb-6">
-             <div className="text-6xl font-mono font-bold mb-6">
+             <div className="text-7xl font-mono font-bold mb-6">
               {formatTime(time)}
             </div> 
 

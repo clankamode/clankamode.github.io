@@ -62,7 +62,7 @@ export const ChatSidebar = ({
       <div className="p-3 border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={onNewChat}
-          className="w-full px-4 py-2 bg-[#2cbb5d] text-white rounded-lg hover:bg-[#25a352] transition-colors font-medium text-sm"
+          className="w-full px-4 py-2 bg-[#2cbb5d] text-white rounded-lg hover:bg-[#25a352] transition-colors font-medium text-base"
         >
           + New Chat
         </button>
@@ -74,15 +74,15 @@ export const ChatSidebar = ({
           placeholder="Search conversations..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+          className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
         />
       </div>
 
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="p-4 text-center text-sm text-gray-500">Loading...</div>
+          <div className="p-4 text-center text-base text-gray-500">Loading...</div>
         ) : filteredConversations.length === 0 ? (
-          <div className="p-4 text-center text-sm text-gray-500">
+          <div className="p-4 text-center text-base text-gray-500">
             {searchQuery ? 'No conversations found' : 'No conversations yet'}
           </div>
         ) : (
@@ -113,14 +113,14 @@ export const ChatSidebar = ({
                           onEditCancel();
                         }
                       }}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+                      className="w-full px-2 py-1 text-base border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
                     />
                   </div>
                 ) : (
                   <div className="flex items-center">
                     <button
                       onClick={() => onSelect(conv.id)}
-                      className="flex-1 text-left p-3 text-sm text-gray-900 dark:text-gray-100 truncate"
+                      className="flex-1 text-left p-3 text-base text-gray-900 dark:text-gray-100 truncate"
                     >
                       {conv.title || 'Untitled conversation'}
                     </button>

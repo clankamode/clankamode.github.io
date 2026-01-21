@@ -21,8 +21,8 @@ export default async function UnansweredQuestionsPage() {
     <div className="min-h-screen bg-[#1a1a1a] text-white px-4 py-10">
       <div className="max-w-4xl mx-auto space-y-8">
         <header className="space-y-2">
-          <p className="text-sm uppercase tracking-wider text-[#2cbb5d]">Career Q&A</p>
-          <h1 className="text-3xl font-bold">Community Questions</h1>
+          <p className="text-base uppercase tracking-wider text-[#2cbb5d]">Career Q&A</p>
+          <h1 className="text-4xl font-bold">Community Questions</h1>
           <p className="text-gray-400">
             Browse questions from the community. Upvote your favorites to help them rise to the top.
           </p>
@@ -30,17 +30,17 @@ export default async function UnansweredQuestionsPage() {
 
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Top Questions</h2>
+            <h2 className="text-3xl font-bold">Top Questions</h2>
             <div className="flex gap-2 border border-[#3e3e3e] rounded-lg p-1 bg-[#1f1f1f]">
               <Link
                 href="/questions/answered"
-                className="px-4 py-2 text-sm font-semibold rounded transition text-gray-400 hover:text-white"
+                className="px-4 py-2 text-base font-semibold rounded transition text-gray-400 hover:text-white"
               >
                 Answered
               </Link>
               <Link
                 href="/questions/unanswered"
-                className="px-4 py-2 text-sm font-semibold rounded transition bg-[#2cbb5d] text-black"
+                className="px-4 py-2 text-base font-semibold rounded transition bg-[#2cbb5d] text-black"
               >
                 Unanswered
               </Link>

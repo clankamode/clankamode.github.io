@@ -113,11 +113,11 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
       </div>
 
       <div className="p-6">
-        <h3 className="text-xl font-bold text-white mb-2">{video.title}</h3>
+        <h3 className="text-2xl font-bold text-white mb-2">{video.title}</h3>
         <p className="text-gray-400 mb-6 line-clamp-3">{video.description}</p>
         
         <div className="space-y-4">
-          <h4 className="text-lg font-semibold text-white">
+          <h4 className="text-xl font-semibold text-white">
             {'Rate this candidate:' }
           </h4>
           

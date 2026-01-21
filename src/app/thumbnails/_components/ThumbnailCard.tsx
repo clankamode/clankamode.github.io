@@ -65,7 +65,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
 
         {thumbnail.notes && (
           <div className="mb-3">
-            <p className="text-sm text-gray-300 line-clamp-3">{thumbnail.notes}</p>
+            <p className="text-base text-gray-300 line-clamp-3">{thumbnail.notes}</p>
           </div>
         )}
 
@@ -73,7 +73,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
           <div className="flex items-center gap-4">
             <button
               onClick={() => onViewClick?.(thumbnail.id)}
-              className="text-[#2cbb5d] hover:text-[#25a24f] text-sm font-medium"
+              className="text-[#2cbb5d] hover:text-[#25a24f] text-base font-medium"
             >
               View Video
             </button>
@@ -101,7 +101,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
             {thumbnail.thumbnailUrl && (
               <button
                 onClick={handleDownload}
-                className="text-blue-400 hover:text-blue-300 text-sm font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
+                className="text-blue-400 hover:text-blue-300 text-base font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
                 title="Download Thumbnail"
               >
                 <svg
@@ -148,7 +148,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
           {status === ThumbnailJobStatus.TODO && onStatusChange && thumbnail.thumbnailUrl && (
             <button
               onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.IN_REVIEW)}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md text-sm font-medium"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md text-base font-medium"
             >
               Move to Review
             </button>
@@ -156,7 +156,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
           {status === ThumbnailJobStatus.IN_REVIEW && onStatusChange && (
             <button
               onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.COMPLETED)}
-              className="bg-[#2cbb5d] hover:bg-[#25a24f] text-white px-4 py-1 rounded-md text-sm font-medium"
+              className="bg-[#2cbb5d] hover:bg-[#25a24f] text-white px-4 py-1 rounded-md text-base font-medium"
             >
               Complete
             </button>
@@ -164,7 +164,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
           {status === ThumbnailJobStatus.COMPLETED && onStatusChange && (
             <button
               onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.TODO)}
-              className="bg-[#f59e0b] hover:bg-[#d97706] text-white px-4 py-1 rounded-md text-sm font-medium"
+              className="bg-[#f59e0b] hover:bg-[#d97706] text-white px-4 py-1 rounded-md text-base font-medium"
             >
               Move to Todo
             </button>

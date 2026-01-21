@@ -115,7 +115,7 @@ export default function Component() {
             <div className="text-center py-12 px-6">
               {/* Title with animated gradient */}
               <h1
-                className={`text-6xl font-black mb-6 text-foreground font-sans tracking-tighter
+                className={`text-7xl font-black mb-6 text-foreground font-sans tracking-tighter
                   transition-all duration-1500 transform
                   ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
               >
@@ -125,7 +125,7 @@ export default function Component() {
               {/* Subtitle with fade-in and slide-up */}
               <div className="max-w-3xl mx-auto space-y-6 text-muted-foreground">
                 <p
-                  className={`text-xl font-medium leading-relaxed
+                  className={`text-2xl font-medium leading-relaxed
                     transition-all duration-1500 delay-450 transform
                     ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
@@ -134,7 +134,7 @@ export default function Component() {
                 </p>
 
                 <p
-                  className={`text-xl font-medium leading-relaxed
+                  className={`text-2xl font-medium leading-relaxed
                     transition-all duration-1500 delay-450 transform
                     ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
@@ -158,12 +158,12 @@ export default function Component() {
             <div className="bg-card/20 backdrop-blur-md rounded-xl border border-white/5 p-6 shadow-lg">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-lg font-bold text-foreground tracking-tight">Progress</span>
-                  <span className="text-sm text-muted-foreground font-mono">
+                  <span className="text-xl font-bold text-foreground tracking-tight">Progress</span>
+                  <span className="text-lg text-muted-foreground font-mono">
                     {solvedQuestions.size} / {PERALTA_75_LIST.length}
                   </span>
                 </div>
-                <span className="text-lg font-bold text-brand-green drop-shadow-[0_0_8px_rgba(44,187,93,0.5)]">
+                <span className="text-xl font-bold text-brand-green drop-shadow-[0_0_8px_rgba(44,187,93,0.5)]">
                   {Math.round((solvedQuestions.size / PERALTA_75_LIST.length) * 100)}%
                 </span>
               </div>
@@ -208,8 +208,8 @@ export default function Component() {
                           />
                         </svg>
                       </div>
-                      <h3 className="text-xl font-bold text-foreground font-display tracking-tight group-hover:text-brand-green transition-colors">{category}</h3>
-                      <span className={`px-2.5 py-0.5 text-xs font-mono font-medium rounded-full transition-colors
+                      <h3 className="text-2xl font-bold text-foreground font-display tracking-tight group-hover:text-brand-green transition-colors">{category}</h3>
+                      <span className={`px-2.5 py-0.5 text-sm font-mono font-medium rounded-full transition-colors
                         ${expandedCategories.has(category) ? 'bg-brand-green/20 text-brand-green' : 'bg-white/5 text-muted-foreground'}`}>
                         {groupedQuestions[category].length}
                       </span>
@@ -272,7 +272,7 @@ export default function Component() {
                                   )}
                                 </button>
                                 <div className="min-w-0">
-                                  <h4 className={`font-medium truncate font-sans text-base transition-colors ${solvedQuestions.has(question.id)
+                                  <h4 className={`font-medium truncate font-sans text-lg transition-colors ${solvedQuestions.has(question.id)
                                     ? 'text-muted-foreground line-through decoration-brand-green/50'
                                     : 'text-foreground group-hover:text-brand-green'
                                     }`}>

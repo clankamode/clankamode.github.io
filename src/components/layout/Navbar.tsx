@@ -31,7 +31,7 @@ export default function Navbar() {
   };
 
   const navLinkClass = (path: string) =>
-    `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${isActive(path)
+    `px-4 py-2 rounded-full text-base font-medium transition-all duration-300 ${isActive(path)
       ? 'bg-brand-green/10 text-brand-green shadow-[0_0_10px_-2px_rgba(44,187,93,0.3)] border border-brand-green/20'
       : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
@@ -43,7 +43,7 @@ export default function Navbar() {
     }`;
 
   const mobileNavLinkClass = (path: string) =>
-    `block px-4 py-3 rounded-lg text-base font-medium transition-colors ${isActive(path)
+    `block px-4 py-3 rounded-lg text-lg font-medium transition-colors ${isActive(path)
       ? 'bg-brand-green/10 text-brand-green border-l-2 border-brand-green'
       : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
@@ -80,12 +80,12 @@ export default function Navbar() {
                   className="w-9 h-9 rounded-full border border-white/10 shadow-sm"
                 />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-green to-emerald-700 flex items-center justify-center text-white font-bold text-sm shadow-[0_0_15px_-3px_rgba(44,187,93,0.4)]">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-green to-emerald-700 flex items-center justify-center text-white font-bold text-base shadow-[0_0_15px_-3px_rgba(44,187,93,0.4)]">
                   J
                 </div>
               )}
               <div className="flex flex-col">
-                <span className="text-lg font-bold tracking-tight text-foreground group-hover:text-brand-green transition-colors font-display">
+                <span className="text-xl font-bold tracking-tight text-foreground group-hover:text-brand-green transition-colors font-display">
                   {isLoggedIn ? session.user?.name : "James Peralta"}
                 </span>
                 {isLoggedIn && session.user?.role && (

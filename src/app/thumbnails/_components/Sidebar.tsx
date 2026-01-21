@@ -47,11 +47,11 @@ export default function Sidebar({ currentView, setCurrentView, statusCounts, sid
                 }`}
               >
                 <div className="flex items-center">
-                  <span className="mr-3 text-lg">{item.icon}</span>
+                  <span className="mr-3 text-xl">{item.icon}</span>
                   <span className="font-medium">{item.label}</span>
                 </div>
                 <span
-                  className={`px-2 py-1 text-xs rounded-full ${
+                  className={`px-2 py-1 text-sm rounded-full ${
                     currentView === item.key ? "bg-[#2cbb5d] text-white" : "bg-[#282828] text-gray-400 border border-gray-600"
                   }`}
                 >

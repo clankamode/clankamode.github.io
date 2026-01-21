@@ -38,7 +38,7 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-1 flex items-center">
             <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold text-white">
+              <span className="text-2xl font-bold text-white">
                 Coding Interviews
               </span>
             </Link>
@@ -48,7 +48,7 @@ export default function Navbar() {
           <div className="flex-1 hidden md:flex items-center justify-center space-x-8">
             <Link
               href="/"
-              className={`text-sm font-medium transition-colors duration-200 ${
+              className={`text-lg font-medium transition-colors duration-200 ${
                 isActive('/')
                   ? 'text-[#2cbb5d]'
                   : 'text-gray-300 hover:text-[#2cbb5d]'
@@ -58,7 +58,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/videos"
-              className={`text-sm font-medium transition-colors duration-200 ${
+              className={`text-lg font-medium transition-colors duration-200 ${
                 isActive('/videos')
                   ? 'text-[#2cbb5d]'
                   : 'text-gray-300 hover:text-[#2cbb5d]'
@@ -75,7 +75,7 @@ export default function Navbar() {
               href={`https://www.youtube.com/channel/${process.env.YOUTUBE_CHANNEL_ID}?sub_confirmation=1`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-300"
+              className="hidden md:inline-flex items-center justify-center px-4 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-300"
             >
               Subscribe
             </a>
@@ -136,7 +136,7 @@ export default function Navbar() {
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-[#1a1a1a] border-t border-[#3e3e3e]">
           <Link
             href="/"
-            className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+            className={`block px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200 ${
               isActive('/')
                 ? 'text-[#2cbb5d] bg-[#2cbb5d]/10'
                 : 'text-gray-300 hover:text-[#2cbb5d] hover:bg-[#2cbb5d]/5'
@@ -147,7 +147,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/videos"
-            className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+            className={`block px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200 ${
               isActive('/videos')
                 ? 'text-[#2cbb5d] bg-[#2cbb5d]/10'
                 : 'text-gray-300 hover:text-[#2cbb5d] hover:bg-[#2cbb5d]/5'
@@ -160,7 +160,7 @@ export default function Navbar() {
             href={`https://www.youtube.com/channel/${process.env.YOUTUBE_CHANNEL_ID}?sub_confirmation=1`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 my-2"
+            className="block px-3 py-2 rounded-md text-lg font-medium text-white bg-blue-600 my-2"
             onClick={() => setIsMenuOpen(false)}
           >
             Subscribe

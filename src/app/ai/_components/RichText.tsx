@@ -86,7 +86,7 @@ const formatInline = (text: string, removeYouTubeUrls = false) => {
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/(^|\s)\*([^*]+)\*(?=\s|$)/g, '$1<em>$2</em>');
   html = html.replace(/~~([^~]+)~~/g, '<del>$1</del>');
-  html = html.replace(/`([^`]+)`/g, '<code class="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-sm">$1</code>');
+  html = html.replace(/`([^`]+)`/g, '<code class="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-lg">$1</code>');
 
   return html;
 };
@@ -301,13 +301,13 @@ const VideoSuggestionCard = ({ videoId, url, title }: { videoId: string; url: st
         </div>
         <div className="flex-1 min-w-0">
           {title ? (
-            <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100 group-hover:text-[#2cbb5d] transition-colors line-clamp-2">
+            <h4 className="font-medium text-lg text-gray-900 dark:text-gray-100 group-hover:text-[#2cbb5d] transition-colors line-clamp-2">
               {title}
             </h4>
           ) : (
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{url}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{url}</p>
           )}
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">YouTube</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">YouTube</p>
         </div>
       </div>
     </a>
@@ -321,7 +321,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <HeadingTag
           key={index}
-          className="text-base font-semibold text-gray-900 dark:text-gray-100 mt-2"
+          className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-2"
           dangerouslySetInnerHTML={{ __html: formatInline(block.content as string) }}
         />
       );
@@ -428,7 +428,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <pre
           key={index}
-          className="bg-gray-900 text-gray-100 rounded-lg p-3 overflow-x-auto text-sm"
+          className="bg-gray-900 text-gray-100 rounded-lg p-3 overflow-x-auto text-lg"
         >
           <code>{block.content as string}</code>
         </pre>
@@ -527,7 +527,7 @@ export function RichText({ content }: { content: string }) {
   const blocks = parseMarkdown(content);
 
   return (
-    <div className="space-y-3 leading-relaxed text-sm">
+    <div className="space-y-3 leading-relaxed text-lg">
       {blocks.map((block, index) => renderBlock(block, index))}
     </div>
   );

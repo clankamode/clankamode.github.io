@@ -50,7 +50,7 @@ export function QuestionView({
           </div>
         </div>
 
-        <h2 className="text-xl font-semibold text-white mb-6">
+        <h2 className="text-2xl font-semibold text-white mb-6">
           {question.question}
         </h2>
 

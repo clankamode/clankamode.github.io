@@ -57,11 +57,11 @@ export default function AskQuestionSection() {
       {/* Ask Question Section - Moved to bottom */}
       <section className="bg-[#1f1f1f] border border-[#3e3e3e]/50 rounded-xl p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-300">Have a question?</h2>
+          <h2 className="text-xl font-semibold text-gray-300">Have a question?</h2>
           {!isAuthenticated && (
             <button
               onClick={() => signIn('google')}
-              className="text-sm text-[#2cbb5d] hover:text-[#25a552] transition"
+              className="text-lg text-[#2cbb5d] hover:text-[#25a552] transition"
             >
               Sign in to participate
             </button>
@@ -81,7 +81,7 @@ export default function AskQuestionSection() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setIsAskModalOpen(false)}>
           <div className="bg-[#282828] border border-[#3e3e3e] rounded-xl p-6 shadow-xl max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Ask a question</h2>
+              <h2 className="text-2xl font-semibold">Ask a question</h2>
               <button
                 onClick={() => setIsAskModalOpen(false)}
                 className="text-gray-400 hover:text-white transition"
@@ -92,7 +92,7 @@ export default function AskQuestionSection() {
               </button>
             </div>
             {error && (
-              <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">
+              <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-lg text-red-200">
                 {error}
               </div>
             )}
@@ -143,7 +143,7 @@ export default function AskQuestionSection() {
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          <span className="text-base">Ask Question</span>
+          <span className="text-lg">Ask Question</span>
         </button>
       )}
     </>

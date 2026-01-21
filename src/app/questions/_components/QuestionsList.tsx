@@ -81,7 +81,7 @@ const VideoAnswerPreview = ({ videoId, videoUrl }: { videoId: string; videoUrl: 
           {isLoadingTitle ? (
             <div className="h-4 bg-gray-700/50 rounded animate-pulse w-3/4" />
           ) : (
-            <p className="text-white text-sm font-semibold line-clamp-2">
+            <p className="text-white text-base font-semibold line-clamp-2">
               {videoTitle || 'Watch Answer'}
             </p>
           )}
@@ -268,7 +268,7 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
   return (
     <>
       {error && (
-        <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">
+        <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-base text-red-200">
           {error}
         </div>
       )}
@@ -306,10 +306,10 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
                 >
                   <path d="M12 4l-7 8h4v6h6v-6h4z" />
                 </svg>
-                <span className="mt-1 text-sm font-semibold">{question.voteCount}</span>
+                <span className="mt-1 text-base font-semibold">{question.voteCount}</span>
               </button>
               <div className="flex-1 space-y-3">
-                <h3 className={`text-xl font-bold leading-snug ${question.isArchived ? 'text-gray-400' : 'text-white'}`}>
+                <h3 className={`text-2xl font-bold leading-snug ${question.isArchived ? 'text-gray-400' : 'text-white'}`}>
                   {question.content}
                 </h3>
                 {question.isArchived && question.videoUrl && (() => {
@@ -327,17 +327,17 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
                         href={question.videoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block px-3 py-2 bg-blue-600/20 text-blue-400 rounded text-sm font-semibold hover:bg-blue-600/30 transition underline"
+                        className="inline-block px-3 py-2 bg-blue-600/20 text-blue-400 rounded text-base font-semibold hover:bg-blue-600/30 transition underline"
                       >
                         Watch Answer
                       </a>
                     </div>
                   );
                 })()}
-                <div className="flex items-center justify-between gap-2 text-sm text-gray-400">
+                <div className="flex items-center justify-between gap-2 text-base text-gray-400">
                   <div className="flex items-center gap-2">
                     {question.isArchived && (
-                      <span className="px-2 py-0.5 bg-yellow-600/20 text-yellow-400 rounded text-xs font-semibold">
+                      <span className="px-2 py-0.5 bg-yellow-600/20 text-yellow-400 rounded text-sm font-semibold">
                         Answered
                       </span>
                     )}
@@ -355,13 +355,13 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
                           }))
                         }
                         placeholder="Video URL"
-                        className="px-2 py-1 text-xs rounded bg-[#1f1f1f] border border-[#3e3e3e] text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#2cbb5d] w-36"
+                        className="px-2 py-1 text-sm rounded bg-[#1f1f1f] border border-[#3e3e3e] text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#2cbb5d] w-36"
                         disabled={submittingQuestionId === question.id}
                       />
                       <button
                         onClick={() => markAsAnswered(question.id, videoUrlInputs[question.id] || '')}
                         disabled={submittingQuestionId === question.id || !videoUrlInputs[question.id]?.trim()}
-                        className="px-2 py-1 text-xs font-semibold rounded transition bg-blue-600/20 text-blue-400 border border-blue-600/40 hover:bg-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="px-2 py-1 text-sm font-semibold rounded transition bg-blue-600/20 text-blue-400 border border-blue-600/40 hover:bg-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                         title="Mark as answered with video URL"
                       >
                         {submittingQuestionId === question.id ? 'Saving...' : 'Mark Answered'}

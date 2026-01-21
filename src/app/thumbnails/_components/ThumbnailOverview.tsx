@@ -69,7 +69,7 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-white">Failed to load thumbnails</h3>
+          <h3 className="text-xl font-medium text-white">Failed to load thumbnails</h3>
           <p className="text-gray-400">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
@@ -85,7 +85,7 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white">{statusLabels[status]}</h2>
+        <h2 className="text-3xl font-bold text-white">{statusLabels[status]}</h2>
         <p className="text-gray-400">
           {filteredThumbnails.length} thumbnail{filteredThumbnails.length !== 1 ? "s" : ""}
         </p>
@@ -103,7 +103,7 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-white mb-2">
+          <h3 className="text-xl font-medium text-white mb-2">
             No thumbnails {status === ThumbnailJobStatus.TODO ? "to do" : status === FAVORITES_VIEW ? "favorited yet" : status}
           </h3>
           <p className="text-gray-400">

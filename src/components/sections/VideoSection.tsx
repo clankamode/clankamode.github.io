@@ -26,7 +26,7 @@ export default function VideoSection({
     <section className={cn("py-16 bg-background text-foreground", sectionBgClass)}>
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="flex justify-between items-center mb-12 border-b border-border pb-4">
-          <h2 className="text-3xl font-bold font-sans tracking-tight">
+          <h2 className="text-4xl font-bold font-sans tracking-tight">
             {title}
           </h2>
           {viewAllHref && (
@@ -60,7 +60,7 @@ export default function VideoSection({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">{emptyStateTitle}</h3>
+            <h3 className="text-2xl font-bold mb-2">{emptyStateTitle}</h3>
             <p className="text-muted-foreground max-w-md mx-auto">
               {emptyStateMessage}
             </p>

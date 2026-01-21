@@ -22,7 +22,7 @@ export function SessionListView({
   return (
     <div className="max-w-4xl mx-auto px-4">
       <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
-        <h1 className="text-3xl font-bold text-white mb-6">Practice Tests</h1>
+        <h1 className="text-4xl font-bold text-white mb-6">Practice Tests</h1>
         
         {error && (
           <div className="mb-6 bg-red-500/10 border-2 border-red-500/30 rounded-lg p-4">
@@ -32,7 +32,7 @@ export function SessionListView({
         
         {sessionList.incomplete.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-[#2cbb5d] mb-4">Continue Where You Left Off</h2>
+            <h2 className="text-2xl font-semibold text-[#2cbb5d] mb-4">Continue Where You Left Off</h2>
             <div className="space-y-3">
               {sessionList.incomplete.map((session) => {
                 const isComplete = session.total_questions === totalQuestionsInBank && totalQuestionsInBank > 0;
@@ -46,11 +46,11 @@ export function SessionListView({
                         <p className="text-white font-medium">
                           {isComplete ? 'Ready to Grade' : 'In Progress'}
                         </p>
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-gray-400 text-base">
                           Started: {new Date(session.started_at).toLocaleDateString()} at{' '}
                           {new Date(session.started_at).toLocaleTimeString()}
                         </p>
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-gray-400 text-base">
                           {session.total_questions} question{session.total_questions !== 1 ? 's' : ''} answered
                           {isComplete && ' ✓'}
                         </p>
@@ -95,7 +95,7 @@ export function SessionListView({
 
         {sessionList.completed.length > 0 && (
           <div>
-            <h2 className="text-xl font-semibold text-white mb-4">Previous Tests</h2>
+            <h2 className="text-2xl font-semibold text-white mb-4">Previous Tests</h2>
             <div className="space-y-3">
               {sessionList.completed.map((session) => (
                 <div key={session.id} className="bg-[#1a1a1a] rounded-lg p-4 border-2 border-[#3e3e3e] hover:border-[#2cbb5d]/50 transition-colors">
@@ -105,14 +105,14 @@ export function SessionListView({
                         Completed: {new Date(session.completed_at!).toLocaleDateString()} at{' '}
                         {new Date(session.completed_at!).toLocaleTimeString()}
                       </p>
-                      <p className="text-gray-400 text-sm">
+                      <p className="text-gray-400 text-base">
                         {session.total_questions} questions
                       </p>
                       <div className="mt-2">
-                        <p className="text-2xl font-bold text-[#2cbb5d]">
+                        <p className="text-3xl font-bold text-[#2cbb5d]">
                           {session.score_percentage}%
                         </p>
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-gray-400 text-base">
                           {session.correct_answers}/{session.total_questions} correct
                         </p>
                       </div>

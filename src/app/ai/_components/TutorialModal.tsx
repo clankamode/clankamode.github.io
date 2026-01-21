@@ -29,8 +29,8 @@ export const TutorialModal = ({
       <div className="w-full max-w-3xl rounded-xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Start a detailed tutorial</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Start a detailed tutorial</h2>
+            <p className="text-base text-gray-600 dark:text-gray-400">
               Provide your prompt and attempts so the AI can generate the full guided walkthrough.
             </p>
           </div>
@@ -45,7 +45,7 @@ export const TutorialModal = ({
         </div>
         <form onSubmit={onSubmit} className="px-6 py-5 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+            <label className="block text-base font-medium text-gray-800 dark:text-gray-200 mb-2">
               Problem statement / question prompt
             </label>
             <textarea
@@ -57,7 +57,7 @@ export const TutorialModal = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+            <label className="block text-base font-medium text-gray-800 dark:text-gray-200 mb-2">
               Constraints + examples (optional)
             </label>
             <textarea
@@ -70,13 +70,13 @@ export const TutorialModal = ({
           </div>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+              <label className="block text-base font-medium text-gray-800 dark:text-gray-200">
                 Candidate solutions (1..n)
               </label>
               <button
                 type="button"
                 onClick={onAddCandidate}
-                className="text-sm text-[#2cbb5d] hover:text-[#25a352] font-medium"
+                className="text-base text-[#2cbb5d] hover:text-[#25a352] font-medium"
               >
                 + Add another
               </button>
@@ -85,13 +85,13 @@ export const TutorialModal = ({
               {form.candidateSolutions.map((solution, index) => (
                 <div key={index} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                    <span className="text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">
                       Solution {index + 1}
                     </span>
                     <button
                       type="button"
                       onClick={() => onRemoveCandidate(index)}
-                      className="text-xs text-gray-500 hover:text-red-500"
+                      className="text-sm text-gray-500 hover:text-red-500"
                       disabled={form.candidateSolutions.length === 1}
                     >
                       Remove
@@ -109,7 +109,7 @@ export const TutorialModal = ({
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+            <label className="block text-base font-medium text-gray-800 dark:text-gray-200 mb-2">
               Final solution + intuition (optional)
             </label>
             <textarea
@@ -124,13 +124,13 @@ export const TutorialModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
+              className="px-4 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 text-sm font-semibold text-white bg-[#2cbb5d] rounded-lg hover:bg-[#25a352] transition-colors"
+              className="px-5 py-2 text-base font-semibold text-white bg-[#2cbb5d] rounded-lg hover:bg-[#25a352] transition-colors"
             >
               Start tutorial chat
             </button>

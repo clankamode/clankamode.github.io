@@ -124,8 +124,8 @@ export function InputArea({
                             <svg className="w-12 h-12 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
-                            <p className="text-lg font-semibold text-foreground">Drop files here</p>
-                            <p className="text-sm text-muted-foreground">Images and PDFs supported</p>
+                            <p className="text-xl font-semibold text-foreground">Drop files here</p>
+                            <p className="text-base text-muted-foreground">Images and PDFs supported</p>
                         </div>
                     </div>
                 </div>
@@ -170,8 +170,8 @@ export function InputArea({
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                         </svg>
                                         <div className="flex flex-col">
-                                            <span className="text-sm text-foreground truncate max-w-[150px]">{attachment.name}</span>
-                                            <span className="text-xs text-muted-foreground">Ready to send</span>
+                                            <span className="text-base text-foreground truncate max-w-[150px]">{attachment.name}</span>
+                                            <span className="text-sm text-muted-foreground">Ready to send</span>
                                         </div>
                                         <button
                                             onClick={() => onRemoveAttachment(attachment.id)}
@@ -234,7 +234,7 @@ export function InputArea({
                     />
                     {isPromptMenuOpen && (
                         <div className="absolute bottom-14 left-0 w-72 rounded-lg border border-border bg-card shadow-lg overflow-hidden">
-                            <div className="px-3 py-2 text-xs text-muted-foreground bg-muted/30">Insert a system prompt</div>
+                            <div className="px-3 py-2 text-sm text-muted-foreground bg-muted/30">Insert a system prompt</div>
                             <div className="max-h-56 overflow-y-auto">
                                 {filteredPrompts.map((prompt) => (
                                     <button
@@ -244,12 +244,12 @@ export function InputArea({
                                         className="w-full px-3 py-2 text-left hover:bg-muted/50 transition-colors"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+                                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
                                                 /
                                             </span>
                                             <div>
                                                 <div className="font-medium text-foreground">{prompt.title}</div>
-                                                <div className="text-xs text-muted-foreground text-ellipsis overflow-hidden whitespace-nowrap max-w-[180px]">{prompt.description}</div>
+                                                <div className="text-sm text-muted-foreground text-ellipsis overflow-hidden whitespace-nowrap max-w-[180px]">{prompt.description}</div>
                                             </div>
                                         </div>
                                     </button>
@@ -268,7 +268,7 @@ export function InputArea({
                 </Button>
             </form>
             {selectedSystemPrompt && (
-                <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs text-foreground border border-border">
+                <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-sm text-foreground border border-border">
                     <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-background border border-border text-[10px] font-semibold text-muted-foreground">
                         /
                     </span>
@@ -283,7 +283,7 @@ export function InputArea({
                     </button>
                 </div>
             )}
-            <p className="text-xs text-muted-foreground mt-2 text-center">
+            <p className="text-sm text-muted-foreground mt-2 text-center">
                 Press Enter to send, Shift+Enter for new line
             </p>
         </div>

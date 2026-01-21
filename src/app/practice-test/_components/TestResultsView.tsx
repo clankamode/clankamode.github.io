@@ -19,10 +19,10 @@ export function TestResultsView({
     <div className="max-w-4xl mx-auto px-4">
       <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
         <div className="text-center mb-6">
-          <div className="text-6xl mb-3">
+          <div className="text-7xl mb-3">
             {passed ? '🎉' : '📚'}
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2">
             {passed ? 'Congratulations!' : 'Test Complete'}
           </h1>
           <p className="text-gray-400">
@@ -34,10 +34,10 @@ export function TestResultsView({
         
         <div className="bg-[#1a1a1a] rounded-lg p-6 mb-6 border-2 border-[#2cbb5d]/30">
           <div className="text-center mb-4">
-            <div className="text-6xl font-bold text-[#2cbb5d] mb-2">
+            <div className="text-7xl font-bold text-[#2cbb5d] mb-2">
               {results.scorePercentage}%
             </div>
-            <p className="text-xl text-white font-semibold">
+            <p className="text-2xl text-white font-semibold">
               {results.correctAnswers} out of {results.totalQuestions} correct
             </p>
           </div>
@@ -51,16 +51,16 @@ export function TestResultsView({
 
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-green-400 mb-1">
+              <div className="text-4xl font-bold text-green-400 mb-1">
                 {results.correctAnswers}
               </div>
-              <p className="text-gray-400 text-sm">Correct Answers</p>
+              <p className="text-gray-400 text-base">Correct Answers</p>
             </div>
             <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-red-400 mb-1">
+              <div className="text-4xl font-bold text-red-400 mb-1">
                 {incorrectCount}
               </div>
-              <p className="text-gray-400 text-sm">Incorrect Answers</p>
+              <p className="text-gray-400 text-base">Incorrect Answers</p>
             </div>
           </div>
 
@@ -79,18 +79,18 @@ export function TestResultsView({
 
         {results.unitBreakdown && results.unitBreakdown.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-4">📊 Performance by Unit</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">📊 Performance by Unit</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {results.unitBreakdown.map((unitStats) => (
                 <div key={unitStats.unit} className="bg-[#1a1a1a] rounded-lg p-5 border-2 border-[#3e3e3e]">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{unitStats.unit}</h3>
-                      <p className="text-gray-400 text-sm">
+                      <h3 className="text-xl font-semibold text-white">{unitStats.unit}</h3>
+                      <p className="text-gray-400 text-base">
                         {unitStats.correct}/{unitStats.total} correct
                       </p>
                     </div>
-                    <div className={`text-2xl font-bold ${
+                    <div className={`text-3xl font-bold ${
                       unitStats.percentage >= 70 ? 'text-green-400' : 'text-orange-400'
                     }`}>
                       {unitStats.percentage}%
@@ -112,15 +112,15 @@ export function TestResultsView({
 
         {results.incorrectAnswers.length === 0 && (
           <div className="mb-6 bg-green-500/10 border-2 border-green-500/30 rounded-lg p-6 text-center">
-            <div className="text-4xl mb-2">✨</div>
-            <h2 className="text-2xl font-bold text-green-400 mb-2">Perfect Score!</h2>
+            <div className="text-5xl mb-2">✨</div>
+            <h2 className="text-3xl font-bold text-green-400 mb-2">Perfect Score!</h2>
             <p className="text-gray-300">You answered all questions correctly. Excellent work!</p>
           </div>
         )}
 
         {results.incorrectAnswers.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-white mb-4">
               📝 Review Incorrect Answers ({results.incorrectAnswers.length})
             </h2>
             <div className="space-y-4">
@@ -157,10 +157,10 @@ export function TestResultsView({
                   
                   <div className="bg-[#0a0a0a] p-4 rounded border-l-4 border-[#2cbb5d]">
                     <div className="mb-3 pb-3 border-b border-gray-700">
-                      <p className="text-xs font-semibold text-blue-400 mb-1">{item.unit}</p>
-                      <p className="text-xs text-gray-400">{item.knowledgeArea}</p>
+                      <p className="text-sm font-semibold text-blue-400 mb-1">{item.unit}</p>
+                      <p className="text-sm text-gray-400">{item.knowledgeArea}</p>
                     </div>
-                    <p className="text-gray-300 text-sm">
+                    <p className="text-gray-300 text-base">
                       <span className="font-semibold text-[#2cbb5d]">Explanation:</span> {item.rationale}
                     </p>
                   </div>
