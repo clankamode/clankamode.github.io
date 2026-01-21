@@ -36,6 +36,12 @@ export default function Navbar() {
       : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
 
+  const navButtonClass = (active: boolean) =>
+    `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${active
+      ? 'bg-brand-green/10 text-brand-green shadow-[0_0_10px_-2px_rgba(44,187,93,0.3)] border border-brand-green/20'
+      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+    }`;
+
   const mobileNavLinkClass = (path: string) =>
     `block px-4 py-3 rounded-lg text-base font-medium transition-colors ${isActive(path)
       ? 'bg-brand-green/10 text-brand-green border-l-2 border-brand-green'
@@ -52,6 +58,7 @@ export default function Navbar() {
   const isAdmin = hasRole(originalRole, UserRole.ADMIN);
   const isEffectiveAdmin = hasRole(effectiveRole, UserRole.ADMIN);
   const isEditor = effectiveRole === UserRole.EDITOR;
+  const isEditorSectionActive = ['/thumbnails', '/gallery', '/clips'].some((path) => isActive(path));
 
   return (
     <>
@@ -98,8 +105,21 @@ export default function Navbar() {
               {isLoggedIn && isEditor ? (
                 <>
                   <Link href="/ai" className={navLinkClass('/ai')}>AI</Link>
-                  <Link href="/thumbnails" className={navLinkClass('/thumbnails')}>Thumbnails</Link>
-                  <Link href="/gallery" className={navLinkClass('/gallery')}>Gallery</Link>
+                  <div className="relative group">
+                    <button type="button" className={navButtonClass(isEditorSectionActive)}>
+                      Editor
+                      <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-white/10 bg-background/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                      <div className="py-2">
+                        <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
+                        <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
+                        <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
+                      </div>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>
@@ -110,8 +130,21 @@ export default function Navbar() {
                   {isLoggedIn && isEffectiveAdmin && (
                     <>
                       <Link href="/ai" className={navLinkClass('/ai')}>AI Tools</Link>
-                      <Link href="/thumbnails" className={navLinkClass('/thumbnails')}>Thumbnails</Link>
-                      <Link href="/gallery" className={navLinkClass('/gallery')}>Gallery</Link>
+                      <div className="relative group">
+                        <button type="button" className={navButtonClass(isEditorSectionActive)}>
+                          Editor
+                          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                        <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-white/10 bg-background/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                          <div className="py-2">
+                            <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
+                            <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
+                            <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
+                          </div>
+                        </div>
+                      </div>
                     </>
                   )}
                 </>
@@ -176,8 +209,12 @@ export default function Navbar() {
             {isLoggedIn && isEditor ? (
               <>
                 <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI</Link>
-                <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
-                <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
+                <div className="space-y-1">
+                  <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>
+                  <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
+                  <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
+                  <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
+                </div>
               </>
             ) : (
               <>
@@ -188,8 +225,12 @@ export default function Navbar() {
                 {isLoggedIn && isEffectiveAdmin && (
                   <>
                     <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
-                    <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
-                    <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
+                    <div className="space-y-1">
+                      <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>
+                      <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
+                      <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
+                      <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
+                    </div>
                   </>
                 )}
               </>
