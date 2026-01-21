@@ -1,7 +1,9 @@
+'use client';
+
 import type React from "react"
 import { Thumbnail } from "@/types/ThumbnailJob"
 import { ThumbnailJobStatus } from "@/types/ThumbnailJob"
-import Image from "next/image"
+import { useState } from "react"
 
 
 interface ThumbnailCardProps {
@@ -15,6 +17,8 @@ interface ThumbnailCardProps {
 }
 
 export default function ThumbnailCard({ thumbnail, status, onStatusChange, onViewClick, onToggleFavorite, onDelete, isAdmin }: ThumbnailCardProps) {
+  const [imgError, setImgError] = useState(false);
+
   const handleDownload = async () => {
     try {
       const response = await fetch(thumbnail.thumbnailUrl || '')
@@ -36,15 +40,15 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
   }
 
   return (
-    <div key={thumbnail.id} className="bg-[#282828] rounded-lg shadow-md overflow-hidden">
-      <div className="aspect-video bg-[#1a1a1a] relative">
-        {thumbnail.thumbnailUrl ? (
-          <Image
-            src={thumbnail.thumbnailUrl || "/placeholder.svg"}
+    <div key={thumbnail.id} className="frame bg-surface-workbench overflow-hidden">
+      <div className="aspect-video bg-surface-interactive relative">
+        {thumbnail.thumbnailUrl && !imgError ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={thumbnail.thumbnailUrl}
             alt={thumbnail.videoTitle}
             className="w-full h-full object-cover"
-            width={100}
-            height={100}
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-500">
@@ -61,12 +65,12 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
       </div>
 
       <div className="p-4">
-        <h3 className="font-semibold text-white mb-2 line-clamp-2">{thumbnail.videoTitle}</h3>
+        <h3 className="font-semibold text-foreground mb-2 line-clamp-2">{thumbnail.videoTitle}</h3>
 
 
         {thumbnail.notes && (
           <div className="mb-3">
-            <p className="text-base text-gray-300 line-clamp-3">{thumbnail.notes}</p>
+            <p className="text-base text-muted-foreground line-clamp-3">{thumbnail.notes}</p>
           </div>
         )}
 
@@ -74,14 +78,14 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
           <div className="flex items-center gap-4">
             <button
               onClick={() => onViewClick?.(thumbnail.id)}
-              className="text-[#2cbb5d] hover:text-[#25a24f] text-base font-medium"
+              className="text-muted-foreground hover:text-foreground text-base font-medium"
             >
               View Video
             </button>
             {isAdmin && (
               <button
                 onClick={() => onToggleFavorite?.(thumbnail.id)}
-                className={`text-sm font-medium p-1 rounded-full transition-colors ${thumbnail.favorite ? "text-yellow-300 hover:text-yellow-200" : "text-gray-400 hover:text-gray-200"}`}
+                className={`text-sm font-medium p-1 rounded-full transition-colors ${thumbnail.favorite ? "text-yellow-300 hover:text-yellow-200" : "text-muted-foreground hover:text-foreground"}`}
                 title={thumbnail.favorite ? "Remove favorite" : "Add favorite"}
                 aria-pressed={thumbnail.favorite}
                 aria-label={thumbnail.favorite ? "Remove favorite" : "Add favorite"}
@@ -104,7 +108,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
             {thumbnail.thumbnailUrl && (
               <button
                 onClick={handleDownload}
-                className="text-blue-400 hover:text-blue-300 text-base font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
+                className="text-muted-foreground hover:text-foreground text-base font-medium p-1 rounded-full hover:bg-white/5 transition-colors"
                 title="Download Thumbnail"
               >
                 <svg
@@ -151,7 +155,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
           {status === ThumbnailJobStatus.TODO && onStatusChange && thumbnail.thumbnailUrl && (
             <button
               onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.IN_REVIEW)}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md text-base font-medium"
+              className="bg-surface-interactive hover:bg-surface-dense text-foreground px-4 py-1 rounded-md text-base font-medium border border-border-subtle"
             >
               Move to Review
             </button>
@@ -159,7 +163,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
           {status === ThumbnailJobStatus.IN_REVIEW && onStatusChange && (
             <button
               onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.COMPLETED)}
-              className="bg-[#2cbb5d] hover:bg-[#25a24f] text-white px-4 py-1 rounded-md text-base font-medium"
+              className="bg-surface-interactive hover:bg-surface-dense text-foreground px-4 py-1 rounded-md text-base font-medium border border-border-subtle"
             >
               Complete
             </button>
@@ -167,7 +171,7 @@ export default function ThumbnailCard({ thumbnail, status, onStatusChange, onVie
           {status === ThumbnailJobStatus.COMPLETED && onStatusChange && (
             <button
               onClick={() => onStatusChange(thumbnail.id, ThumbnailJobStatus.TODO)}
-              className="bg-[#f59e0b] hover:bg-[#d97706] text-white px-4 py-1 rounded-md text-base font-medium"
+              className="bg-surface-interactive hover:bg-surface-dense text-foreground px-4 py-1 rounded-md text-base font-medium border border-border-subtle"
             >
               Move to Todo
             </button>

@@ -284,8 +284,8 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold text-white">Comments</h2>
-        {isLoading && <span className="text-base text-gray-400">Loading...</span>}
+        <h2 className="text-2xl font-semibold text-foreground">Comments</h2>
+        {isLoading && <span className="text-base text-muted-foreground">Loading...</span>}
       </div>
 
       {/* Error Message */}
@@ -298,14 +298,14 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
       {/* Comments List */}
       <div className="space-y-4 mb-6 overflow-y-auto pr-2 flex-1">
         {comments.length === 0 && !isLoading ? (
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             No comments yet. Start the conversation!
           </p>
         ) : (
           comments.map((comment) => (
             <div
               key={comment.id}
-              className="border border-[#3e3e3e] rounded-lg p-4 bg-[#1f1f1f]"
+              className="border border-border-subtle rounded-lg p-4 bg-surface-interactive"
             >
               {/* Comment Header */}
               <div className="flex items-center justify-between mb-2">
@@ -320,19 +320,19 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                       className="rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-[#3e3e3e] flex items-center justify-center">
-                      <span className="text-xs font-medium text-gray-400">
+                    <div className="w-7 h-7 rounded-full bg-surface-dense flex items-center justify-center">
+                      <span className="text-xs font-medium text-muted-foreground">
                         {comment.author_name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
-                  <span className="text-sm font-medium text-white">
+                  <span className="text-sm font-medium text-foreground">
                     {comment.author_name}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {comment.created_at && (
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-muted-foreground">
                       {formatRelativeTime(comment.created_at)}
                     </span>
                   )}
@@ -340,7 +340,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                     <button
                       type="button"
                       onClick={() => startEditing(comment)}
-                      className="text-gray-500 hover:text-gray-300 transition-colors p-1"
+                      className="text-muted-foreground hover:text-foreground transition-colors p-1"
                       title="Edit comment"
                     >
                       <svg
@@ -367,7 +367,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                   <textarea
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#3e3e3e] rounded-lg text-white placeholder:text-gray-500 resize-none focus:outline-none focus:border-[#2cbb5d]"
+                    className="w-full px-3 py-2 bg-surface-interactive border border-border-subtle rounded-lg text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:border-brand-green"
                     rows={2}
                     maxLength={MAX_TEXT_LENGTH}
                     autoFocus
@@ -379,7 +379,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                           ? "text-red-400"
                           : editText.length > MAX_TEXT_LENGTH * 0.8
                             ? "text-yellow-400"
-                            : "text-gray-500"
+                          : "text-muted-foreground"
                       }`}
                     >
                       {editText.length}/{MAX_TEXT_LENGTH}
@@ -389,7 +389,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                         type="button"
                         onClick={cancelEditing}
                         disabled={isEditing}
-                        className="px-3 py-1 text-sm text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+                        className="px-3 py-1 text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -397,7 +397,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                         type="button"
                         onClick={() => handleEditSubmit(comment.id)}
                         disabled={isEditing || !editText.trim() || editText.length > MAX_TEXT_LENGTH}
-                        className="px-3 py-1 text-sm text-[#2cbb5d] font-medium hover:text-[#25a24f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="px-3 py-1 text-sm text-brand-green font-medium hover:text-brand-green/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         {isEditing ? "Saving..." : "Save"}
                       </button>
@@ -405,7 +405,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                   </div>
                 </div>
               ) : (
-                <p className="text-base text-gray-200 whitespace-pre-line mb-3">
+                <p className="text-base text-foreground whitespace-pre-line mb-3">
                   {comment.text}
                 </p>
               )}
@@ -418,7 +418,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                       key={`${comment.id}-attachment-${index}`}
                       type="button"
                       onClick={() => setExpandedImage(attachment.url)}
-                      className="relative w-20 h-20 rounded-lg overflow-hidden border border-[#3e3e3e] hover:border-[#2cbb5d] transition-colors cursor-pointer"
+                      className="relative w-20 h-20 rounded-lg overflow-hidden border border-border-subtle hover:border-border-interactive transition-colors cursor-pointer"
                     >
                       <Image
                         src={attachment.url}
@@ -439,7 +439,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
       {/* Comment Form */}
       <form
         onSubmit={handleSubmit}
-        className="space-y-3 border-t border-[#3e3e3e] pt-4"
+        className="space-y-3 border-t border-border-subtle pt-4"
       >
         {/* Pending Attachments Preview */}
         {pendingAttachments.length > 0 && (
@@ -447,7 +447,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
             {pendingAttachments.map((attachment) => (
               <div
                 key={attachment.id}
-                className="relative w-16 h-16 rounded-lg overflow-hidden border border-[#3e3e3e] group"
+                className="relative w-16 h-16 rounded-lg overflow-hidden border border-border-subtle group"
               >
                 <Image
                   src={attachment.url}
@@ -484,8 +484,8 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
         <div
           className={`relative rounded-lg border transition-colors ${
             dragActive
-              ? "border-[#2cbb5d] bg-[#2cbb5d]/5"
-              : "border-[#3e3e3e] hover:border-[#4e4e4e]"
+              ? "border-brand-green bg-brand-green/5"
+              : "border-border-subtle hover:border-border-interactive"
           }`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
@@ -496,15 +496,15 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Add a comment... (drag & drop images here)"
-            className="w-full px-4 py-3 bg-transparent text-white placeholder:text-gray-500 resize-none focus:outline-none"
+            className="w-full px-4 py-3 bg-transparent text-foreground placeholder:text-muted-foreground resize-none focus:outline-none"
             rows={3}
             maxLength={MAX_TEXT_LENGTH}
           />
 
           {/* Drag Overlay */}
           {dragActive && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#2cbb5d]/10 rounded-lg pointer-events-none">
-              <span className="text-[#2cbb5d] font-medium">
+            <div className="absolute inset-0 flex items-center justify-center bg-brand-green/10 rounded-lg pointer-events-none">
+              <span className="text-brand-green font-medium">
                 Drop images here
               </span>
             </div>
@@ -519,7 +519,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+              className="text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
               title="Attach image"
             >
               <svg
@@ -544,7 +544,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                   ? "text-red-400"
                   : commentText.length > MAX_TEXT_LENGTH * 0.8
                     ? "text-yellow-400"
-                    : "text-gray-500"
+                    : "text-muted-foreground"
               }`}
             >
               {commentText.length}/{MAX_TEXT_LENGTH}
@@ -552,7 +552,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
 
             {/* Upload Indicator */}
             {isUploading && (
-              <span className="text-sm text-gray-400 flex items-center">
+              <span className="text-sm text-muted-foreground flex items-center">
                 <svg
                   className="animate-spin mr-1 h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
@@ -582,7 +582,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
           <button
             type="submit"
             disabled={!canSubmit}
-            className="px-4 py-2 text-[#2cbb5d] font-medium hover:text-[#25a24f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-brand-green font-medium hover:text-brand-green/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? "Posting..." : "Post"}
           </button>

@@ -37,15 +37,15 @@ export default function CreateJobModal({ isOpen, onClose, onSubmit }: CreateJobM
       onClick={onClose}
     >
       <div 
-        className="bg-[#282828] rounded-lg p-6 w-full max-w-md"
+        className="bg-surface-workbench rounded-lg p-6 w-full max-w-md border border-border-subtle"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-semibold text-white mb-4">Create New Thumbnail Job</h2>
+        <h2 className="text-2xl font-semibold text-foreground mb-4">Create New Thumbnail Job</h2>
         
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="videoTitle" className="block text-base font-medium text-gray-300 mb-2">
+              <label htmlFor="videoTitle" className="block text-base font-medium text-muted-foreground mb-2">
                 Video Title
               </label>
               <input
@@ -54,13 +54,13 @@ export default function CreateJobModal({ isOpen, onClose, onSubmit }: CreateJobM
                 value={videoTitle}
                 onChange={(e) => setVideoTitle(e.target.value)}
                 placeholder="Enter video title..."
-                className="w-full px-3 py-2 bg-[#1a1a1a] border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] focus:border-transparent"
+                className="w-full px-3 py-2 bg-surface-interactive border border-border-subtle rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-transparent"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="videoUrl" className="block text-base font-medium text-gray-300 mb-2">
+              <label htmlFor="videoUrl" className="block text-base font-medium text-muted-foreground mb-2">
                 YouTube Video URL
               </label>
               <input
@@ -69,7 +69,7 @@ export default function CreateJobModal({ isOpen, onClose, onSubmit }: CreateJobM
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
                 placeholder="https://youtube.com/watch?v=..."
-                className="w-full px-3 py-2 bg-[#1a1a1a] border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] focus:border-transparent"
+                className="w-full px-3 py-2 bg-surface-interactive border border-border-subtle rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/40 focus:border-transparent"
                 required
               />
             </div>
@@ -85,14 +85,14 @@ export default function CreateJobModal({ isOpen, onClose, onSubmit }: CreateJobM
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+              className="px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
               disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-[#2cbb5d] text-white rounded-md hover:bg-[#25a24f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-brand-green text-black rounded-md hover:bg-brand-green/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Creating...' : 'Create Job'}

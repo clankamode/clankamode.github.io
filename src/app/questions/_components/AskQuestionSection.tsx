@@ -55,13 +55,13 @@ export default function AskQuestionSection() {
   return (
     <>
       {/* Ask Question Section - Moved to bottom */}
-      <section className="bg-[#1f1f1f] border border-[#3e3e3e]/50 rounded-xl p-5 shadow-sm">
+      <section className="bg-surface-workbench border border-border-subtle rounded-xl p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-semibold text-gray-300">Have a question?</h2>
+          <h2 className="text-xl font-semibold text-foreground">Have a question?</h2>
           {!isAuthenticated && (
             <button
               onClick={() => signIn('google')}
-              className="text-lg text-[#2cbb5d] hover:text-[#25a552] transition"
+              className="text-lg text-muted-foreground hover:text-foreground transition"
             >
               Sign in to participate
             </button>
@@ -70,7 +70,7 @@ export default function AskQuestionSection() {
         <button
           onClick={() => setIsAskModalOpen(true)}
           disabled={!isAuthenticated}
-          className="w-full px-4 py-3 bg-[#2cbb5d] text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#25a552] transition text-left"
+          className="w-full px-4 py-3 bg-brand-green text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-brand-green/90 transition text-left"
         >
           {isAuthenticated ? 'Ask a Question' : 'Sign in to ask a question'}
         </button>
@@ -79,12 +79,12 @@ export default function AskQuestionSection() {
       {/* Ask Question Modal */}
       {isAskModalOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setIsAskModalOpen(false)}>
-          <div className="bg-[#282828] border border-[#3e3e3e] rounded-xl p-6 shadow-xl max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-surface-workbench border border-border-subtle rounded-xl p-6 shadow-xl max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold">Ask a question</h2>
               <button
                 onClick={() => setIsAskModalOpen(false)}
-                className="text-gray-400 hover:text-white transition"
+                className="text-muted-foreground hover:text-foreground transition"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -101,7 +101,7 @@ export default function AskQuestionSection() {
                 value={newQuestion}
                 onChange={(event) => setNewQuestion(event.target.value)}
                 placeholder="What would you like to ask?"
-                className="w-full rounded-lg bg-[#1f1f1f] border border-[#3e3e3e] p-4 text-white focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+                className="w-full rounded-lg bg-surface-interactive border border-border-subtle p-4 text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/40"
                 rows={5}
                 disabled={!isAuthenticated || isSubmitting}
                 autoFocus
@@ -110,14 +110,14 @@ export default function AskQuestionSection() {
                 <button
                   type="button"
                   onClick={() => setIsAskModalOpen(false)}
-                  className="px-4 py-2 text-gray-400 hover:text-white transition"
+                  className="px-4 py-2 text-muted-foreground hover:text-foreground transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!isAuthenticated || isSubmitting || !newQuestion.trim()}
-                  className="px-4 py-2 bg-[#2cbb5d] text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#25a552] transition"
+                  className="px-4 py-2 bg-brand-green text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-brand-green/90 transition"
                 >
                   {isSubmitting ? 'Sending…' : 'Submit question'}
                 </button>
@@ -137,7 +137,7 @@ export default function AskQuestionSection() {
               setIsAskModalOpen(true);
             }
           }}
-          className="fixed bottom-6 right-6 bg-[#2cbb5d] text-black rounded-full shadow-xl hover:bg-[#25a552] transition-all hover:scale-105 flex items-center justify-center z-40 px-6 py-4 gap-2 font-semibold"
+          className="fixed bottom-6 right-6 bg-brand-green text-black rounded-full shadow-xl hover:bg-brand-green/90 transition-all hover:scale-105 flex items-center justify-center z-40 px-6 py-4 gap-2 font-semibold"
           title="Ask a question"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

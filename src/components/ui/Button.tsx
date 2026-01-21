@@ -10,7 +10,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
         const variants = {
             // Standard Variants
-            primary: 'bg-primary text-primary-foreground hover:opacity-90 shadow-[0_0_15px_-3px_rgba(44,187,93,0.3)] hover:shadow-[0_0_20px_-3px_rgba(44,187,93,0.5)] transition-all',
+            primary: 'bg-primary text-black hover:bg-primary/90 border-none font-semibold min-h-[44px] transition-all',
             secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-white/5',
             outline: 'border border-input bg-background/50 backdrop-blur-sm hover:bg-accent hover:text-accent-foreground hover:border-accent',
             ghost: 'hover:bg-accent hover:text-accent-foreground',

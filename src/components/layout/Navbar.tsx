@@ -8,6 +8,44 @@ import { UserRole, hasRole } from '@/types/roles';
 import AdminProxyControls from '../auth/AdminProxyControls';
 import { Button } from '@/components/ui/Button';
 
+function UserAvatar({ src, name }: { src: string; name: string }) {
+  const [imgError, setImgError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleError = () => {
+    setImgError(true);
+    setIsLoading(false);
+  };
+
+  const handleLoad = () => {
+    setIsLoading(false);
+  };
+
+  if (imgError || !src) {
+    return (
+      <div className="w-8 h-8 rounded-full bg-surface-interactive border border-border-subtle flex items-center justify-center text-foreground font-bold text-sm">
+        {name.charAt(0).toUpperCase()}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {isLoading && (
+        <div className="w-8 h-8 rounded-full bg-surface-interactive border border-border-subtle animate-pulse" />
+      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={name}
+        className={`w-8 h-8 rounded-full border border-border-subtle shadow-sm ${isLoading ? 'hidden' : ''}`}
+        onError={handleError}
+        onLoad={handleLoad}
+      />
+    </>
+  );
+}
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -31,21 +69,24 @@ export default function Navbar() {
   };
 
   const navLinkClass = (path: string) =>
-    `px-4 py-2 rounded-full text-base font-medium transition-all duration-300 ${isActive(path)
-      ? 'bg-brand-green/10 text-brand-green shadow-[0_0_10px_-2px_rgba(44,187,93,0.3)] border border-brand-green/20'
-      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+    `px-4 py-2 rounded-full text-base font-medium transition-all duration-300 border border-transparent ${
+      isActive(path)
+        ? 'text-foreground border-b-2 border-brand-green'
+        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
 
   const navButtonClass = (active: boolean) =>
-    `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${active
-      ? 'bg-brand-green/10 text-brand-green shadow-[0_0_10px_-2px_rgba(44,187,93,0.3)] border border-brand-green/20'
-      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+    `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 border border-transparent ${
+      active
+        ? 'text-foreground border-b-2 border-brand-green'
+        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
 
   const mobileNavLinkClass = (path: string) =>
-    `block px-4 py-3 rounded-lg text-lg font-medium transition-colors ${isActive(path)
-      ? 'bg-brand-green/10 text-brand-green border-l-2 border-brand-green'
-      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+    `block px-4 py-3 rounded-lg text-lg font-medium transition-colors border-l-2 border-transparent ${
+      isActive(path)
+        ? 'text-foreground border-brand-green'
+        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
 
   const handleSignOut = async () => {
@@ -64,7 +105,7 @@ export default function Navbar() {
     <>
       <nav
         className={`fixed w-full z-50 top-0 left-0 transition-all duration-500 border-b ${scrolled || isMenuOpen
-            ? 'bg-background/80 backdrop-blur-xl border-white/5 py-3'
+            ? 'bg-surface-ambient/80 backdrop-blur-xl border-border-subtle py-3'
             : 'bg-transparent border-transparent py-5'
           }`}
       >
@@ -73,19 +114,17 @@ export default function Navbar() {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-3 group">
               {isLoggedIn && session.user?.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <UserAvatar
                   src={session.user.image}
-                  alt={session.user.name || "User"}
-                  className="w-9 h-9 rounded-full border border-white/10 shadow-sm"
+                  name={session.user.name || "User"}
                 />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-green to-emerald-700 flex items-center justify-center text-white font-bold text-base shadow-[0_0_15px_-3px_rgba(44,187,93,0.4)]">
+                <div className="w-9 h-9 rounded-full bg-surface-interactive border border-border-subtle flex items-center justify-center text-foreground font-bold text-base">
                   J
                 </div>
               )}
               <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight text-foreground group-hover:text-brand-green transition-colors font-display">
+                <span className="text-xl font-bold tracking-tight text-foreground transition-colors font-display">
                   {isLoggedIn ? session.user?.name : "James Peralta"}
                 </span>
                 {isLoggedIn && session.user?.role && (
@@ -99,7 +138,7 @@ export default function Navbar() {
 
           {/* Navigation - center (Floating Pill) */}
           <div className="hidden md:flex items-center justify-center flex-1">
-            <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-white/5 backdrop-blur-md' : ''
+            <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-border-subtle backdrop-blur-md' : ''
               }`}>
               {/* Editors only see Editor dropdown with AI and Thumbnails tabs */}
               {isLoggedIn && isEditor ? (
@@ -111,7 +150,7 @@ export default function Navbar() {
                         <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
                       </svg>
                     </button>
-                    <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-white/10 bg-background/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                    <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                       <div className="py-2">
                         <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
                         <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
@@ -136,7 +175,7 @@ export default function Navbar() {
                             <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
                           </svg>
                         </button>
-                        <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-white/10 bg-background/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                        <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                           <div className="py-2">
                             <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
                             <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
@@ -172,7 +211,7 @@ export default function Navbar() {
               </div>
             ) : (
               <Link href="/login">
-                <Button variant="ghost" size="sm" className="text-foreground hover:text-brand-green">
+                <Button variant="ghost" size="sm" className="text-foreground hover:text-foreground">
                   Login
                 </Button>
               </Link>
@@ -200,7 +239,7 @@ export default function Navbar() {
 
       {/* Mobile menu overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl transition-transform duration-500 md:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed inset-0 z-40 bg-surface-ambient/95 backdrop-blur-2xl transition-transform duration-500 md:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         style={{ top: '60px' }}
       >
@@ -238,7 +277,7 @@ export default function Navbar() {
           </div>
 
           {isLoggedIn && isAdmin && (
-            <div className="pt-6 border-t border-border">
+            <div className="pt-6 border-t border-border-subtle">
               <AdminProxyControls />
             </div>
           )}

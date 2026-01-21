@@ -19,18 +19,18 @@ export const TimestampModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-2xl rounded-xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+      <div className="w-full max-w-2xl rounded-xl bg-surface-workbench shadow-xl border border-border-subtle max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-border-subtle px-6 py-4">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Generate Timestamps</h2>
-            <p className="text-base text-gray-600 dark:text-gray-400">
+            <h2 className="text-2xl font-semibold text-foreground">Generate Timestamps</h2>
+            <p className="text-base text-muted-foreground">
               Paste your transcript or notes to generate YouTube-style timestamps.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+            className="text-muted-foreground hover:text-foreground"
             aria-label="Close timestamp modal"
           >
             ×
@@ -38,30 +38,30 @@ export const TimestampModal = ({
         </div>
         <form onSubmit={onSubmit} className="px-6 py-5 space-y-5">
           <div>
-            <label className="block text-base font-medium text-gray-800 dark:text-gray-200 mb-2">
+            <label className="block text-base font-medium text-foreground mb-2">
               Transcript / Notes
             </label>
             <textarea
               value={transcript}
               onChange={(e) => onTranscriptChange(e.target.value)}
               rows={12}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] font-mono text-base"
+              className="w-full rounded-lg border border-border-subtle bg-surface-interactive text-foreground px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-green/40 font-mono text-base"
               placeholder="Paste your transcript or notes here..."
               autoFocus
             />
           </div>
-          <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+          <div className="flex items-center justify-end gap-3 border-t border-border-subtle pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
+              className="px-4 py-2 text-base font-medium text-muted-foreground hover:text-foreground"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!transcript.trim()}
-              className="px-5 py-2 text-base font-semibold text-white bg-[#2cbb5d] rounded-lg hover:bg-[#25a352] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="px-5 py-2 text-base font-semibold text-black bg-brand-green rounded-lg hover:bg-brand-green/90 transition-colors disabled:bg-surface-interactive disabled:cursor-not-allowed"
             >
               Generate Timestamps
             </button>

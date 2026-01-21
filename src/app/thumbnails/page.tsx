@@ -160,7 +160,7 @@ export default function ThumbnailDashboard() {
   const statusCounts = getStatusCounts()
 
   return (
-    <div className="h-[calc(100vh-3.5rem)] bg-[#1a1a1a] flex">
+    <div className="h-[calc(100vh-3.5rem)] bg-surface-ambient flex">
       {/* Sidebar */}
       <Sidebar 
         currentView={currentView} 
@@ -196,13 +196,13 @@ export default function ThumbnailDashboard() {
       {/* Main content */}
       <div className="flex-1 lg:ml-0 h-full flex flex-col overflow-hidden">
         {/* Mobile header */}
-        <div className="lg:hidden bg-[#282828] shadow-sm px-4 py-3 flex items-center justify-between">
-          <button onClick={() => setSidebarOpen(true)} className="text-gray-300 hover:text-white">
+        <div className="lg:hidden bg-surface-workbench shadow-sm px-4 py-3 flex items-center justify-between border-b border-border-subtle">
+          <button onClick={() => setSidebarOpen(true)} className="text-muted-foreground hover:text-foreground">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className="text-lg font-semibold text-white">Thumbnail Dashboard</h1>
+          <h1 className="text-lg font-semibold text-foreground">Thumbnail Dashboard</h1>
           <div></div>
         </div>
 

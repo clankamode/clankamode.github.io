@@ -17,50 +17,50 @@ export function TestResultsView({
 
   return (
     <div className="max-w-4xl mx-auto px-4">
-      <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
+      <div className="frame bg-surface-workbench p-8 shadow-lg">
         <div className="text-center mb-6">
           <div className="text-7xl mb-3">
             {passed ? '🎉' : '📚'}
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
             {passed ? 'Congratulations!' : 'Test Complete'}
           </h1>
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             {passed 
               ? 'You passed the practice test!' 
               : 'Keep studying and try again!'}
           </p>
         </div>
         
-        <div className="bg-[#1a1a1a] rounded-lg p-6 mb-6 border-2 border-[#2cbb5d]/30">
+        <div className="bg-surface-interactive rounded-lg p-6 mb-6 border-2 border-brand-green/30">
           <div className="text-center mb-4">
-            <div className="text-7xl font-bold text-[#2cbb5d] mb-2">
+            <div className="text-7xl font-bold text-brand-green mb-2">
               {results.scorePercentage}%
             </div>
-            <p className="text-2xl text-white font-semibold">
+            <p className="text-2xl text-foreground font-semibold">
               {results.correctAnswers} out of {results.totalQuestions} correct
             </p>
           </div>
 
-          <div className="w-full bg-[#0a0a0a] rounded-full h-4 mb-4">
+          <div className="w-full bg-surface-dense rounded-full h-4 mb-4">
             <div
-              className="bg-[#2cbb5d] h-4 rounded-full transition-all duration-500"
+              className="bg-brand-green h-4 rounded-full transition-all duration-500"
               style={{ width: `${results.scorePercentage}%` }}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
+            <div className="bg-surface-dense rounded-lg p-4 text-center">
               <div className="text-4xl font-bold text-green-400 mb-1">
                 {results.correctAnswers}
               </div>
-              <p className="text-gray-400 text-base">Correct Answers</p>
+              <p className="text-muted-foreground text-base">Correct Answers</p>
             </div>
-            <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
+            <div className="bg-surface-dense rounded-lg p-4 text-center">
               <div className="text-4xl font-bold text-red-400 mb-1">
                 {incorrectCount}
               </div>
-              <p className="text-gray-400 text-base">Incorrect Answers</p>
+              <p className="text-muted-foreground text-base">Incorrect Answers</p>
             </div>
           </div>
 
@@ -79,14 +79,14 @@ export function TestResultsView({
 
         {results.unitBreakdown && results.unitBreakdown.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-white mb-4">📊 Performance by Unit</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">📊 Performance by Unit</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {results.unitBreakdown.map((unitStats) => (
-                <div key={unitStats.unit} className="bg-[#1a1a1a] rounded-lg p-5 border-2 border-[#3e3e3e]">
+                <div key={unitStats.unit} className="bg-surface-interactive rounded-lg p-5 border-2 border-border-subtle">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="text-xl font-semibold text-white">{unitStats.unit}</h3>
-                      <p className="text-gray-400 text-base">
+                      <h3 className="text-xl font-semibold text-foreground">{unitStats.unit}</h3>
+                      <p className="text-muted-foreground text-base">
                         {unitStats.correct}/{unitStats.total} correct
                       </p>
                     </div>
@@ -96,7 +96,7 @@ export function TestResultsView({
                       {unitStats.percentage}%
                     </div>
                   </div>
-                  <div className="w-full bg-[#0a0a0a] rounded-full h-3">
+                  <div className="w-full bg-surface-dense rounded-full h-3">
                     <div
                       className={`h-3 rounded-full transition-all duration-500 ${
                         unitStats.percentage >= 70 ? 'bg-green-500' : 'bg-orange-500'
@@ -114,21 +114,21 @@ export function TestResultsView({
           <div className="mb-6 bg-green-500/10 border-2 border-green-500/30 rounded-lg p-6 text-center">
             <div className="text-5xl mb-2">✨</div>
             <h2 className="text-3xl font-bold text-green-400 mb-2">Perfect Score!</h2>
-            <p className="text-gray-300">You answered all questions correctly. Excellent work!</p>
+            <p className="text-muted-foreground">You answered all questions correctly. Excellent work!</p>
           </div>
         )}
 
         {results.incorrectAnswers.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               📝 Review Incorrect Answers ({results.incorrectAnswers.length})
             </h2>
             <div className="space-y-4">
               {results.incorrectAnswers.map((item, index) => (
-                <div key={index} className="bg-[#1a1a1a] rounded-lg p-6 border-2 border-red-500/30">
+                <div key={index} className="bg-surface-interactive rounded-lg p-6 border-2 border-red-500/30">
                   <div className="mb-3">
                     <span className="text-red-400 font-semibold">Question {item.questionNumber}</span>
-                    <h3 className="text-white font-medium mt-2">{item.question}</h3>
+                    <h3 className="text-foreground font-medium mt-2">{item.question}</h3>
                   </div>
                   
                   <div className="space-y-2 mb-4">
@@ -142,7 +142,7 @@ export function TestResultsView({
                       } else if (isUserAnswer) {
                         classes += 'border-red-500 bg-red-500/10 text-white';
                       } else {
-                        classes += 'border-[#3e3e3e] bg-[#0a0a0a] text-gray-400';
+                        classes += 'border-border-subtle bg-surface-dense text-muted-foreground';
                       }
                       
                       return (
@@ -155,13 +155,13 @@ export function TestResultsView({
                     })}
                   </div>
                   
-                  <div className="bg-[#0a0a0a] p-4 rounded border-l-4 border-[#2cbb5d]">
-                    <div className="mb-3 pb-3 border-b border-gray-700">
+                  <div className="bg-surface-dense p-4 rounded border-l-4 border-brand-green">
+                    <div className="mb-3 pb-3 border-b border-border-subtle">
                       <p className="text-sm font-semibold text-blue-400 mb-1">{item.unit}</p>
-                      <p className="text-sm text-gray-400">{item.knowledgeArea}</p>
+                      <p className="text-sm text-muted-foreground">{item.knowledgeArea}</p>
                     </div>
-                    <p className="text-gray-300 text-base">
-                      <span className="font-semibold text-[#2cbb5d]">Explanation:</span> {item.rationale}
+                    <p className="text-muted-foreground text-base">
+                      <span className="font-semibold text-brand-green">Explanation:</span> {item.rationale}
                     </p>
                   </div>
                 </div>
@@ -173,13 +173,13 @@ export function TestResultsView({
         <div className="space-y-3">
           <button
             onClick={onTakeTestAgain}
-            className="w-full bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-full bg-brand-green hover:bg-brand-green/90 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
           >
             Take Test Again
           </button>
           <button
             onClick={onBackToTests}
-            className="w-full bg-[#3e3e3e] hover:bg-[#4e4e4e] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-full bg-surface-interactive hover:bg-surface-dense text-foreground font-semibold py-3 px-6 rounded-lg transition-colors"
           >
             Back to Tests
           </button>

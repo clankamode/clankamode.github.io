@@ -45,7 +45,7 @@ export default function QuestionsListServer({ questions, tab }: QuestionsListSer
 
   if (sorted.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-[#3e3e3e] bg-[#232323] p-6 text-center text-gray-400">
+      <div className="rounded-lg border border-dashed border-border-subtle bg-surface-workbench p-6 text-center text-muted-foreground">
         {tab === 'answered' 
           ? 'No answered questions yet.' 
           : 'No questions yet. Be the first to ask!'}
@@ -62,13 +62,13 @@ export default function QuestionsListServer({ questions, tab }: QuestionsListSer
         return (
           <li
             key={question.id}
-            className={`rounded-lg border p-5 flex gap-4 items-start shadow-md transition-all hover:shadow-lg ${
+            className={`frame p-5 flex gap-4 items-start transition-all ${
               question.isArchived
-                ? 'border-[#3e3e3e]/50 bg-[#1f1f1f]/80 opacity-90'
-                : 'border-[#3e3e3e] bg-[#1f1f1f] hover:border-[#3e3e3e]/80'
+                ? 'bg-surface-workbench/80 opacity-90'
+                : 'bg-surface-workbench hover:bg-surface-interactive/80'
             }`}
           >
-            <div className="flex flex-col items-center rounded-lg border px-3 py-2 bg-[#1f1f1f] border-[#3e3e3e] text-white">
+            <div className="flex flex-col items-center rounded-lg border px-3 py-2 bg-surface-interactive border-border-subtle text-foreground">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -80,7 +80,7 @@ export default function QuestionsListServer({ questions, tab }: QuestionsListSer
               <span className="mt-1 text-base font-semibold">{question.voteCount}</span>
             </div>
             <div className="flex-1 space-y-3">
-              <h3 className={`text-2xl font-bold leading-snug ${question.isArchived ? 'text-gray-400' : 'text-white'}`}>
+              <h3 className={`text-2xl font-bold leading-snug ${question.isArchived ? 'text-muted-foreground' : 'text-foreground'}`}>
                 {question.content}
               </h3>
               {question.isArchived && question.videoUrl && videoId && thumbnailUrl && (
@@ -91,7 +91,7 @@ export default function QuestionsListServer({ questions, tab }: QuestionsListSer
                     rel="noopener noreferrer"
                     className="group block"
                   >
-                    <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border border-[#3e3e3e] hover:border-[#2cbb5d] transition-all bg-[#1f1f1f]">
+                    <div className="frame relative w-full max-w-md aspect-video rounded-lg overflow-hidden bg-surface-interactive transition-all">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={thumbnailUrl}
@@ -99,7 +99,7 @@ export default function QuestionsListServer({ questions, tab }: QuestionsListSer
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
-                        <div className="w-12 h-12 bg-[#2cbb5d] rounded-full flex items-center justify-center shadow-lg">
+                        <div className="w-12 h-12 bg-white/15 rounded-full flex items-center justify-center shadow-lg">
                           <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
                           </svg>
@@ -109,7 +109,7 @@ export default function QuestionsListServer({ questions, tab }: QuestionsListSer
                   </a>
                 </div>
               )}
-              <div className="flex items-center justify-between gap-2 text-base text-gray-400">
+              <div className="flex items-center justify-between gap-2 text-base text-muted-foreground">
                 <div className="flex items-center gap-2">
                   {question.isArchived && (
                     <span className="px-2 py-0.5 bg-yellow-600/20 text-yellow-400 rounded text-sm font-semibold">

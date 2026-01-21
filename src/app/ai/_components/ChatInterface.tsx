@@ -385,14 +385,14 @@ export default function ChatInterface() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-h-0">
         {/* Header */}
-        <div className="border-b border-gray-200 dark:border-gray-700 p-3 md:p-4 flex flex-wrap gap-3 justify-between items-center">
+        <div className="border-b border-border-subtle p-3 md:p-4 flex flex-wrap gap-3 justify-between items-center">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-interactive rounded-lg transition-colors"
             >
               <svg
-                className="w-5 h-5 text-gray-600 dark:text-gray-400"
+                className="w-5 h-5 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -408,7 +408,7 @@ export default function ChatInterface() {
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="px-3 md:px-4 py-2 text-xl md:text-3xl font-semibold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] cursor-pointer"
+              className="px-3 md:px-4 py-2 text-xl md:text-3xl font-semibold border border-border-subtle rounded-lg bg-surface-interactive text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/40 cursor-pointer"
               disabled={isLoading || (currentConversationId !== null && messages.length > 0) || attachments.some(att => att.type === 'pdf')}
             >
               {MODELS.map((model) => (
@@ -418,12 +418,12 @@ export default function ChatInterface() {
               ))}
             </select>
             {attachments.some(att => att.type === 'pdf') && (
-              <span className="text-base text-gray-600 dark:text-gray-400 ml-2">
+              <span className="text-base text-muted-foreground ml-2">
                 (PDF requires GPT-4.1)
               </span>
             )}
             {selectedModel === 'gemini-3-pro-image-preview' && (
-              <span className="text-base text-gray-600 dark:text-gray-400 ml-2">
+              <span className="text-base text-muted-foreground ml-2">
                 {attachments.length > 0 && attachments[0].type === 'image' 
                   ? '(Image editing mode)' 
                   : '(Image generation mode)'}
@@ -444,7 +444,7 @@ export default function ChatInterface() {
 
         {/* Input Form */}
         <div 
-          className="border-t border-gray-200 dark:border-gray-700 p-4 relative"
+          className="border-t border-border-subtle p-4 relative"
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
@@ -453,19 +453,19 @@ export default function ChatInterface() {
           {/* Drag Overlay */}
           {dragActive && (
             <div 
-              className="absolute inset-0 bg-[#2cbb5d]/10 border-2 border-dashed border-[#2cbb5d] rounded-lg z-10 flex items-center justify-center"
+              className="absolute inset-0 bg-brand-green/10 border-2 border-dashed border-brand-green rounded-lg z-10 flex items-center justify-center"
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
             >
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg pointer-events-none">
+              <div className="bg-surface-workbench rounded-lg p-6 shadow-lg pointer-events-none">
                 <div className="flex flex-col items-center gap-3">
-                  <svg className="w-12 h-12 text-[#2cbb5d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-12 h-12 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
-                  <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">Drop files here</p>
-                  <p className="text-base text-gray-600 dark:text-gray-400">Images and PDFs supported</p>
+                  <p className="text-xl font-semibold text-foreground">Drop files here</p>
+                  <p className="text-base text-muted-foreground">Images and PDFs supported</p>
                 </div>
               </div>
             </div>
@@ -485,7 +485,7 @@ export default function ChatInterface() {
                       <img
                         src={attachment.url}
                         alt={attachment.name}
-                        className="h-20 w-20 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                        className="h-20 w-20 object-cover rounded-lg border border-border-subtle"
                       />
                       <button
                         onClick={() => removeAttachment(attachment.id)}
@@ -505,13 +505,13 @@ export default function ChatInterface() {
                           title={attachment.name}
                         />
                       )}
-                      <div className="relative flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
-                        <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="relative flex items-center gap-2 px-3 py-2 bg-surface-interactive rounded-lg border border-border-subtle">
+                        <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                         <div className="flex flex-col">
-                          <span className="text-base text-gray-700 dark:text-gray-300 truncate max-w-[150px]">{attachment.name}</span>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">Ready to send</span>
+                          <span className="text-base text-foreground truncate max-w-[150px]">{attachment.name}</span>
+                          <span className="text-sm text-muted-foreground">Ready to send</span>
                         </div>
                         <button
                           onClick={() => removeAttachment(attachment.id)}
@@ -541,7 +541,7 @@ export default function ChatInterface() {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading || isUploading || (selectedModel === 'gemini-3-pro-image-preview' && attachments.length > 0)}
-              className="px-3 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-3 bg-surface-interactive text-muted-foreground rounded-lg hover:bg-surface-dense disabled:bg-surface-interactive disabled:cursor-not-allowed transition-colors"
               title={selectedModel === 'gemini-3-pro-image-preview' ? 'Upload image to edit' : 'Upload files'}
             >
               {isUploading ? (
@@ -567,13 +567,13 @@ export default function ChatInterface() {
                       : 'Describe the image you want to generate...'
                     : 'Type your message... (Shift+Enter for new line)'
                 }
-                className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2cbb5d] dark:bg-gray-800 dark:text-white resize-none max-h-32 min-h-[3rem]"
+                className="w-full px-4 py-3 pr-12 border border-border-subtle rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green/40 bg-surface-interactive text-foreground resize-none max-h-32 min-h-[3rem]"
                 disabled={isLoading}
                 rows={1}
               />
               {isPromptMenuOpen && (
-                <div className="absolute bottom-14 left-0 w-72 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
-                  <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">Insert a system prompt</div>
+                <div className="absolute bottom-14 left-0 w-72 rounded-lg border border-border-subtle bg-surface-workbench shadow-lg">
+                  <div className="px-3 py-2 text-sm text-muted-foreground">Insert a system prompt</div>
                   <div className="max-h-56 overflow-y-auto">
                     {SYSTEM_PROMPTS.filter(
                       (prompt) =>
@@ -584,15 +584,15 @@ export default function ChatInterface() {
                         key={prompt.id}
                         type="button"
                         onClick={() => handleSystemPromptSelect(prompt.id)}
-                        className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="w-full px-3 py-2 text-left hover:bg-surface-interactive"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-surface-interactive text-sm font-semibold text-foreground">
                             /
                           </span>
                           <div>
-                            <div className="font-medium text-gray-900 dark:text-gray-100">{prompt.title}</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">{prompt.description}</div>
+                            <div className="font-medium text-foreground">{prompt.title}</div>
+                            <div className="text-sm text-muted-foreground">{prompt.description}</div>
                           </div>
                         </div>
                       </button>
@@ -604,28 +604,28 @@ export default function ChatInterface() {
             <button
               type="submit"
               disabled={isLoading || (!input.trim() && attachments.length === 0)}
-              className="px-6 py-3 bg-[#2cbb5d] text-white rounded-lg hover:bg-[#25a352] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
+              className="px-6 py-3 bg-brand-green text-black rounded-lg hover:bg-brand-green/90 disabled:bg-surface-interactive disabled:cursor-not-allowed transition-colors font-medium"
             >
               Send
             </button>
           </form>
           {selectedSystemPrompt && (
-            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-surface-interactive px-3 py-1 text-sm text-foreground">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-surface-dense text-sm font-semibold text-foreground">
                 /
               </span>
               <span className="font-medium">{selectedSystemPrompt.title}</span>
               <button
                 type="button"
                 onClick={clearSystemPrompt}
-                className="text-gray-500 transition hover:text-gray-700 dark:hover:text-gray-300"
+                className="text-muted-foreground transition hover:text-foreground"
                 aria-label="Clear system prompt"
               >
                 ×
               </button>
             </div>
           )}
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
+          <p className="text-sm text-muted-foreground mt-2 text-center">
             Press Enter to send, Shift+Enter for new line
           </p>
         </div>

@@ -91,10 +91,10 @@ function ResultsContent() {
   if (loading || status === 'loading') {
     return (
       <div className="max-w-3xl mx-auto px-4">
-        <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
+        <div className="frame bg-surface-workbench p-8 shadow-lg">
           <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2cbb5d]"></div>
-            <p className="text-white text-xl">Loading results...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+            <p className="text-foreground text-xl">Loading results...</p>
           </div>
         </div>
       </div>
@@ -105,16 +105,16 @@ function ResultsContent() {
   if (error || !results) {
     return (
       <div className="max-w-3xl mx-auto px-4">
-        <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
+        <div className="frame bg-surface-workbench p-8 shadow-lg">
           <div className="text-center">
             <div className="text-6xl mb-4">⚠️</div>
-            <h2 className="text-3xl font-bold text-white mb-4">Error</h2>
-            <p className="text-gray-400 mb-6">
+            <h2 className="text-3xl font-bold text-foreground mb-4">Error</h2>
+            <p className="text-muted-foreground mb-6">
               {error || 'No results found'}
             </p>
             <button
               onClick={handleBackToTests}
-              className="bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+              className="bg-brand-green hover:bg-brand-green/90 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
             >
               Back to Tests
             </button>
@@ -136,16 +136,16 @@ function ResultsContent() {
 
   return (
     <div className="max-w-4xl mx-auto px-4">
-      <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
+      <div className="frame bg-surface-workbench p-8 shadow-lg">
         {/* Header with emoji */}
         <div className="text-center mb-6">
           <div className="text-7xl mb-3">
             {passed ? '🎉' : '📚'}
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
             {passed ? 'Congratulations!' : 'Test Complete'}
           </h1>
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             {passed 
               ? 'You passed the practice test!' 
               : 'Keep studying and try again!'}
@@ -153,37 +153,37 @@ function ResultsContent() {
         </div>
         
         {/* Score Summary */}
-        <div className="bg-[#1a1a1a] rounded-lg p-6 mb-6 border-2 border-[#2cbb5d]/30">
+        <div className="bg-surface-interactive rounded-lg p-6 mb-6 border-2 border-brand-green/30">
           <div className="text-center mb-4">
-            <div className="text-7xl font-bold text-[#2cbb5d] mb-2">
+            <div className="text-7xl font-bold text-brand-green mb-2">
               {results.scorePercentage}%
             </div>
-            <p className="text-2xl text-white font-semibold">
+            <p className="text-2xl text-foreground font-semibold">
               {results.correctAnswers} out of {results.totalQuestions} correct
             </p>
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-[#0a0a0a] rounded-full h-4 mb-4">
+          <div className="w-full bg-surface-dense rounded-full h-4 mb-4">
             <div
-              className="bg-[#2cbb5d] h-4 rounded-full transition-all duration-500"
+              className="bg-brand-green h-4 rounded-full transition-all duration-500"
               style={{ width: `${results.scorePercentage}%` }}
             />
           </div>
 
           {/* Statistics Grid */}
           <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
+            <div className="bg-surface-dense rounded-lg p-4 text-center">
               <div className="text-4xl font-bold text-green-400 mb-1">
                 {results.correctAnswers}
               </div>
-              <p className="text-gray-400 text-base">Correct Answers</p>
+              <p className="text-muted-foreground text-base">Correct Answers</p>
             </div>
-            <div className="bg-[#0a0a0a] rounded-lg p-4 text-center">
+            <div className="bg-surface-dense rounded-lg p-4 text-center">
               <div className="text-4xl font-bold text-red-400 mb-1">
                 {incorrectCount}
               </div>
-              <p className="text-gray-400 text-base">Incorrect Answers</p>
+              <p className="text-muted-foreground text-base">Incorrect Answers</p>
             </div>
           </div>
 
@@ -204,14 +204,14 @@ function ResultsContent() {
         {/* Unit Breakdown */}
         {results.unitBreakdown && results.unitBreakdown.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-white mb-4">📊 Performance by Unit</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">📊 Performance by Unit</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {results.unitBreakdown.map((unitStats) => (
-                <div key={unitStats.unit} className="bg-[#1a1a1a] rounded-lg p-5 border-2 border-[#3e3e3e]">
+                <div key={unitStats.unit} className="bg-surface-interactive rounded-lg p-5 border-2 border-border-subtle">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="text-xl font-semibold text-white">{unitStats.unit}</h3>
-                      <p className="text-gray-400 text-base">
+                      <h3 className="text-xl font-semibold text-foreground">{unitStats.unit}</h3>
+                      <p className="text-muted-foreground text-base">
                         {unitStats.correct}/{unitStats.total} correct
                       </p>
                     </div>
@@ -221,7 +221,7 @@ function ResultsContent() {
                       {unitStats.percentage}%
                     </div>
                   </div>
-                  <div className="w-full bg-[#0a0a0a] rounded-full h-3">
+                  <div className="w-full bg-surface-dense rounded-full h-3">
                     <div
                       className={`h-3 rounded-full transition-all duration-500 ${
                         unitStats.percentage >= 70 ? 'bg-green-500' : 'bg-orange-500'
@@ -240,7 +240,7 @@ function ResultsContent() {
           <div className="mb-6 bg-green-500/10 border-2 border-green-500/30 rounded-lg p-6 text-center">
             <div className="text-4xl mb-2">✨</div>
             <h2 className="text-3xl font-bold text-green-400 mb-2">Perfect Score!</h2>
-            <p className="text-gray-300">You answered all questions correctly. Excellent work!</p>
+            <p className="text-muted-foreground">You answered all questions correctly. Excellent work!</p>
           </div>
         )}
 
@@ -248,7 +248,7 @@ function ResultsContent() {
         {results.incorrectAnswers.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
-              <h2 className="text-3xl font-bold text-white">
+              <h2 className="text-3xl font-bold text-foreground">
                 📝 Review Incorrect Answers ({filteredIncorrectAnswers.length})
               </h2>
               
@@ -257,8 +257,8 @@ function ResultsContent() {
                   onClick={() => setSelectedUnit('ALL')}
                   className={`px-3 py-1 rounded-full text-base font-medium transition-colors ${
                     selectedUnit === 'ALL' 
-                      ? 'bg-[#2cbb5d] text-white' 
-                      : 'bg-[#3e3e3e] text-gray-300 hover:bg-[#4e4e4e]'
+                      ? 'bg-brand-green text-black' 
+                      : 'bg-surface-interactive text-muted-foreground hover:bg-surface-dense'
                   }`}
                 >
                   All
@@ -269,8 +269,8 @@ function ResultsContent() {
                     onClick={() => setSelectedUnit(unit)}
                     className={`px-3 py-1 rounded-full text-base font-medium transition-colors ${
                       selectedUnit === unit 
-                        ? 'bg-[#2cbb5d] text-white' 
-                        : 'bg-[#3e3e3e] text-gray-300 hover:bg-[#4e4e4e]'
+                        ? 'bg-brand-green text-black' 
+                        : 'bg-surface-interactive text-muted-foreground hover:bg-surface-dense'
                     }`}
                   >
                     {unit}
@@ -281,10 +281,10 @@ function ResultsContent() {
 
             <div className="space-y-4">
               {filteredIncorrectAnswers.map((item) => (
-                <div key={item.questionNumber} className="bg-[#1a1a1a] rounded-lg p-6 border-2 border-red-500/30">
+                <div key={item.questionNumber} className="bg-surface-interactive rounded-lg p-6 border-2 border-red-500/30">
                   <div className="mb-3">
                     <span className="text-red-400 font-semibold">Question {item.questionNumber}</span>
-                    <h3 className="text-white font-medium mt-2">{item.question}</h3>
+                    <h3 className="text-foreground font-medium mt-2">{item.question}</h3>
                   </div>
                   
                   <div className="space-y-2 mb-4">
@@ -298,7 +298,7 @@ function ResultsContent() {
                       } else if (isUserAnswer) {
                         classes += 'border-red-500 bg-red-500/10 text-white';
                       } else {
-                        classes += 'border-[#3e3e3e] bg-[#0a0a0a] text-gray-400';
+                        classes += 'border-border-subtle bg-surface-dense text-muted-foreground';
                       }
                       
                       return (
@@ -311,12 +311,12 @@ function ResultsContent() {
                     })}
                   </div>
                   
-                  <div className="bg-[#0a0a0a] p-4 rounded border-l-4 border-[#2cbb5d]">
-                    <p className="text-gray-300 text-base mb-4">
-                      <span className="font-semibold text-[#2cbb5d]">Explanation:</span> {item.rationale}
+                  <div className="bg-surface-dense p-4 rounded border-l-4 border-brand-green">
+                    <p className="text-muted-foreground text-base mb-4">
+                      <span className="font-semibold text-brand-green">Explanation:</span> {item.rationale}
                     </p>
-                    <div className="pt-3 border-t border-gray-700">
-                        <p className="text-xs text-gray-400">{item.knowledgeArea}</p>
+                    <div className="pt-3 border-t border-border-subtle">
+                        <p className="text-xs text-muted-foreground">{item.knowledgeArea}</p>
                     </div>
                   </div>
                 </div>
@@ -329,13 +329,13 @@ function ResultsContent() {
         <div className="space-y-3">
           <button
             onClick={handleTakeTestAgain}
-            className="w-full bg-[#2cbb5d] hover:bg-[#25a352] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-full bg-brand-green hover:bg-brand-green/90 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
           >
             Take Test Again
           </button>
           <button
             onClick={handleBackToTests}
-            className="w-full bg-[#3e3e3e] hover:bg-[#4e4e4e] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-full bg-surface-interactive hover:bg-surface-dense text-foreground font-semibold py-3 px-6 rounded-lg transition-colors"
           >
             Back to Tests
           </button>
@@ -350,10 +350,10 @@ export default function ResultsPage() {
     <Suspense
       fallback={
         <div className="max-w-3xl mx-auto px-4">
-          <div className="bg-[#282828] rounded-lg p-8 shadow-lg">
+          <div className="frame bg-surface-workbench p-8 shadow-lg">
             <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2cbb5d]"></div>
-              <p className="text-white text-xl">Loading results...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+              <p className="text-foreground text-xl">Loading results...</p>
             </div>
           </div>
         </div>

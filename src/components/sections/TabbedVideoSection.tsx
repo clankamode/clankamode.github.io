@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import VideoCard from '@/components/ui/VideoCard';
 import { YouTubeVideo } from '@/lib/youtube';
-import { cn } from '@/lib/utils';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 
 interface TabbedVideoSectionProps {
   latestVideos: YouTubeVideo[];
@@ -38,41 +38,21 @@ export default function TabbedVideoSection({
   return (
     <section className="py-16 bg-background text-foreground">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-12 border-b border-border pb-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-12 border-b border-border-subtle pb-4">
           <h2 className="text-4xl font-bold font-sans tracking-tight">
             Videos
           </h2>
           <div className="flex flex-wrap items-center gap-3">
-            <div
-              role="tablist"
-              aria-label="Video category"
-              className="inline-flex items-center rounded-full border border-border bg-background/50 p-1"
-            >
-              {tabOptions.map((tab) => {
-                const isActive = tab.id === activeTab;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    className={cn(
-                      "px-4 py-2 rounded-full text-base font-medium transition-colors border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/50",
-                      isActive
-                        ? "bg-brand-green/10 text-brand-green border-brand-green/20"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                    onClick={() => setActiveTab(tab.id)}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
+            <SegmentedControl
+              options={tabOptions.map(tab => ({ id: tab.id, label: tab.label }))}
+              value={activeTab}
+              onChange={(value) => setActiveTab(value)}
+              ariaLabel="Video category"
+            />
             {viewAllHref && (
               <Link
                 href={viewAllHref}
-                className="text-brand-green hover:text-brand-green/80 font-medium flex items-center group"
+                className="text-muted-foreground hover:text-foreground font-medium flex items-center group"
               >
                 View all
                 <svg

@@ -267,21 +267,21 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
       onClick={onClose}
     >
       <div 
-        className="bg-[#282828] rounded-lg shadow-lg w-full max-w-6xl xl:max-w-7xl my-8 border border-[#3e3e3e]"
+        className="bg-surface-workbench rounded-lg shadow-lg w-full max-w-6xl xl:max-w-7xl my-8 border border-border-subtle"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-[#282828] px-6 py-4 border-b border-[#3e3e3e] flex items-center justify-between">
+        <div className="bg-surface-workbench px-6 py-4 border-b border-border-subtle flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={onClose}
-              className="flex items-center text-gray-400 hover:text-white transition-colors"
+              className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <h1 className="text-3xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-foreground">
               {isLoading ? "Loading..." : formData.videoTitle}
             </h1>
           </div>
@@ -289,7 +289,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
 
         {isLoading ? (
           <div className="p-6 flex items-center justify-center min-h-[400px]">
-            <div className="text-gray-400">Loading thumbnail data...</div>
+            <div className="text-muted-foreground">Loading thumbnail data...</div>
           </div>
         ) : (
           <div className="p-6 max-h-[calc(100vh-200px)] overflow-hidden">
@@ -297,13 +297,13 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
               <div className="flex-1 min-w-0 overflow-y-auto max-h-[calc(100vh-250px)] pr-6">
                 {/* Video Link Section */}
                 <div className="mb-8">
-                  <div className="bg-[#1a1a1a] rounded-lg p-4 border-l-4 border-[#2cbb5d]">
-                    <p className="text-base text-gray-400 mb-2">Please watch this video before creating the thumbnail:</p>
+                  <div className="bg-surface-interactive rounded-lg p-4 border-l-4 border-brand-green">
+                    <p className="text-base text-muted-foreground mb-2">Please watch this video before creating the thumbnail:</p>
                     <a
                       href={formData.videoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#2cbb5d] hover:text-[#25a24f] font-medium break-all"
+                      className="text-brand-green hover:text-brand-green/90 font-medium break-all"
                     >
                       {formData.videoUrl}
                     </a>
@@ -312,7 +312,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                         href={formData.videoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-4 py-2 bg-[#2cbb5d] text-white text-base font-medium rounded-lg hover:bg-[#28a754] transition-colors"
+                        className="inline-flex items-center px-4 py-2 bg-brand-green text-black text-base font-medium rounded-lg hover:bg-brand-green/90 transition-colors"
                       >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path
@@ -329,29 +329,29 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                 </div>
 
                 {/* Suggested Thumbnails - Collapsible */}
-                <div className="mb-8 border border-[#3e3e3e] rounded-lg overflow-hidden">
+                <div className="mb-8 border border-border-subtle rounded-lg overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setIsSuggestionsExpanded(!isSuggestionsExpanded)}
-                    className="w-full flex items-center justify-between p-4 bg-[#1a1a1a] hover:bg-[#222] transition-colors"
+                    className="w-full flex items-center justify-between p-4 bg-surface-interactive hover:bg-surface-dense transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <svg
-                        className={`w-5 h-5 text-gray-400 transition-transform ${isSuggestionsExpanded ? 'rotate-90' : ''}`}
+                        className={`w-5 h-5 text-muted-foreground transition-transform ${isSuggestionsExpanded ? 'rotate-90' : ''}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                      <h2 className="text-xl font-semibold text-white">Suggested thumbnails</h2>
+                      <h2 className="text-xl font-semibold text-foreground">Suggested thumbnails</h2>
                       {formData.suggestedThumbnails.length > 0 && (
-                        <span className="text-sm text-gray-400">({formData.suggestedThumbnails.length})</span>
+                        <span className="text-sm text-muted-foreground">({formData.suggestedThumbnails.length})</span>
                       )}
                     </div>
                     <div className="flex items-center gap-3">
                       {isGeneratingSuggestions && (
-                        <span className="text-sm text-fg-muted flex items-center">
+                        <span className="text-sm text-muted-foreground flex items-center">
                           <svg
                             className="animate-spin mr-2 h-4 w-4"
                             xmlns="http://www.w3.org/2000/svg"
@@ -379,14 +379,14 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                   </button>
 
                   {isSuggestionsExpanded && (
-                    <div className="p-4 border-t border-[#3e3e3e]">
+                    <div className="p-4 border-t border-border-subtle">
                       <div className="flex items-center justify-end mb-3">
                         {formData.suggestedThumbnails.length > 0 && !isGeneratingSuggestions && (
                           <button
                             type="button"
                             onClick={handleGenerateSuggestions}
                             disabled={isGeneratingSuggestions}
-                            className="inline-flex items-center px-3 py-1.5 text-sm bg-surface-dense border border-border-interactive text-fg rounded-lg hover:bg-surface-interactive focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="inline-flex items-center px-3 py-1.5 text-sm bg-surface-dense border border-border-interactive text-foreground rounded-lg hover:bg-surface-interactive focus:ring-2 focus:ring-brand-green/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                           >
                             <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -402,14 +402,14 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                       )}
                       {formData.suggestedThumbnails.length === 0 ? (
                         <div className="border border-dashed border-border-interactive rounded-lg p-6 text-center bg-surface-interactive">
-                          <p className="text-fg-muted mb-4">
+                          <p className="text-muted-foreground mb-4">
                             Generate AI thumbnail suggestions using your headshots and the video title.
                           </p>
                           <button
                             type="button"
                             onClick={handleGenerateSuggestions}
                             disabled={isGeneratingSuggestions}
-                            className="inline-flex items-center px-4 py-2 bg-surface-dense border border-border-interactive text-fg rounded-lg hover:bg-surface-interactive focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="inline-flex items-center px-4 py-2 bg-surface-dense border border-border-interactive text-foreground rounded-lg hover:bg-surface-interactive focus:ring-2 focus:ring-brand-green/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                           >
                             {isGeneratingSuggestions ? (
                               <>
@@ -462,12 +462,12 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                                 />
                               </div>
                               <div className="p-3 flex items-center justify-between">
-                                <span className="text-sm text-gray-300">Option {index + 1}</span>
+                                <span className="text-sm text-muted-foreground">Option {index + 1}</span>
                                 <div className="flex items-center gap-2">
                                   <button
                                     type="button"
                                     onClick={() => handleDownload(url, `${formData.videoTitle || 'thumbnail'}-suggestion-${index + 1}.png`)}
-                                    className="text-fg-muted hover:text-fg p-1.5 rounded-lg hover:bg-surface-dense transition-colors"
+                                    className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-surface-dense transition-colors"
                                     title="Download"
                                   >
                                     <svg
@@ -489,7 +489,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                                   <button
                                     type="button"
                                     onClick={() => setFormData((prev) => ({ ...prev, thumbnail_url: url }))}
-                                    className="text-sm px-3 py-1 rounded-lg bg-[#2cbb5d] text-black font-semibold hover:bg-[#26a653]"
+                                    className="text-sm px-3 py-1 rounded-lg bg-brand-green text-black font-semibold hover:bg-brand-green/90"
                                   >
                                     Use this
                                   </button>
@@ -507,7 +507,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                   {/* File Upload Section */}
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-2xl font-semibold text-white">Upload Thumbnail</h2>
+                      <h2 className="text-2xl font-semibold text-foreground">Upload Thumbnail</h2>
                       {formData.thumbnail_url && (
                         <button
                           onClick={(e) => {
@@ -515,7 +515,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                             handleDownload()
                           }}
                           type="button"
-                          className="text-blue-400 hover:text-blue-300 text-base font-medium p-1 rounded-full hover:bg-blue-400/10 transition-colors"
+                          className="text-muted-foreground hover:text-foreground text-base font-medium p-1 rounded-full hover:bg-surface-dense transition-colors"
                           title="Download Thumbnail"
                         >
                           <svg
@@ -538,7 +538,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                     </div>
                     <div
                       className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                        dragActive ? "border-[#2cbb5d] bg-[#2cbb5d]/5" : "border-[#3e3e3e] hover:border-[#2cbb5d] bg-[#1a1a1a]"
+                        dragActive ? "border-brand-green bg-brand-green/5" : "border-border-subtle hover:border-border-interactive bg-surface-interactive"
                       }`}
                       onDragEnter={handleDrag}
                       onDragLeave={handleDrag}
@@ -572,8 +572,8 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                         </div>
                       ) : (
                         <div className="space-y-4">
-                          <div className="w-16 h-16 bg-[#282828] rounded-full flex items-center justify-center mx-auto">
-                            <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-16 h-16 bg-surface-workbench rounded-full flex items-center justify-center mx-auto">
+                            <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -583,10 +583,10 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                             </svg>
                           </div>
                           <div>
-                            <p className="text-xl font-medium text-white">Drop your thumbnail here</p>
-                            <p className="text-gray-400">or click to browse files</p>
+                            <p className="text-xl font-medium text-foreground">Drop your thumbnail here</p>
+                            <p className="text-muted-foreground">or click to browse files</p>
                           </div>
-                          <p className="text-base text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                          <p className="text-base text-muted-foreground">PNG, JPG, GIF up to 10MB</p>
                         </div>
                       )}
                     </div>
@@ -594,10 +594,10 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
 
                   {/* Notes Section */}
                   <div>
-                    <label htmlFor="notes" className="block text-2xl font-semibold text-white mb-3">
+                    <label htmlFor="notes" className="block text-2xl font-semibold text-foreground mb-3">
                       Notes & Timestamps
                     </label>
-                    <p className="text-gray-300 mb-3">
+                    <p className="text-muted-foreground mb-3">
                       Add any notes, timestamps, or key moments from the video that should be included in the description.
                     </p>
                     <textarea
@@ -605,10 +605,10 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                       value={formData.notes}
                       onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
                       placeholder="Example:&#10;0:30 - Introduction to the topic&#10;2:15 - Main demonstration begins&#10;5:45 - Key takeaway&#10;&#10;Additional notes:&#10;- Great energy in this video&#10;- Consider highlighting the demo section"
-                      className="w-full h-40 px-4 py-3 border border-[#3e3e3e] rounded-lg focus:ring-2 focus:ring-[#2cbb5d]/50 focus:border-[#2cbb5d] resize-vertical bg-[#1a1a1a] text-white placeholder:text-gray-500"
+                      className="w-full h-40 px-4 py-3 border border-border-subtle rounded-lg focus:ring-2 focus:ring-brand-green/40 focus:border-brand-green resize-vertical bg-surface-interactive text-foreground placeholder:text-muted-foreground"
                       rows={8}
                     />
-                    <p className="text-base text-gray-500 mt-2">{formData.notes.length} characters</p>
+                    <p className="text-base text-muted-foreground mt-2">{formData.notes.length} characters</p>
                   </div>
 
                   {/* Submit Button */}
@@ -616,7 +616,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-6 py-2 text-gray-300 hover:text-white transition-colors"
+                      className="px-6 py-2 text-muted-foreground hover:text-foreground transition-colors"
                       disabled={isSubmitting}
                     >
                       Cancel
@@ -624,7 +624,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                     <button
                       type="submit"
                       disabled={!formData.thumbnail_url || isSubmitting}
-                      className="px-8 py-3 bg-[#2cbb5d] text-white font-medium rounded-lg hover:bg-[#25a24f] focus:ring-2 focus:ring-[#2cbb5d]/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-8 py-3 bg-brand-green text-black font-medium rounded-lg hover:bg-brand-green/90 focus:ring-2 focus:ring-brand-green/40 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {isSubmitting ? (
                         <div className="flex items-center">
@@ -659,7 +659,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
               </div>
 
               {/* Comments Section */}
-              <div className="w-full lg:w-96 xl:w-[420px] border-t border-[#3e3e3e] lg:border-t-0 lg:border-l lg:pl-6 pt-6 lg:pt-0 flex flex-col max-h-full">
+              <div className="w-full lg:w-96 xl:w-[420px] border-t border-border-subtle lg:border-t-0 lg:border-l lg:pl-6 pt-6 lg:pt-0 flex flex-col max-h-full">
                 {thumbnailId && <CommentsSection thumbnailId={thumbnailId} />}
               </div>
             </div>

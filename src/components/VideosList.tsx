@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useVideoContext } from '@/context/VideoContext';
 import VideoCard from '@/components/ui/VideoCard';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import Link from 'next/link';
 
 export default function VideosList() {
@@ -92,30 +93,15 @@ export default function VideosList() {
             className="w-full rounded-lg border border-border bg-muted/20 px-4 py-2 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/50"
           />
         </div>
-        <div className="inline-flex items-center rounded-full border border-border bg-muted/20 p-1">
-          <button
-            type="button"
-            onClick={() => setSortOrder('newest')}
-            className={`px-4 py-2 rounded-full text-base font-medium transition-colors ${
-              sortOrder === 'newest'
-                ? 'bg-brand-green/15 text-brand-green'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Newest
-          </button>
-          <button
-            type="button"
-            onClick={() => setSortOrder('oldest')}
-            className={`px-4 py-2 rounded-full text-base font-medium transition-colors ${
-              sortOrder === 'oldest'
-                ? 'bg-brand-green/15 text-brand-green'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Oldest
-          </button>
-        </div>
+        <SegmentedControl
+          options={[
+            { id: 'newest', label: 'Newest' },
+            { id: 'oldest', label: 'Oldest' },
+          ]}
+          value={sortOrder}
+          onChange={(value) => setSortOrder(value)}
+          ariaLabel="Sort videos by date"
+        />
       </div>
 
       {!loading && videos.length > 0 && filteredVideos.length === 0 ? (

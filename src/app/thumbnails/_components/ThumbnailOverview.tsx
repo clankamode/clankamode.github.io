@@ -70,11 +70,11 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h3 className="text-xl font-medium text-white">Failed to load thumbnails</h3>
-          <p className="text-gray-400">{error}</p>
+          <h3 className="text-xl font-medium text-foreground">Failed to load thumbnails</h3>
+          <p className="text-muted-foreground">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-[#2cbb5d] text-white rounded-lg hover:bg-[#25a24f]"
+            className="mt-4 px-4 py-2 bg-brand-green text-black rounded-lg hover:bg-brand-green/90"
           >
             Try Again
           </button>
@@ -86,16 +86,16 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-3xl font-bold text-white">{statusLabels[status]}</h2>
-        <p className="text-gray-400">
+        <h2 className="text-3xl font-bold text-foreground">{statusLabels[status]}</h2>
+        <p className="text-muted-foreground">
           {filteredThumbnails.length} thumbnail{filteredThumbnails.length !== 1 ? "s" : ""}
         </p>
       </div>
 
       {filteredThumbnails.length === 0 ? (
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-[#282828] rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-surface-workbench rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -104,10 +104,10 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
               />
             </svg>
           </div>
-          <h3 className="text-xl font-medium text-white mb-2">
+          <h3 className="text-xl font-medium text-foreground mb-2">
             No thumbnails {status === ThumbnailJobStatus.TODO ? "to do" : status === FAVORITES_VIEW ? "favorited yet" : status}
           </h3>
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             {status === ThumbnailJobStatus.TODO && "New video requests will appear here"}
             {status === ThumbnailJobStatus.IN_REVIEW && "Submitted thumbnails will appear here for review"}
             {status === ThumbnailJobStatus.COMPLETED && "Approved thumbnails will appear here"}

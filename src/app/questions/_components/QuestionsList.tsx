@@ -57,7 +57,7 @@ const VideoAnswerPreview = ({ videoId, videoUrl }: { videoId: string; videoUrl: 
       rel="noopener noreferrer"
       className="group block"
     >
-      <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border border-[#3e3e3e] hover:border-[#2cbb5d] transition-all bg-[#1f1f1f]">
+      <div className="frame relative w-full max-w-md aspect-video rounded-lg overflow-hidden bg-surface-interactive transition-all">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={thumbnailUrl}
@@ -71,7 +71,7 @@ const VideoAnswerPreview = ({ videoId, videoUrl }: { videoId: string; videoUrl: 
           }}
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
-          <div className="w-12 h-12 bg-[#2cbb5d] rounded-full flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 bg-white/15 rounded-full flex items-center justify-center shadow-lg">
             <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -79,9 +79,9 @@ const VideoAnswerPreview = ({ videoId, videoUrl }: { videoId: string; videoUrl: 
         </div>
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-3">
           {isLoadingTitle ? (
-            <div className="h-4 bg-gray-700/50 rounded animate-pulse w-3/4" />
+            <div className="h-4 bg-surface-interactive rounded animate-pulse w-3/4" />
           ) : (
-            <p className="text-white text-base font-semibold line-clamp-2">
+            <p className="text-foreground text-base font-semibold line-clamp-2">
               {videoTitle || 'Watch Answer'}
             </p>
           )}
@@ -273,7 +273,7 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
         </div>
       )}
       {filteredAndSortedQuestions.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[#3e3e3e] bg-[#232323] p-6 text-center text-gray-400">
+        <div className="rounded-lg border border-dashed border-border-subtle bg-surface-workbench p-6 text-center text-muted-foreground">
           {initialTab === 'answered' 
             ? 'No answered questions yet.' 
             : 'No questions yet. Be the first to ask!'}
@@ -283,10 +283,10 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
           {filteredAndSortedQuestions.map((question) => (
             <li
               key={question.id}
-              className={`rounded-lg border p-5 flex gap-4 items-start shadow-md transition-all hover:shadow-lg ${
+              className={`frame p-5 flex gap-4 items-start transition-all ${
                 question.isArchived
-                  ? 'border-[#3e3e3e]/50 bg-[#1f1f1f]/80 opacity-90'
-                  : 'border-[#3e3e3e] bg-[#1f1f1f] hover:border-[#3e3e3e]/80'
+                  ? 'bg-surface-workbench/80 opacity-90'
+                  : 'bg-surface-workbench hover:bg-surface-interactive/80'
               }`}
             >
               <button
@@ -294,8 +294,8 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
                 disabled={votingQuestionId === question.id || question.isArchived}
                 className={`flex flex-col items-center rounded-lg border px-3 py-2 transition shadow-sm ${
                   question.hasVoted
-                    ? 'bg-[#2cbb5d]/10 border-[#2cbb5d] text-[#2cbb5d]'
-                    : 'bg-[#1f1f1f] border-[#3e3e3e] text-white hover:border-[#2cbb5d]'
+                    ? 'bg-brand-green/10 border-brand-green text-foreground'
+                    : 'bg-surface-interactive border-border-subtle text-foreground hover:border-border-interactive'
                 } ${votingQuestionId === question.id || question.isArchived ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <svg
@@ -309,7 +309,7 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
                 <span className="mt-1 text-base font-semibold">{question.voteCount}</span>
               </button>
               <div className="flex-1 space-y-3">
-                <h3 className={`text-2xl font-bold leading-snug ${question.isArchived ? 'text-gray-400' : 'text-white'}`}>
+                <h3 className={`text-2xl font-bold leading-snug ${question.isArchived ? 'text-muted-foreground' : 'text-foreground'}`}>
                   {question.content}
                 </h3>
                 {question.isArchived && question.videoUrl && (() => {
@@ -327,14 +327,14 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
                         href={question.videoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block px-3 py-2 bg-blue-600/20 text-blue-400 rounded text-base font-semibold hover:bg-blue-600/30 transition underline"
+                        className="inline-block px-3 py-2 bg-surface-interactive text-foreground border border-border-subtle rounded text-base font-semibold hover:bg-surface-dense transition"
                       >
                         Watch Answer
                       </a>
                     </div>
                   );
                 })()}
-                <div className="flex items-center justify-between gap-2 text-base text-gray-400">
+                <div className="flex items-center justify-between gap-2 text-base text-muted-foreground">
                   <div className="flex items-center gap-2">
                     {question.isArchived && (
                       <span className="px-2 py-0.5 bg-yellow-600/20 text-yellow-400 rounded text-sm font-semibold">
@@ -355,13 +355,13 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
                           }))
                         }
                         placeholder="Video URL"
-                        className="px-2 py-1 text-sm rounded bg-[#1f1f1f] border border-[#3e3e3e] text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#2cbb5d] w-36"
+                        className="px-2 py-1 text-sm rounded bg-surface-interactive border border-border-subtle text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-brand-green/40 w-36"
                         disabled={submittingQuestionId === question.id}
                       />
                       <button
                         onClick={() => markAsAnswered(question.id, videoUrlInputs[question.id] || '')}
                         disabled={submittingQuestionId === question.id || !videoUrlInputs[question.id]?.trim()}
-                        className="px-2 py-1 text-sm font-semibold rounded transition bg-blue-600/20 text-blue-400 border border-blue-600/40 hover:bg-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="px-2 py-1 text-sm font-semibold rounded transition bg-surface-interactive text-foreground border border-border-subtle hover:bg-surface-dense disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                         title="Mark as answered with video URL"
                       >
                         {submittingQuestionId === question.id ? 'Saving...' : 'Mark Answered'}

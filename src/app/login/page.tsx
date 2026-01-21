@@ -18,11 +18,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#1a1a1a] p-4">
-      <div className="w-full max-w-md space-y-8 rounded-lg border border-[#3e3e3e] bg-[#282828] p-8 shadow-lg">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-ambient p-4">
+      <div className="frame w-full max-w-md space-y-8 bg-surface-workbench p-8 shadow-lg">
         <div className="text-center">
-          <h2 className="mt-6 text-4xl font-bold text-white">Sign in to your account</h2>
-          <p className="mt-2 text-base text-gray-400">
+          <h2 className="mt-6 text-4xl font-bold text-foreground">Sign in to your account</h2>
+          <p className="mt-2 text-base text-muted-foreground">
             Please sign in to access your account
           </p>
         </div>
@@ -31,7 +31,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleSignIn}
             disabled={isLoading}
-            className="group relative flex w-full justify-center rounded-md border border-transparent bg-[#4285F4] px-4 py-3 text-white hover:bg-[#3367D6] focus:outline-none disabled:opacity-70"
+            className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-3 text-white hover:bg-blue-700 focus:outline-none disabled:opacity-70"
           >
             {isLoading ? (
               <span>Loading...</span>

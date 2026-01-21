@@ -57,32 +57,32 @@ export const ChatSidebar = ({
     <div
       className={`${
         isOpen ? 'w-64' : 'w-0'
-      } transition-all duration-300 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col`}
+      } transition-all duration-300 border-r border-border-subtle bg-surface-workbench overflow-hidden flex flex-col`}
     >
-      <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-3 border-b border-border-subtle">
         <button
           onClick={onNewChat}
-          className="w-full px-4 py-2 bg-[#2cbb5d] text-white rounded-lg hover:bg-[#25a352] transition-colors font-medium text-base"
+          className="w-full px-4 py-2 bg-brand-green text-black rounded-lg hover:bg-brand-green/90 transition-colors font-medium text-base"
         >
           + New Chat
         </button>
       </div>
 
-      <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-3 border-b border-border-subtle">
         <input
           type="text"
           placeholder="Search conversations..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+          className="w-full px-3 py-2 text-base border border-border-subtle rounded-lg bg-surface-interactive text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/40"
         />
       </div>
 
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="p-4 text-center text-base text-gray-500">Loading...</div>
+          <div className="p-4 text-center text-base text-muted-foreground">Loading...</div>
         ) : filteredConversations.length === 0 ? (
-          <div className="p-4 text-center text-base text-gray-500">
+          <div className="p-4 text-center text-base text-muted-foreground">
             {searchQuery ? 'No conversations found' : 'No conversations yet'}
           </div>
         ) : (
@@ -92,8 +92,8 @@ export const ChatSidebar = ({
                 key={conv.id}
                 className={`group relative rounded-lg ${
                   currentConversationId === conv.id
-                    ? 'bg-gray-200 dark:bg-gray-800'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                    ? 'bg-surface-interactive'
+                    : 'hover:bg-surface-interactive/70'
                 }`}
               >
                 {editingConversationId === conv.id ? (
@@ -113,14 +113,14 @@ export const ChatSidebar = ({
                           onEditCancel();
                         }
                       }}
-                      className="w-full px-2 py-1 text-base border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2cbb5d]"
+                      className="w-full px-2 py-1 text-base border border-border-subtle rounded bg-surface-interactive text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/40"
                     />
                   </div>
                 ) : (
                   <div className="flex items-center">
                     <button
                       onClick={() => onSelect(conv.id)}
-                      className="flex-1 text-left p-3 text-base text-gray-900 dark:text-gray-100 truncate"
+                      className="flex-1 text-left p-3 text-base text-foreground truncate"
                     >
                       {conv.title || 'Untitled conversation'}
                     </button>
@@ -130,11 +130,11 @@ export const ChatSidebar = ({
                           e.stopPropagation();
                           onEditStart(conv.id, conv.title || '');
                         }}
-                        className="p-1 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
+                        className="p-1 hover:bg-surface-dense rounded"
                         title="Rename"
                       >
                         <svg
-                          className="w-4 h-4 text-gray-600 dark:text-gray-400"
+                          className="w-4 h-4 text-muted-foreground"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -152,11 +152,11 @@ export const ChatSidebar = ({
                           e.stopPropagation();
                           onDelete(conv.id);
                         }}
-                        className="p-1 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
+                        className="p-1 hover:bg-surface-dense rounded"
                         title="Delete"
                       >
                         <svg
-                          className="w-4 h-4 text-gray-600 dark:text-gray-400"
+                          className="w-4 h-4 text-muted-foreground"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"

@@ -84,25 +84,25 @@ export default function AdminProxyControls() {
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="flex items-center space-x-2 rounded-md border border-white/15 bg-white/10 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-white/20"
+        className="flex items-center space-x-2 rounded-md border border-border-subtle bg-surface-interactive px-3 py-1.5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-surface-dense"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <span className="inline-block h-2 w-2 rounded-full bg-[#2cbb5d]" aria-hidden="true" />
+        <span className="inline-block h-2 w-2 rounded-full bg-brand-green" aria-hidden="true" />
         <span>{isProxying ? 'Proxy active' : 'Proxy user'}</span>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-72 rounded-lg border border-white/10 bg-[#1f1f1f] p-3 shadow-lg">
-          <form onSubmit={handleSubmit} className="flex flex-col space-y-2 text-base text-white">
+        <div className="absolute right-0 mt-2 w-72 rounded-lg border border-border-subtle bg-surface-workbench p-3 shadow-lg">
+          <form onSubmit={handleSubmit} className="flex flex-col space-y-2 text-base text-foreground">
             <label className="flex flex-col space-y-1">
-              <span className="text-sm uppercase tracking-wide text-white/70">Proxy as user</span>
+              <span className="text-sm uppercase tracking-wide text-muted-foreground">Proxy as user</span>
               <input
                 type="email"
                 value={proxyEmail}
                 onChange={(event) => setProxyEmail(event.target.value)}
                 placeholder="user@example.com"
-                className="w-full rounded-md border border-white/20 bg-white/5 px-3 py-2 text-white placeholder:text-white/60 focus:border-white focus:outline-none"
+                className="w-full rounded-md border border-border-subtle bg-surface-interactive px-3 py-2 text-foreground placeholder:text-muted-foreground focus:border-border-interactive focus:outline-none"
                 disabled={isSubmitting}
               />
             </label>
@@ -110,7 +110,7 @@ export default function AdminProxyControls() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-md bg-[#2cbb5d] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#24a653] disabled:opacity-70"
+                className="rounded-md bg-brand-green px-3 py-2 text-sm font-semibold text-black transition hover:bg-brand-green/90 disabled:opacity-70"
               >
                 {isProxying ? 'Update proxy' : 'Start proxying'}
               </button>
@@ -126,14 +126,14 @@ export default function AdminProxyControls() {
               )}
             </div>
             {session?.proxy?.email && (
-              <p className="text-sm text-white/80">
+              <p className="text-sm text-muted-foreground">
                 Viewing as <strong>{session.proxy.email}</strong>
                 {session.originalUser?.email && (
-                  <span className="text-white/60"> (originally {session.originalUser.email})</span>
+                  <span className="text-muted-foreground"> (originally {session.originalUser.email})</span>
                 )}
               </p>
             )}
-            {statusMessage && <p className="text-sm text-white/70">{statusMessage}</p>}
+            {statusMessage && <p className="text-sm text-muted-foreground">{statusMessage}</p>}
           </form>
         </div>
       )}

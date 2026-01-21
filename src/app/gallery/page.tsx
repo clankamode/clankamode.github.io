@@ -6,6 +6,86 @@ import { upload } from "@vercel/blob/client";
 import { useSession } from "next-auth/react";
 import { hasRole, UserRole } from "@/types/roles";
 
+// Gallery image component with error handling
+function GalleryImage({ 
+  url, 
+  onCopy, 
+  onDownload, 
+  onDelete 
+}: { 
+  url: string; 
+  onCopy: () => void; 
+  onDownload: () => void;
+  onDelete?: () => void;
+}) {
+  const [imgError, setImgError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleError = () => {
+    setImgError(true);
+    setIsLoading(false);
+  };
+
+  const handleLoad = () => {
+    setIsLoading(false);
+  };
+
+  return (
+    <div 
+      className="frame relative aspect-video bg-surface-interactive rounded-lg overflow-hidden group cursor-pointer"
+      onClick={onCopy}
+    >
+      {imgError ? (
+        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+          <div className="text-center">
+            <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p className="text-xs text-muted-foreground">Failed to load</p>
+          </div>
+        </div>
+      ) : (
+        <>
+          {isLoading && (
+            <div className="absolute inset-0 bg-surface-interactive animate-pulse" />
+          )}
+          <img 
+            src={url} 
+            alt="Headshot" 
+            className={`w-full h-full object-cover ${isLoading ? 'opacity-0' : ''}`}
+            onError={handleError}
+            onLoad={handleLoad}
+          />
+        </>
+      )}
+      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDownload();
+          }}
+          className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-foreground text-base font-medium backdrop-blur-sm"
+          title="Download"
+        >
+          Download
+        </button>
+        {onDelete && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="px-4 py-2 rounded-lg bg-red-600/80 hover:bg-red-600 text-white text-base font-medium backdrop-blur-sm"
+            title="Delete"
+          >
+            Delete
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface GalleryItem {
   url: string;
   pathname?: string;
@@ -230,28 +310,28 @@ export default function GalleryPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center min-h-[50vh] text-white">Checking access…</div>
+      <div className="flex items-center justify-center min-h-[50vh] text-foreground">Checking access…</div>
     );
   }
 
   if (!hasAccess) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-10 text-white">
+      <div className="max-w-5xl mx-auto px-4 py-10 text-foreground">
         <h1 className="text-4xl font-semibold mb-4">Gallery</h1>
-        <p className="text-gray-300">You don&apos;t have permission to view this page.</p>
+        <p className="text-muted-foreground">You don&apos;t have permission to view this page.</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10 text-white">
+    <div className="max-w-6xl mx-auto px-4 py-10 text-foreground">
 
       {canUpload && (
         <div 
-          className={`bg-[#1f1f1f] border rounded-xl p-6 mb-8 transition-colors ${
+          className={`bg-surface-workbench border rounded-xl p-6 mb-8 transition-colors ${
             dragActive 
-              ? 'border-[#2cbb5d] bg-[#2cbb5d]/10' 
-              : 'border-[#2cbb5d]/20'
+              ? 'border-brand-green bg-brand-green/10' 
+              : 'border-border-subtle'
           }`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
@@ -261,10 +341,10 @@ export default function GalleryPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-xl font-medium">Upload new headshots</p>
-            <p className="text-gray-400 text-base">
+            <p className="text-muted-foreground text-base">
               {dragActive ? 'Drop file here' : 'Drag and drop an image here, or click to choose a file'}
             </p>
-            <p className="text-gray-500 text-sm mt-1">PNG, JPG, or WEBP up to 10MB (one file at a time)</p>
+            <p className="text-muted-foreground text-sm mt-1">PNG, JPG, or WEBP up to 10MB (one file at a time)</p>
           </div>
           <div className="flex items-center gap-3">
             <input
@@ -277,21 +357,21 @@ export default function GalleryPage() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="px-4 py-2 rounded-lg border border-white/20 text-white hover:border-white/40 disabled:opacity-50"
+              className="px-4 py-2 rounded-lg border border-border-subtle text-foreground hover:border-border-interactive disabled:opacity-50"
             >
               Choose file
             </button>
           </div>
         </div>
-        {statusMessage && <p className="text-base text-green-400 mt-3">{statusMessage}</p>}
+        {statusMessage && <p className="text-base text-brand-green mt-3">{statusMessage}</p>}
         {error && <p className="text-base text-red-400 mt-3">{error}</p>}
         </div>
       )}
 
       {canUpload && selectedFile && previewUrl && (
-        <div className="bg-[#1f1f1f] border border-white/10 rounded-xl p-6 mb-8">
+        <div className="bg-surface-workbench border border-border-subtle rounded-xl p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="aspect-video w-full md:w-64 bg-black/40 rounded-lg overflow-hidden flex-shrink-0">
+            <div className="aspect-video w-full md:w-64 bg-surface-interactive rounded-lg overflow-hidden flex-shrink-0">
               <img 
                 src={previewUrl} 
                 alt={selectedFile.name} 
@@ -301,7 +381,7 @@ export default function GalleryPage() {
             <div className="flex-1 flex flex-col justify-between">
               <div>
                 <p className="text-xl font-semibold mb-2">{selectedFile.name}</p>
-                <p className="text-base text-gray-400">{formatFileSize(selectedFile.size)}</p>
+                <p className="text-base text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
               </div>
               <div className="flex gap-2">
                 <button
@@ -312,14 +392,14 @@ export default function GalleryPage() {
                       fileInputRef.current.value = "";
                     }
                   }}
-                  className="mt-4 px-4 py-2 rounded-lg border border-white/20 text-white hover:border-white/40 text-base"
+                  className="mt-4 px-4 py-2 rounded-lg border border-border-subtle text-foreground hover:border-border-interactive text-base"
                 >
                   Remove
                 </button>
                 <button
                   onClick={handleUpload}
                   disabled={isUploading || !selectedFile}
-                  className="mt-4 px-4 py-2 rounded-lg bg-[#2cbb5d] text-black font-semibold hover:bg-[#26a653] disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                  className="mt-4 px-4 py-2 rounded-lg bg-brand-green text-black font-semibold hover:bg-brand-green/90 disabled:opacity-50 disabled:cursor-not-allowed text-base"
                 >
                   {isUploading ? "Uploading…" : "Upload"}
                 </button>
@@ -330,51 +410,23 @@ export default function GalleryPage() {
       )}
 
       <div className="flex items-center justify-between mb-4">
-        {isLoading && <span className="text-base text-gray-400">Loading gallery…</span>}
+        {isLoading && <span className="text-base text-muted-foreground">Loading gallery…</span>}
       </div>
 
       {items.length === 0 && !isLoading ? (
-        <div className="text-center py-12 border border-dashed border-white/10 rounded-lg text-gray-400">
+        <div className="text-center py-12 border border-dashed border-border-subtle rounded-lg text-muted-foreground">
           No headshots uploaded yet. Add your first image to share with designers.
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {items.map((item) => (
-            <div 
-              key={item.url} 
-              className="relative aspect-video bg-black/40 rounded-lg overflow-hidden group cursor-pointer"
-              onClick={() => copyUrl(item.url)}
-            >
-              <img 
-                src={item.url} 
-                alt="Headshot" 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDownload(item.url);
-                  }}
-                  className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white text-base font-medium backdrop-blur-sm"
-                  title="Download"
-                >
-                  Download
-                </button>
-                {canUpload && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(item.url);
-                    }}
-                    className="px-4 py-2 rounded-lg bg-red-600/80 hover:bg-red-600 text-white text-base font-medium backdrop-blur-sm"
-                    title="Delete"
-                  >
-                    Delete
-                  </button>
-                )}
-              </div>
-            </div>
+            <GalleryImage
+              key={item.url}
+              url={item.url}
+              onCopy={() => copyUrl(item.url)}
+              onDownload={() => handleDownload(item.url)}
+              onDelete={canUpload ? () => handleDelete(item.url) : undefined}
+            />
           ))}
         </div>
       )}

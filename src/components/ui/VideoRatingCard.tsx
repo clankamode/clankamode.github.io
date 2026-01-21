@@ -102,7 +102,7 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
   ];
 
   return (
-    <div className="bg-[#1a1a1a] rounded-lg border border-[#3e3e3e] overflow-hidden transition-all duration-300 mb-8 shadow-lg">
+    <div className="frame bg-surface-workbench overflow-hidden transition-all duration-300 mb-8 shadow-lg">
       <div className="aspect-video relative">
         <iframe
           className="w-full h-full"
@@ -113,11 +113,11 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
       </div>
 
       <div className="p-6">
-        <h3 className="text-2xl font-bold text-white mb-2">{video.title}</h3>
-        <p className="text-gray-400 mb-6 line-clamp-3">{video.description}</p>
+        <h3 className="text-2xl font-bold text-foreground mb-2">{video.title}</h3>
+        <p className="text-muted-foreground mb-6 line-clamp-3">{video.description}</p>
         
         <div className="space-y-4">
-          <h4 className="text-xl font-semibold text-white">
+          <h4 className="text-xl font-semibold text-foreground">
             {'Rate this candidate:' }
           </h4>
           
@@ -133,7 +133,7 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
                   ${ 
                     selectedRating === rating.id 
                       ? `${rating.selectedColor} text-white ring-2 ring-white ring-opacity-70 scale-105`
-                      : `from-[#2a2a2a] to-[#333] text-gray-200 hover:${rating.hoverColor} hover:text-white`
+                      : `from-surface-interactive to-surface-dense text-muted-foreground hover:${rating.hoverColor} hover:text-white`
                   }
                 `}
               >
@@ -150,8 +150,8 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
               w-full py-3 rounded-lg font-medium transition-all duration-300
               flex items-center justify-center shadow-lg
               ${selectedRating && timerComplete
-                ? 'bg-gradient-to-r from-[#2cbb5d] to-[#28a754] text-white hover:from-[#28a754] hover:to-[#249e4f] transform hover:scale-[1.02]'
-                : 'bg-[#333] text-gray-400 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-brand-green to-emerald-600 text-black hover:from-emerald-600 hover:to-emerald-500 transform hover:scale-[1.02]'
+                : 'bg-surface-interactive text-muted-foreground cursor-not-allowed'
               }
             `}
           >

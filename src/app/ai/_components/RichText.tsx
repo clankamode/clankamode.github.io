@@ -81,12 +81,12 @@ const formatInline = (text: string, removeYouTubeUrls = false) => {
     if (videoId) {
       return match; // Keep the markdown link for now, we'll handle it separately
     }
-    return `<a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener noreferrer" class="text-[#2cbb5d] underline">${escapeHtml(linkText)}</a>`;
+    return `<a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener noreferrer" class="text-foreground underline decoration-border-subtle hover:text-brand-green">${escapeHtml(linkText)}</a>`;
   });
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/(^|\s)\*([^*]+)\*(?=\s|$)/g, '$1<em>$2</em>');
   html = html.replace(/~~([^~]+)~~/g, '<del>$1</del>');
-  html = html.replace(/`([^`]+)`/g, '<code class="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-lg">$1</code>');
+  html = html.replace(/`([^`]+)`/g, '<code class="bg-surface-interactive px-1 py-0.5 rounded text-lg text-foreground">$1</code>');
 
   return html;
 };
@@ -276,8 +276,8 @@ const VideoSuggestionCard = ({ videoId, url, title }: { videoId: string; url: st
       rel="noopener noreferrer"
       className="block mt-3 group"
     >
-      <div className="flex gap-3 p-3 rounded-lg border border-gray-300 dark:border-gray-600 hover:border-[#2cbb5d] transition-colors bg-gray-50 dark:bg-gray-700/50">
-        <div className="relative flex-shrink-0 w-32 h-20 rounded overflow-hidden bg-gray-200 dark:bg-gray-800">
+      <div className="flex gap-3 p-3 rounded-lg border border-border-subtle hover:border-border-interactive transition-colors bg-surface-workbench">
+        <div className="relative flex-shrink-0 w-32 h-20 rounded overflow-hidden bg-surface-interactive">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={thumbnailUrl}
@@ -292,7 +292,7 @@ const VideoSuggestionCard = ({ videoId, url, title }: { videoId: string; url: st
             }}
           />
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
-            <div className="w-8 h-8 bg-[#2cbb5d] rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-white/15 rounded-full flex items-center justify-center">
               <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
@@ -301,13 +301,13 @@ const VideoSuggestionCard = ({ videoId, url, title }: { videoId: string; url: st
         </div>
         <div className="flex-1 min-w-0">
           {title ? (
-            <h4 className="font-medium text-lg text-gray-900 dark:text-gray-100 group-hover:text-[#2cbb5d] transition-colors line-clamp-2">
+            <h4 className="font-medium text-lg text-foreground group-hover:text-brand-green transition-colors line-clamp-2">
               {title}
             </h4>
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{url}</p>
+            <p className="text-sm text-muted-foreground truncate">{url}</p>
           )}
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">YouTube</p>
+          <p className="text-sm text-muted-foreground mt-1">YouTube</p>
         </div>
       </div>
     </a>
@@ -321,7 +321,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <HeadingTag
           key={index}
-          className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-2"
+          className="text-lg font-semibold text-foreground mt-2"
           dangerouslySetInnerHTML={{ __html: formatInline(block.content as string) }}
         />
       );
@@ -386,7 +386,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
           <React.Fragment key={index}>
             {textItems.length > 0 && (
               <ListTag
-                className="ml-5 space-y-1 list-outside text-gray-900 dark:text-gray-100"
+                className="ml-5 space-y-1 list-outside text-foreground"
                 style={{ listStyleType: block.ordered ? 'decimal' : 'disc' }}
               >
                 {textItems.map((item, idx) => (
@@ -402,7 +402,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <ListTag
           key={index}
-          className="ml-5 space-y-1 list-outside text-gray-900 dark:text-gray-100"
+          className="ml-5 space-y-1 list-outside text-foreground"
           style={{ listStyleType: block.ordered ? 'decimal' : 'disc' }}
         >
           {items.map((item, idx) => (
@@ -428,7 +428,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <pre
           key={index}
-          className="bg-gray-900 text-gray-100 rounded-lg p-3 overflow-x-auto text-lg"
+          className="bg-surface-dense text-foreground rounded-lg p-3 overflow-x-auto text-lg"
         >
           <code>{block.content as string}</code>
         </pre>
@@ -438,7 +438,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <blockquote
           key={index}
-          className="border-l-4 border-[#2cbb5d] pl-3 italic text-gray-700 dark:text-gray-300"
+          className="border-l-4 border-brand-green pl-3 italic text-muted-foreground"
           dangerouslySetInnerHTML={{ __html: formatInline(block.content as string) }}
         />
       );
@@ -447,7 +447,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       // Render content with preserved line breaks but no extra spacing
       const lines = (block.content as string).split('\n');
       return (
-        <div key={index} className="text-gray-900 dark:text-gray-100">
+        <div key={index} className="text-foreground">
           {lines.map((line, idx) => (
             <div key={idx} dangerouslySetInnerHTML={{ __html: formatInline(line) }} />
           ))}
@@ -506,7 +506,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
         }
         
         return (
-          <p key={index} className="text-gray-900 dark:text-gray-100">
+          <p key={index} className="text-foreground">
             {parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: formatInline(text) }} />}
           </p>
         );
@@ -515,7 +515,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <p
           key={index}
-          className="text-gray-900 dark:text-gray-100"
+          className="text-foreground"
           dangerouslySetInnerHTML={{ __html: formatInline(text) }}
         />
       );

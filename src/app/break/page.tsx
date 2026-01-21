@@ -153,7 +153,7 @@ export default function BreakPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-white p-4 flex flex-col items-center">
+    <div className="min-h-screen bg-surface-ambient text-foreground p-4 flex flex-col items-center">
 
       {/* Title and Subtitle/Timer Display */}
       <div className="text-center mb-10"> {/* Added margin-bottom */}
@@ -166,7 +166,7 @@ export default function BreakPage() {
       {/* Video Player Area & Controls Area */}
       <div className="mb-6 w-full max-w-4xl flex flex-col items-center"> {/* Combined container, removed mb-24, added flex-col */}
         {/* Video Player */} 
-        <div className="w-full aspect-video bg-[#2d2d2d] rounded-lg flex items-center justify-center mb-6"> {/* Added mb-6 */} 
+        <div className="w-full aspect-video bg-surface-interactive rounded-lg flex items-center justify-center mb-6"> {/* Added mb-6 */} 
           {isLoading && <p>Loading video...</p>}
           {error && <p className="text-red-500">Error: {error}</p>}
           {!isLoading && !error && videoId && (
@@ -188,21 +188,21 @@ export default function BreakPage() {
             <button
               onClick={() => addTime(30)}
               disabled={isRunning}
-              className="px-4 py-2 bg-[#3d3d3d] rounded-md hover:bg-[#4d4d4d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-surface-interactive rounded-md hover:bg-surface-dense transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               +0:30
             </button>
             <button
               onClick={() => addTime(60)}
               disabled={isRunning}
-              className="px-4 py-2 bg-[#3d3d3d] rounded-md hover:bg-[#4d4d4d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-surface-interactive rounded-md hover:bg-surface-dense transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               +1:00
             </button>
             <button
               onClick={() => addTime(300)}
               disabled={isRunning}
-              className="px-4 py-2 bg-[#3d3d3d] rounded-md hover:bg-[#4d4d4d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-surface-interactive rounded-md hover:bg-surface-dense transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               +5:00
             </button>
@@ -219,14 +219,14 @@ export default function BreakPage() {
             </button>
             <button
               onClick={handleReset}
-              className="px-8 py-3 bg-[#3d3d3d] rounded-md hover:bg-[#4d4d4d] transition-colors min-w-[120px]"
+              className="px-8 py-3 bg-surface-interactive rounded-md hover:bg-surface-dense transition-colors min-w-[120px]"
             >
               Reset
             </button>
           </div>
 
           {/* Progress Bar */} 
-          <div className="relative h-2 bg-[#3d3d3d] rounded-full overflow-hidden">
+          <div className="relative h-2 bg-surface-interactive rounded-full overflow-hidden">
             <div
               className="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-1000 ease-linear"
               style={{
@@ -239,7 +239,7 @@ export default function BreakPage() {
 
       {/* Removed Original Timer Controls Area */}
       {/* <div className="max-w-md w-full">
-        <div className="bg-[#2d2d2d] rounded-lg p-6">
+        <div className="bg-surface-interactive rounded-lg p-6">
           <div className="text-center mb-6">
              <div className="text-7xl font-mono font-bold mb-6">
               {formatTime(time)}

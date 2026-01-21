@@ -8,8 +8,8 @@ export default async function MocksPage() {
   const { videos: initialVideos, hasMore: initialHasMore } = await getInitialMockVideos();
   
   return (
-    <div className="flex flex-col min-h-screen bg-[#1a1a1a] pt-20">
-      <section className="pb-16 bg-[#1a1a1a]">
+    <div className="flex flex-col min-h-screen bg-surface-ambient pt-20">
+      <section className="pb-16 bg-surface-ambient">
         <div className="max-w-screen-xl mx-auto px-4">
           <Suspense fallback={<LoadingMocks />}>
             <MocksRatingClient 

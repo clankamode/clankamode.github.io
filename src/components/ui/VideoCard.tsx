@@ -63,7 +63,7 @@ export default function VideoCard({
       : 'p-5';
 
   return (
-    <Card className="group overflow-hidden border-white/5 bg-card/30 backdrop-blur-sm hover:bg-card/40 hover:border-brand-green/30 hover:shadow-[0_0_40px_-10px_rgba(44,187,93,0.15)] transition-all duration-500 h-full flex flex-col">
+    <Card className="group frame overflow-hidden bg-surface-interactive/80 backdrop-blur-none hover:bg-surface-interactive/90 transition-all duration-500 h-full flex flex-col">
       <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="block relative aspect-video overflow-hidden bg-muted/20">
         <Image
           className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -84,8 +84,8 @@ export default function VideoCard({
           </div>
         </div>
         {/* Play Overlay */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-all duration-300 group-hover:opacity-100 backdrop-blur-[2px]">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-green text-white shadow-[0_0_30px_rgba(44,187,93,0.6)] transform scale-90 group-hover:scale-100 transition-transform duration-300">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-all duration-300 group-hover:opacity-100">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 text-white shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
             <svg className="h-7 w-7 ml-1" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -94,8 +94,8 @@ export default function VideoCard({
       </a>
 
       <CardContent className={`flex flex-col flex-grow ${contentPaddingClass}`}>
-        <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="group-hover:text-brand-green transition-colors duration-300">
-          <h3 className={`line-clamp-2 font-bold leading-tight font-sans tracking-tight text-foreground group-hover:text-brand-green/90 ${titleSizeClass}`}>
+        <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="group-hover:text-foreground transition-colors duration-300">
+          <h3 className={`line-clamp-2 font-bold leading-tight font-sans tracking-tight text-foreground ${titleSizeClass}`}>
             {title}
           </h3>
         </a>
@@ -110,7 +110,7 @@ export default function VideoCard({
       {!isCompact && (
         <CardFooter className="p-5 pt-0 mt-auto">
           <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="w-full">
-            <Button variant="outline" size="sm" className="w-full border-white/10 text-muted-foreground hover:text-brand-green hover:border-brand-green/30 hover:bg-brand-green/5 transition-all">
+            <Button variant="outline" size="sm" className="w-full border-border-subtle text-muted-foreground hover:text-foreground hover:border-border-interactive hover:bg-white/5 transition-all">
               Watch Video
             </Button>
           </a>
