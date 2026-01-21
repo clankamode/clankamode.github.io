@@ -1,9 +1,19 @@
+import { notFound } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import PillarCard from './_components/PillarCard';
 import { getLearningLibrary } from '@/lib/content';
+import { UserRole, hasRole } from '@/types/roles';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LearnPage() {
+  const session = await getServerSession(authOptions);
+  const userRole = session?.user?.role as UserRole | undefined;
+  if (!userRole || !hasRole(userRole, UserRole.ADMIN)) {
+    notFound();
+  }
+
   const library = await getLearningLibrary(false);
 
   const pillarCards = library.map((pillar) => ({

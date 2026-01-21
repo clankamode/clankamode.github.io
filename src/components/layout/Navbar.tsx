@@ -162,7 +162,9 @@ export default function Navbar() {
               ) : (
                 <>
                   <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
-                  <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
+                  {isEffectiveAdmin && (
+                    <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
+                  )}
                   <div className="relative group">
                     <button type="button" className={navButtonClass(isPracticeSectionActive)}>
                       Practice
@@ -273,7 +275,9 @@ export default function Navbar() {
             ) : (
               <>
                 <Link href="/videos" className={mobileNavLinkClass('/videos')} onClick={() => setIsMenuOpen(false)}>Videos</Link>
-                <Link href="/learn" className={mobileNavLinkClass('/learn')} onClick={() => setIsMenuOpen(false)}>Learn</Link>
+                {isEffectiveAdmin && (
+                  <Link href="/learn" className={mobileNavLinkClass('/learn')} onClick={() => setIsMenuOpen(false)}>Learn</Link>
+                )}
                 <div className="space-y-1 pt-3">
                   <span className="block px-4 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Practice</span>
                   <Link href="/peralta75" className={mobileNavLinkClass('/peralta75')} onClick={() => setIsMenuOpen(false)}>Peralta 75</Link>

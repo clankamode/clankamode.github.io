@@ -1,5 +1,8 @@
 import { notFound } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { getLearningPillarBySlug, getLearningPillarTree } from '@/lib/content';
+import { UserRole, hasRole } from '@/types/roles';
 import MobileSidebarToggle from '../_components/MobileSidebarToggle';
 import PillarSidebar from '../_components/PillarSidebar';
 import TopicAccordion from '../_components/TopicAccordion';
@@ -11,6 +14,12 @@ interface PillarPageProps {
 }
 
 export default async function PillarPage({ params }: PillarPageProps) {
+  const session = await getServerSession(authOptions);
+  const userRole = session?.user?.role as UserRole | undefined;
+  if (!userRole || !hasRole(userRole, UserRole.ADMIN)) {
+    notFound();
+  }
+
   const { pillar: pillarSlug } = await params;
   const pillar = await getLearningPillarBySlug(pillarSlug);
   if (!pillar) {

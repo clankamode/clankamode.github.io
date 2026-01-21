@@ -37,6 +37,12 @@ export async function middleware(req: NextRequest) {
             }
         }
 
+        if (req.nextUrl.pathname.startsWith('/learn')) {
+            if (!hasRole(userRole, UserRole.ADMIN)) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+        }
+
         // Check if the route is thumbnail-related
         if (req.nextUrl.pathname.startsWith('/thumbnails') || req.nextUrl.pathname.startsWith('/api/thumbnail_job')) {
             if (!hasRole(userRole, UserRole.EDITOR)) {
@@ -78,6 +84,7 @@ export const config = {
         '/api/thumbnail_job/:path*',
         '/practice-test',
         '/api/test-session/:path*',
+        '/learn/:path*',
         '/ai',
         '/api/chat',
     ],

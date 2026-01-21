@@ -42,6 +42,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { pillar: pillarSlug, slug: articleSlug } = await params;
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role as UserRole | undefined;
+  if (!userRole || !hasRole(userRole, UserRole.ADMIN)) {
+    notFound();
+  }
   const canViewDrafts = !!userRole && hasRole(userRole, UserRole.EDITOR);
 
   const pillar = await getLearningPillarBySlug(pillarSlug);
