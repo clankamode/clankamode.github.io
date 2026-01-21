@@ -58,7 +58,7 @@ export default function Navbar() {
   const isAdmin = hasRole(originalRole, UserRole.ADMIN);
   const isEffectiveAdmin = hasRole(effectiveRole, UserRole.ADMIN);
   const isEditor = effectiveRole === UserRole.EDITOR;
-  const isEditorSectionActive = ['/thumbnails', '/gallery', '/clips'].some((path) => isActive(path));
+  const isEditorSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai'].some((path) => isActive(path));
 
   return (
     <>
@@ -101,10 +101,9 @@ export default function Navbar() {
           <div className="hidden md:flex items-center justify-center flex-1">
             <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-white/5 backdrop-blur-md' : ''
               }`}>
-              {/* Editors only see AI and Thumbnails tabs */}
+              {/* Editors only see Editor dropdown with AI and Thumbnails tabs */}
               {isLoggedIn && isEditor ? (
                 <>
-                  <Link href="/ai" className={navLinkClass('/ai')}>AI</Link>
                   <div className="relative group">
                     <button type="button" className={navButtonClass(isEditorSectionActive)}>
                       Editor
@@ -114,6 +113,7 @@ export default function Navbar() {
                     </button>
                     <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-white/10 bg-background/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                       <div className="py-2">
+                        <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
                         <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
                         <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
                         <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
@@ -129,7 +129,6 @@ export default function Navbar() {
                   <Link href="/assessment" className={navLinkClass('/assessment')}>Assessment</Link>
                   {isLoggedIn && isEffectiveAdmin && (
                     <>
-                      <Link href="/ai" className={navLinkClass('/ai')}>AI Tools</Link>
                       <div className="relative group">
                         <button type="button" className={navButtonClass(isEditorSectionActive)}>
                           Editor
@@ -139,6 +138,7 @@ export default function Navbar() {
                         </button>
                         <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-white/10 bg-background/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                           <div className="py-2">
+                            <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
                             <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
                             <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
                             <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
@@ -208,9 +208,9 @@ export default function Navbar() {
           <div className="space-y-2">
             {isLoggedIn && isEditor ? (
               <>
-                <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI</Link>
                 <div className="space-y-1">
                   <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>
+                  <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
                   <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
                   <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
                   <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
@@ -224,9 +224,9 @@ export default function Navbar() {
                 <Link href="/assessment" className={mobileNavLinkClass('/assessment')} onClick={() => setIsMenuOpen(false)}>Assessment</Link>
                 {isLoggedIn && isEffectiveAdmin && (
                   <>
-                    <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
                     <div className="space-y-1">
                       <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>
+                      <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
                       <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
                       <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
                       <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
