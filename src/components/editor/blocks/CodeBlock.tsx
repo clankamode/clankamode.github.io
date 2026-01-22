@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import type { CodeBlock as CodeBlockType } from '../types';
 
 interface CodeBlockProps {
@@ -69,7 +69,7 @@ type HLJSApi = {
   highlight: (code: string, options: { language: string; ignoreIllegals: boolean }) => { value: string };
 };
 
-export function CodeBlock({ block, editable = false, onChange }: CodeBlockProps) {
+function CodeBlockComponent({ block, editable = false, onChange }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const [hljs, setHljs] = useState<HLJSApi | null>(null);
   const highlightedLines = parseHighlightRanges(block.highlight);
@@ -122,6 +122,10 @@ export function CodeBlock({ block, editable = false, onChange }: CodeBlockProps)
     }
   };
 
+  if (!block.content && !editable) {
+    return null;
+  }
+
   return (
     <div className="frame rounded-xl bg-surface-dense">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-subtle px-4 py-3">
@@ -173,8 +177,9 @@ export function CodeBlock({ block, editable = false, onChange }: CodeBlockProps)
 
     {editable ? (
         <textarea
-          value={block.content}
-          className="min-h-[200px] w-full rounded-b-xl bg-surface-dense px-4 py-3 font-mono text-sm text-text-primary focus-visible:outline-none"
+          value={block.content || ''}
+          placeholder="Write code here..."
+          className="min-h-[180px] w-full rounded-b-xl bg-surface-dense px-4 py-3 font-mono text-sm text-text-primary focus-visible:outline-none"
           onChange={(event) => {
             const raw = event.target.value;
             const next = raw.replace(/^\n+/, '');
@@ -209,3 +214,5 @@ export function CodeBlock({ block, editable = false, onChange }: CodeBlockProps)
     </div>
   );
 }
+
+export const CodeBlock = memo(CodeBlockComponent);

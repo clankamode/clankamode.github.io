@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { getToken } from 'next-auth/jwt';
-import { UserRole, hasRole } from '@/types/roles';
+import { UserRole } from '@/types/roles';
+import { requireAuth } from '@/lib/auth-helpers';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 interface OpenAIResponseContent {
+  type?: string;
   text?: string;
 }
 
 interface OpenAIResponseItem {
+  type?: string;
   content?: OpenAIResponseContent[];
 }
 
@@ -22,10 +24,9 @@ interface OpenAIResponse {
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req });
-    const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+    const token = await requireAuth(req, UserRole.EDITOR);
 
-    if (!token || !hasRole(effectiveRole, UserRole.EDITOR)) {
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await openai.responses.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-5-nano',
       input: [
         {
           role: 'user',
@@ -54,18 +55,39 @@ export async function POST(req: NextRequest) {
           ],
         },
       ],
-      max_output_tokens: 120,
+      max_output_tokens: 2000,
     });
 
-    const outputText =
-      (response as OpenAIResponse).output_text ??
-      ((response as OpenAIResponse).output ?? [])
-        .flatMap((item) => item.content ?? [])
-        .map((item) => item.text || '')
-        .join(' ')
-        .trim();
+    let outputText = (response as OpenAIResponse).output_text;
 
-    return NextResponse.json({ altText: outputText || null });
+    if (!outputText) {
+      const output = (response as OpenAIResponse).output ?? [];
+      for (const item of output) {
+        if (item.type === 'message' && item.content) {
+          const textContent = item.content
+            .filter((c) => c.type === 'output_text' && c.text)
+            .map((c) => c.text)
+            .join(' ')
+            .trim();
+          if (textContent) {
+            outputText = textContent;
+            break;
+          }
+        }
+        if (item.content) {
+          const text = item.content
+            .map((c) => c.text || '')
+            .join(' ')
+            .trim();
+          if (text) {
+            outputText = text;
+            break;
+          }
+        }
+      }
+    }
+
+    return NextResponse.json({ altText: outputText?.trim() || null });
   } catch (error) {
     console.error('Error generating alt text:', error);
     return NextResponse.json({ error: 'Failed to generate alt text' }, { status: 500 });

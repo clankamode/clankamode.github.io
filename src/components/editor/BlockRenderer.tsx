@@ -21,7 +21,7 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
     Array.isArray(children) ? children.join('') : String(children ?? '');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {blocks.map((block) => {
         switch (block.type) {
           case 'markdown':

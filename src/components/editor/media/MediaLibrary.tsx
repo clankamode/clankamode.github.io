@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import type { EditorBlock } from '../types';
 
 interface MediaLibraryProps {
@@ -75,7 +76,13 @@ export function MediaLibrary({ isOpen, blocks, onClose, onInsert }: MediaLibrary
           className="group frame overflow-hidden rounded-lg border border-border-subtle bg-surface-interactive"
           onClick={() => onInsert(item.url)}
         >
-          <img src={item.url} alt={item.name ?? 'Media'} className="h-20 w-full object-cover" />
+          <Image
+            src={item.url}
+            alt={item.name ?? 'Media'}
+            width={200}
+            height={80}
+            className="h-20 w-full object-cover"
+          />
           <div className="px-2 py-1 text-left text-xs text-text-secondary group-hover:text-text-primary">
             {item.name ?? 'Media'}
           </div>

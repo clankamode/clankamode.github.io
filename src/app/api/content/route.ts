@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
-import { UserRole, hasRole } from '@/types/roles';
+import { UserRole } from '@/types/roles';
+import { requireAuth } from '@/lib/auth-helpers';
 
 const PILLARS_TABLE = 'LearningPillars';
 const TOPICS_TABLE = 'LearningTopics';
@@ -46,9 +46,8 @@ export async function GET(req: NextRequest) {
 
     let adminAllowed = false;
     if (includeDrafts) {
-      const token = await getToken({ req });
-      const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
-      adminAllowed = !!token && hasRole(effectiveRole, UserRole.EDITOR);
+      const token = await requireAuth(req, UserRole.EDITOR);
+      adminAllowed = !!token;
       if (!adminAllowed) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
@@ -107,10 +106,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req });
-    const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+    const token = await requireAuth(req, UserRole.EDITOR);
 
-    if (!token || !hasRole(effectiveRole, UserRole.EDITOR)) {
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

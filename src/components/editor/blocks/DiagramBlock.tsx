@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import mermaid from 'mermaid';
 import type { DiagramBlock as DiagramBlockType } from '../types';
 
@@ -10,7 +10,7 @@ interface DiagramBlockProps {
   onChange?: (updates: Partial<DiagramBlockType>) => void;
 }
 
-export function DiagramBlock({ block, editable = false, onChange }: DiagramBlockProps) {
+function DiagramBlockComponent({ block, editable = false, onChange }: DiagramBlockProps) {
   const [svg, setSvg] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const renderId = useMemo(() => `diagram-${Math.random().toString(36).slice(2, 9)}`, []);
@@ -41,10 +41,10 @@ export function DiagramBlock({ block, editable = false, onChange }: DiagramBlock
   }, [block.content, renderId]);
 
   return (
-    <div className="rounded-xl border border-border-subtle bg-surface-dense p-5">
+    <div className="rounded-xl border border-border-subtle bg-surface-dense p-4">
       {editable && (
         <textarea
-          value={block.content}
+          value={block.content || ''}
           placeholder="Write Mermaid syntax here..."
           className="mb-4 min-h-[160px] w-full rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 font-mono text-sm text-text-primary"
           onChange={(event) => onChange?.({ content: event.target.value })}
@@ -53,9 +53,13 @@ export function DiagramBlock({ block, editable = false, onChange }: DiagramBlock
 
       {error ? (
         <p className="text-sm text-text-muted">Unable to render diagram: {error}</p>
-      ) : (
+      ) : svg ? (
         <div className="overflow-x-auto" dangerouslySetInnerHTML={{ __html: svg }} />
-      )}
+      ) : !editable ? (
+        <p className="text-sm text-text-muted italic">No diagram content</p>
+      ) : null}
     </div>
   );
 }
+
+export const DiagramBlock = memo(DiagramBlockComponent);

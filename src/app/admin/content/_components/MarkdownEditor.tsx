@@ -49,7 +49,7 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
       </div>
       <div className="rounded-xl border border-border-subtle bg-surface-ambient p-5 min-h-[720px]">
         <span className="mb-4 block text-[10px] uppercase tracking-[0.2em] text-text-muted">Preview</span>
-        <div className="max-h-[720px] overflow-y-auto pr-2">
+        <div className="pr-2">
           <BlockRenderer blocks={blocks} />
         </div>
       </div>

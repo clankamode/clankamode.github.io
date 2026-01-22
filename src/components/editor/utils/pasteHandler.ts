@@ -1,4 +1,4 @@
-import type { EmbedBlock } from '../types';
+import type { EmbedBlock, ImageBlock } from '../types';
 
 export function detectEmbedFromText(text: string): Pick<EmbedBlock, 'provider' | 'url' | 'embedId'> | null {
   const trimmed = text.trim();
@@ -17,4 +17,18 @@ export function detectEmbedFromText(text: string): Pick<EmbedBlock, 'provider' |
   }
 
   return { provider: 'url', url: trimmed, embedId: undefined };
+}
+
+export function detectImageFromText(text: string): Pick<ImageBlock, 'src' | 'alt'> | null {
+  const trimmed = text.trim();
+  if (!trimmed.startsWith('http')) {
+    return null;
+  }
+
+  const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|avif)(\?.*)?$/i;
+  if (imageExtensions.test(trimmed)) {
+    return { src: trimmed, alt: '' };
+  }
+
+  return null;
 }

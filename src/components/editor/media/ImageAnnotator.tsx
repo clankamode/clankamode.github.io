@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import type { ImageAnnotation, ImageBlock } from '../types';
 import { createBlockId } from '../utils/blockUtils';
 
@@ -75,7 +76,13 @@ export function ImageAnnotator({ block, onClose, onSave }: ImageAnnotatorProps) 
             className="frame relative mx-auto max-w-4xl cursor-crosshair bg-surface-interactive p-3"
             onClick={handleAddAnnotation}
           >
-            <img src={block.src} alt={block.alt} className="h-auto w-full rounded-lg" />
+            <Image
+              src={block.src}
+              alt={block.alt}
+              width={1200}
+              height={800}
+              className="h-auto w-full rounded-lg"
+            />
             <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
               {annotations.map((annotation) => {
                 if (annotation.style !== 'arrow') {

@@ -124,43 +124,51 @@ export default function ArticleForm({ article, pillars, onChange }: ArticleFormP
                 onChange({ ...article, slug: event.target.value });
               }}
             />
-            <button
-              type="button"
-              onClick={() => {
-                const nextLocked = !slugLocked;
-                setSlugLocked(nextLocked);
-                if (!nextLocked) {
-                  onChange({ ...article, slug: slugFromTitle(article.title) });
-                }
-              }}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border-subtle bg-surface-dense/60 text-text-muted transition-colors hover:text-text-primary"
-              aria-pressed={slugLocked}
-              aria-label={slugLocked ? 'Unlock slug auto-generation' : 'Lock slug auto-generation'}
-            >
-              {slugLocked ? (
-                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4">
-                  <path
-                    d="M6 9V7a4 4 0 018 0v2"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <rect x="4.5" y="9" width="11" height="8" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-              ) : (
-                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4">
-                  <path
-                    d="M6 9V7a4 4 0 017-2.8"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <rect x="4.5" y="9" width="11" height="8" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-              )}
-            </button>
+            <div className="group relative">
+              <button
+                type="button"
+                onClick={() => {
+                  const nextLocked = !slugLocked;
+                  setSlugLocked(nextLocked);
+                  if (!nextLocked) {
+                    onChange({ ...article, slug: slugFromTitle(article.title) });
+                  }
+                }}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border-subtle bg-surface-dense/60 text-text-muted transition-colors hover:text-text-primary"
+                aria-pressed={slugLocked}
+                aria-label={slugLocked ? 'Unlock slug auto-generation' : 'Lock slug auto-generation'}
+              >
+                {slugLocked ? (
+                  <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4">
+                    <path
+                      d="M6 9V7a4 4 0 018 0v2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <rect x="4.5" y="9" width="11" height="8" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ) : (
+                  <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4">
+                    <path
+                      d="M6 9V7a4 4 0 017-2.8"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <rect x="4.5" y="9" width="11" height="8" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                )}
+              </button>
+              <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-border-subtle bg-surface-workbench px-3 py-1.5 text-xs text-text-primary opacity-0 shadow-[var(--shadow-lift)] transition-opacity group-hover:opacity-100">
+                {slugLocked
+                  ? 'Slug is locked. Click to unlock and auto-generate from title.'
+                  : 'Slug auto-generates from title. Click to lock and edit manually.'}
+                <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-surface-workbench" />
+              </div>
+            </div>
           </div>
         </div>
         <div className="space-y-2 md:col-span-2">

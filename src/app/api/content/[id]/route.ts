@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
-import { UserRole, hasRole } from '@/types/roles';
+import { UserRole } from '@/types/roles';
+import { requireAuth } from '@/lib/auth-helpers';
 
 const ARTICLES_TABLE = 'LearningArticles';
 
@@ -19,18 +19,17 @@ export async function GET(
     const includeDrafts = req.nextUrl.searchParams.get('includeDrafts') === 'true';
 
     if (includeDrafts) {
-      const token = await getToken({ req });
-      const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
-      if (!token || !hasRole(effectiveRole, UserRole.EDITOR)) {
+      const token = await requireAuth(req, UserRole.EDITOR);
+      if (!token) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
     }
 
     const { id } = await params;
-    let query = supabase
-      .from(ARTICLES_TABLE)
-      .select('*')
-      .eq('id', id);
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    
+    let query = supabase.from(ARTICLES_TABLE).select('*');
+    query = isUUID ? query.eq('id', id) : query.eq('slug', id);
 
     if (!includeDrafts) {
       query = query.eq('is_published', true);
@@ -54,10 +53,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const token = await getToken({ req });
-    const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+    const token = await requireAuth(req, UserRole.EDITOR);
 
-    if (!token || !hasRole(effectiveRole, UserRole.EDITOR)) {
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -109,10 +107,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const token = await getToken({ req });
-    const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+    const token = await requireAuth(req, UserRole.ADMIN);
 
-    if (!token || !hasRole(effectiveRole, UserRole.ADMIN)) {
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

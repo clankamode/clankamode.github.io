@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import YouTube from 'react-youtube';
 import type { EmbedBlock as EmbedBlockType } from '../types';
 
@@ -25,12 +26,12 @@ function getYouTubeId(url: string): string | undefined {
   return embedMatch?.[1];
 }
 
-export function EmbedBlock({ block, editable = false, onChange }: EmbedBlockProps) {
+function EmbedBlockComponent({ block, editable = false, onChange }: EmbedBlockProps) {
   const url = block.url || '';
   const embedId = block.embedId || getYouTubeId(url);
 
   return (
-    <div className="frame rounded-xl bg-surface-dense p-5">
+    <div className="frame rounded-xl bg-surface-dense p-4">
       {editable && (
         <div className="flex flex-wrap gap-3">
           <select
@@ -57,7 +58,7 @@ export function EmbedBlock({ block, editable = false, onChange }: EmbedBlockProp
       )}
 
       {!editable && block.provider === 'youtube' && embedId && (
-        <div className="mt-4 overflow-hidden rounded-lg">
+        <div className="overflow-hidden rounded-lg">
           <YouTube
             videoId={embedId}
             opts={{
@@ -68,8 +69,8 @@ export function EmbedBlock({ block, editable = false, onChange }: EmbedBlockProp
         </div>
       )}
 
-      {!editable && block.provider !== 'youtube' && (
-        <div className="mt-4 space-y-2 text-sm text-text-secondary">
+      {!editable && block.provider !== 'youtube' && url && (
+        <div className="space-y-2 text-sm text-text-secondary">
           <p className="text-xs uppercase tracking-[0.25em] text-text-muted">
             {block.provider.toUpperCase()}
           </p>
@@ -85,8 +86,14 @@ export function EmbedBlock({ block, editable = false, onChange }: EmbedBlockProp
       )}
 
       {editable && !url && (
-        <p className="mt-4 text-xs text-text-muted">Paste a URL to render the embed preview.</p>
+        <p className="mt-3 text-xs text-text-muted italic">Paste a URL to render the embed preview.</p>
+      )}
+
+      {!editable && !url && (
+        <p className="text-sm text-text-muted italic">No URL provided</p>
       )}
     </div>
   );
 }
+
+export const EmbedBlock = memo(EmbedBlockComponent);

@@ -1,16 +1,17 @@
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
-import { UserRole, hasRole } from '@/types/roles';
+import { UserRole } from '@/types/roles';
+import { requireAuth } from '@/lib/auth-helpers';
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
-    const token = await getToken({ req: request as NextRequest });
-    const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+    const token = await requireAuth(request as NextRequest, UserRole.EDITOR);
 
-    if (!token || !hasRole(effectiveRole, UserRole.EDITOR)) {
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
 
     const body = (await request.json()) as HandleUploadBody;
     const jsonResponse = await handleUpload({
@@ -38,6 +39,6 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json(jsonResponse);
   } catch (error) {
     console.error('Error uploading content media:', error);
-    return NextResponse.json({ error: (error as Error).message }, { status: 400 });
+    return NextResponse.json({ error: 'Upload failed' }, { status: 400 });
   }
 }

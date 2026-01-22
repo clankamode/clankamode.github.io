@@ -57,17 +57,72 @@ function parseEmbedProvider(value?: string): EmbedBlock['provider'] {
   }
 }
 
+function extractMarkdownImages(content: string): Array<{ alt: string; url: string; match: string; index: number }> {
+  const images: Array<{ alt: string; url: string; match: string; index: number }> = [];
+  const regex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(content)) !== null) {
+    images.push({
+      alt: match[1] || '',
+      url: match[2],
+      match: match[0],
+      index: match.index,
+    });
+  }
+  return images;
+}
+
 function flushMarkdownBlock(blocks: EditorBlock[], buffer: string[]) {
   const content = buffer.join('\n').trim();
   if (!content) {
     buffer.length = 0;
     return;
   }
-  blocks.push({
-    id: createBlockId('markdown'),
-    type: 'markdown',
-    content,
-  });
+
+  const images = extractMarkdownImages(content);
+  if (images.length > 0) {
+    images.sort((a, b) => a.index - b.index);
+
+    let lastIndex = 0;
+    for (const image of images) {
+      const beforeImage = content.slice(lastIndex, image.index).trim();
+      if (beforeImage) {
+        blocks.push({
+          id: createBlockId('markdown'),
+          type: 'markdown',
+          content: beforeImage,
+        });
+      }
+
+      const imageUrl = image.url.trim();
+      if (imageUrl && (imageUrl.startsWith('http') || imageUrl.startsWith('/'))) {
+        blocks.push({
+          id: createBlockId('image'),
+          type: 'image',
+          src: imageUrl,
+          alt: image.alt,
+          size: 'full',
+        });
+      }
+
+      lastIndex = image.index + image.match.length;
+    }
+
+    const afterLastImage = content.slice(lastIndex).trim();
+    if (afterLastImage) {
+      blocks.push({
+        id: createBlockId('markdown'),
+        type: 'markdown',
+        content: afterLastImage,
+      });
+    }
+  } else {
+    blocks.push({
+      id: createBlockId('markdown'),
+      type: 'markdown',
+      content,
+    });
+  }
   buffer.length = 0;
 }
 
