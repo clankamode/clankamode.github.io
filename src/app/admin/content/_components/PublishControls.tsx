@@ -22,12 +22,21 @@ export default function PublishControls({
   canDelete = false,
 }: PublishControlsProps) {
   return (
-    <div className="mt-8 flex flex-wrap items-center gap-3">
-      <Button onClick={onSave} disabled={saving} variant="ghost">
+    <div className="mt-8 flex flex-wrap items-center gap-3 sm:justify-end">
+      <Button
+        onClick={onSave}
+        disabled={saving}
+        variant="ghost"
+        className="border border-border-subtle bg-surface-dense/60 text-text-secondary hover:text-text-primary"
+      >
         {saving ? 'Saving...' : 'Save Draft'}
       </Button>
       {isPublished ? (
-        <Button onClick={onUnpublish} disabled={saving} className="bg-white/10 text-text-primary">
+        <Button
+          onClick={onUnpublish}
+          disabled={saving}
+          className="border border-border-subtle bg-surface-dense/70 text-text-primary hover:bg-surface-dense"
+        >
           Unpublish
         </Button>
       ) : (
@@ -36,7 +45,12 @@ export default function PublishControls({
         </Button>
       )}
       {canDelete && (
-        <Button onClick={onDelete} disabled={saving} variant="ghost">
+        <Button
+          onClick={onDelete}
+          disabled={saving}
+          variant="ghost"
+          className="text-red-300 hover:bg-red-500/10 hover:text-red-200"
+        >
           Delete
         </Button>
       )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -40,8 +40,10 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
   const [pillars, setPillars] = useState<PillarTopic[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [justSaved, setJustSaved] = useState(false);
   const effectiveRole = (session?.user?.role as UserRole) || UserRole.USER;
   const canDelete = hasRole(effectiveRole, UserRole.ADMIN);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hasUnsavedChanges = useMemo(() => {
     if (!article || !savedArticle) {
@@ -59,6 +61,10 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
         ?.slug
     );
   }, [article, pillars]);
+
+  const shortcutHint = useMemo(() => {
+    return /Mac|iPhone|iPad/.test(navigator.platform) ? 'Cmd+S' : 'Ctrl+S';
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,6 +118,11 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
       const updated = await response.json();
       setArticle(updated);
       setSavedArticle(updated);
+      setJustSaved(true);
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      saveTimeoutRef.current = setTimeout(() => setJustSaved(false), 2000);
     } catch (saveError) {
       console.error(saveError);
       setError('Failed to save article.');
@@ -149,32 +160,57 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [saving, handleSave, article]);
 
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
+
   if (!article) {
     return (
-      <div className="min-h-screen bg-background pt-24 px-6 text-text-muted">Loading...</div>
+      <div className="min-h-screen bg-background pt-24 pb-16">
+        <div className="mx-auto max-w-6xl px-6 animate-pulse">
+          <div className="mb-4 h-3 w-32 rounded-full bg-surface-dense" />
+          <div className="mb-8 h-10 w-80 rounded-lg bg-surface-dense" />
+          <div className="mb-8 h-44 rounded-xl bg-surface-interactive/50" />
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="h-[520px] rounded-xl bg-surface-interactive/50" />
+            <div className="h-[520px] rounded-xl bg-surface-interactive/50" />
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Editor</p>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-text-primary">
-              {article.title || 'Untitled'}
-            </h1>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-border-subtle pb-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <p className="text-[11px] uppercase tracking-[0.35em] text-text-muted">Editor</p>
             {hasUnsavedChanges && (
-              <p className="mt-2 text-xs uppercase tracking-[0.2em] text-text-muted">
-                Unsaved changes
-              </p>
+              <div className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface-dense/60 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-text-muted">
+                <span className="h-1.5 w-1.5 rounded-full bg-brand-amber/80" aria-hidden="true" />
+                Unsaved
+                <kbd className="ml-1 rounded border border-border-subtle bg-surface-dense px-1.5 py-0.5 text-[10px] font-mono text-text-muted">
+                  {shortcutHint}
+                </kbd>
+              </div>
+            )}
+            {!hasUnsavedChanges && justSaved && (
+              <div className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface-dense/60 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-text-muted">
+                <span className="h-1.5 w-1.5 rounded-full bg-brand-green/80" aria-hidden="true" />
+                Saved
+              </div>
             )}
           </div>
           <div className="flex items-center gap-4">
             {article.is_published && livePillarSlug && (
               <Link
                 href={`/learn/${livePillarSlug}/${article.slug}`}
-                className="text-sm text-text-secondary hover:text-text-primary"
+                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -187,19 +223,17 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
           </div>
         </div>
 
-        <ArticleForm
-          article={article}
-          pillars={pillars}
-          onChange={setArticle}
+        <ArticleForm article={article} pillars={pillars} onChange={setArticle} />
+      </div>
+
+      <div className="mx-auto mt-8 w-full px-6 lg:px-10 2xl:px-14">
+        <MarkdownEditor
+          value={article.body}
+          onChange={(value: string) => setArticle({ ...article, body: value })}
         />
+      </div>
 
-        <div className="mt-8">
-          <MarkdownEditor
-            value={article.body}
-            onChange={(value: string) => setArticle({ ...article, body: value })}
-          />
-        </div>
-
+      <div className="mx-auto mt-8 max-w-6xl px-6">
         <PublishControls
           saving={saving}
           isPublished={article.is_published}
