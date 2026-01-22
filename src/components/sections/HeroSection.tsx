@@ -66,7 +66,7 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
 
         {/* Subline */}
         <p className="mb-10 max-w-2xl text-lg md:text-xl text-muted-foreground font-light leading-relaxed">
-          {channelStats?.description || "No fluff. No theory. Just the exact steps, resources, and mindset I used to break into Big Tech and scale my career."}
+          {channelStats?.description || "Deep dives into algorithms, system design, and problem-solving strategies for technical interviews."}
         </p>
 
         {/* Stats - Custom Brand Icons */}

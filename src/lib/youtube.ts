@@ -19,6 +19,7 @@ export interface VideoData {
 }
 
 import { getRecentVideos } from './videos';
+import { devCache } from './dev-cache';
 
 // YouTube API types
 export interface YouTubeVideo {
@@ -167,8 +168,13 @@ export function formatCount(count: string | number): string {
   }
 }
 
-// Fetch channel statistics
 export async function getChannelStats(channelId: string): Promise<ChannelStats | null> {
+  const cacheKey = devCache.generateKey('getChannelStats', channelId);
+  const cached = devCache.get<ChannelStats>(cacheKey);
+  if (cached !== null) {
+    return cached;
+  }
+
   if (!process.env.YOUTUBE_API_KEY) {
     console.error('YouTube API key is missing');
     return null;
@@ -180,6 +186,12 @@ export async function getChannelStats(channelId: string): Promise<ChannelStats |
     );
     
     if (!response.ok) {
+      if (response.status === 403) {
+        const errorData = await response.json().catch(() => ({}));
+        if (errorData.error?.errors?.[0]?.reason === 'quotaExceeded') {
+          return null;
+        }
+      }
       throw new Error(`YouTube API error: ${response.statusText}`);
     }
     
@@ -192,7 +204,7 @@ export async function getChannelStats(channelId: string): Promise<ChannelStats |
     
     const channel = data.items[0];
     
-    return {
+    const result = {
       id: channel.id,
       title: channel.snippet.title,
       description: channel.snippet.description,
@@ -202,6 +214,9 @@ export async function getChannelStats(channelId: string): Promise<ChannelStats |
       viewCount: channel.statistics.viewCount,
       videoCount: channel.statistics.videoCount
     };
+    
+    devCache.set(cacheKey, result);
+    return result;
   } catch (error) {
     console.error('Error fetching channel stats:', error);
     return null;
@@ -233,11 +248,16 @@ export async function getChannelVideos(
   }
 }
 
-// Fetch popular videos from a specific channel
 export async function getPopularChannelVideos(
   channelId: string,
   maxResults: number = 3
 ): Promise<YouTubeVideo[]> {
+  const cacheKey = devCache.generateKey('getPopularChannelVideos', channelId, maxResults);
+  const cached = devCache.get<YouTubeVideo[]>(cacheKey);
+  if (cached !== null) {
+    return cached;
+  }
+
   if (!process.env.YOUTUBE_API_KEY) {
     console.error('YouTube API key is missing');
     return [];
@@ -255,7 +275,12 @@ export async function getPopularChannelVideos(
 
     const searchResponse = await fetch(searchUrl.toString());
     if (!searchResponse.ok) {
-        // Log the response body for more details on the error
+        if (searchResponse.status === 403) {
+          const errorData = await searchResponse.json().catch(() => ({}));
+          if (errorData.error?.errors?.[0]?.reason === 'quotaExceeded') {
+            return [];
+          }
+        }
         const errorBody = await searchResponse.text();
         console.error('YouTube API error details (Search):', errorBody);
         throw new Error(`YouTube API error (Search): ${searchResponse.statusText}`);
@@ -315,8 +340,10 @@ export async function getPopularChannelVideos(
         };
      });
 
-    // Filter out any nulls and assert the final type
-    return formattedVideos.filter((video): video is YouTubeVideo => video !== null);
+    const result = formattedVideos.filter((video): video is YouTubeVideo => video !== null);
+    
+    devCache.set(cacheKey, result);
+    return result;
 
   } catch (error) {
     console.error('Error fetching popular YouTube videos:', error);
