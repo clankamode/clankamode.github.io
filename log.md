@@ -1,3 +1,31 @@
+## January 20, 2026
+### Thumbnail Tool Improvements
+- Added comments sidebar to thumbnail modal with image attachments, drag-and-drop, and edit functionality
+- Comments now use Google auth name automatically (no manual name input)
+- Made suggested thumbnails section collapsible
+- Added favorites tab and per-thumbnail favorite toggles
+- Generate three thumbnail suggestions including inspiration and text-overlay variants
+- Refined thumbnail suggestion generation
+
+### Editor & Navigation
+- Added Editor dropdown with Thumbnails, Gallery, and Clips (placeholder)
+- Moved AI Tools to the Editor Nav
+
+### Learning Platform
+- Shipped Learning Platform V1 with OpenAI-inspired content experience
+- Restricted learn section to admin users only
+
+### Design System
+- Aligned design system with DESIGN_PRINCIPLES.md
+- Made FAANG level styling red
+- Increased font sizes and improved video section UX
+
+### Fixes & Cleanup
+- Fixed YouTube API quota handling and added dev mode cache
+- Removed mobile auth and YouTube subscribe CTAs from mobile menu
+
+---
+
 ## May 24
 - Fixed the navigation bar (DONE)
 - Fix the login
