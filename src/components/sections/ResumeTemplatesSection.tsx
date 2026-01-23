@@ -1,3 +1,6 @@
+'use client';
+
+import { signIn, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
 
 const templates = [
@@ -20,6 +23,17 @@ const templates = [
 ];
 
 export default function ResumeTemplatesSection() {
+  const { status } = useSession();
+  const isAuthenticated = status === 'authenticated';
+
+  const handleAction = (href: string) => {
+    if (!isAuthenticated) {
+      signIn('google');
+      return;
+    }
+    window.open(href, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <section className="flex min-h-[calc(100vh-80px)] items-center bg-background py-20">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6">
@@ -51,27 +65,30 @@ export default function ResumeTemplatesSection() {
                 </div>
 
                 <div className="flex gap-3 sm:flex-shrink-0">
-                  <a
-                    href={template.viewHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  {isAuthenticated ? (
+                    <>
+                      <Button
+                        variant="secondary"
+                        className="border-border-interactive bg-transparent text-text-primary hover:bg-white/5"
+                        onClick={() => handleAction(template.viewHref)}
+                      >
+                        View
+                      </Button>
+                      <Button
+                        className="bg-accent text-black hover:brightness-110"
+                        onClick={() => handleAction(template.editHref)}
+                      >
+                        Copy
+                      </Button>
+                    </>
+                  ) : (
                     <Button
-                      variant="secondary"
-                      className="border-border-interactive bg-transparent text-text-primary hover:bg-white/5"
+                      className="bg-accent text-black hover:brightness-110"
+                      onClick={() => signIn('google')}
                     >
-                      View
+                      Login to Access
                     </Button>
-                  </a>
-                  <a
-                    href={template.editHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button className="bg-accent text-black hover:brightness-110">
-                      Copy
-                    </Button>
-                  </a>
+                  )}
                 </div>
               </div>
             </div>
