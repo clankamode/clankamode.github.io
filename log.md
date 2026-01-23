@@ -1,3 +1,9 @@
+## January 21, 2026
+### Navigation
+- Fixed navbar centering - navigation links (Videos, Practice) are now truly centered on the page using absolute positioning
+
+---
+
 ## January 20, 2026
 ### Thumbnail Tool Improvements
 - Added comments sidebar to thumbnail modal with image attachments, drag-and-drop, and edit functionality
