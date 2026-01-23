@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { UserRole, hasRole } from '@/types/roles';
 import ContentTable from './ContentTable';
 
@@ -34,6 +35,9 @@ export default function ContentDashboard() {
   const [newTitle, setNewTitle] = useState('');
   const [newSlug, setNewSlug] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [createdArticleId, setCreatedArticleId] = useState<string | null>(null);
   const effectiveRole = (session?.user?.role as UserRole) || UserRole.USER;
   const canDelete = hasRole(effectiveRole, UserRole.ADMIN);
 
@@ -116,7 +120,11 @@ export default function ContentDashboard() {
       }
 
       const article = await response.json();
-      router.push(`/admin/content/${article.id}`);
+      setNewTitle('');
+      setNewSlug('');
+      setNewTopicId('');
+      setCreatedArticleId(article.id);
+      setShowSuccess(true);
     } catch (createError) {
       console.error(createError);
       setError('Failed to create article.');
@@ -126,18 +134,22 @@ export default function ContentDashboard() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this article? This cannot be undone.')) {
-      return;
-    }
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
     try {
-      const response = await fetch(`/api/content/${id}`, { method: 'DELETE' });
+      const response = await fetch(`/api/content/${deleteConfirmId}`, { method: 'DELETE' });
       if (!response.ok) {
         throw new Error('Failed to delete article');
       }
-      setArticles((prev) => prev.filter((item) => item.id !== id));
+      setArticles((prev) => prev.filter((item) => item.id !== deleteConfirmId));
+      setDeleteConfirmId(null);
     } catch (deleteError) {
       console.error(deleteError);
       setError('Failed to delete article.');
+      setDeleteConfirmId(null);
     }
   };
 
@@ -160,42 +172,46 @@ export default function ContentDashboard() {
           </p>
         </div>
 
-        <div className="mb-10 rounded-xl border border-border-subtle bg-surface-interactive/70 p-6">
-          <h2 className="text-lg font-semibold text-text-primary">New Article</h2>
-          <div className="mt-4 grid gap-4 md:grid-cols-[1fr_1fr_1fr_auto]">
+        <div className="mb-6 border-b border-border-workbench pb-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <input
-              className="rounded-lg border border-border-subtle bg-surface-dense px-4 py-2 text-text-primary"
-              placeholder="Title"
+              className="flex-1 bg-transparent text-lg font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-0"
+              placeholder="Start typing to create a new article..."
               value={newTitle}
               onChange={(event) => setNewTitle(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && newTitle && newTopicId && !creating) {
+                  handleCreate();
+                }
+              }}
             />
-            <input
-              className="rounded-lg border border-border-subtle bg-surface-dense px-4 py-2 text-text-primary"
-              placeholder="Slug"
-              value={newSlug}
-              onChange={(event) => setNewSlug(event.target.value)}
-            />
-            <select
-              className="rounded-lg border border-border-subtle bg-surface-dense px-4 py-2 text-text-primary"
-              value={newTopicId}
-              onChange={(event) => setNewTopicId(event.target.value)}
-            >
-              <option value="">Select topic</option>
-              {topicOptions.map((topic) => (
-                <option key={topic.id} value={topic.id}>
-                  {topic.label}
-                </option>
-              ))}
-            </select>
-            <Button
-              onClick={handleCreate}
-              disabled={creating}
-              className="bg-brand-green text-black hover:bg-brand-green/90"
-            >
-              {creating ? 'Creating...' : 'Create'}
-            </Button>
+            {newTitle && (
+              <div className="flex items-center gap-3 transition-opacity duration-200">
+                <select
+                  className="rounded-lg border border-border-subtle bg-surface-workbench px-3 py-2 text-sm text-text-primary transition-colors focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  value={newTopicId}
+                  onChange={(event) => setNewTopicId(event.target.value)}
+                >
+                  <option value="">Select topic</option>
+                  {topicOptions.map((topic) => (
+                    <option key={topic.id} value={topic.id}>
+                      {topic.label}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  onClick={handleCreate}
+                  disabled={creating || !newTopicId || !newTitle || !newSlug}
+                  variant="primary"
+                  className="!text-black"
+                  size="md"
+                >
+                  {creating ? 'Creating...' : 'Create'}
+                </Button>
+              </div>
+            )}
           </div>
-          {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+          {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
         </div>
 
         {loading ? (
@@ -204,6 +220,46 @@ export default function ContentDashboard() {
           <ContentTable articles={articles} onDelete={handleDelete} canDelete={canDelete} />
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteConfirmId !== null}
+        onClose={() => setDeleteConfirmId(null)}
+        onConfirm={confirmDelete}
+        title="Delete article?"
+        message="This cannot be undone."
+        confirmLabel="Delete"
+        confirmVariant="danger"
+      />
+
+      {showSuccess && createdArticleId && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-surface-workbench border border-border-subtle shadow-xl p-4 max-w-sm">
+          <p className="text-text-primary font-medium mb-3">Article created</p>
+          <div className="flex gap-2">
+            <Button
+              variant="primary"
+              size="sm"
+              className="!text-black"
+              onClick={() => {
+                router.push(`/admin/content/${createdArticleId}`);
+                setShowSuccess(false);
+                setCreatedArticleId(null);
+              }}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setShowSuccess(false);
+                setCreatedArticleId(null);
+              }}
+            >
+              Create another
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
