@@ -75,7 +75,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <div className="min-h-screen bg-background pt-20 pb-24">
       <ReadingProgress />
-      <section className="mx-auto max-w-6xl px-6">
+      <section className="mx-auto max-w-7xl px-6">
         <div className="grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)_240px]">
           <aside className="hidden lg:block">
             <div className="sticky top-28">
@@ -129,13 +129,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 )}
               </div>
               {article.excerpt && (
-                <p className="mt-6 max-w-3xl text-lg text-text-secondary leading-relaxed">
+                <p className="mt-6 text-lg text-text-secondary leading-relaxed">
                   {article.excerpt}
                 </p>
               )}
             </div>
 
-            <div className="max-w-3xl">
+            <div>
               <ArticleRenderer content={contentToRender} />
               {!canViewPremium && <PremiumGate />}
               <ArticleNav
