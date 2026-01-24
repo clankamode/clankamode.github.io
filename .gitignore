@@ -16,6 +16,8 @@
 # testing
 /coverage
 /playwright-report
+/playwright/.auth
+/test-results
 
 # next.js
 /.next/
@@ -27,6 +29,8 @@
 # misc
 .DS_Store
 *.pem
+PR_DESCRIPTION.md
+CODE_REVIEW_CHECKLIST.md
 
 # debug
 npm-debug.log*
