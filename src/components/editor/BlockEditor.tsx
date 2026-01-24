@@ -47,6 +47,7 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [menuAnchorId, setMenuAnchorId] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; right: number } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadingCount, setUploadingCount] = useState(0);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
@@ -102,6 +103,7 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
       if (menuRef.current && target && !menuRef.current.contains(target)) {
         setMenuOpen(false);
         setMenuAnchorId(null);
+        setMenuPosition(null);
       }
     };
 
@@ -109,6 +111,7 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
       if (event.key === 'Escape') {
         setMenuOpen(false);
         setMenuAnchorId(null);
+        setMenuPosition(null);
       }
     };
 
@@ -225,14 +228,54 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
     }
   };
 
-  const openCommandMenu = (blockId: string) => {
+  const scrollBlockIntoView = (blockId: string) => {
+    setTimeout(() => {
+      const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+      if (blockElement) {
+        blockElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 0);
+  };
+
+  const openCommandMenu = (blockId: string, buttonElement?: HTMLElement) => {
     setMenuAnchorId(blockId);
-    setMenuOpen(true);
     setActiveBlockId(blockId);
+    
+    if (buttonElement) {
+      const rect = buttonElement.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const menuHeight = 300;
+      const menuWidth = 240;
+      const padding = 8;
+      
+      let top = rect.bottom + padding;
+      let right = viewportWidth - rect.right;
+      
+      if (top + menuHeight > viewportHeight - padding) {
+        top = rect.top - menuHeight - padding;
+        if (top < padding) {
+          top = padding;
+        }
+      }
+      
+      if (right + menuWidth > viewportWidth - padding) {
+        right = padding;
+      } else if (right < padding) {
+        right = padding;
+      }
+      
+      setMenuPosition({ top, right });
+    } else {
+      setMenuPosition(null);
+    }
+    
+    setMenuOpen(true);
   };
 
   const handleCommandSelect = (command: BlockCommand) => {
     setMenuOpen(false);
+    setMenuPosition(null);
     if (!menuAnchorId) {
       return;
     }
@@ -246,8 +289,10 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
     if (isEmptyOrSlash) {
       replaceBlock(menuAnchorId, newBlock);
       insertBlockAfter(newBlock.id, createEmptyMarkdownBlock());
+      scrollBlockIntoView(newBlock.id);
     } else {
       insertBlockAfter(menuAnchorId, newBlock);
+      scrollBlockIntoView(newBlock.id);
     }
   };
 
@@ -258,6 +303,7 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
       if (!anchorId) {
         insertBlockAfter(null, newBlock);
         setActiveBlockId(newBlock.id);
+        scrollBlockIntoView(newBlock.id);
         return;
       }
       const anchor = blocks.find((item) => item.id === anchorId);
@@ -268,11 +314,13 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
         insertBlockAfter(anchorId, newBlock);
       }
       setActiveBlockId(newBlock.id);
+      scrollBlockIntoView(newBlock.id);
       return;
     }
     const newBlock = createBlockForCommand(type);
     if (!anchorId) {
       insertBlockAfter(null, newBlock);
+      scrollBlockIntoView(newBlock.id);
       return;
     }
     const anchor = blocks.find((item) => item.id === anchorId);
@@ -282,6 +330,7 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
     } else {
       insertBlockAfter(anchorId, newBlock);
     }
+    scrollBlockIntoView(newBlock.id);
   };
 
   const handleMarkdownChange = (blockId: string, nextValue: string) => {
@@ -537,6 +586,7 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
         {blocks.map((block) => (
           <div
             key={block.id}
+            data-block-id={block.id}
             className={`group relative transition ${
               block.type === 'markdown'
                 ? 'rounded-xl border border-border-workbench bg-surface-workbench p-4'
@@ -553,7 +603,10 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
                   <button
                     type="button"
                     className="rounded border border-border-subtle px-2 py-1 text-xs text-text-secondary transition hover:border-border-interactive hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    onClick={() => openCommandMenu(block.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openCommandMenu(block.id, e.currentTarget);
+                    }}
                   >
                     + Insert
                   </button>
@@ -586,7 +639,10 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
                   <button
                     type="button"
                     className="rounded border border-border-subtle bg-surface-workbench px-2 py-1 text-xs text-text-secondary transition hover:border-border-interactive hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    onClick={() => openCommandMenu(block.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openCommandMenu(block.id, e.currentTarget);
+                    }}
                   >
                     + Insert
                   </button>
@@ -680,7 +736,7 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
 
       <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border-workbench pt-4">
         <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted">Insert</span>
-        {COMMANDS.filter((command) => command.id !== 'markdown').map((command) => (
+        {COMMANDS.map((command) => (
           <button
             key={command.id}
             type="button"
@@ -698,7 +754,12 @@ export function BlockEditor({ value, onChange, mediaLibraryTrigger }: BlockEdito
       {menuOpen && (
         <div
           ref={menuRef}
-          className="absolute right-0 top-20 z-20 w-60 rounded-xl border border-border-subtle bg-surface-workbench p-3 shadow-[var(--shadow-lift)]"
+          className="fixed z-20 w-60 rounded-xl border border-border-subtle bg-surface-workbench p-3 shadow-[var(--shadow-lift)]"
+          style={
+            menuPosition
+              ? { top: `${menuPosition.top}px`, right: `${menuPosition.right}px` }
+              : { top: '80px', right: '0' }
+          }
         >
           <p className="px-2 pb-2 text-[10px] uppercase tracking-[0.25em] text-text-muted">Insert block</p>
           {COMMANDS.map((command) => (
