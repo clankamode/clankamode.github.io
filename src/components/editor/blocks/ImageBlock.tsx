@@ -11,6 +11,7 @@ interface ImageBlockProps {
   onAnnotate?: () => void;
   onUploadClick?: () => void;
   onDrop?: (files: FileList) => void;
+  mode?: 'write' | 'inspect';
 }
 
 const sizeClasses: Record<NonNullable<ImageBlockType['size']>, string> = {
@@ -20,7 +21,7 @@ const sizeClasses: Record<NonNullable<ImageBlockType['size']>, string> = {
   inline: 'w-full max-w-md',
 };
 
-function ImageBlockComponent({ block, editable = false, onChange, onAnnotate, onUploadClick, onDrop }: ImageBlockProps) {
+function ImageBlockComponent({ block, editable = false, onChange, onAnnotate, onUploadClick, onDrop, mode = 'write' }: ImageBlockProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -49,63 +50,37 @@ function ImageBlockComponent({ block, editable = false, onChange, onAnnotate, on
   const hasImage = !!block.src;
 
   return (
-    <figure className={`space-y-3 ${containerClass}`}>
-      <div className="frame relative min-h-[200px] overflow-hidden rounded-xl bg-surface-interactive">
+    <figure className={`group space-y-2 ${containerClass}`}>
+      <div className={`relative overflow-hidden ${editable ? '' : 'frame rounded-xl bg-surface-interactive'}`}>
         {hasImage && !imageError ? (
           <Image
             src={block.src}
             alt={block.alt}
             width={1200}
             height={600}
-            className="h-auto max-h-[600px] w-full cursor-zoom-in object-contain"
-            onClick={() => setLightboxOpen(true)}
+            className={`h-auto w-full object-contain ${editable ? `opacity-60 grayscale-[0.25] ${mode === 'write' ? 'max-h-[200px]' : ''}` : 'max-h-[600px] cursor-zoom-in'}`}
+            onClick={editable ? undefined : () => setLightboxOpen(true)}
             onError={() => {
               console.error('Image failed to load:', block.src);
               setImageError(true);
             }}
-              onLoad={() => setImageError(false)}
-            />
+            onLoad={() => setImageError(false)}
+          />
         ) : hasImage && imageError ? (
-          <div className="flex min-h-[200px] items-center justify-center text-sm text-text-muted">
+          <div className="flex min-h-[100px] items-center justify-center text-sm text-text-muted/50">
             Failed to load image
           </div>
-        ) : (
+        ) : editable ? (
           <div
-            className={`flex min-h-[200px] flex-col items-center justify-center border-2 border-dashed border-border-subtle p-8 text-center transition ${
-              editable
-                ? 'cursor-pointer hover:border-border-interactive hover:bg-surface-dense/50'
-                : ''
-            }`}
-            onClick={editable && onUploadClick ? onUploadClick : undefined}
-            onDragOver={
-              editable && onDrop
-                ? (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }
-                : undefined
-            }
-            onDrop={
-              editable && onDrop
-                ? (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (e.dataTransfer.files.length) {
-                      onDrop(e.dataTransfer.files);
-                    }
-                  }
-                : undefined
-            }
+            className="flex min-h-[80px] flex-col items-center justify-center border border-dashed border-border-subtle/50 text-center transition cursor-pointer hover:border-border-interactive"
+            onClick={onUploadClick}
+            onDragOver={onDrop ? (e) => { e.preventDefault(); e.stopPropagation(); } : undefined}
+            onDrop={onDrop ? (e) => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.files.length) onDrop(e.dataTransfer.files); } : undefined}
           >
-            {editable ? (
-              <>
-                <p className="mb-2 text-sm text-text-muted">Drop image here or click to upload</p>
-                <p className="text-xs text-text-muted">Supports JPG, PNG, GIF, WebP</p>
-              </>
-            ) : (
-              <p className="text-sm text-text-muted">No image</p>
-            )}
+            <p className="text-xs text-text-muted/40">Drop image or click</p>
           </div>
+        ) : (
+          <p className="text-sm text-text-muted italic">No image</p>
         )}
         {block.annotations?.map((annotation, index) => (
           <div
@@ -128,7 +103,7 @@ function ImageBlockComponent({ block, editable = false, onChange, onAnnotate, on
           </div>
         ))}
         {editable && (
-          <div className="absolute right-3 top-3 flex gap-2">
+          <div className="absolute right-3 top-3 flex gap-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <button
               type="button"
               className="rounded-full border border-border-subtle bg-surface-dense/80 px-3 py-1 text-xs text-text-secondary transition hover:border-border-interactive hover:text-text-primary"
@@ -143,19 +118,16 @@ function ImageBlockComponent({ block, editable = false, onChange, onAnnotate, on
       {(block.caption || editable) && (
         <div className="space-y-2 text-sm text-text-secondary">
           {editable ? (
-            <div>
-              <label className="mb-1 block text-xs uppercase tracking-[0.2em] text-text-muted">Caption</label>
-              <input
-                type="text"
-                value={block.caption || ''}
-                placeholder="Add a caption for this image"
-                className="w-full rounded-lg border border-border-subtle bg-surface-dense px-3 py-2 text-sm text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                onChange={(event) => {
-                  const trimmed = event.target.value.trim();
-                  onChange?.({ caption: trimmed || undefined });
-                }}
-              />
-            </div>
+            <input
+              type="text"
+              value={block.caption || ''}
+              placeholder="Caption..."
+              className="w-full rounded-lg border border-transparent bg-transparent px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/40 transition focus-visible:border-border-subtle focus-visible:outline-none"
+              onChange={(event) => {
+                const trimmed = event.target.value.trim();
+                onChange?.({ caption: trimmed || undefined });
+              }}
+            />
           ) : (
             block.caption && <figcaption className="text-sm text-text-secondary">{block.caption}</figcaption>
           )}
@@ -163,8 +135,8 @@ function ImageBlockComponent({ block, editable = false, onChange, onAnnotate, on
             <input
               type="text"
               value={block.alt}
-              placeholder="Alt text (auto-generated)"
-              className="w-full rounded-lg border border-border-subtle bg-surface-dense px-3 py-2 text-sm text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              placeholder="Alt text..."
+              className="w-full rounded-lg border border-transparent bg-transparent px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/40 transition focus-visible:border-border-subtle focus-visible:outline-none"
               onChange={(event) => onChange?.({ alt: event.target.value })}
             />
           )}
@@ -172,8 +144,8 @@ function ImageBlockComponent({ block, editable = false, onChange, onAnnotate, on
             <input
               type="text"
               value={block.why ?? ''}
-              placeholder="Why this matters (optional)"
-              className="w-full rounded-lg border border-border-subtle bg-surface-dense px-3 py-2 text-sm text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              placeholder="Why this matters..."
+              className="w-full rounded-lg border border-transparent bg-transparent px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/40 transition focus-visible:border-border-subtle focus-visible:outline-none"
               onChange={(event) => onChange?.({ why: event.target.value })}
             />
           )}

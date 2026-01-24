@@ -31,11 +31,11 @@ function EmbedBlockComponent({ block, editable = false, onChange }: EmbedBlockPr
   const embedId = block.embedId || getYouTubeId(url);
 
   return (
-    <div className="frame rounded-xl bg-surface-dense p-4">
+    <div className={`rounded-xl p-4 ${editable ? 'bg-transparent' : 'frame bg-surface-dense'}`}>
       {editable && (
         <div className="flex flex-wrap gap-3">
           <select
-            className="rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-xs uppercase tracking-[0.2em] text-text-secondary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-lg border border-transparent bg-transparent px-3 py-2 text-xs uppercase tracking-[0.2em] text-text-secondary transition focus-visible:border-border-subtle focus-visible:text-text-primary focus-visible:outline-none"
             value={block.provider}
             onChange={(event) => onChange?.({ provider: event.target.value as EmbedBlockType['provider'] })}
           >
@@ -50,8 +50,8 @@ function EmbedBlockComponent({ block, editable = false, onChange }: EmbedBlockPr
           <input
             type="text"
             value={url}
-            placeholder="Paste the URL"
-            className="flex-1 rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-sm text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            placeholder="Paste URL..."
+            className="flex-1 rounded-lg border border-transparent bg-transparent px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/40 transition focus-visible:border-border-subtle focus-visible:outline-none"
             onChange={(event) => onChange?.({ url: event.target.value })}
           />
         </div>

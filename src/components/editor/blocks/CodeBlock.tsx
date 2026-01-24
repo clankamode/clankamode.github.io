@@ -126,67 +126,66 @@ function CodeBlockComponent({ block, editable = false, onChange }: CodeBlockProp
     return null;
   }
 
-  return (
-    <div className="frame rounded-xl bg-surface-dense">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-subtle px-4 py-3">
-        {editable ? (
-          <div className="flex flex-1 flex-wrap gap-3">
-            <input
-              type="text"
-              value={block.filename ?? ''}
-              placeholder="Filename"
-              className="w-40 rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-xs text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              onChange={(event) => onChange?.({ filename: event.target.value })}
-            />
-            <select
-              value={block.language || 'text'}
-              className="w-40 rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-xs text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              onChange={(event) => onChange?.({ language: event.target.value })}
-            >
-              {COMMON_LANGUAGES.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              value={block.highlight ?? ''}
-              placeholder="Highlight lines (2,4-6)"
-              className="w-40 rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-xs text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              onChange={(event) => onChange?.({ highlight: event.target.value })}
-            />
-          </div>
-        ) : (
-          <div className="space-y-1">
-            {block.filename && <p className="text-xs text-text-primary">{block.filename}</p>}
-            <p className="text-xs uppercase tracking-[0.2em] text-text-muted">{block.language}</p>
-          </div>
-        )}
-
-        {!editable && (
-          <button
-            type="button"
-            className="rounded-full border border-border-subtle px-3 py-1 text-xs text-text-secondary transition hover:border-border-interactive hover:text-text-primary"
-            onClick={handleCopy}
+  // Edit mode: flat monospace textarea, no chrome
+  if (editable) {
+    return (
+      <div className="group/code relative font-mono">
+        <div className="absolute top-0 right-0 z-20 flex items-center gap-2 opacity-0 transition-opacity group-focus-within/code:opacity-100 hover:opacity-100">
+          <input
+            type="text"
+            value={block.filename ?? ''}
+            placeholder="file.ts"
+            className="w-20 border-none bg-transparent px-1 py-0.5 text-[10px] text-text-muted/50 placeholder:text-text-muted/20 focus:text-text-primary focus:outline-none"
+            onChange={(event) => onChange?.({ filename: event.target.value })}
+          />
+          <select
+            value={block.language || 'text'}
+            className="w-20 border-none bg-transparent px-1 py-0.5 text-[10px] text-text-muted/50 transition focus:text-text-primary focus:outline-none"
+            onChange={(event) => onChange?.({ language: event.target.value })}
           >
-            {copied ? 'Copied' : 'Copy'}
-          </button>
-        )}
-      </div>
-
-    {editable ? (
+            {COMMON_LANGUAGES.map((lang) => (
+              <option key={lang.value} value={lang.value}>
+                {lang.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <textarea
           value={block.content || ''}
-          placeholder="Write code here..."
-          className="min-h-[180px] w-full rounded-b-xl bg-surface-dense px-4 py-3 font-mono text-sm text-text-primary focus-visible:outline-none"
+          placeholder="// code..."
+          className="w-full min-h-[80px] resize-none bg-transparent px-0 py-2 font-mono text-base leading-relaxed text-white/90 placeholder:text-white/50 focus:outline-none overflow-hidden"
           onChange={(event) => {
             const raw = event.target.value;
             const next = raw.replace(/^\n+/, '');
             onChange?.({ content: next });
+            event.target.style.height = 'auto';
+            event.target.style.height = `${event.target.scrollHeight}px`;
+          }}
+          ref={(el) => {
+            if (el) {
+              el.style.height = 'auto';
+              el.style.height = `${el.scrollHeight}px`;
+            }
           }}
         />
-      ) : (
+      </div>
+    );
+  }
+
+  // Preview mode: styled code block
+  return (
+    <div className="relative overflow-hidden rounded-xl border border-border-subtle bg-surface-ambient transition-all hover:border-border-interactive">
+      <div className="group/code relative font-mono">
+        <div className="absolute top-3 right-4 z-20 flex items-center gap-3 opacity-0 transition-opacity group-hover/code:opacity-100">
+          {block.filename && <span className="text-[10px] uppercase tracking-widest text-text-muted">{block.filename}</span>}
+          <button
+            type="button"
+            className="rounded-full border border-border-subtle bg-surface-interactive/40 px-3 py-1 text-[10px] uppercase tracking-wider text-text-secondary backdrop-blur-sm transition hover:border-border-interactive hover:text-text-primary"
+            onClick={handleCopy}
+          >
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+        </div>
         <pre className="overflow-x-auto px-4 py-4 text-sm text-text-primary">
           <code className="grid gap-1 font-mono">
             {lines.map((originalLine, index) => {
@@ -196,9 +195,8 @@ function CodeBlockComponent({ block, editable = false, onChange }: CodeBlockProp
               return (
                 <span
                   key={`${block.id}-line-${lineNumber}`}
-                  className={`flex gap-4 rounded px-2 py-0.5 ${
-                    highlighted ? 'bg-surface-interactive/70' : ''
-                  }`}
+                  className={`flex gap-4 rounded px-2 py-0.5 ${highlighted ? 'bg-surface-interactive/70' : ''
+                    }`}
                 >
                   <span className="w-6 text-right text-xs text-text-muted">{lineNumber}</span>
                   <span
@@ -210,7 +208,7 @@ function CodeBlockComponent({ block, editable = false, onChange }: CodeBlockProp
             })}
           </code>
         </pre>
-      )}
+      </div>
     </div>
   );
 }

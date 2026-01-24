@@ -120,7 +120,7 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
       setArticle(updated);
       setSavedArticle(updated);
       setJustSaved(true);
-      
+
       if (publishOverride === false) {
         setSaveMessage('Saved as draft');
       } else if (publishOverride === true) {
@@ -128,7 +128,7 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
       } else {
         setSaveMessage(null);
       }
-      
+
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
@@ -241,7 +241,7 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-border-subtle pb-4">
           <div className="flex flex-wrap items-center gap-4">
             <p className="text-[11px] uppercase tracking-[0.35em] text-text-muted">Editor</p>
-            
+
             <div className="inline-flex items-center gap-1.5 rounded-full border border-border-subtle bg-surface-dense px-2.5 py-0.5 text-xs">
               {!hasUnsavedChanges && justSaved && (
                 <span className="h-1.5 w-1.5 rounded-full bg-brand-green/80" aria-hidden="true" />
@@ -270,8 +270,18 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
                 View live →
               </Link>
             )}
-            <Button variant="ghost" onClick={handleBackClick}>
-              Back to library
+            <PublishControls
+              saving={saving}
+              isPublished={article.is_published}
+              onSaveDraft={handleSaveDraft}
+              onPublishChanges={handlePublishChanges}
+              onPublish={() => handleSave(true)}
+              onDelete={handleDelete}
+              canDelete={canDelete}
+            />
+            <div className="h-6 w-px bg-border-subtle mx-2" />
+            <Button variant="ghost" onClick={handleBackClick} className="text-xs">
+              Exit
             </Button>
           </div>
         </div>
@@ -287,15 +297,6 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
       </div>
 
       <div className="mt-8 max-w-6xl px-6">
-        <PublishControls
-          saving={saving}
-          isPublished={article.is_published}
-          onSaveDraft={handleSaveDraft}
-          onPublishChanges={handlePublishChanges}
-          onPublish={() => handleSave(true)}
-          onDelete={handleDelete}
-          canDelete={canDelete}
-        />
 
         {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
       </div>

@@ -12,6 +12,8 @@ interface MarkdownEditorProps {
 
 export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
   const blocks = useMemo(() => parseBlocks(value), [value]);
+  // Mode state: 'write' (default) vs 'inspect'
+  const [mode, setMode] = useState<'write' | 'inspect'>('write');
   const [mediaLibraryTrigger, setMediaLibraryTrigger] = useState(0);
 
   const wordCount = useMemo(() => {
@@ -25,33 +27,71 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <div className="rounded-xl border border-border-subtle bg-surface-workbench p-5 min-h-[720px]">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted">Editor</span>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-text-muted">
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between gap-4 px-6 py-3">
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted/30 font-semibold">Authoring Surface</span>
+            <div className="flex items-center gap-2 text-xs text-text-secondary font-mono">
               {wordCount} words · {readingTime} min read
-            </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="flex items-center gap-2 rounded-full bg-transparent px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-text-secondary transition hover:text-text-primary focus-ring"
+            onClick={() => setMediaLibraryTrigger((prev) => prev + 1)}
+          >
+            Media Library
+          </button>
+
+          {/* Mode Toggles */}
+          <div className="flex items-center rounded-full bg-surface-interactive p-1">
             <button
               type="button"
-              className="rounded-full border border-border-subtle bg-surface-workbench px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-text-secondary transition hover:border-border-interactive hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              onClick={() => setMediaLibraryTrigger((prev) => prev + 1)}
+              className={`rounded-full px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] transition-all ${mode === 'write'
+                ? 'bg-accent-primary text-white shadow-sm'
+                : 'text-text-muted hover:text-text-primary'
+                }`}
+              onClick={() => setMode('write')}
             >
-              Media Library
+              Write
+            </button>
+            <button
+              type="button"
+              className={`rounded-full px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] transition-all ${mode === 'inspect'
+                ? 'bg-surface-dense text-text-primary shadow-sm'
+                : 'text-text-muted hover:text-text-primary'
+                }`}
+              onClick={() => setMode('inspect')}
+            >
+              Inspect
             </button>
           </div>
         </div>
-        <div className="mb-4 rounded-lg border border-border-workbench bg-surface-dense px-4 py-2 text-xs text-text-muted">
-          Drop media anywhere or type <span className="text-text-primary">/</span> for blocks.
-        </div>
-        <BlockEditor value={value} onChange={onChange} mediaLibraryTrigger={mediaLibraryTrigger} />
       </div>
-      <div className="rounded-xl border border-border-subtle bg-surface-ambient p-5 min-h-[720px]">
-        <span className="mb-4 block text-[10px] uppercase tracking-[0.2em] text-text-muted">Preview</span>
-        <div className="pr-2">
-          <BlockRenderer blocks={blocks} />
+
+      <div className={`grid gap-8 transition-all duration-300 ${mode === 'inspect' ? 'lg:grid-cols-[60%_40%]' : 'grid-cols-1'}`}>
+        {/* Editor Column */}
+        <div className={`transition-all duration-300 mx-auto w-full ${mode === 'write' ? 'max-w-5xl' : 'max-w-full'}`}>
+          <div className={`min-h-[800px] bg-[#18181b] px-8 lg:px-12 rounded-lg ${mode === 'write' ? 'shadow-2xl border-x border-y border-white/5' : ''}`}>
+            <BlockEditor value={value} onChange={onChange} mediaLibraryTrigger={mediaLibraryTrigger} mode={mode} />
+          </div>
         </div>
+
+        {/* Preview Column - Only visible in Inspect Mode */}
+        {mode === 'inspect' && (
+          <div className="sticky top-24 h-[calc(100vh-160px)] min-h-[720px] min-w-[320px] overflow-hidden border-l border-white/10 pl-6 opacity-75">
+            <div className="mb-6 flex items-center justify-between">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted/50 font-semibold">Preview</span>
+            </div>
+            <div className="h-full overflow-y-auto pr-2 scrollbar-hide">
+              <BlockRenderer blocks={blocks} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

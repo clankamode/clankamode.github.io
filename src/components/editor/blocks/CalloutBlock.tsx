@@ -40,11 +40,11 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
   const shouldShowContent = editable || (isCollapsible ? open : true);
 
   return (
-    <div className={`frame rounded-xl bg-surface-dense p-4 w-full ${tone.accent}`}>
+    <div className={`rounded-xl p-4 w-full ${editable ? '' : `frame bg-surface-dense ${tone.accent}`}`}>
       <div className="flex items-center justify-between gap-4">
         {editable ? (
           <select
-            className="rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-xs uppercase tracking-[0.2em] text-text-secondary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-lg border border-transparent bg-transparent px-3 py-2 text-xs uppercase tracking-[0.2em] text-text-secondary transition focus-visible:text-text-primary focus-visible:outline-none"
             value={block.tone}
             onChange={(event) => onChange?.({ tone: event.target.value as CalloutBlockType['tone'] })}
           >
@@ -84,8 +84,8 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
         <input
           type="text"
           value={block.title ?? ''}
-          placeholder="Callout title (optional)"
-          className="mt-3 w-full rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-sm text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          placeholder="Title (optional)"
+          className="mt-3 w-full rounded-lg border border-transparent bg-transparent px-3 py-2 text-base text-white/95 placeholder:text-white/50 transition focus-visible:outline-none"
           onChange={(event) => onChange?.({ title: event.target.value })}
         />
       )}
@@ -93,9 +93,19 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
       {editable ? (
         <textarea
           value={block.content || ''}
-          placeholder="Write the callout content..."
-          className="mt-3 min-h-[80px] w-full resize-y rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-sm text-text-primary transition focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onChange={(event) => onChange?.({ content: event.target.value })}
+          placeholder="Content..."
+          className="mt-3 w-full resize-none rounded-lg border border-transparent bg-transparent px-3 py-2 text-base text-white/90 placeholder:text-white/50 transition focus-visible:outline-none overflow-hidden"
+          onChange={(event) => {
+            onChange?.({ content: event.target.value });
+            event.target.style.height = 'auto';
+            event.target.style.height = `${event.target.scrollHeight}px`;
+          }}
+          ref={(el) => {
+            if (el) {
+              el.style.height = 'auto';
+              el.style.height = `${el.scrollHeight}px`;
+            }
+          }}
         />
       ) : (
         shouldShowContent && (
@@ -109,92 +119,92 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeHighlight]}
                   components={{
-                  h1: ({ children, ...props }) => (
-                    <h1
-                      {...props}
-                      id={slugifyHeading(getText(children))}
-                      className="text-2xl font-bold tracking-tight text-text-primary"
-                    >
-                      {children}
-                    </h1>
-                  ),
-                  h2: ({ children, ...props }) => (
-                    <h2
-                      {...props}
-                      id={slugifyHeading(getText(children))}
-                      className="mt-4 text-xl font-semibold tracking-tight text-text-primary"
-                    >
-                      {children}
-                    </h2>
-                  ),
-                  h3: ({ children, ...props }) => (
-                    <h3
-                      {...props}
-                      id={slugifyHeading(getText(children))}
-                      className="mt-3 text-lg font-semibold tracking-tight text-text-primary"
-                    >
-                      {children}
-                    </h3>
-                  ),
-                  p: ({ children, ...props }) => (
-                    <p {...props} className="mt-2 leading-relaxed text-text-secondary">
-                      {children}
-                    </p>
-                  ),
-                  code: ({ children, className, ...props }) => {
-                    const isBlock = className?.includes('language-');
-                    if (!isBlock) {
+                    h1: ({ children, ...props }) => (
+                      <h1
+                        {...props}
+                        id={slugifyHeading(getText(children))}
+                        className="text-2xl font-bold tracking-tight text-text-primary"
+                      >
+                        {children}
+                      </h1>
+                    ),
+                    h2: ({ children, ...props }) => (
+                      <h2
+                        {...props}
+                        id={slugifyHeading(getText(children))}
+                        className="mt-4 text-xl font-semibold tracking-tight text-text-primary"
+                      >
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children, ...props }) => (
+                      <h3
+                        {...props}
+                        id={slugifyHeading(getText(children))}
+                        className="mt-3 text-lg font-semibold tracking-tight text-text-primary"
+                      >
+                        {children}
+                      </h3>
+                    ),
+                    p: ({ children, ...props }) => (
+                      <p {...props} className="mt-2 leading-relaxed text-text-secondary">
+                        {children}
+                      </p>
+                    ),
+                    code: ({ children, className, ...props }) => {
+                      const isBlock = className?.includes('language-');
+                      if (!isBlock) {
+                        return (
+                          <code
+                            className="rounded bg-surface-interactive px-1.5 py-0.5 text-xs text-text-primary"
+                            {...props}
+                          >
+                            {children}
+                          </code>
+                        );
+                      }
                       return (
-                        <code
-                          className="rounded bg-surface-interactive px-1.5 py-0.5 text-xs text-text-primary"
-                          {...props}
-                        >
+                        <code className={className} {...props}>
                           {children}
                         </code>
                       );
-                    }
-                    return (
-                      <code className={className} {...props}>
+                    },
+                    pre: ({ children, ...props }) => (
+                      <pre
+                        {...props}
+                        className="mt-3 overflow-x-auto rounded-lg border border-border-subtle bg-surface-interactive p-3 text-xs"
+                      >
                         {children}
-                      </code>
-                    );
-                  },
-                  pre: ({ children, ...props }) => (
-                    <pre
-                      {...props}
-                      className="mt-3 overflow-x-auto rounded-lg border border-border-subtle bg-surface-interactive p-3 text-xs"
-                    >
-                      {children}
-                    </pre>
-                  ),
-                  ul: ({ children, ...props }) => (
-                    <ul {...props} className="mt-2 list-disc space-y-1 pl-5 text-text-secondary">
-                      {children}
-                    </ul>
-                  ),
-                  ol: ({ children, ...props }) => (
-                    <ol {...props} className="mt-2 list-decimal space-y-1 pl-5 text-text-secondary">
-                      {children}
-                    </ol>
-                  ),
-                  blockquote: ({ children, ...props }) => (
-                    <blockquote
-                      {...props}
-                      className="mt-2 border-l-2 border-border-interactive pl-3 text-text-secondary italic"
-                    >
-                      {children}
-                    </blockquote>
-                  ),
-                  a: ({ children, ...props }) => (
-                    <a
-                      {...props}
-                      className="text-text-primary underline transition hover:text-text-secondary"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {children}
-                    </a>
-                  ),
+                      </pre>
+                    ),
+                    ul: ({ children, ...props }) => (
+                      <ul {...props} className="mt-2 list-disc space-y-1 pl-5 text-text-secondary">
+                        {children}
+                      </ul>
+                    ),
+                    ol: ({ children, ...props }) => (
+                      <ol {...props} className="mt-2 list-decimal space-y-1 pl-5 text-text-secondary">
+                        {children}
+                      </ol>
+                    ),
+                    blockquote: ({ children, ...props }) => (
+                      <blockquote
+                        {...props}
+                        className="mt-2 border-l-2 border-border-interactive pl-3 text-text-secondary italic"
+                      >
+                        {children}
+                      </blockquote>
+                    ),
+                    a: ({ children, ...props }) => (
+                      <a
+                        {...props}
+                        className="text-text-primary underline transition hover:text-text-secondary"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {children}
+                      </a>
+                    ),
                   }}
                 >
                   {block.content}

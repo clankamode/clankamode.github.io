@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 // Test data constants
-const PAGE_TITLE = 'Coding Interviews - YouTube Channel';
+const PAGE_TITLE = 'James Peralta';
 const HERO_FALLBACK_NAME = 'James Peralta';
 const HERO_FALLBACK_DESCRIPTION = 'Deep dives into algorithms, system design, and problem-solving strategies for technical interviews.';
 
@@ -48,7 +48,7 @@ test.describe('Homepage', () => {
     // 3. Latest Videos Section
     const latestVideosSection = page.getByRole('region').filter({ hasText: LATEST_VIDEOS.title });
     await expect(latestVideosSection).toBeVisible();
-    
+
     // Section header
     await expect(latestVideosSection.getByRole('heading', { name: LATEST_VIDEOS.title })).toBeVisible();
     const viewAllLink = latestVideosSection.getByRole('link', { name: 'View all' });
@@ -58,7 +58,7 @@ test.describe('Homepage', () => {
     // Check for videos or empty state
     const latestVideosGrid = latestVideosSection.locator('.grid-cols-1');
     const hasLatestVideos = await latestVideosGrid.isVisible();
-    
+
     if (hasLatestVideos) {
       // Verify video grid and first video card
       const firstVideoCard = latestVideosGrid.locator('> div').first();
@@ -75,14 +75,14 @@ test.describe('Homepage', () => {
     // 4. Popular Videos Section
     const popularVideosSection = page.getByRole('region').filter({ hasText: POPULAR_VIDEOS.title });
     await expect(popularVideosSection).toBeVisible();
-    
+
     // Section header
     await expect(popularVideosSection.getByRole('heading', { name: POPULAR_VIDEOS.title })).toBeVisible();
 
     // Check for videos or empty state
     const popularVideosGrid = popularVideosSection.locator('.grid-cols-1');
     const hasPopularVideos = await popularVideosGrid.isVisible();
-    
+
     if (hasPopularVideos) {
       // Verify video grid and first video card
       const firstVideoCard = popularVideosGrid.locator('> div').first();

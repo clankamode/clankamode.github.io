@@ -16,10 +16,13 @@ function DiagramBlockComponent({ block, editable = false, onChange }: DiagramBlo
   const renderId = useMemo(() => `diagram-${Math.random().toString(36).slice(2, 9)}`, []);
 
   useEffect(() => {
+    if (editable) return; // Don't render in edit mode
     mermaid.initialize({ startOnLoad: false, theme: 'dark' });
-  }, []);
+  }, [editable]);
 
   useEffect(() => {
+    if (editable) return; // Don't render in edit mode
+
     let cancelled = false;
     const renderDiagram = async () => {
       try {
@@ -38,26 +41,41 @@ function DiagramBlockComponent({ block, editable = false, onChange }: DiagramBlo
     return () => {
       cancelled = true;
     };
-  }, [block.content, renderId]);
+  }, [block.content, renderId, editable]);
 
+  // Edit mode: raw mermaid code only
+  if (editable) {
+    return (
+      <textarea
+        value={block.content || ''}
+        placeholder="flowchart TD
+  A[Start] --> B[Next]"
+        className="w-full resize-none bg-transparent px-0 py-2 font-mono text-base text-white/90 placeholder:text-white/50 focus:outline-none overflow-hidden"
+        onChange={(event) => {
+          onChange?.({ content: event.target.value });
+          event.target.style.height = 'auto';
+          event.target.style.height = `${event.target.scrollHeight}px`;
+        }}
+        ref={(el) => {
+          if (el) {
+            el.style.height = 'auto';
+            el.style.height = `${el.scrollHeight}px`;
+          }
+        }}
+      />
+    );
+  }
+
+  // Preview mode: rendered diagram only
   return (
     <div className="rounded-xl border border-border-subtle bg-surface-dense p-4">
-      {editable && (
-        <textarea
-          value={block.content || ''}
-          placeholder="Write Mermaid syntax here..."
-          className="mb-4 min-h-[160px] w-full rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 font-mono text-sm text-text-primary"
-          onChange={(event) => onChange?.({ content: event.target.value })}
-        />
-      )}
-
       {error ? (
         <p className="text-sm text-text-muted">Unable to render diagram: {error}</p>
       ) : svg ? (
         <div className="overflow-x-auto" dangerouslySetInnerHTML={{ __html: svg }} />
-      ) : !editable ? (
+      ) : (
         <p className="text-sm text-text-muted italic">No diagram content</p>
-      ) : null}
+      )}
     </div>
   );
 }
