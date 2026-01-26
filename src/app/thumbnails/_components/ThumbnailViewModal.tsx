@@ -659,7 +659,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
               </div>
 
               {/* Comments Section */}
-              <div className="w-full lg:w-96 xl:w-[420px] border-t border-border-subtle lg:border-t-0 lg:border-l lg:pl-6 pt-6 lg:pt-0 flex flex-col max-h-full">
+              <div className="w-full lg:w-96 xl:w-[420px] border-t border-border-subtle lg:border-t-0 lg:border-l lg:pl-6 pt-6 lg:pt-0 flex flex-col h-full max-h-[calc(100vh-250px)] overflow-hidden min-h-0">
                 {thumbnailId && <CommentsSection thumbnailId={thumbnailId} />}
               </div>
             </div>

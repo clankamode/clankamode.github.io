@@ -281,7 +281,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-0">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold text-foreground">Comments</h2>
@@ -296,7 +296,7 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
       )}
 
       {/* Comments List */}
-      <div className="space-y-4 mb-6 overflow-y-auto pr-2 flex-1">
+      <div className="space-y-4 mb-6 overflow-y-auto pr-2 flex-1 min-h-0">
         {comments.length === 0 && !isLoading ? (
           <p className="text-muted-foreground">
             No comments yet. Start the conversation!
