@@ -1,6 +1,8 @@
 ## January 21, 2026
 ### Navigation
 - Fixed navbar centering - navigation links (Videos, Practice) are now truly centered on the page using absolute positioning
+### Dependencies
+- Upgraded OpenAI SDK from v5 to v6 (#83)
 
 ---
 
