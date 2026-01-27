@@ -41,8 +41,8 @@ export async function POST(req: NextRequest) {
         }
 
         const prompt = currentSummary
-            ? `Rewrite this summary for the following article content. Keep it to 1-2 compelling sentences. Do not use em-dashes (—); use commas or periods instead. Current summary: "${currentSummary}"`
-            : 'Summarize the following article content in 1-2 compelling sentences for a preview card. Do not start with phrases like "This article discusses". Do not use em-dashes (—); use commas or periods instead.';
+            ? `Rewrite this card teaser for the following article. Keep it under 120 characters, hook-focused, not a summary. Do not use em-dashes (—). Current teaser: "${currentSummary}"`
+            : 'Write a short card teaser (under 120 characters) that hooks readers into clicking this article. Focus on the key insight or benefit, not a summary. Do not start with "Learn", "Discover", or "This article". Do not use em-dashes (—).';
 
         const response = await openai.responses.create({
             model: 'gpt-5-nano',

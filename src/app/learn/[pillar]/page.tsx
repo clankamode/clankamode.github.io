@@ -19,6 +19,7 @@ export default async function PillarPage({ params }: PillarPageProps) {
   if (!userRole || !hasRole(userRole, UserRole.ADMIN)) {
     notFound();
   }
+  const canViewDrafts = hasRole(userRole, UserRole.EDITOR);
 
   const { pillar: pillarSlug } = await params;
   const pillar = await getLearningPillarBySlug(pillarSlug);
@@ -26,7 +27,7 @@ export default async function PillarPage({ params }: PillarPageProps) {
     notFound();
   }
 
-  const topics = await getLearningPillarTree(pillar.id, false);
+  const topics = await getLearningPillarTree(pillar.id, canViewDrafts);
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-24">

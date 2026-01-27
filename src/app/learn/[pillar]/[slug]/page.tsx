@@ -128,11 +128,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   </>
                 )}
               </div>
-              {article.excerpt && (
-                <p className="mt-6 text-lg text-text-secondary leading-relaxed">
-                  {article.excerpt}
-                </p>
-              )}
+              {/* Excerpt intentionally hidden here - shown only in card views to avoid duplication with article intro */}
             </div>
 
             <div>
@@ -142,21 +138,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 previous={
                   prev
                     ? {
-                        label: 'Previous',
-                        title: prev.title,
-                        href: `/learn/${pillar.slug}/${prev.slug}`,
-                        topicName: prev.topicName,
-                      }
+                      label: 'Previous',
+                      title: prev.title,
+                      href: `/learn/${pillar.slug}/${prev.slug}`,
+                      topicName: prev.topicName,
+                    }
                     : null
                 }
                 next={
                   next
                     ? {
-                        label: 'Next',
-                        title: next.title,
-                        href: `/learn/${pillar.slug}/${next.slug}`,
-                        topicName: next.topicName,
-                      }
+                      label: 'Next',
+                      title: next.title,
+                      href: `/learn/${pillar.slug}/${next.slug}`,
+                      topicName: next.topicName,
+                    }
                     : null
                 }
               />

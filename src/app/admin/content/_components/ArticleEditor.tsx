@@ -46,6 +46,7 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showNavConfirm, setShowNavConfirm] = useState(false);
   const [showPublishConfirm, setShowPublishConfirm] = useState(false);
+  const [showUnpublishConfirm, setShowUnpublishConfirm] = useState(false);
   const effectiveRole = (session?.user?.role as UserRole) || UserRole.USER;
   const canDelete = hasRole(effectiveRole, UserRole.ADMIN);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -144,17 +145,21 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
     }
   }, [article, articleId]);
 
-  const handleSaveDraft = useCallback(() => {
-    handleSave(false);
+  const handleSaveOnly = useCallback(() => {
+    handleSave();
   }, [handleSave]);
 
-  const handlePublishChanges = useCallback(() => {
+  const handlePublishOrUpdate = useCallback(() => {
     if (article?.is_published && hasUnsavedChanges) {
       setShowPublishConfirm(true);
     } else {
       handleSave(true);
     }
   }, [article, hasUnsavedChanges, handleSave]);
+
+  const handleUnpublish = useCallback(() => {
+    setShowUnpublishConfirm(true);
+  }, []);
 
   const handleDelete = () => {
     setShowDeleteConfirm(true);
@@ -179,13 +184,13 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
       if ((event.metaKey || event.ctrlKey) && event.key === 's') {
         event.preventDefault();
         if (!saving && article) {
-          handleSaveDraft();
+          handleSaveOnly();
         }
       }
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [saving, handleSaveDraft, article]);
+  }, [saving, handleSaveOnly, article]);
 
   useEffect(() => {
     return () => {
@@ -273,9 +278,10 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
             <PublishControls
               saving={saving}
               isPublished={article.is_published}
-              onSaveDraft={handleSaveDraft}
-              onPublishChanges={handlePublishChanges}
-              onPublish={() => handleSave(true)}
+              hasChanges={hasUnsavedChanges}
+              onSave={handleSaveOnly}
+              onPublish={handlePublishOrUpdate}
+              onUnpublish={handleUnpublish}
               onDelete={handleDelete}
               canDelete={canDelete}
             />
@@ -329,9 +335,23 @@ export default function ArticleEditor({ articleId }: ArticleEditorProps) {
           handleSave(true);
           setShowPublishConfirm(false);
         }}
-        title="Publish changes to live article?"
-        message="These changes will be visible to readers immediately. Make sure everything looks correct before publishing. You can save as draft instead if you want to review changes first."
-        confirmLabel="Yes, publish changes"
+        title="Update live article?"
+        message="These changes will be visible to readers immediately."
+        confirmLabel="Yes, update"
+        cancelLabel="Cancel"
+        confirmVariant="primary"
+      />
+
+      <ConfirmDialog
+        isOpen={showUnpublishConfirm}
+        onClose={() => setShowUnpublishConfirm(false)}
+        onConfirm={() => {
+          handleSave(false);
+          setShowUnpublishConfirm(false);
+        }}
+        title="Take article offline?"
+        message="This article will no longer be visible to readers. You can republish anytime."
+        confirmLabel="Yes, unpublish"
         cancelLabel="Cancel"
         confirmVariant="primary"
       />

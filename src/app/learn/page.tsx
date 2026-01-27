@@ -13,8 +13,9 @@ export default async function LearnPage() {
   if (!userRole || !hasRole(userRole, UserRole.ADMIN)) {
     notFound();
   }
+  const canViewDrafts = hasRole(userRole, UserRole.EDITOR);
 
-  const library = await getLearningLibrary(false);
+  const library = await getLearningLibrary(canViewDrafts);
 
   const pillarCards = library.map((pillar) => ({
     pillar,

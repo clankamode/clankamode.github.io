@@ -169,8 +169,8 @@ export default function ArticleForm({ article, pillars, onChange }: ArticleFormP
         <div className="space-y-2 md:col-span-2">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <label className="text-xs uppercase tracking-[0.2em] text-text-muted">Summary</label>
-              <span className="text-[10px] text-text-muted/60">Shown in previews and lists.</span>
+              <label className="text-xs uppercase tracking-[0.2em] text-text-muted">Card Teaser</label>
+              <span className="text-[10px] text-text-muted/60">Short hook for cards (max ~120 chars).</span>
             </div>
 
             {/* AI Assist Buttons */}
@@ -194,7 +194,7 @@ export default function ArticleForm({ article, pillars, onChange }: ArticleFormP
                 {summaryState === 'generating' ? 'Generating...' :
                   summaryState === 'success' ? 'Generated!' :
                     summaryState === 'error' ? 'Retry' :
-                      (article.excerpt ? 'Rewrite' : 'Generate summary')}
+                      (article.excerpt ? 'Rewrite' : 'Generate teaser')}
               </button>
             </div>
           </div>

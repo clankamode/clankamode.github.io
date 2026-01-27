@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/Button';
 interface PublishControlsProps {
   saving: boolean;
   isPublished: boolean;
-  onSaveDraft?: () => void;
-  onPublishChanges?: () => void;
-  onSave?: () => void;
+  hasChanges: boolean;
+  onSave: () => void;
   onPublish: () => void;
+  onUnpublish?: () => void;
   onDelete: () => void;
   canDelete?: boolean;
   className?: string;
@@ -17,33 +17,36 @@ interface PublishControlsProps {
 export default function PublishControls({
   saving,
   isPublished,
-  onSaveDraft,
-  onPublishChanges,
+  hasChanges,
   onSave,
   onPublish,
+  onUnpublish,
   onDelete,
   canDelete = false,
   className = '',
 }: PublishControlsProps) {
-  if (isPublished && onSaveDraft && onPublishChanges) {
+  if (isPublished) {
+    // Published state: Update | Unpublish | Delete
     return (
       <div className={`inline-flex items-center rounded-lg border border-border-subtle bg-surface-workbench overflow-hidden shadow-sm ${className}`}>
         <Button
-          onClick={onPublishChanges}
-          disabled={saving}
+          onClick={onPublish}
+          disabled={saving || !hasChanges}
           variant="primary"
           className="h-9 min-h-0 py-0 rounded-l-lg rounded-r-none border-0 text-xs px-4"
         >
-          {saving ? 'Publishing...' : 'Publish Changes'}
+          {saving ? 'Updating...' : 'Update'}
         </Button>
-        <Button
-          onClick={onSaveDraft}
-          disabled={saving}
-          variant="ghost"
-          className="h-9 min-h-0 py-0 rounded-none border-0 bg-transparent text-text-primary hover:bg-surface-dense/50 hover:text-text-primary text-xs px-3"
-        >
-          {saving ? 'Saving...' : 'Save Draft'}
-        </Button>
+        {onUnpublish && (
+          <Button
+            onClick={onUnpublish}
+            disabled={saving}
+            variant="ghost"
+            className="h-9 min-h-0 py-0 rounded-none border-0 bg-transparent text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 text-xs px-3"
+          >
+            Unpublish
+          </Button>
+        )}
         {canDelete && (
           <Button
             onClick={onDelete}
@@ -58,6 +61,7 @@ export default function PublishControls({
     );
   }
 
+  // Draft state: Publish | Save | Delete
   return (
     <div className={`inline-flex items-center rounded-lg border border-border-subtle bg-surface-workbench overflow-hidden shadow-sm ${className}`}>
       <Button
@@ -69,12 +73,12 @@ export default function PublishControls({
         Publish
       </Button>
       <Button
-        onClick={onSave || onSaveDraft}
-        disabled={saving}
+        onClick={onSave}
+        disabled={saving || !hasChanges}
         variant="ghost"
         className="h-9 min-h-0 py-0 rounded-none border-0 bg-transparent text-text-primary hover:bg-surface-dense/50 hover:text-text-primary text-xs px-3"
       >
-        {saving ? 'Saving...' : 'Save Draft'}
+        {saving ? 'Saving...' : 'Save'}
       </Button>
       {canDelete && (
         <Button
