@@ -84,7 +84,10 @@ export default function AdminProxyControls() {
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="flex items-center space-x-2 rounded-md border border-border-subtle bg-surface-interactive px-3 py-1.5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-surface-dense"
+        className={`flex items-center space-x-2 rounded-md px-3 py-1.5 text-sm font-medium transition-all ${isProxying
+            ? 'bg-surface-interactive border border-border-subtle text-foreground shadow-sm'
+            : 'text-muted-foreground/60 hover:text-foreground hover:bg-white/5'
+          }`}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >

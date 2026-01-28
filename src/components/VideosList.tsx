@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useVideoContext } from '@/context/VideoContext';
 import VideoCard from '@/components/ui/VideoCard';
-import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import Link from 'next/link';
 
 export default function VideosList() {
@@ -71,7 +70,7 @@ export default function VideosList() {
         <p className="text-muted-foreground mb-4">
           Could not fetch videos. Please check the channel ID or API key.
         </p>
-        <Link 
+        <Link
           href="/"
           className="inline-flex items-center px-4 py-2 text-base font-medium text-primary-foreground bg-brand-green rounded-lg hover:bg-brand-green/90 focus:ring-2 focus:ring-brand-green/50 transition-all duration-300"
         >
@@ -83,25 +82,79 @@ export default function VideosList() {
 
   return (
     <>
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="relative w-full md:max-w-sm">
-          <input
-            type="text"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search videos"
-            className="w-full rounded-lg border border-border bg-muted/20 px-4 py-2 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/50"
-          />
+      <div className="sticky top-[var(--nav-height)] z-30 w-full bg-white/60 dark:bg-black/60 backdrop-blur-md saturate-150 border-b border-black/5 dark:border-white/10 shadow-sm dark:shadow-black/20 mb-8 transition-all duration-300">
+        <div className="max-w-screen-xl mx-auto px-6 py-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">Videos</h1>
+            {videos.length > 0 && (
+              <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 text-xs font-medium rounded-full bg-secondary/80 border border-black/5 dark:border-white/10 text-secondary-foreground">
+                {videos.length}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative w-full sm:w-72 group">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/50 group-hover:text-muted-foreground/80 transition-colors pointer-events-none">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search videos..."
+                className="w-full h-11 rounded-full border border-border bg-secondary/50 pl-11 pr-12 text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-ring focus:bg-background focus:ring-1 focus:ring-ring transition-all"
+              />
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                {query ? (
+                  <button
+                    onClick={() => setQuery('')}
+                    className="text-muted-foreground/50 hover:text-foreground transition-colors p-0.5 rounded-full hover:bg-secondary"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                ) : (
+                  <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-border bg-secondary px-1.5 font-mono text-[10px] font-medium text-muted-foreground/60">
+                    <span className="text-xs">⌘</span>K
+                  </kbd>
+                )}
+              </div>
+            </div>
+
+            <div className="relative group/sort">
+              <button
+                className="h-11 rounded-full border border-border bg-secondary/50 px-5 flex items-center gap-2 text-sm font-medium text-foreground transition-all hover:bg-secondary hover:border-border active:scale-95"
+              >
+                <span className="text-muted-foreground/60">Sort:</span>
+                <span>{sortOrder === 'newest' ? 'Newest' : 'Oldest'}</span>
+                <svg className="w-4 h-4 text-muted-foreground/50 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              <div className="absolute right-0 top-full mt-2 w-40 rounded-xl border border-border bg-popover shadow-xl p-1 opacity-0 invisible translate-y-2 transition-all duration-200 group-hover/sort:opacity-100 group-hover/sort:visible group-hover/sort:translate-y-0 z-50">
+                <button
+                  onClick={() => setSortOrder('newest')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${sortOrder === 'newest' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                    }`}
+                >
+                  Newest
+                </button>
+                <button
+                  onClick={() => setSortOrder('oldest')}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${sortOrder === 'oldest' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                    }`}
+                >
+                  Oldest
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <SegmentedControl
-          options={[
-            { id: 'newest', label: 'Newest' },
-            { id: 'oldest', label: 'Oldest' },
-          ]}
-          value={sortOrder}
-          onChange={(value) => setSortOrder(value)}
-          ariaLabel="Sort videos by date"
-        />
       </div>
 
       {!loading && videos.length > 0 && filteredVideos.length === 0 ? (
@@ -124,24 +177,26 @@ export default function VideosList() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredVideos.map((video) => (
-            <VideoCard
-              key={video.id}
-              title={video.title}
-              description={video.description}
-              thumbnailUrl={video.thumbnailUrl}
-              videoUrl={video.videoUrl}
-              date={video.publishedAt}
-              viewCount={video.viewCount}
-            />
-          ))}
+        <div className="max-w-screen-xl mx-auto px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredVideos.map((video) => (
+              <VideoCard
+                key={video.id}
+                title={video.title}
+                description={video.description}
+                thumbnailUrl={video.thumbnailUrl}
+                videoUrl={video.videoUrl}
+                date={video.publishedAt}
+                viewCount={video.viewCount}
+              />
+            ))}
+          </div>
         </div>
       )}
-      
+
       {hasMore && query.trim().length === 0 && (
-        <div 
-          ref={loaderRef} 
+        <div
+          ref={loaderRef}
           className="flex justify-center items-center mt-12"
         >
           {loading ? (
@@ -156,7 +211,7 @@ export default function VideosList() {
           )}
         </div>
       )}
-      
+
       {!hasMore && videos.length > 0 && (
         <div className="text-center mt-12 py-4 text-muted-foreground">
           <p>You&apos;ve reached the end of the videos</p>

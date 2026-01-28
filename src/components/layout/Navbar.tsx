@@ -60,7 +60,13 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Helper function to check if a path is active
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--nav-height-initial', '113px');
+    root.style.setProperty('--nav-height-scrolled', '89px');
+    root.style.setProperty('--nav-height', scrolled ? '89px' : '113px');
+  }, [scrolled]);
+
   const isActive = (path: string) => {
     if (path === '/') {
       return pathname === '/';
@@ -69,24 +75,21 @@ export default function Navbar() {
   };
 
   const navLinkClass = (path: string) =>
-    `px-4 py-2 rounded-full text-base font-medium transition-all duration-300 border border-transparent ${
-      isActive(path)
-        ? 'text-foreground border-b-2 border-brand-green'
-        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+    `px-4 py-2 rounded-full text-base font-medium transition-all duration-300 border border-transparent ${isActive(path)
+      ? 'text-foreground border-b-2 border-brand-green'
+      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
 
   const navButtonClass = (active: boolean) =>
-    `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 border border-transparent ${
-      active
-        ? 'text-foreground border-b-2 border-brand-green'
-        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+    `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 border border-transparent ${active
+      ? 'text-foreground border-b-2 border-brand-green'
+      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
 
   const mobileNavLinkClass = (path: string) =>
-    `block px-4 py-3 rounded-lg text-lg font-medium transition-colors border-l-2 border-transparent ${
-      isActive(path)
-        ? 'text-foreground border-brand-green'
-        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+    `block px-4 py-3 rounded-lg text-lg font-medium transition-colors border-l-2 border-transparent ${isActive(path)
+      ? 'text-foreground border-brand-green'
+      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
     }`;
 
   const handleSignOut = async () => {
@@ -106,12 +109,11 @@ export default function Navbar() {
     <>
       <nav
         className={`fixed w-full z-50 top-0 left-0 transition-all duration-500 border-b ${scrolled || isMenuOpen
-            ? 'bg-surface-ambient/80 backdrop-blur-xl border-border-subtle py-3'
-            : 'bg-transparent border-transparent py-5'
+          ? 'bg-surface-ambient/80 backdrop-blur-xl border-border-subtle py-3'
+          : 'bg-transparent border-transparent py-5'
           }`}
       >
         <div className="max-w-screen-xl mx-auto px-6 flex justify-between items-center">
-          {/* Logo - left side */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-3 group">
               {isLoggedIn && session.user?.image ? (
@@ -137,7 +139,6 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Navigation - center (Floating Pill) */}
           <div className="hidden md:flex items-center justify-center absolute left-1/2 -translate-x-1/2">
             <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-border-subtle backdrop-blur-md' : ''
               }`}>
@@ -209,7 +210,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Right side - Auth & Subscribe buttons */}
           <div className="flex items-center gap-4">
             {status === 'loading' ? (
               <div className="h-9 w-20 bg-white/5 animate-pulse rounded-full"></div>
@@ -222,7 +222,7 @@ export default function Navbar() {
                   variant="ghost"
                   size="sm"
                   onClick={handleSignOut}
-                  className="text-muted-foreground hover:text-red-400 hover:bg-red-400/10"
+                  className="text-muted-foreground/60 hover:text-red-400 hover:bg-red-400/10 transition-colors"
                 >
                   Logout
                 </Button>
@@ -235,7 +235,7 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* Mobile menu button */}
+
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-2 rounded-lg text-foreground hover:bg-white/5 transition-colors"
@@ -255,7 +255,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu overlay */}
+
       <div
         className={`fixed inset-0 z-40 bg-surface-ambient/95 backdrop-blur-2xl transition-transform duration-500 md:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
