@@ -37,6 +37,7 @@ src/
 - Use named exports for components
 - Use async/await over .then() chains
 - Keep components small and focused
+- **When deleting code**: Remove any variables, imports, types, or functions that become unused as a result. Do not leave dead code or unused declarations.
 
 ### API Routes
 - Use NextResponse for responses
@@ -81,3 +82,18 @@ useEffect(() => { fetchData(); }, []);
 
 ## Environment Variables
 See `.env.local.example` for required variables.
+
+## Known gotchas (multi-file consistency)
+
+When making changes that affect **visibility or access** of a top-level nav item, update **all** of these in one go — the AI often updates only one and forgets the rest:
+
+1. **Page/route** – e.g. `src/app/learn/page.tsx` (or the relevant route). Don’t hide/show only the page without updating nav and middleware.
+2. **Navbar** – `src/components/layout/Navbar.tsx`:
+   - Desktop nav (main `<Link>` list).
+   - Mobile nav (hamburger menu).
+   - Both branches (e.g. editor view vs default view) if the item appears in one or both.
+3. **Middleware** – `src/middleware.ts`:
+   - Add or remove the path from public vs protected logic (e.g. “Learn is public”).
+   - Ensure the path (and children like `/learn/:path*`) is in the `config.matcher` so middleware runs.
+
+**Checklist when adding, removing, or toggling a nav item:** page ✓ · Navbar desktop ✓ · Navbar mobile ✓ · middleware logic ✓ · middleware matcher ✓

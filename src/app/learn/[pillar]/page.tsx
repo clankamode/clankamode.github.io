@@ -16,13 +16,10 @@ interface PillarPageProps {
 export default async function PillarPage({ params }: PillarPageProps) {
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role as UserRole | undefined;
-  if (!userRole || !hasRole(userRole, UserRole.ADMIN)) {
-    notFound();
-  }
-  const canViewDrafts = hasRole(userRole, UserRole.EDITOR);
+  const canViewDrafts = userRole ? hasRole(userRole, UserRole.EDITOR) : false;
 
   const { pillar: pillarSlug } = await params;
-  const pillar = await getLearningPillarBySlug(pillarSlug);
+  const pillar = await getLearningPillarBySlug(pillarSlug.toLowerCase());
   if (!pillar) {
     notFound();
   }
@@ -30,9 +27,9 @@ export default async function PillarPage({ params }: PillarPageProps) {
   const topics = await getLearningPillarTree(pillar.id, canViewDrafts);
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-24">
-      <section className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)]">
+    <div className="min-h-screen bg-background pt-20 pb-24">
+      <section className="mx-auto w-full max-w-[1680px] px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-16 lg:grid-cols-[240px_minmax(0,1fr)_240px]">
           <aside className="hidden lg:block">
             <div className="sticky top-28">
               <PillarSidebar
@@ -75,6 +72,8 @@ export default async function PillarPage({ params }: PillarPageProps) {
               ))}
             </div>
           </div>
+
+          <aside className="hidden lg:block" aria-hidden="true" />
         </div>
       </section>
     </div>

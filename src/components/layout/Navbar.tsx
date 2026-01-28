@@ -162,10 +162,7 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
-                  <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
-                  {isEffectiveAdmin && (
-                    <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
-                  )}
+                  <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
                   <div className="relative group">
                     <button type="button" className={navButtonClass(isPracticeSectionActive)}>
                       Practice
@@ -186,6 +183,7 @@ export default function Navbar() {
                       </div>
                     </div>
                   </div>
+                  <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
                   {isLoggedIn && isEditor && (
                     <div className="relative group">
                       <button type="button" className={navButtonClass(isEditorSectionActive)}>
@@ -274,15 +272,13 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <Link href="/videos" className={mobileNavLinkClass('/videos')} onClick={() => setIsMenuOpen(false)}>Videos</Link>
-                {isEffectiveAdmin && (
-                  <Link href="/learn" className={mobileNavLinkClass('/learn')} onClick={() => setIsMenuOpen(false)}>Learn</Link>
-                )}
+                <Link href="/learn" className={mobileNavLinkClass('/learn')} onClick={() => setIsMenuOpen(false)}>Learn</Link>
                 <div className="space-y-1 pt-3">
                   <span className="block px-4 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Practice</span>
                   <Link href="/peralta75" className={mobileNavLinkClass('/peralta75')} onClick={() => setIsMenuOpen(false)}>Peralta 75</Link>
                   <Link href="/assessment" className={mobileNavLinkClass('/assessment')} onClick={() => setIsMenuOpen(false)}>Assessment</Link>
                 </div>
+                <Link href="/videos" className={mobileNavLinkClass('/videos')} onClick={() => setIsMenuOpen(false)}>Videos</Link>
                 {isLoggedIn && isEditor && (
                   <div className="space-y-1">
                     <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Editor</span>

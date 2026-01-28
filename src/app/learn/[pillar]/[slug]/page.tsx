@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
@@ -42,12 +43,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { pillar: pillarSlug, slug: articleSlug } = await params;
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role as UserRole | undefined;
-  if (!userRole || !hasRole(userRole, UserRole.ADMIN)) {
-    notFound();
-  }
   const canViewDrafts = !!userRole && hasRole(userRole, UserRole.EDITOR);
+  const canEdit = canViewDrafts;
 
-  const pillar = await getLearningPillarBySlug(pillarSlug);
+  const pillar = await getLearningPillarBySlug(pillarSlug.toLowerCase());
   if (!pillar) {
     notFound();
   }
@@ -75,8 +74,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <div className="min-h-screen bg-background pt-20 pb-24">
       <ReadingProgress />
-      <section className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)_240px]">
+      <section className="mx-auto w-full max-w-[1680px] px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-16 lg:grid-cols-[240px_minmax(0,1fr)_240px]">
           <aside className="hidden lg:block">
             <div className="sticky top-28">
               <PillarSidebar
@@ -125,6 +124,17 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     <span className="rounded-full bg-surface-dense px-3 py-1 text-[10px] font-semibold text-text-primary">
                       Premium
                     </span>
+                  </>
+                )}
+                {canEdit && (
+                  <>
+                    <span className="text-text-muted/60">•</span>
+                    <Link
+                      href={`/admin/content/${article.id}`}
+                      className="text-brand-green hover:text-brand-emerald transition-colors"
+                    >
+                      Edit article
+                    </Link>
                   </>
                 )}
               </div>

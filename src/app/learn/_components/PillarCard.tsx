@@ -37,15 +37,10 @@ const iconMap: Record<string, ReactElement> = {
 
 export default function PillarCard({ pillar, articleCount }: PillarCardProps) {
   const icon = iconMap[pillar.slug] || iconMap.blog;
+  const isEmpty = articleCount === 0;
 
-  return (
-    <Link
-      href={`/learn/${pillar.slug}`}
-      className={cn(
-        'group frame relative flex h-full flex-col gap-6 p-6 transition-all duration-300',
-        'bg-surface-interactive/80 hover:bg-surface-interactive/90'
-      )}
-    >
+  const content = (
+    <>
       <div className="flex items-center justify-between text-text-secondary">
         <div className="flex items-center gap-3 text-sm uppercase tracking-[0.2em]">
           <span className="text-text-muted">Pillar</span>
@@ -65,10 +60,40 @@ export default function PillarCard({ pillar, articleCount }: PillarCardProps) {
 
       <div className="mt-auto flex items-center justify-between text-sm text-text-muted">
         <span>{articleCount} articles</span>
-        <span className="text-text-primary transition-transform duration-200 group-hover:translate-x-1">
-          Explore →
+        <span
+          className={cn(
+            'text-text-primary',
+            !isEmpty && 'transition-transform duration-200 group-hover:translate-x-1'
+          )}
+        >
+          {isEmpty ? 'Under construction' : 'Explore →'}
         </span>
       </div>
+    </>
+  );
+
+  if (isEmpty) {
+    return (
+      <div
+        className={cn(
+          'frame relative flex h-full cursor-default flex-col gap-6 p-6',
+          'bg-surface-interactive/60'
+        )}
+      >
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={`/learn/${pillar.slug}`}
+      className={cn(
+        'group frame relative flex h-full flex-col gap-6 p-6 transition-all duration-300',
+        'bg-surface-interactive/80 hover:bg-surface-interactive/90'
+      )}
+    >
+      {content}
     </Link>
   );
 }

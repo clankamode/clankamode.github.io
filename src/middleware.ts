@@ -22,6 +22,11 @@ export async function middleware(req: NextRequest) {
             // Otherwise, allow access to home page
             return NextResponse.next();
         }
+
+        // Learn is public — allow without auth
+        if (req.nextUrl.pathname.startsWith('/learn')) {
+            return NextResponse.next();
+        }
         
         // For all other protected routes, require authentication
         if (!token) {
@@ -33,12 +38,6 @@ export async function middleware(req: NextRequest) {
         // Check if the route is admin-related
         if (req.nextUrl.pathname.startsWith('/admin')) {
             if (!hasRole(userRole, UserRole.EDITOR)) {
-                return NextResponse.redirect(new URL('/', req.url));
-            }
-        }
-
-        if (req.nextUrl.pathname.startsWith('/learn')) {
-            if (!hasRole(userRole, UserRole.ADMIN)) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
         }

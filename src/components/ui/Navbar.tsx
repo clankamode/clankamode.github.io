@@ -66,6 +66,16 @@ export default function Navbar() {
             >
               Videos
             </Link>
+            <Link
+              href="/learn"
+              className={`text-lg font-medium transition-colors duration-200 border-b-2 border-transparent ${
+                isActive('/learn')
+                  ? 'text-foreground border-brand-green'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Learn
+            </Link>
           </div>
           
           {/* Right section with Subscribe button */}
@@ -155,6 +165,17 @@ export default function Navbar() {
             onClick={() => setIsMenuOpen(false)}
           >
             Videos
+          </Link>
+          <Link
+            href="/learn"
+            className={`block px-3 py-2 rounded-md text-lg font-medium transition-colors duration-200 border-l-2 border-transparent ${
+              isActive('/learn')
+                ? 'text-foreground border-brand-green'
+                : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+            }`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Learn
           </Link>
           <a
             href={`https://www.youtube.com/channel/${process.env.YOUTUBE_CHANNEL_ID}?sub_confirmation=1`}

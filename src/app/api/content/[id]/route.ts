@@ -77,7 +77,7 @@ export async function PATCH(
       is_premium: body.is_premium ?? false,
       is_published: body.is_published ?? false,
       order_index: body.order_index ?? 0,
-      reading_time_minutes: body.reading_time_minutes ?? (body.body ? getReadingTimeMinutes(body.body) : undefined),
+      reading_time_minutes: body.body ? getReadingTimeMinutes(body.body) : (body.reading_time_minutes ?? undefined),
       topic_id: body.topic_id,
     };
 
