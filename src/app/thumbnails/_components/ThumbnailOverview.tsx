@@ -1,9 +1,13 @@
 import type React from "react"
+import { useState, useEffect, useMemo } from "react"
 import ThumbnailCard from "./ThumbnailCard"
+import SortFilterBar from "./SortFilterBar"
+import { ThumbnailGridSkeleton } from "./ThumbnailCardSkeleton"
+import EmptyState from "./EmptyState"
+import BulkActionBar from "./BulkActionBar"
 import { ThumbnailJobStatus } from "@/types/ThumbnailJob"
 import { Thumbnail } from "@/types/ThumbnailJob"
-import Loading from '@/components/ui/Loading';
-import { FAVORITES_VIEW, type ThumbnailView } from "@/app/thumbnails/types"
+import { FAVORITES_VIEW, type ThumbnailView, type SortOption, type FilterOption } from "@/app/thumbnails/types"
 
 type ThumbnailOverviewProps = {
   thumbnails: Thumbnail[]
@@ -15,16 +19,104 @@ type ThumbnailOverviewProps = {
   onToggleFavorite?: (thumbnailId: string) => void
   onDelete?: (thumbnailId: string) => void
   isAdmin?: boolean
+  selectedIds?: Set<string>
+  onSelect?: (thumbnailId: string, event: React.MouseEvent) => void
+  onSelectAll?: () => void
+  onClearSelection?: () => void
+  onCreateClick?: () => void
+  onNavigate?: (view: ThumbnailView) => void
+  onBulkStatusChange?: (status: ThumbnailJobStatus) => void
+  onBulkFavorite?: (favorite: boolean) => void
+  onBulkDelete?: () => void
 }
 
-export default function ThumbnailOverview({ thumbnails, status, isLoading, error, onThumbnailsChange, onViewClick, onToggleFavorite, onDelete, isAdmin }: ThumbnailOverviewProps) {
-  const filteredThumbnails = thumbnails
-    .filter((t) => status === FAVORITES_VIEW ? t.favorite : t.status === status)
-    .sort((a, b) => {
-      const dateA = new Date(a.updatedAt || 0).getTime()
-      const dateB = new Date(b.updatedAt || 0).getTime()
-      return dateB - dateA // Sort in descending order (newest first)
+export default function ThumbnailOverview({
+  thumbnails,
+  status,
+  isLoading,
+  error,
+  onThumbnailsChange,
+  onViewClick,
+  onToggleFavorite,
+  onDelete,
+  isAdmin,
+  selectedIds = new Set(),
+  onSelect,
+  onSelectAll,
+  onClearSelection,
+  onCreateClick,
+  onNavigate,
+  onBulkStatusChange,
+  onBulkFavorite,
+  onBulkDelete,
+}: ThumbnailOverviewProps) {
+  const [sortBy, setSortBy] = useState<SortOption>("newest")
+  const [activeFilters, setActiveFilters] = useState<Set<FilterOption>>(new Set())
+  const [searchQuery, setSearchQuery] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  useEffect(() => {
+    setActiveFilters(new Set())
+    setSearchQuery("")
+  }, [status])
+
+  const handleFilterToggle = (filter: FilterOption) => {
+    setActiveFilters((prev) => {
+      const next = new Set(prev)
+      if (next.has(filter)) {
+        next.delete(filter)
+      } else {
+        next.add(filter)
+      }
+      return next
     })
+  }
+
+  const filteredThumbnails = useMemo(() => {
+    let result = thumbnails.filter((t) =>
+      status === FAVORITES_VIEW ? t.favorite : t.status === status
+    )
+
+    if (debouncedSearch.trim()) {
+      const query = debouncedSearch.toLowerCase()
+      result = result.filter((t) =>
+        t.videoTitle.toLowerCase().includes(query) ||
+        t.notes?.toLowerCase().includes(query)
+      )
+    }
+
+    if (activeFilters.has("has-thumbnail")) {
+      result = result.filter((t) => !!t.thumbnailUrl)
+    }
+    if (activeFilters.has("missing-thumbnail")) {
+      result = result.filter((t) => !t.thumbnailUrl)
+    }
+    if (activeFilters.has("favorited")) {
+      result = result.filter((t) => t.favorite)
+    }
+
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()
+        case "oldest":
+          return new Date(a.updatedAt || 0).getTime() - new Date(b.updatedAt || 0).getTime()
+        case "title-asc":
+          return a.videoTitle.localeCompare(b.videoTitle)
+        case "title-desc":
+          return b.videoTitle.localeCompare(a.videoTitle)
+        default:
+          return 0
+      }
+    })
+
+    return result
+  }, [thumbnails, status, debouncedSearch, activeFilters, sortBy])
 
   const statusLabels = {
     [ThumbnailJobStatus.TODO]: "To Do",
@@ -49,16 +141,29 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
         throw new Error('Failed to update thumbnail status')
       }
 
-      // Refresh the thumbnails list
       onThumbnailsChange();
     } catch (error) {
       console.error('Error updating thumbnail status:', error);
-      // You might want to show an error toast here
+    }
+  }
+
+  const handleSelectAllFiltered = () => {
+    if (selectedIds.size > 0 && onClearSelection) {
+      onClearSelection()
+    } else if (onSelectAll) {
+      onSelectAll()
     }
   }
 
   if (isLoading) {
-    return <Loading />
+    return (
+      <div>
+        <div className="mb-4">
+          <div className="h-9 w-32 bg-surface-interactive rounded animate-pulse" />
+        </div>
+        <ThumbnailGridSkeleton count={6} />
+      </div>
+    )
   }
 
   if (error) {
@@ -72,8 +177,8 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
           </div>
           <h3 className="text-xl font-medium text-foreground">Failed to load thumbnails</h3>
           <p className="text-muted-foreground">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-brand-green text-black rounded-lg hover:bg-brand-green/90"
           >
             Try Again
@@ -85,49 +190,75 @@ export default function ThumbnailOverview({ thumbnails, status, isLoading, error
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-4">
         <h2 className="text-3xl font-bold text-foreground">{statusLabels[status]}</h2>
-        <p className="text-muted-foreground">
-          {filteredThumbnails.length} thumbnail{filteredThumbnails.length !== 1 ? "s" : ""}
-        </p>
       </div>
 
+      {selectedIds.size > 0 && onBulkStatusChange && onBulkFavorite && onBulkDelete && onClearSelection ? (
+        <BulkActionBar
+          selectedCount={selectedIds.size}
+          currentView={status}
+          onStatusChange={onBulkStatusChange}
+          onFavorite={onBulkFavorite}
+          onDelete={onBulkDelete}
+          onClear={onClearSelection}
+        />
+      ) : (
+        <SortFilterBar
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          activeFilters={activeFilters}
+          onFilterToggle={handleFilterToggle}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          totalCount={filteredThumbnails.length}
+          onSelectAll={handleSelectAllFiltered}
+          hasSelection={selectedIds.size > 0}
+        />
+      )}
+
       {filteredThumbnails.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 bg-surface-workbench rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2-2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
-          </div>
-          <h3 className="text-xl font-medium text-foreground mb-2">
-            No thumbnails {status === ThumbnailJobStatus.TODO ? "to do" : status === FAVORITES_VIEW ? "favorited yet" : status}
-          </h3>
-          <p className="text-muted-foreground">
-            {status === ThumbnailJobStatus.TODO && "New video requests will appear here"}
-            {status === ThumbnailJobStatus.IN_REVIEW && "Submitted thumbnails will appear here for review"}
-            {status === ThumbnailJobStatus.COMPLETED && "Approved thumbnails will appear here"}
-            {status === FAVORITES_VIEW && "Tap the star on any thumbnail to save it here"}
-          </p>
-        </div>
+        <EmptyState
+          status={status}
+          hasFilters={debouncedSearch.length > 0 || activeFilters.size > 0}
+          onCreateClick={onCreateClick}
+          onClearFilters={() => {
+            setSearchQuery('')
+            setActiveFilters(new Set())
+          }}
+          onNavigate={onNavigate}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredThumbnails.map((thumbnail: Thumbnail) => (
-            <ThumbnailCard 
-              key={thumbnail.id} 
-              thumbnail={thumbnail} 
+            <ThumbnailCard
+              key={thumbnail.id}
+              thumbnail={thumbnail}
               status={thumbnail.status}
               onStatusChange={handleStatusChange}
               onViewClick={onViewClick}
               onToggleFavorite={onToggleFavorite}
               onDelete={onDelete}
               isAdmin={isAdmin}
+              isSelected={selectedIds.has(thumbnail.id)}
+              onSelect={onSelect}
+              hasSelection={selectedIds.size > 0}
             />
           ))}
+
+          {status === ThumbnailJobStatus.TODO && filteredThumbnails.length < 6 && onCreateClick && (
+            <button
+              onClick={onCreateClick}
+              className="frame bg-transparent border-2 border-dashed border-border-subtle hover:border-brand-green hover:bg-surface-workbench/50 overflow-hidden group transition-all duration-200 flex flex-col items-center justify-center min-h-[280px]"
+            >
+              <div className="w-12 h-12 rounded-full bg-surface-workbench flex items-center justify-center mb-3 group-hover:bg-brand-green/10 transition-colors">
+                <svg className="w-6 h-6 text-muted-foreground group-hover:text-brand-green transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+              <span className="text-muted-foreground group-hover:text-foreground font-medium transition-colors">Create Job</span>
+            </button>
+          )}
         </div>
       )}
     </div>

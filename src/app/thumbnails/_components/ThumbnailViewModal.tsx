@@ -43,11 +43,10 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
 
   useEffect(() => {
     if (isOpen && thumbnailId) {
-      // Reset state when opening a new thumbnail job
       setIsLoading(true)
       setSuggestionError(null)
       setIsGeneratingSuggestions(false)
-      
+
       const fetchThumbnail = async () => {
         try {
           const response = await fetch(`/api/thumbnail_job/${thumbnailId}`)
@@ -67,11 +66,15 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
             suggestedThumbnails: data.data.suggested_thumbnails || [],
             suggestionStatus,
           })
-          
-          // If status is generating, start polling
+
           if (suggestionStatus === ThumbnailSuggestionStatus.GENERATING) {
             setIsGeneratingSuggestions(true)
+            setIsSuggestionsExpanded(true)
             pollForSuggestionStatus(thumbnailId)
+          }
+
+          if (data.data.suggested_thumbnails?.length > 0) {
+            setIsSuggestionsExpanded(true)
           }
         } catch (error) {
           console.error('Error fetching thumbnail:', error)
@@ -262,11 +265,11 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
   if (!isOpen) return null
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-y-auto"
       onClick={onClose}
     >
-      <div 
+      <div
         className="bg-surface-workbench rounded-lg shadow-lg w-full max-w-6xl xl:max-w-7xl my-8 border border-border-subtle"
         onClick={(e) => e.stopPropagation()}
       >
@@ -335,7 +338,7 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                     onClick={() => setIsSuggestionsExpanded(!isSuggestionsExpanded)}
                     className="w-full flex items-center justify-between p-4 bg-surface-interactive hover:bg-surface-dense transition-colors"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
                       <svg
                         className={`w-5 h-5 text-muted-foreground transition-transform ${isSuggestionsExpanded ? 'rotate-90' : ''}`}
                         fill="none"
@@ -344,9 +347,28 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                      <h2 className="text-xl font-semibold text-foreground">Suggested thumbnails</h2>
+                      <h2 className="text-xl font-semibold text-foreground whitespace-nowrap">Suggested thumbnails</h2>
                       {formData.suggestedThumbnails.length > 0 && (
-                        <span className="text-sm text-muted-foreground">({formData.suggestedThumbnails.length})</span>
+                        <span className="text-sm text-muted-foreground whitespace-nowrap">({formData.suggestedThumbnails.length})</span>
+                      )}
+
+                      {!isSuggestionsExpanded && formData.suggestedThumbnails.length > 0 && (
+                        <div className="flex items-center gap-2 ml-4 overflow-hidden">
+                          {formData.suggestedThumbnails.slice(0, 3).map((url, idx) => (
+                            <div key={idx} className="relative w-12 h-8 rounded overflow-hidden border border-border-subtle shrink-0">
+                              <Image
+                                src={url}
+                                alt="Suggestion preview"
+                                fill
+                                className="object-cover"
+                                sizes="48px"
+                              />
+                            </div>
+                          ))}
+                          {formData.suggestedThumbnails.length > 3 && (
+                            <span className="text-xs text-muted-foreground shrink-0">+{formData.suggestedThumbnails.length - 3}</span>
+                          )}
+                        </div>
                       )}
                     </div>
                     <div className="flex items-center gap-3">
@@ -537,9 +559,8 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                       )}
                     </div>
                     <div
-                      className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                        dragActive ? "border-brand-green bg-brand-green/5" : "border-border-subtle hover:border-border-interactive bg-surface-interactive"
-                      }`}
+                      className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${dragActive ? "border-brand-green bg-brand-green/5" : "border-border-subtle hover:border-border-interactive bg-surface-interactive"
+                        }`}
                       onDragEnter={handleDrag}
                       onDragLeave={handleDrag}
                       onDragOver={handleDrag}
@@ -564,10 +585,13 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
                               sizes="(max-width: 768px) 100vw, 672px"
                             />
                           </div>
-                          <div className="flex items-center justify-center space-x-2 text-green-600">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
+                          <div className="flex items-center justify-center gap-2">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-brand-green/10 border border-brand-green/30 text-brand-green text-sm font-medium rounded-full">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              Uploaded
+                            </span>
                           </div>
                         </div>
                       ) : (

@@ -374,13 +374,12 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
                   />
                   <div className="flex items-center justify-between">
                     <span
-                      className={`text-xs ${
-                        editText.length > MAX_TEXT_LENGTH
+                      className={`text-xs ${editText.length > MAX_TEXT_LENGTH
                           ? "text-red-400"
                           : editText.length > MAX_TEXT_LENGTH * 0.8
                             ? "text-yellow-400"
-                          : "text-muted-foreground"
-                      }`}
+                            : "text-muted-foreground"
+                        }`}
                     >
                       {editText.length}/{MAX_TEXT_LENGTH}
                     </span>
@@ -437,167 +436,167 @@ export default function CommentsSection({ thumbnailId }: CommentsSectionProps) {
       </div>
 
       {/* Comment Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-3 border-t border-border-subtle pt-4"
-      >
-        {/* Pending Attachments Preview */}
-        {pendingAttachments.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-2">
-            {pendingAttachments.map((attachment) => (
-              <div
-                key={attachment.id}
-                className="relative w-16 h-16 rounded-lg overflow-hidden border border-border-subtle group"
-              >
-                <Image
-                  src={attachment.url}
-                  alt={attachment.name}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeAttachment(attachment.id)}
-                  className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Textarea with Drag/Drop */}
-        <div
-          className={`relative rounded-lg border transition-colors ${
-            dragActive
-              ? "border-brand-green bg-brand-green/5"
-              : "border-border-subtle hover:border-border-interactive"
-          }`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
+      <div className="sticky bottom-0 bg-surface-workbench pt-4 -mx-2 px-2">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-3 border-t border-border-subtle pt-4"
         >
-          <textarea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder="Add a comment... (drag & drop images here)"
-            className="w-full px-4 py-3 bg-transparent text-foreground placeholder:text-muted-foreground resize-none focus:outline-none"
-            rows={3}
-            maxLength={MAX_TEXT_LENGTH}
-          />
-
-          {/* Drag Overlay */}
-          {dragActive && (
-            <div className="absolute inset-0 flex items-center justify-center bg-brand-green/10 rounded-lg pointer-events-none">
-              <span className="text-brand-green font-medium">
-                Drop images here
-              </span>
+          {/* Pending Attachments Preview */}
+          {pendingAttachments.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-2">
+              {pendingAttachments.map((attachment) => (
+                <div
+                  key={attachment.id}
+                  className="relative w-16 h-16 rounded-lg overflow-hidden border border-border-subtle group"
+                >
+                  <Image
+                    src={attachment.url}
+                    alt={attachment.name}
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeAttachment(attachment.id)}
+                    className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <svg
+                      className="w-3 h-3 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ))}
             </div>
           )}
-        </div>
 
-        {/* Footer Row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Attach Button */}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              className="text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
-              title="Attach image"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                />
-              </svg>
-            </button>
-
-            {/* Character Count */}
-            <span
-              className={`text-sm ${
-                commentText.length > MAX_TEXT_LENGTH
-                  ? "text-red-400"
-                  : commentText.length > MAX_TEXT_LENGTH * 0.8
-                    ? "text-yellow-400"
-                    : "text-muted-foreground"
+          {/* Textarea with Drag/Drop */}
+          <div
+            className={`relative rounded-lg border transition-colors ${dragActive
+                ? "border-brand-green bg-brand-green/5"
+                : "border-border-subtle hover:border-border-interactive"
               }`}
-            >
-              {commentText.length}/{MAX_TEXT_LENGTH}
-            </span>
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+          >
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Add a comment... (drag & drop images here)"
+              className="w-full px-4 py-3 bg-transparent text-foreground placeholder:text-muted-foreground resize-none focus:outline-none"
+              rows={3}
+              maxLength={MAX_TEXT_LENGTH}
+            />
 
-            {/* Upload Indicator */}
-            {isUploading && (
-              <span className="text-sm text-muted-foreground flex items-center">
-                <svg
-                  className="animate-spin mr-1 h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Uploading...
-              </span>
+            {/* Drag Overlay */}
+            {dragActive && (
+              <div className="absolute inset-0 flex items-center justify-center bg-brand-green/10 rounded-lg pointer-events-none">
+                <span className="text-brand-green font-medium">
+                  Drop images here
+                </span>
+              </div>
             )}
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="px-4 py-2 text-brand-green font-medium hover:text-brand-green/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {isSubmitting ? "Posting..." : "Post"}
-          </button>
-        </div>
+          {/* Footer Row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {/* Attach Button */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                title="Attach image"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                  />
+                </svg>
+              </button>
 
-        {/* Hidden File Input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-          multiple
-          onChange={handleFileInputChange}
-          className="hidden"
-        />
-      </form>
+              {/* Character Count */}
+              <span
+                className={`text-sm ${commentText.length > MAX_TEXT_LENGTH
+                    ? "text-red-400"
+                    : commentText.length > MAX_TEXT_LENGTH * 0.8
+                      ? "text-yellow-400"
+                      : "text-muted-foreground"
+                  }`}
+              >
+                {commentText.length}/{MAX_TEXT_LENGTH}
+              </span>
+
+              {/* Upload Indicator */}
+              {isUploading && (
+                <span className="text-sm text-muted-foreground flex items-center">
+                  <svg
+                    className="animate-spin mr-1 h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Uploading...
+                </span>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="px-4 py-2 text-brand-green font-medium hover:text-brand-green/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSubmitting ? "Posting..." : "Post"}
+            </button>
+          </div>
+
+          {/* Hidden File Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+            multiple
+            onChange={handleFileInputChange}
+            className="hidden"
+          />
+        </form>
+      </div>
 
       {/* Image Lightbox */}
       {expandedImage && (

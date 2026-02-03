@@ -143,7 +143,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {!['/ai', '/admin'].some(path => pathname.startsWith(path)) && (
+          {pathname !== '/ai' && (
             <div className="hidden md:flex items-center justify-center absolute left-1/2 -translate-x-1/2">
               <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-border-subtle backdrop-blur-md' : ''
                 }`}>

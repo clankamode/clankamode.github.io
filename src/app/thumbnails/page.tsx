@@ -13,7 +13,6 @@ import { Thumbnail } from "@/types/ThumbnailJob"
 import { type ThumbnailView } from "@/app/thumbnails/types"
 import { hasRole, UserRole } from "@/types/roles"
 
-// Function to convert API data to our frontend format
 const convertApiDataToThumbnail = (job: ThumbnailJob): Thumbnail => {
   return {
     id: job.id,
@@ -36,6 +35,9 @@ export default function ThumbnailDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [selectedThumbnailId, setSelectedThumbnailId] = useState<string | null>(null)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [lastSelectedId, setLastSelectedId] = useState<string | null>(null)
+
   const { data: session } = useSession()
 
   const isAdmin = session?.user?.role ? hasRole(session.user.role as UserRole, UserRole.ADMIN) : false
@@ -69,9 +71,9 @@ export default function ThumbnailDashboard() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         video_url: videoUrl,
-        video_title: videoTitle 
+        video_title: videoTitle
       }),
     })
 
@@ -80,7 +82,6 @@ export default function ThumbnailDashboard() {
       throw new Error(error.message || 'Failed to create thumbnail job')
     }
 
-    // Refresh the thumbnails list
     fetchThumbnails()
   }
 
@@ -95,7 +96,6 @@ export default function ThumbnailDashboard() {
 
     const newFavoriteValue = !thumbnail.favorite
 
-    // Optimistically update the UI
     setThumbnails((prev) =>
       prev.map((t) =>
         t.id === thumbnailId ? { ...t, favorite: newFavoriteValue } : t
@@ -116,7 +116,6 @@ export default function ThumbnailDashboard() {
       }
     } catch (error) {
       console.error('Error updating favorite status:', error)
-      // Revert on error
       setThumbnails((prev) =>
         prev.map((t) =>
           t.id === thumbnailId ? { ...t, favorite: !newFavoriteValue } : t
@@ -126,11 +125,6 @@ export default function ThumbnailDashboard() {
   }
 
   const handleDelete = async (thumbnailId: string) => {
-    if (!confirm('Are you sure you want to delete this thumbnail?')) {
-      return
-    }
-
-    // Optimistically remove from UI
     setThumbnails((prev) => prev.filter((t) => t.id !== thumbnailId))
 
     try {
@@ -143,7 +137,149 @@ export default function ThumbnailDashboard() {
       }
     } catch (error) {
       console.error('Error deleting thumbnail:', error)
-      // Revert on error by refetching
+      fetchThumbnails()
+    }
+  }
+
+  useEffect(() => {
+    setSelectedIds(new Set())
+    setLastSelectedId(null)
+  }, [currentView])
+
+  const getFilteredThumbnailIds = () => {
+    return thumbnails
+      .filter((t) => currentView === 'FAVORITES' ? t.favorite : t.status === currentView)
+      .sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime())
+      .map((t) => t.id)
+  }
+
+  const handleSelect = (thumbnailId: string, event: React.MouseEvent) => {
+    const isMetaKey = event.metaKey || event.ctrlKey
+    const isShiftKey = event.shiftKey
+
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+
+      if (isShiftKey && lastSelectedId) {
+        const filteredIds = getFilteredThumbnailIds()
+        const lastIndex = filteredIds.indexOf(lastSelectedId)
+        const currentIndex = filteredIds.indexOf(thumbnailId)
+
+        if (lastIndex !== -1 && currentIndex !== -1) {
+          const start = Math.min(lastIndex, currentIndex)
+          const end = Math.max(lastIndex, currentIndex)
+          for (let i = start; i <= end; i++) {
+            next.add(filteredIds[i])
+          }
+        }
+      } else if (isMetaKey) {
+        if (next.has(thumbnailId)) {
+          next.delete(thumbnailId)
+        } else {
+          next.add(thumbnailId)
+        }
+      } else {
+        if (next.has(thumbnailId) && next.size === 1) {
+          next.clear()
+        } else {
+          next.clear()
+          next.add(thumbnailId)
+        }
+      }
+
+      return next
+    })
+
+    setLastSelectedId(thumbnailId)
+  }
+
+  const clearSelection = () => {
+    setSelectedIds(new Set())
+    setLastSelectedId(null)
+  }
+
+  const handleSelectAll = () => {
+    const filteredIds = getFilteredThumbnailIds()
+    setSelectedIds(new Set(filteredIds))
+  }
+
+  const handleBulkStatusChange = async (newStatus: ThumbnailJobStatus) => {
+    const ids = Array.from(selectedIds)
+    if (ids.length === 0) return
+
+    setThumbnails((prev) =>
+      prev.map((t) =>
+        selectedIds.has(t.id) ? { ...t, status: newStatus } : t
+      )
+    )
+    clearSelection()
+
+    try {
+      const response = await fetch('/api/thumbnail_job/batch', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids, status: newStatus }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update thumbnails')
+      }
+    } catch (error) {
+      console.error('Error updating thumbnails:', error)
+      fetchThumbnails()
+    }
+  }
+
+  const handleBulkFavorite = async (favorite: boolean) => {
+    const ids = Array.from(selectedIds)
+    if (ids.length === 0) return
+
+    setThumbnails((prev) =>
+      prev.map((t) =>
+        selectedIds.has(t.id) ? { ...t, favorite } : t
+      )
+    )
+    clearSelection()
+
+    try {
+      const response = await fetch('/api/thumbnail_job/batch', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids, favorite }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update favorites')
+      }
+    } catch (error) {
+      console.error('Error updating favorites:', error)
+      fetchThumbnails()
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    const ids = Array.from(selectedIds)
+    if (ids.length === 0) return
+
+    if (!confirm(`Are you sure you want to delete ${ids.length} thumbnail${ids.length > 1 ? 's' : ''}?`)) {
+      return
+    }
+
+    setThumbnails((prev) => prev.filter((t) => !selectedIds.has(t.id)))
+    clearSelection()
+
+    try {
+      const response = await fetch('/api/thumbnail_job/batch', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete thumbnails')
+      }
+    } catch (error) {
+      console.error('Error deleting thumbnails:', error)
       fetchThumbnails()
     }
   }
@@ -161,23 +297,20 @@ export default function ThumbnailDashboard() {
 
   return (
     <div className="h-[calc(100vh-3.5rem)] bg-surface-ambient flex">
-      {/* Sidebar */}
-      <Sidebar 
-        currentView={currentView} 
-        setCurrentView={setCurrentView} 
-        statusCounts={statusCounts} 
+      <Sidebar
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        statusCounts={statusCounts}
         sidebarOpen={sidebarOpen}
         onCreateClick={() => setIsModalOpen(true)}
       />
 
-      {/* Create Job Modal */}
       <CreateJobModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreateJob}
       />
 
-      {/* Thumbnail View Modal */}
       <ThumbnailViewModal
         isOpen={viewModalOpen}
         onClose={() => {
@@ -188,14 +321,11 @@ export default function ThumbnailDashboard() {
         onSubmitSuccess={fetchThumbnails}
       />
 
-      {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Main content */}
       <div className="flex-1 lg:ml-0 h-full flex flex-col overflow-hidden">
-        {/* Mobile header */}
         <div className="lg:hidden bg-surface-workbench shadow-sm px-4 py-3 flex items-center justify-between border-b border-border-subtle">
           <button onClick={() => setSidebarOpen(true)} className="text-muted-foreground hover:text-foreground">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,18 +336,26 @@ export default function ThumbnailDashboard() {
           <div></div>
         </div>
 
-        {/* Page content */}
         <div className="p-6 flex-1 overflow-y-auto">
-          <ThumbnailOverview 
-            thumbnails={thumbnails} 
-            status={currentView} 
-            isLoading={isLoading} 
+          <ThumbnailOverview
+            thumbnails={thumbnails}
+            status={currentView}
+            isLoading={isLoading}
             error={error}
             onThumbnailsChange={fetchThumbnails}
             onViewClick={handleViewClick}
             onToggleFavorite={handleToggleFavorite}
             onDelete={handleDelete}
             isAdmin={isAdmin}
+            selectedIds={selectedIds}
+            onSelect={handleSelect}
+            onSelectAll={handleSelectAll}
+            onClearSelection={clearSelection}
+            onCreateClick={() => setIsModalOpen(true)}
+            onNavigate={setCurrentView}
+            onBulkStatusChange={handleBulkStatusChange}
+            onBulkFavorite={handleBulkFavorite}
+            onBulkDelete={handleBulkDelete}
           />
         </div>
       </div>
