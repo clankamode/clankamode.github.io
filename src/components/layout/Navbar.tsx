@@ -105,6 +105,10 @@ export default function Navbar() {
   const isEditorSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content'].some((path) => isActive(path));
   const isPracticeSectionActive = ['/peralta75', '/assessment'].some((path) => isActive(path));
 
+  if (pathname === '/ai') {
+    return null;
+  }
+
   return (
     <>
       <nav
@@ -139,74 +143,77 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="hidden md:flex items-center justify-center absolute left-1/2 -translate-x-1/2">
-            <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-border-subtle backdrop-blur-md' : ''
-              }`}>
-              {isLoggedIn && isEditor && !isEffectiveAdmin ? (
-                <>
-                  <Link href="/admin/content" className={navLinkClass('/admin/content')}>
-                    Content
-                  </Link>
-                  <Link href="/ai" className={navLinkClass('/ai')}>
-                    AI Tools
-                  </Link>
-                  <Link href="/thumbnails" className={navLinkClass('/thumbnails')}>
-                    Thumbnails
-                  </Link>
-                  <Link href="/gallery" className={navLinkClass('/gallery')}>
-                    Gallery
-                  </Link>
-                  <Link href="/clips" className={navLinkClass('/clips')}>
-                    Clips
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
-                  <div className="relative group">
-                    <button type="button" className={navButtonClass(isPracticeSectionActive)}>
-                      Practice
-                      <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                    <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
-                      <div className="py-2">
-                        <Link href="/peralta75" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">
-                          <span className="block text-foreground font-medium">Peralta 75</span>
-                          <span className="block text-xs text-muted-foreground">75 curated LeetCode problems</span>
-                        </Link>
-                        <Link href="/assessment" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">
-                          <span className="block text-foreground font-medium">Assessment</span>
-                          <span className="block text-xs text-muted-foreground">Test your skills on demand</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                  <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
-                  {isLoggedIn && isEditor && (
+          {!['/ai', '/admin'].some(path => pathname.startsWith(path)) && (
+            <div className="hidden md:flex items-center justify-center absolute left-1/2 -translate-x-1/2">
+              <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-border-subtle backdrop-blur-md' : ''
+                }`}>
+                {isLoggedIn && isEditor && !isEffectiveAdmin ? (
+                  <>
+                    <Link href="/admin/content" className={navLinkClass('/admin/content')}>
+                      Content
+                    </Link>
+                    <Link href="/ai" className={navLinkClass('/ai')}>
+                      AI Tools
+                    </Link>
+                    <Link href="/thumbnails" className={navLinkClass('/thumbnails')}>
+                      Thumbnails
+                    </Link>
+                    <Link href="/gallery" className={navLinkClass('/gallery')}>
+                      Gallery
+                    </Link>
+                    <Link href="/clips" className={navLinkClass('/clips')}>
+                      Clips
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
                     <div className="relative group">
-                      <button type="button" className={navButtonClass(isEditorSectionActive)}>
-                        Editor
+                      <button type="button" className={navButtonClass(isPracticeSectionActive)}>
+                        Practice
                         <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                           <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
                         </svg>
                       </button>
-                      <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                      <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                         <div className="py-2">
-                          <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
-                          <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
-                          <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
-                          <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
-                          <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Learning Content</Link>
+                          <Link href="/peralta75" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">
+                            <span className="block text-foreground font-medium">Peralta 75</span>
+                            <span className="block text-xs text-muted-foreground">75 curated LeetCode problems</span>
+                          </Link>
+                          <Link href="/assessment" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">
+                            <span className="block text-foreground font-medium">Assessment</span>
+                            <span className="block text-xs text-muted-foreground">Test your skills on demand</span>
+                          </Link>
                         </div>
                       </div>
                     </div>
-                  )}
-                </>
-              )}
+                    <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
+                    {isLoggedIn && isEditor && (
+                      <div className="relative group">
+                        <button type="button" className={navButtonClass(isEditorSectionActive)}>
+                          Editor
+                          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                        <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                          <div className="py-2">
+                            <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
+                            <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
+                            <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
+                            <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
+                            <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Learning Content</Link>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          )}
+
 
           <div className="flex items-center gap-4">
             {status === 'loading' ? (

@@ -9,19 +9,20 @@ import { TutorialFormState } from './types';
 import { useChat } from './hooks/useChat';
 import { useConversations } from './hooks/useConversations';
 import { ChatSidebar } from './ChatSidebar';
-import { MessageList } from './MessageList';
 import { TutorialModal } from './TutorialModal';
 import { TimestampModal } from './TimestampModal';
+import { InputArea } from './InputArea';
+import { ModelSelector } from './ModelSelector';
 import { uploadFile } from './utils/uploadFile';
+import { TurnRenderer } from './TurnRenderer';
+import { EmptyStateCreate } from './EmptyStateCreate';
 
 export default function ChatInterface() {
   const { data: session } = useSession();
-  
-  // Message state
+
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<MessageAttachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
   const [isPromptMenuOpen, setIsPromptMenuOpen] = useState(false);
   const [promptQuery, setPromptQuery] = useState('');
 
@@ -72,8 +73,7 @@ export default function ChatInterface() {
 
   const [isTimestampModalOpen, setIsTimestampModalOpen] = useState(false);
   const [timestampTranscript, setTimestampTranscript] = useState('');
-  
-  // UI state
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     if (typeof window === 'undefined') return true;
     return window.innerWidth >= 1024;
@@ -81,12 +81,10 @@ export default function ChatInterface() {
   const [editingConversationId, setEditingConversationId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const dragCounter = useRef(0);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,19 +96,6 @@ export default function ChatInterface() {
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 100);
-  };
-
-  const handleInputChange = (value: string) => {
-    setInput(value);
-
-    const match = value.match(/\/([^\s]*)$/);
-    if (match) {
-      setPromptQuery(match[1]);
-      setIsPromptMenuOpen(true);
-    } else {
-      setIsPromptMenuOpen(false);
-      setPromptQuery('');
-    }
   };
 
   const buildTutorialPrompt = ({
@@ -231,76 +216,22 @@ export default function ChatInterface() {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setIsUploading(true);
-    try {
-      const uploadPromises = Array.from(files).map(uploadFile);
-      const uploadedFiles = await Promise.all(uploadPromises);
-      if (
-        uploadedFiles.some((file) => file.type === 'pdf') &&
-        selectedModel !== 'gpt-4.1-2025-04-14'
-      ) {
-        setSelectedModel('gpt-4.1-2025-04-14');
-      }
-      setAttachments((prev) => [...prev, ...uploadedFiles]);
-    } catch (error) {
-      console.error('Error uploading files:', error);
-      alert(error instanceof Error ? error.message : 'Failed to upload files');
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
-
   const removeAttachment = (id: string) => {
     setAttachments((prev) => prev.filter((att) => att.id !== id));
   };
 
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter') {
-      dragCounter.current += 1;
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      dragCounter.current -= 1;
-      if (dragCounter.current === 0) {
-        setDragActive(false);
-      }
-    }
-  };
 
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    dragCounter.current = 0;
-
-    const droppedFiles = e.dataTransfer.files;
-    if (!droppedFiles || droppedFiles.length === 0) return;
-
-    const allowedFiles = Array.from(droppedFiles).filter(file => 
-      file.type.startsWith('image/') || file.type === 'application/pdf'
-    );
-
-    if (allowedFiles.length === 0) {
-      alert('Please drop only image or PDF files');
-      return;
-    }
+  const handleFilesSelected = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const validFiles = Array.from(files);
+    if (validFiles.length === 0) return;
 
     setIsUploading(true);
     try {
-      const uploadPromises = allowedFiles.map(uploadFile);
+      const uploadPromises = validFiles.map(uploadFile);
       const uploadedFiles = await Promise.all(uploadPromises);
-      if (
-        uploadedFiles.some((file) => file.type === 'pdf') &&
-        selectedModel !== 'gpt-4.1-2025-04-14'
-      ) {
+
+      if (uploadedFiles.some((file) => file.type === 'pdf') && selectedModel !== 'gpt-4.1-2025-04-14') {
         setSelectedModel('gpt-4.1-2025-04-14');
       }
       setAttachments((prev) => [...prev, ...uploadedFiles]);
@@ -345,21 +276,8 @@ export default function ChatInterface() {
     await submitMessage(prompt, []);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (isPromptMenuOpen && e.key === 'Escape') {
-      setIsPromptMenuOpen(false);
-      setPromptQuery('');
-      return;
-    }
-
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    }
-  };
-
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
+    <div className="flex h-screen overflow-hidden mt-[-3.5rem]">
       <ChatSidebar
         isOpen={isSidebarOpen}
         onNewChat={handleStartNewChat}
@@ -380,19 +298,18 @@ export default function ChatInterface() {
         onDelete={handleDeleteConversation}
         onSelect={handleLoadConversation}
         editInputRef={editInputRef}
+        session={session}
       />
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-h-0">
-        {/* Header */}
-        <div className="border-b border-border-subtle p-3 md:p-4 flex flex-wrap gap-3 justify-between items-center">
+      <div className="flex-1 flex flex-col min-h-0 bg-background relative">
+        <div className="absolute top-0 left-0 right-0 z-10 p-3 md:p-4 flex flex-wrap gap-3 justify-between items-center bg-gradient-to-b from-background to-transparent">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 hover:bg-surface-interactive rounded-lg transition-colors"
+              className="p-2 hover:bg-white/5 rounded-lg transition-colors text-muted-foreground hover:text-foreground"
             >
               <svg
-                className="w-5 h-5 text-muted-foreground"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -405,230 +322,104 @@ export default function ChatInterface() {
                 />
               </svg>
             </button>
-            <select
-              value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-              className="px-3 md:px-4 py-2 text-xl md:text-3xl font-semibold border border-border-subtle rounded-lg bg-surface-interactive text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green/40 cursor-pointer"
+            <ModelSelector
+              models={MODELS}
+              selectedModel={selectedModel}
+              onSelect={setSelectedModel}
               disabled={isLoading || (currentConversationId !== null && messages.length > 0) || attachments.some(att => att.type === 'pdf')}
-            >
-              {MODELS.map((model) => (
-                <option key={model.id} value={model.id}>
-                  {model.name}
-                </option>
-              ))}
-            </select>
+            />
             {attachments.some(att => att.type === 'pdf') && (
-              <span className="text-base text-muted-foreground ml-2">
+              <span className="text-sm text-muted-foreground ml-2">
                 (PDF requires GPT-4.1)
               </span>
             )}
             {selectedModel === 'gemini-3-pro-image-preview' && (
-              <span className="text-base text-muted-foreground ml-2">
-                {attachments.length > 0 && attachments[0].type === 'image' 
-                  ? '(Image editing mode)' 
+              <span className="text-sm text-muted-foreground ml-2">
+                {attachments.length > 0 && attachments[0].type === 'image'
+                  ? '(Image editing mode)'
                   : '(Image generation mode)'}
               </span>
             )}
           </div>
         </div>
 
-        <MessageList
-          messages={messages}
-          isLoading={isLoading}
-          selectedModel={selectedModel}
-          onSuggestedQueryClick={handleSuggestedQueryClick}
-          onOpenTimestampModal={() => setIsTimestampModalOpen(true)}
-          onOpenTutorialModal={() => setIsTutorialModalOpen(true)}
-          messagesEndRef={messagesEndRef}
-        />
+        <div className="flex-1 overflow-y-auto pt-20">
+          {messages.length === 0 ? (
+            <EmptyStateCreate
+              mode={selectedModel === 'gemini-3-pro-image-preview' ? 'image' : 'chat'}
+              composer={
+                <InputArea
+                  input={input}
+                  setInput={setInput}
+                  isLoading={isLoading}
+                  isUploading={isUploading}
+                  attachments={attachments}
+                  selectedModel={selectedModel}
+                  selectedSystemPrompt={selectedSystemPrompt}
+                  systemPrompts={SYSTEM_PROMPTS}
+                  isPromptMenuOpen={isPromptMenuOpen}
+                  promptQuery={promptQuery}
+                  textareaRef={textareaRef}
+                  onSubmit={handleSubmit}
+                  onFilesSelected={handleFilesSelected}
+                  onRemoveAttachment={removeAttachment}
+                  onSystemPromptSelect={handleSystemPromptSelect}
+                  onClearSystemPrompt={clearSystemPrompt}
+                />
+              }
+              chips={[
+                { label: 'Write code', onClick: () => handleSuggestedQueryClick('Help me write a React component') },
+                { label: 'Explain concept', onClick: () => handleSuggestedQueryClick('Explain how async/await works in JavaScript') },
+                { label: 'Debug issue', onClick: () => handleSuggestedQueryClick('Help me debug this error') },
+              ]}
+              templates={[
+                { title: 'Generate Timestamps', description: 'Create chapters from a transcript', onClick: () => setIsTimestampModalOpen(true) },
+                { title: 'Code Tutorial', description: 'Structured learning for a problem', onClick: () => setIsTutorialModalOpen(true) },
+              ]}
+            />
+          ) : (
+            <TurnRenderer
+              messages={messages}
+              isLoading={isLoading}
+              selectedModel={selectedModel}
+              messagesEndRef={messagesEndRef}
+            />
+          )}
+        </div>
 
-        {/* Input Form */}
-        <div 
-          className="border-t border-border-subtle p-4 relative"
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-        >
-          {/* Drag Overlay */}
-          {dragActive && (
-            <div 
-              className="absolute inset-0 bg-brand-green/10 border-2 border-dashed border-brand-green rounded-lg z-10 flex items-center justify-center"
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <div className="bg-surface-workbench rounded-lg p-6 shadow-lg pointer-events-none">
-                <div className="flex flex-col items-center gap-3">
-                  <svg className="w-12 h-12 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
-                  <p className="text-xl font-semibold text-foreground">Drop files here</p>
-                  <p className="text-base text-muted-foreground">Images and PDFs supported</p>
+        {/* Composer - only show when there are messages (not in empty state) */}
+        {messages.length > 0 && (
+          <div className="sticky bottom-0 pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
+            <div className="mx-auto w-full max-w-[920px] px-6">
+              {/* Pending node + composer in one flex row */}
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-4 h-4 flex items-center justify-center mt-[18px]">
+                  <div className="w-2.5 h-2.5 rounded-full border-2 border-white/40 bg-transparent" />
+                </div>
+                <div className="flex-1">
+                  <InputArea
+                    input={input}
+                    setInput={setInput}
+                    isLoading={isLoading}
+                    isUploading={isUploading}
+                    attachments={attachments}
+                    selectedModel={selectedModel}
+                    selectedSystemPrompt={selectedSystemPrompt}
+                    systemPrompts={SYSTEM_PROMPTS}
+                    isPromptMenuOpen={isPromptMenuOpen}
+                    promptQuery={promptQuery}
+                    textareaRef={textareaRef}
+                    onSubmit={handleSubmit}
+                    onFilesSelected={handleFilesSelected}
+                    onRemoveAttachment={removeAttachment}
+                    onSystemPromptSelect={handleSystemPromptSelect}
+                    onClearSystemPrompt={clearSystemPrompt}
+                  />
                 </div>
               </div>
             </div>
-          )}
-          
-          {/* Attachments Preview */}
-          {attachments.length > 0 && (
-            <div className="mb-3 flex flex-wrap gap-2">
-              {attachments.map((attachment) => (
-                <div
-                  key={attachment.id}
-                  className="relative group"
-                >
-                  {attachment.type === 'image' ? (
-                    <div className="relative">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={attachment.url}
-                        alt={attachment.name}
-                        className="h-20 w-20 object-cover rounded-lg border border-border-subtle"
-                      />
-                      <button
-                        onClick={() => removeAttachment(attachment.id)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative flex flex-col gap-2">
-                      {attachment.url && (
-                        <iframe
-                          src={attachment.url}
-                          className="w-48 h-32 rounded-lg border border-gray-300 dark:border-gray-600"
-                          title={attachment.name}
-                        />
-                      )}
-                      <div className="relative flex items-center gap-2 px-3 py-2 bg-surface-interactive rounded-lg border border-border-subtle">
-                        <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                        <div className="flex flex-col">
-                          <span className="text-base text-foreground truncate max-w-[150px]">{attachment.name}</span>
-                          <span className="text-sm text-muted-foreground">Ready to send</span>
-                        </div>
-                        <button
-                          onClick={() => removeAttachment(attachment.id)}
-                          className="ml-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                        >
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept={selectedModel === 'gemini-3-pro-image-preview' ? 'image/*' : 'image/*,.pdf'}
-              multiple={selectedModel !== 'gemini-3-pro-image-preview'}
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isLoading || isUploading || (selectedModel === 'gemini-3-pro-image-preview' && attachments.length > 0)}
-              className="px-3 py-3 bg-surface-interactive text-muted-foreground rounded-lg hover:bg-surface-dense disabled:bg-surface-interactive disabled:cursor-not-allowed transition-colors"
-              title={selectedModel === 'gemini-3-pro-image-preview' ? 'Upload image to edit' : 'Upload files'}
-            >
-              {isUploading ? (
-                <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                </svg>
-              )}
-            </button>
-            <div className="flex-1 relative">
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={(e) => handleInputChange(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={
-                  selectedModel === 'gemini-3-pro-image-preview'
-                    ? attachments.length > 0 && attachments[0].type === 'image'
-                      ? 'Describe how to edit the image... (e.g., "make it black and white", "add a sunset")'
-                      : 'Describe the image you want to generate...'
-                    : 'Type your message... (Shift+Enter for new line)'
-                }
-                className="w-full px-4 py-3 pr-12 border border-border-subtle rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green/40 bg-surface-interactive text-foreground resize-none max-h-32 min-h-[3rem]"
-                disabled={isLoading}
-                rows={1}
-              />
-              {isPromptMenuOpen && (
-                <div className="absolute bottom-14 left-0 w-72 rounded-lg border border-border-subtle bg-surface-workbench shadow-lg">
-                  <div className="px-3 py-2 text-sm text-muted-foreground">Insert a system prompt</div>
-                  <div className="max-h-56 overflow-y-auto">
-                    {SYSTEM_PROMPTS.filter(
-                      (prompt) =>
-                        prompt.title.toLowerCase().includes(promptQuery.toLowerCase()) ||
-                        prompt.description.toLowerCase().includes(promptQuery.toLowerCase())
-                    ).map((prompt) => (
-                      <button
-                        key={prompt.id}
-                        type="button"
-                        onClick={() => handleSystemPromptSelect(prompt.id)}
-                        className="w-full px-3 py-2 text-left hover:bg-surface-interactive"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-surface-interactive text-sm font-semibold text-foreground">
-                            /
-                          </span>
-                          <div>
-                            <div className="font-medium text-foreground">{prompt.title}</div>
-                            <div className="text-sm text-muted-foreground">{prompt.description}</div>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            <button
-              type="submit"
-              disabled={isLoading || (!input.trim() && attachments.length === 0)}
-              className="px-6 py-3 bg-brand-green text-black rounded-lg hover:bg-brand-green/90 disabled:bg-surface-interactive disabled:cursor-not-allowed transition-colors font-medium"
-            >
-              Send
-            </button>
-          </form>
-          {selectedSystemPrompt && (
-            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-surface-interactive px-3 py-1 text-sm text-foreground">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-surface-dense text-sm font-semibold text-foreground">
-                /
-              </span>
-              <span className="font-medium">{selectedSystemPrompt.title}</span>
-              <button
-                type="button"
-                onClick={clearSystemPrompt}
-                className="text-muted-foreground transition hover:text-foreground"
-                aria-label="Clear system prompt"
-              >
-                ×
-              </button>
-            </div>
-          )}
-          <p className="text-sm text-muted-foreground mt-2 text-center">
-            Press Enter to send, Shift+Enter for new line
-          </p>
-        </div>
+          </div>
+        )}
       </div>
 
       <TutorialModal

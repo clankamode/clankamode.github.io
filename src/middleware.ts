@@ -5,20 +5,14 @@ import { UserRole, hasRole } from '@/types/roles';
 
 export async function middleware(req: NextRequest) {
     try {
-        const token = await getToken({ 
+        const token = await getToken({
             req,
         });
-        
+
         const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
 
         // Special handling for home page
         if (req.nextUrl.pathname === '/') {
-            // If user is logged in and is an editor, redirect to /ai
-            if (token && effectiveRole === UserRole.EDITOR) {
-                console.log('Redirecting editor to /ai from home page');
-                return NextResponse.redirect(new URL('/ai', req.url));
-            }
-            console.log('Home page access - Role:', effectiveRole);
             // Otherwise, allow access to home page
             return NextResponse.next();
         }
@@ -27,14 +21,14 @@ export async function middleware(req: NextRequest) {
         if (req.nextUrl.pathname.startsWith('/learn')) {
             return NextResponse.next();
         }
-        
+
         // For all other protected routes, require authentication
         if (!token) {
             return NextResponse.redirect(new URL('/', req.url));
         }
-        
+
         const userRole = effectiveRole;
-        
+
         // Check if the route is admin-related
         if (req.nextUrl.pathname.startsWith('/admin')) {
             if (!hasRole(userRole, UserRole.EDITOR)) {
@@ -67,7 +61,7 @@ export async function middleware(req: NextRequest) {
             }
         }
     } catch (error) {
-        console.log('error', error);
+        console.error('Middleware error:', error);
         return NextResponse.redirect(new URL('/', req.url));
     }
 

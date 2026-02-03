@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, RefObject, ChangeEvent, KeyboardEvent, DragEvent, FormEvent } from 'react';
-import { Button } from '@/components/ui/Button';
 import { MessageAttachment } from '@/types/chat';
 
 interface SystemPrompt {
@@ -95,7 +94,6 @@ export function InputArea({
             fileInputRef.current.value = '';
         }
     };
-
     const filteredPrompts = systemPrompts.filter(
         (prompt) =>
             prompt.title.toLowerCase().includes(promptQuery.toLowerCase()) ||
@@ -104,40 +102,34 @@ export function InputArea({
 
     return (
         <div
-            className="border-t border-border p-4 relative bg-background"
+            className="relative transition-all duration-200"
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
             onDrop={handleDrop}
         >
-            {/* Drag Overlay */}
             {dragActive && (
                 <div
-                    className="absolute inset-0 bg-brand-green/10 border-2 border-dashed border-brand-green rounded-lg z-10 flex items-center justify-center backdrop-blur-sm"
+                    className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-2xl z-20 flex items-center justify-center border border-brand-green/30"
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
                 >
-                    <div className="bg-background rounded-lg p-6 shadow-lg pointer-events-none border border-border">
-                        <div className="flex flex-col items-center gap-3">
-                            <svg className="w-12 h-12 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
-                            <p className="text-xl font-semibold text-foreground">Drop files here</p>
-                            <p className="text-base text-muted-foreground">Images and PDFs supported</p>
-                        </div>
+                    <div className="flex flex-col items-center gap-3 animate-in fade-in zoom-in-95 duration-200">
+                        <svg className="w-12 h-12 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <p className="text-lg font-medium text-foreground">Release to Drop</p>
                     </div>
                 </div>
             )}
-
-            {/* Attachments Preview */}
             {attachments.length > 0 && (
-                <div className="mb-3 flex flex-wrap gap-2">
+                <div className="px-4 pt-4 pb-0 flex flex-wrap gap-2">
                     {attachments.map((attachment) => (
                         <div
                             key={attachment.id}
-                            className="relative group"
+                            className="relative group animate-in fade-in slide-in-from-bottom-2 duration-200"
                         >
                             {attachment.type === 'image' ? (
                                 <div className="relative">
@@ -145,50 +137,41 @@ export function InputArea({
                                     <img
                                         src={attachment.url}
                                         alt={attachment.name}
-                                        className="h-20 w-20 object-cover rounded-lg border border-border"
+                                        className="h-14 w-14 object-cover rounded-md border border-white/10 brightness-75 group-hover:brightness-100 transition-all"
                                     />
                                     <button
                                         onClick={() => onRemoveAttachment(attachment.id)}
-                                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors shadow-sm"
+                                        className="absolute -top-1.5 -right-1.5 bg-black text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity border border-white/20"
                                     >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </button>
                                 </div>
                             ) : (
-                                <div className="relative flex flex-col gap-2">
-                                    {attachment.url && (
-                                        <iframe
-                                            src={attachment.url}
-                                            className="w-48 h-32 rounded-lg border border-border bg-background"
-                                            title={attachment.name}
-                                        />
-                                    )}
-                                    <div className="relative flex items-center gap-2 px-3 py-2 bg-muted rounded-lg border border-border">
-                                        <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                <div className="relative flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-md border border-white/5">
+                                    <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                    <span className="text-xs text-foreground truncate max-w-[100px]">{attachment.name}</span>
+                                    <button
+                                        onClick={() => onRemoveAttachment(attachment.id)}
+                                        className="ml-1 text-muted-foreground hover:text-white transition-colors"
+                                    >
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                         </svg>
-                                        <div className="flex flex-col">
-                                            <span className="text-base text-foreground truncate max-w-[150px]">{attachment.name}</span>
-                                            <span className="text-sm text-muted-foreground">Ready to send</span>
-                                        </div>
-                                        <button
-                                            onClick={() => onRemoveAttachment(attachment.id)}
-                                            className="ml-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors shadow-sm"
-                                        >
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </button>
-                                    </div>
+                                    </button>
                                 </div>
                             )}
                         </div>
                     ))}
                 </div>
             )}
-            <form onSubmit={onSubmit} className="flex gap-2">
+            <form
+                onSubmit={onSubmit}
+                className="relative flex items-center gap-2 px-2 min-h-[52px] bg-white/[0.03] border border-white/10 rounded-xl transition-all duration-200 focus-within:bg-white/[0.05] focus-within:border-white/15"
+            >
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -197,13 +180,13 @@ export function InputArea({
                     onChange={handleFileChange}
                     className="hidden"
                 />
-                <Button
+
+                <button
                     type="button"
-                    variant="ghost"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isLoading || isUploading || (selectedModel === 'gemini-3-pro-image-preview' && attachments.length > 0)}
-                    className="px-3 py-3 h-auto aspect-square rounded-lg border border-border bg-muted/50 hover:bg-muted"
-                    title={selectedModel === 'gemini-3-pro-image-preview' ? 'Upload image to edit' : 'Upload files'}
+                    className="flex-shrink-0 h-9 w-9 flex items-center justify-center self-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors focus:outline-none disabled:opacity-30 disabled:cursor-not-allowed"
+                    title="Upload"
                 >
                     {isUploading ? (
                         <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,11 +194,11 @@ export function InputArea({
                         </svg>
                     ) : (
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                         </svg>
                     )}
-                </Button>
-                <div className="flex-1 relative">
+                </button>
+                <div className="flex-1 flex items-center">
                     <textarea
                         ref={textareaRef}
                         value={input}
@@ -224,32 +207,32 @@ export function InputArea({
                         placeholder={
                             selectedModel === 'gemini-3-pro-image-preview'
                                 ? attachments.length > 0 && attachments[0].type === 'image'
-                                    ? 'Describe how to edit the image... (e.g., "make it black and white", "add a sunset")'
-                                    : 'Describe the image you want to generate...'
-                                : 'Type your message... (Shift+Enter for new line)'
+                                    ? 'Describe how to edit...'
+                                    : 'Describe image to generate...'
+                                : 'Message...'
                         }
-                        className="w-full px-4 py-3 pr-12 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green/50 bg-background text-foreground resize-none max-h-32 min-h-[3rem]"
+                        className="w-full bg-transparent border-none focus:ring-0 outline-none text-white/90 placeholder:text-white/20 resize-none overflow-hidden text-[15px] leading-6 py-[14px]"
                         disabled={isLoading}
                         rows={1}
                     />
                     {isPromptMenuOpen && (
-                        <div className="absolute bottom-14 left-0 w-72 rounded-lg border border-border bg-card shadow-lg overflow-hidden">
-                            <div className="px-3 py-2 text-sm text-muted-foreground bg-muted/30">Insert a system prompt</div>
-                            <div className="max-h-56 overflow-y-auto">
+                        <div className="absolute bottom-full left-0 mb-4 w-96 rounded-lg border border-white/10 bg-[#18181b] shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                            <div className="px-3 py-2 text-[10px] font-medium text-white/40 uppercase tracking-widest bg-white/[0.02] border-b border-white/5">System Prompts</div>
+                            <div className="max-h-64 overflow-y-auto p-1">
                                 {filteredPrompts.map((prompt) => (
                                     <button
                                         key={prompt.id}
                                         type="button"
                                         onClick={() => onSystemPromptSelect(prompt.id)}
-                                        className="w-full px-3 py-2 text-left hover:bg-muted/50 transition-colors"
+                                        className="w-full px-3 py-2 text-left hover:bg-white/5 rounded-md transition-colors group"
                                     >
-                                        <div className="flex items-center gap-2">
-                                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
+                                        <div className="flex items-center gap-3">
+                                            <span className="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded bg-white/5 text-[10px] font-mono text-white/40 group-hover:text-white/80 transition-all">
                                                 /
                                             </span>
-                                            <div>
-                                                <div className="font-medium text-foreground">{prompt.title}</div>
-                                                <div className="text-sm text-muted-foreground text-ellipsis overflow-hidden whitespace-nowrap max-w-[180px]">{prompt.description}</div>
+                                            <div className="min-w-0">
+                                                <div className="font-medium text-[13px] text-white/80 group-hover:text-white truncate">{prompt.title}</div>
+                                                <div className="text-[11px] text-white/40 truncate opacity-60">{prompt.description}</div>
                                             </div>
                                         </div>
                                     </button>
@@ -258,18 +241,22 @@ export function InputArea({
                         </div>
                     )}
                 </div>
-                <Button
+                <button
                     type="submit"
-                    variant="novice"
                     disabled={isLoading || (!input.trim() && attachments.length === 0)}
-                    className="px-6 py-3 h-auto"
+                    className={`flex-shrink-0 h-9 w-9 rounded-lg flex items-center justify-center self-center transition-all duration-200 focus:outline-none ${!input.trim() && attachments.length === 0
+                        ? 'text-white/10 cursor-not-allowed'
+                        : 'text-white/60 hover:text-white hover:bg-white/10'
+                        }`}
                 >
-                    Send
-                </Button>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </button>
             </form>
             {selectedSystemPrompt && (
-                <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-sm text-foreground border border-border">
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-background border border-border text-[10px] font-semibold text-muted-foreground">
+                <div className="absolute -top-10 left-0 inline-flex items-center gap-2 rounded-full bg-surface-interactive px-3 py-1 text-sm text-foreground border border-white/5 backdrop-blur-md">
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 border border-white/5 text-[10px] font-semibold text-muted-foreground">
                         /
                     </span>
                     <span className="font-medium">{selectedSystemPrompt.title}</span>
@@ -283,7 +270,7 @@ export function InputArea({
                     </button>
                 </div>
             )}
-            <p className="text-sm text-muted-foreground mt-2 text-center">
+            <p className="sr-only">
                 Press Enter to send, Shift+Enter for new line
             </p>
         </div>

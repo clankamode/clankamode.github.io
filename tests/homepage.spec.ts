@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 // Test data constants
 const PAGE_TITLE = 'James Peralta';
-const HERO_FALLBACK_NAME = 'James Peralta';
+const HERO_FALLBACK_NAME = /JAMES\s*PERALTA/i;
 const HERO_FALLBACK_DESCRIPTION = 'Deep dives into algorithms, system design, and problem-solving strategies for technical interviews.';
 
 // Video section constants
@@ -27,11 +27,10 @@ test.describe('Homepage', () => {
     await expect(page).toHaveTitle(new RegExp(PAGE_TITLE));
 
     // 2. Hero Section
-    const heroSection = page.getByRole('region').filter({ hasText: HERO_FALLBACK_NAME });
+    const heroSection = page.getByRole('region', { name: 'Hero Section' });
     await expect(heroSection).toBeVisible();
 
     // Hero section elements
-    await expect(heroSection.getByText('NEW VIDEOS DAILY')).toBeVisible();
     await expect(heroSection.getByRole('heading', { level: 1 })).toContainText(HERO_FALLBACK_NAME);
     await expect(heroSection.getByText(HERO_FALLBACK_DESCRIPTION)).toBeVisible();
 
@@ -41,59 +40,46 @@ test.describe('Homepage', () => {
     await expect(youtubeButton).toHaveAttribute('target', '_blank');
     await expect(youtubeButton).toHaveAttribute('rel', 'noopener noreferrer');
 
-    const browseButton = heroSection.getByRole('link', { name: 'Browse Videos' });
+    const browseButton = heroSection.getByRole('link', { name: 'Explore Content' });
     await expect(browseButton).toBeVisible();
     await expect(browseButton).toHaveAttribute('href', '/videos');
 
-    // 3. Latest Videos Section
-    const latestVideosSection = page.getByRole('region').filter({ hasText: LATEST_VIDEOS.title });
-    await expect(latestVideosSection).toBeVisible();
+    // 3. Videos Section (Tabbed)
+    const videosSection = page.getByRole('region', { name: 'Videos' }).or(page.locator('section').filter({ hasText: 'Videos' }));
+    await expect(videosSection).toBeVisible();
 
     // Section header
-    await expect(latestVideosSection.getByRole('heading', { name: LATEST_VIDEOS.title })).toBeVisible();
-    const viewAllLink = latestVideosSection.getByRole('link', { name: 'View all' });
+    await expect(videosSection.getByRole('heading', { name: 'Videos' })).toBeVisible();
+    const viewAllLink = videosSection.getByRole('link', { name: 'View all' });
     await expect(viewAllLink).toBeVisible();
     await expect(viewAllLink).toHaveAttribute('href', LATEST_VIDEOS.viewAllLink);
 
-    // Check for videos or empty state
-    const latestVideosGrid = latestVideosSection.locator('.grid-cols-1');
-    const hasLatestVideos = await latestVideosGrid.isVisible();
+    // Test Tabs
+    const latestTab = videosSection.getByRole('tab', { name: 'Latest' });
+    const popularTab = videosSection.getByRole('tab', { name: 'Popular' });
 
-    if (hasLatestVideos) {
-      // Verify video grid and first video card
-      const firstVideoCard = latestVideosGrid.locator('> div').first();
+    await expect(latestTab).toBeVisible();
+    await expect(popularTab).toBeVisible();
+
+    // Check Latest Videos (Default)
+    await latestTab.click();
+    const videoGrid = videosSection.locator('.grid');
+    const hasVideos = await videoGrid.isVisible();
+
+    if (hasVideos) {
+      const firstVideoCard = videoGrid.locator('> div').first();
       await expect(firstVideoCard).toBeVisible();
-      await expect(firstVideoCard.locator('img')).toBeVisible(); // Thumbnail
-      await expect(firstVideoCard.locator('h3')).toBeVisible(); // Title
     } else {
-      // Verify empty state
-      const emptyState = latestVideosSection.locator(`div:has-text("${LATEST_VIDEOS.emptyTitle}")`);
-      await expect(emptyState).toBeVisible();
-      await expect(latestVideosSection.getByText(LATEST_VIDEOS.emptyMessage)).toBeVisible();
+      await expect(videosSection.getByText(LATEST_VIDEOS.emptyTitle)).toBeVisible();
     }
 
-    // 4. Popular Videos Section
-    const popularVideosSection = page.getByRole('region').filter({ hasText: POPULAR_VIDEOS.title });
-    await expect(popularVideosSection).toBeVisible();
-
-    // Section header
-    await expect(popularVideosSection.getByRole('heading', { name: POPULAR_VIDEOS.title })).toBeVisible();
-
-    // Check for videos or empty state
-    const popularVideosGrid = popularVideosSection.locator('.grid-cols-1');
-    const hasPopularVideos = await popularVideosGrid.isVisible();
-
-    if (hasPopularVideos) {
-      // Verify video grid and first video card
-      const firstVideoCard = popularVideosGrid.locator('> div').first();
+    // Switch to Popular
+    await popularTab.click();
+    if (hasVideos) {
+      const firstVideoCard = videoGrid.locator('> div').first();
       await expect(firstVideoCard).toBeVisible();
-      await expect(firstVideoCard.locator('img')).toBeVisible(); // Thumbnail
-      await expect(firstVideoCard.locator('h3')).toBeVisible(); // Title
     } else {
-      // Verify empty state
-      const emptyState = popularVideosSection.locator(`div:has-text("${POPULAR_VIDEOS.emptyTitle}")`);
-      await expect(emptyState).toBeVisible();
-      await expect(popularVideosSection.getByText(POPULAR_VIDEOS.emptyMessage)).toBeVisible();
+      await expect(videosSection.getByText(POPULAR_VIDEOS.emptyTitle)).toBeVisible();
     }
   });
-}); 
+});

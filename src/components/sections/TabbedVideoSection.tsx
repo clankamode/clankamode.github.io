@@ -36,7 +36,7 @@ export default function TabbedVideoSection({
   const supportingVideos = videos.slice(1, 3);
 
   return (
-    <section className="py-16 bg-background text-foreground">
+    <section aria-label="Videos" className="py-16 bg-background text-foreground">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-12 border-b border-border-subtle pb-4">
           <h2 className="text-4xl font-bold font-sans tracking-tight">

@@ -38,7 +38,7 @@ function ProfileImage({ src, alt, title }: { src: string; alt: string; title?: s
 
 export default function HeroSection({ channelStats, channelId }: HeroSectionProps) {
   return (
-    <section className="relative bg-background pt-24 pb-16 px-4 md:px-8 overflow-x-hidden overflow-y-visible min-h-[80vh] flex items-center justify-center">
+    <section aria-label="Hero Section" className="relative bg-background pt-24 pb-16 px-4 md:px-8 overflow-x-hidden overflow-y-visible min-h-[80vh] flex items-center justify-center">
       {/* Ambient Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] pointer-events-none" />
 

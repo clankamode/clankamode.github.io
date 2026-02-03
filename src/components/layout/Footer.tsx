@@ -1,5 +1,14 @@
+'use client';
+import { usePathname } from 'next/navigation';
+
 export default function Footer() {
     const currentYear = new Date().getFullYear();
+    const pathname = usePathname();
+
+    // Hide footer on specific tool routes
+    if (pathname.startsWith('/ai') || pathname.startsWith('/admin')) {
+        return null;
+    }
 
     return (
         <footer className="border-t border-white/5 bg-black/20 backdrop-blur-md">

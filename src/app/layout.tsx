@@ -44,6 +44,7 @@ export default function RootLayout({
                 <main className="flex-grow">
                   {children}
                 </main>
+                {/* Footer hidden on AI route by h-screen overflow-hidden in ChatInterface */}
                 <Footer />
               </div>
             </VideoProvider>
