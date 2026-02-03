@@ -1,3 +1,13 @@
+## February 2, 2026
+### AI Chat UI
+- Unified chat UI into a structural timeline system (#88)
+- Added turn-based components: TurnCard, TurnStack, TurnRenderer, ArtifactCard, TextCard
+- Added ModelSelector, EmptyStateCreate; refactored ChatInterface, ChatSidebar, InputArea
+- Removed MessageBubble and MessageList in favor of timeline/turn model
+- Slimmed RichText; updated Navbar, Footer, middleware, and homepage E2E tests
+
+---
+
 ## January 21, 2026
 ### Navigation
 - Fixed navbar centering - navigation links (Videos, Practice) are now truly centered on the page using absolute positioning
