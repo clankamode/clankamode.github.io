@@ -8,7 +8,7 @@ export default async function VideosPage() {
   const { videos: initialVideos, hasMore: initialHasMore } = await getInitialVideos();
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pt-[var(--nav-height-initial,113px)]">
+    <div className="flex flex-col min-h-screen bg-background">
       <section className="pb-16">
         <Suspense fallback={<LoadingVideos />}>
           <VideosPageClient

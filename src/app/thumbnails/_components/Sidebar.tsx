@@ -66,7 +66,7 @@ export default function Sidebar({ currentView, setCurrentView, statusCounts, sid
 
   return (
     <div
-      className={`${sidebarOpen ? "w-64 opacity-100" : "w-0 opacity-0 lg:w-64 lg:opacity-100"} transition-all duration-300 bg-white/[0.02] border-r border-white/5 overflow-hidden flex flex-col h-full pt-28`}
+      className={`${sidebarOpen ? "w-64 opacity-100" : "w-0 opacity-0 lg:w-64 lg:opacity-100"} transition-all duration-300 bg-white/[0.02] border-r border-white/5 overflow-hidden flex flex-col h-full pt-6`}
     >
       <div className="p-3">
         <button

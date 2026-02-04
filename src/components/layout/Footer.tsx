@@ -6,7 +6,7 @@ export default function Footer() {
     const pathname = usePathname();
 
     // Hide footer on specific tool routes
-    if (pathname.startsWith('/ai') || pathname.startsWith('/admin')) {
+    if (pathname.startsWith('/ai') || pathname.startsWith('/admin') || pathname.startsWith('/thumbnails')) {
         return null;
     }
 

@@ -8,8 +8,11 @@ import Link from 'next/link';
 export default function VideosList() {
   const { videos, loading, hasMore, loadMoreVideos } = useVideoContext();
   const loaderRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const sortRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const [sortOpen, setSortOpen] = useState(false);
 
   const filteredVideos = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -30,6 +33,27 @@ export default function VideosList() {
 
     return sorted;
   }, [videos, query, sortOrder]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     if (query.trim().length > 0) {
@@ -82,9 +106,9 @@ export default function VideosList() {
 
   return (
     <>
-      <div className="sticky top-[var(--nav-height)] z-30 w-full bg-white/60 dark:bg-black/60 backdrop-blur-md saturate-150 border-b border-black/5 dark:border-white/10 shadow-sm dark:shadow-black/20 mb-8 transition-all duration-300">
+      <div className="sticky top-[var(--nav-height)] z-30 w-full bg-white/60 dark:bg-[#09090b]/80 backdrop-blur-md saturate-150 border-b border-black/5 dark:border-white/10 shadow-sm dark:shadow-black/20 mb-8 transition-all duration-300">
         <div className="max-w-screen-xl mx-auto px-6 py-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Videos</h1>
             {videos.length > 0 && (
               <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 text-xs font-medium rounded-full bg-secondary/80 border border-black/5 dark:border-white/10 text-secondary-foreground">
@@ -93,14 +117,15 @@ export default function VideosList() {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative w-full sm:w-72 group">
+          <div className="flex items-center gap-3 min-w-0 flex-1 sm:flex-none justify-end">
+            <div className="relative w-full sm:w-72 group shrink min-w-0">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/50 group-hover:text-muted-foreground/80 transition-colors pointer-events-none">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
               <input
+                ref={searchInputRef}
                 type="text"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
@@ -110,6 +135,7 @@ export default function VideosList() {
               <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                 {query ? (
                   <button
+                    type="button"
                     onClick={() => setQuery('')}
                     className="text-muted-foreground/50 hover:text-foreground transition-colors p-0.5 rounded-full hover:bg-secondary"
                   >
@@ -125,33 +151,50 @@ export default function VideosList() {
               </div>
             </div>
 
-            <div className="relative group/sort">
+            <div className="relative shrink-0" ref={sortRef}>
               <button
+                type="button"
+                onClick={() => setSortOpen((open) => !open)}
+                aria-expanded={sortOpen}
+                aria-haspopup="listbox"
                 className="h-11 rounded-full border border-border bg-secondary/50 px-5 flex items-center gap-2 text-sm font-medium text-foreground transition-all hover:bg-secondary hover:border-border active:scale-95"
               >
                 <span className="text-muted-foreground/60">Sort:</span>
                 <span>{sortOrder === 'newest' ? 'Newest' : 'Oldest'}</span>
-                <svg className="w-4 h-4 text-muted-foreground/50 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-4 h-4 text-muted-foreground/50 ml-1 transition-transform ${sortOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
-              <div className="absolute right-0 top-full mt-2 w-40 rounded-xl border border-border bg-popover shadow-xl p-1 opacity-0 invisible translate-y-2 transition-all duration-200 group-hover/sort:opacity-100 group-hover/sort:visible group-hover/sort:translate-y-0 z-50">
-                <button
-                  onClick={() => setSortOrder('newest')}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${sortOrder === 'newest' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-                    }`}
+              {sortOpen && (
+                <div
+                  role="listbox"
+                  className="absolute right-0 top-full mt-2 w-40 rounded-xl border border-border bg-popover shadow-xl p-1 animate-in fade-in-0 slide-in-from-top-1 duration-200 z-50"
                 >
-                  Newest
-                </button>
-                <button
-                  onClick={() => setSortOrder('oldest')}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${sortOrder === 'oldest' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-                    }`}
-                >
-                  Oldest
-                </button>
-              </div>
+                  <button
+                    role="option"
+                    aria-selected={sortOrder === 'newest'}
+                    onClick={() => {
+                      setSortOrder('newest');
+                      setSortOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${sortOrder === 'newest' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`}
+                  >
+                    Newest
+                  </button>
+                  <button
+                    role="option"
+                    aria-selected={sortOrder === 'oldest'}
+                    onClick={() => {
+                      setSortOrder('oldest');
+                      setSortOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${sortOrder === 'oldest' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`}
+                  >
+                    Oldest
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
