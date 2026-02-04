@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { UserRole, hasRole } from '@/types/roles';
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import AdminProxyControls from '../auth/AdminProxyControls';
 import { Button } from '@/components/ui/Button';
 
@@ -102,6 +103,10 @@ export default function Navbar() {
   const isAdmin = hasRole(originalRole, UserRole.ADMIN);
   const isEffectiveAdmin = hasRole(effectiveRole, UserRole.ADMIN);
   const isEditor = hasRole(effectiveRole, UserRole.EDITOR);
+
+  // Use session.user (which is proxy-aware) for feature flag gating
+  const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
+
   const isEditorSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content'].some((path) => isActive(path));
   const isPracticeSectionActive = ['/peralta75', '/assessment'].some((path) => isActive(path));
 
@@ -167,7 +172,13 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
+                    <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
                     <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
+                    {showProgress && (
+                      <Link href="/learn/progress" className={navLinkClass('/learn/progress')}>
+                        My Progress
+                      </Link>
+                    )}
                     <div className="relative group">
                       <button type="button" className={navButtonClass(isPracticeSectionActive)}>
                         Practice
@@ -188,7 +199,6 @@ export default function Navbar() {
                         </div>
                       </div>
                     </div>
-                    <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
                     {isLoggedIn && isEditor && (
                       <div className="relative group">
                         <button type="button" className={navButtonClass(isEditorSectionActive)}>
@@ -264,7 +274,7 @@ export default function Navbar() {
       <div
         className={`fixed inset-0 z-40 bg-surface-ambient/95 backdrop-blur-2xl transition-transform duration-500 md:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
-        style={{ top: '60px' }}
+        style={{ top: scrolled ? '89px' : '113px' }}
       >
         <div className="p-6 space-y-4">
           <div className="space-y-2">
@@ -280,6 +290,15 @@ export default function Navbar() {
             ) : (
               <>
                 <Link href="/learn" className={mobileNavLinkClass('/learn')} onClick={() => setIsMenuOpen(false)}>Learn</Link>
+                {showProgress && (
+                  <Link
+                    href="/learn/progress"
+                    className={mobileNavLinkClass('/learn/progress')}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    My Progress
+                  </Link>
+                )}
                 <div className="space-y-1 pt-3">
                   <span className="block px-4 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Practice</span>
                   <Link href="/peralta75" className={mobileNavLinkClass('/peralta75')} onClick={() => setIsMenuOpen(false)}>Peralta 75</Link>

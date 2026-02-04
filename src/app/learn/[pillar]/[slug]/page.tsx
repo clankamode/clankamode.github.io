@@ -18,6 +18,9 @@ import TableOfContents from '../../_components/TableOfContents';
 import PremiumGate from '../../_components/PremiumGate';
 import ReadingProgress from '../../_components/ReadingProgress';
 import { extractHeadings } from '../../_components/markdown';
+import CompletionButton from '../../_components/CompletionButton';
+import BookmarkButton from '../../_components/BookmarkButton';
+import { getArticleCompletionStatus, getBookmarkStatus } from '@/lib/progress';
 
 interface ArticlePageProps {
   params: Promise<{ pillar: string; slug: string }>;
@@ -39,12 +42,16 @@ function getPreviewContent(content: string) {
 
 export const dynamic = 'force-dynamic';
 
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
+
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { pillar: pillarSlug, slug: articleSlug } = await params;
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role as UserRole | undefined;
   const canViewDrafts = !!userRole && hasRole(userRole, UserRole.EDITOR);
   const canEdit = canViewDrafts;
+  const userId = session?.user?.id;
+  const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
 
   const pillar = await getLearningPillarBySlug(pillarSlug.toLowerCase());
   if (!pillar) {
@@ -70,6 +77,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const tocItems = extractHeadings(contentToRender);
   const flatArticles = flattenArticles(topics);
   const { prev, next } = getAdjacentArticles(flatArticles, article.slug);
+  const [completionStatus, bookmarkStatus] = showProgress && userId
+    ? await Promise.all([
+      getArticleCompletionStatus(userId, article.id),
+      getBookmarkStatus(userId, article.id),
+    ])
+    : [null, null];
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-24">
@@ -111,9 +124,18 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <p className="text-xs uppercase tracking-[0.3em] text-text-muted">
                 {pillar.name}
               </p>
-              <h1 className="mt-4 text-4xl md:text-5xl font-bold tracking-tight text-text-primary">
-                {article.title}
-              </h1>
+              <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-text-primary">
+                  {article.title}
+                </h1>
+                {showProgress && (
+                  <BookmarkButton
+                    articleId={article.id}
+                    initialBookmarked={bookmarkStatus?.bookmarked}
+                    size="sm"
+                  />
+                )}
+              </div>
               <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-text-muted font-mono">
                 <span>{formatDate(article.updated_at)}</span>
                 <span className="text-text-muted/60">•</span>
@@ -144,6 +166,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <div>
               <ArticleRenderer content={contentToRender} />
               {!canViewPremium && <PremiumGate />}
+              {showProgress && canViewPremium && (
+                <div className="mt-8">
+                  <CompletionButton
+                    articleId={article.id}
+                    initialCompleted={completionStatus?.completed}
+                  />
+                </div>
+              )}
               <ArticleNav
                 previous={
                   prev

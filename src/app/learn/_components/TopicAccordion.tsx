@@ -8,9 +8,15 @@ interface TopicAccordionProps {
   pillarSlug: string;
   topic: LearningTopicWithArticles;
   defaultOpen?: boolean;
+  showProgress?: boolean;
 }
 
-export default function TopicAccordion({ pillarSlug, topic, defaultOpen = false }: TopicAccordionProps) {
+export default function TopicAccordion({
+  pillarSlug,
+  topic,
+  defaultOpen = false,
+  showProgress = false
+}: TopicAccordionProps) {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
@@ -36,7 +42,12 @@ export default function TopicAccordion({ pillarSlug, topic, defaultOpen = false 
       {open && (
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {topic.articles.map((article) => (
-            <ArticleCard key={article.id} pillarSlug={pillarSlug} article={article} />
+            <ArticleCard
+              key={article.id}
+              pillarSlug={pillarSlug}
+              article={article}
+              showProgress={showProgress}
+            />
           ))}
           {topic.articles.length === 0 && (
             <div className="text-text-muted text-sm">

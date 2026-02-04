@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { getLearningPillarBySlug, getLearningPillarTree } from '@/lib/content';
 import { UserRole, hasRole } from '@/types/roles';
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import MobileSidebarToggle from '../_components/MobileSidebarToggle';
 import PillarSidebar from '../_components/PillarSidebar';
 import TopicAccordion from '../_components/TopicAccordion';
@@ -17,6 +18,9 @@ export default async function PillarPage({ params }: PillarPageProps) {
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role as UserRole | undefined;
   const canViewDrafts = userRole ? hasRole(userRole, UserRole.EDITOR) : false;
+
+  // Use effectiveRole (proxy role) if available, otherwise session role
+  const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
 
   const { pillar: pillarSlug } = await params;
   const pillar = await getLearningPillarBySlug(pillarSlug.toLowerCase());
@@ -68,6 +72,7 @@ export default async function PillarPage({ params }: PillarPageProps) {
                   pillarSlug={pillar.slug}
                   topic={topic}
                   defaultOpen={index === 0}
+                  showProgress={showProgress}
                 />
               ))}
             </div>

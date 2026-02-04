@@ -6,6 +6,8 @@ import type { ReactElement } from 'react';
 interface PillarCardProps {
   pillar: LearningPillar;
   articleCount: number;
+  progressPercent?: number;
+  showProgress?: boolean;
 }
 
 const iconMap: Record<string, ReactElement> = {
@@ -35,7 +37,12 @@ const iconMap: Record<string, ReactElement> = {
   ),
 };
 
-export default function PillarCard({ pillar, articleCount }: PillarCardProps) {
+export default function PillarCard({
+  pillar,
+  articleCount,
+  progressPercent = 0,
+  showProgress = false
+}: PillarCardProps) {
   const icon = iconMap[pillar.slug] || iconMap.blog;
   const isEmpty = articleCount === 0;
 
@@ -58,16 +65,32 @@ export default function PillarCard({ pillar, articleCount }: PillarCardProps) {
         </p>
       </div>
 
-      <div className="mt-auto flex items-center justify-between text-sm text-text-muted">
-        <span>{articleCount} articles</span>
-        <span
-          className={cn(
-            'text-text-primary',
-            !isEmpty && 'transition-transform duration-200 group-hover:translate-x-1'
-          )}
-        >
-          {isEmpty ? 'Under construction' : 'Explore →'}
-        </span>
+      <div className="mt-auto space-y-4">
+        {showProgress && progressPercent > 0 && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-text-muted font-mono">
+              <span>Progress</span>
+              <span>{progressPercent}%</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-dense">
+              <div
+                className="h-full bg-brand-green transition-all duration-500 ease-out"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+        )}
+        <div className="flex items-center justify-between text-sm text-text-muted">
+          <span>{articleCount} articles</span>
+          <span
+            className={cn(
+              'text-text-primary',
+              !isEmpty && 'transition-transform duration-200 group-hover:translate-x-1'
+            )}
+          >
+            {isEmpty ? 'Under construction' : 'Explore →'}
+          </span>
+        </div>
       </div>
     </>
   );

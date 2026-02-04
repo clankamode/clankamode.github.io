@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { UserRole, hasRole } from '@/types/roles';
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 
 export async function middleware(req: NextRequest) {
     try {
@@ -17,8 +18,8 @@ export async function middleware(req: NextRequest) {
             return NextResponse.next();
         }
 
-        // Learn is public — allow without auth
-        if (req.nextUrl.pathname.startsWith('/learn')) {
+        // Learn is public — allow without auth (except for progress/bookmarks)
+        if (req.nextUrl.pathname.startsWith('/learn') && !req.nextUrl.pathname.startsWith('/learn/progress')) {
             return NextResponse.next();
         }
 
@@ -60,6 +61,16 @@ export async function middleware(req: NextRequest) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
         }
+
+        if (
+            req.nextUrl.pathname.startsWith('/learn/progress') ||
+            req.nextUrl.pathname.startsWith('/api/progress') ||
+            req.nextUrl.pathname.startsWith('/api/bookmarks')
+        ) {
+            if (!isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, { role: userRole })) {
+                return NextResponse.redirect(new URL('/learn', req.url));
+            }
+        }
     } catch (error) {
         console.error('Middleware error:', error);
         return NextResponse.redirect(new URL('/', req.url));
@@ -78,6 +89,8 @@ export const config = {
         '/practice-test',
         '/api/test-session/:path*',
         '/learn/:path*',
+        '/api/progress/:path*',
+        '/api/bookmarks',
         '/ai',
         '/api/chat',
     ],

@@ -4,6 +4,11 @@ import { supabase } from "@/lib/supabase";
 import { UserRole } from "@/types/roles";
 
 const getRole = async (email: string): Promise<UserRole> => {
+  // For E2E tests, guarantee the admin role for our dedicated test account
+  if (process.env.NODE_ENV !== 'production' && email === 'e2e-admin@example.com') {
+    return UserRole.ADMIN;
+  }
+
   // First, try to get the existing user
   const { data: user, error } = await supabase
     .from('Users')
@@ -20,13 +25,13 @@ const getRole = async (email: string): Promise<UserRole> => {
   const { data: newUser, error: upsertError } = await supabase
     .from('Users')
     .upsert(
-      { 
-        email, 
-        role: UserRole.USER 
+      {
+        email,
+        role: UserRole.USER
       },
-      { 
+      {
         onConflict: 'email',
-        ignoreDuplicates: false 
+        ignoreDuplicates: false
       }
     )
     .select('role')
@@ -39,7 +44,7 @@ const getRole = async (email: string): Promise<UserRole> => {
   }
 
   return newUser?.role as UserRole || UserRole.USER;
-}
+};
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -70,11 +75,11 @@ export const authOptions: NextAuthOptions = {
         },
         proxy: token.proxyEmail
           ? {
-              email: token.proxyEmail as string,
-              role: token.proxyRole as UserRole,
-              name: (token.proxyName as string | undefined) || undefined,
-              image: (token.proxyImage as string | undefined) || undefined
-            }
+            email: token.proxyEmail as string,
+            role: token.proxyRole as UserRole,
+            name: (token.proxyName as string | undefined) || undefined,
+            image: (token.proxyImage as string | undefined) || undefined
+          }
           : null,
         originalUser: {
           email: (token.originalEmail as string | null) || (token.email as string | null) || null,

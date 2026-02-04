@@ -1,8 +1,11 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
+import Link from 'next/link';
 import PillarCard from './_components/PillarCard';
 import { getLearningLibrary } from '@/lib/content';
+import { getProgressSummary } from '@/lib/progress';
 import { UserRole, hasRole } from '@/types/roles';
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,13 +13,22 @@ export default async function LearnPage() {
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role as UserRole | undefined;
   const canViewDrafts = userRole ? hasRole(userRole, UserRole.EDITOR) : false;
+  const userId = session?.user?.id;
+  const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
 
-  const library = await getLearningLibrary(canViewDrafts);
+  const [library, progressSummary] = await Promise.all([
+    getLearningLibrary(canViewDrafts),
+    showProgress && userId ? getProgressSummary(userId) : null,
+  ]);
 
-  const pillarCards = library.map((pillar) => ({
-    pillar,
-    articleCount: pillar.topics.reduce((sum, topic) => sum + topic.articles.length, 0),
-  }));
+  const pillarCards = library.map((pillar) => {
+    const progress = progressSummary?.pillars.find((p) => p.slug === pillar.slug);
+    return {
+      pillar,
+      articleCount: pillar.topics.reduce((sum, topic) => sum + topic.articles.length, 0),
+      progressPercent: progress?.percent ?? 0,
+    };
+  });
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-24">
@@ -29,11 +41,27 @@ export default async function LearnPage() {
           <p className="mt-6 text-lg text-text-secondary leading-relaxed">
             Four pillars. Clear progression. Everything you need to build the skills that compound.
           </p>
+          {showProgress && userId && (
+            <div className="mt-8">
+              <Link
+                href="/learn/progress"
+                className="inline-flex items-center justify-center rounded-full border border-border-interactive px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:border-text-secondary"
+              >
+                View Dashboard
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          {pillarCards.map(({ pillar, articleCount }) => (
-            <PillarCard key={pillar.id} pillar={pillar} articleCount={articleCount} />
+          {pillarCards.map(({ pillar, articleCount, progressPercent }) => (
+            <PillarCard
+              key={pillar.id}
+              pillar={pillar}
+              articleCount={articleCount}
+              progressPercent={progressPercent}
+              showProgress={showProgress}
+            />
           ))}
         </div>
       </section>
