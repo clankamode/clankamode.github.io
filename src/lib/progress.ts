@@ -5,6 +5,10 @@ import type {
   LearningPillar,
   LearningPillarWithTopics,
 } from '@/types/content';
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
+import { getUserLearningState } from '@/lib/user-learning-state';
+import { deriveStateAwareIntent, deriveStaticIntent } from '@/lib/gate-intent';
+import { buildIdentityOrFilter, type EffectiveIdentity } from '@/lib/auth-identity';
 
 const PROGRESS_TABLE = 'UserArticleProgress';
 const BOOKMARKS_TABLE = 'UserBookmarks';
@@ -47,6 +51,8 @@ export interface ProgressSummary {
   pillars: PillarProgress[];
   recentActivity: RecentActivityItem[];
   nextArticle: NextArticle | null;
+  completedIds: string[];
+  allCompletionDates: string[];
 }
 
 export interface BookmarkItem {
@@ -57,6 +63,50 @@ export interface BookmarkItem {
   excerpt: string | null;
   readingTimeMinutes: number | null;
   savedAt: string;
+}
+
+export type SessionMode = 'pick_track' | 'normal' | 'just_finished';
+
+
+export interface SessionIntent {
+  type: 'bridge' | 'tradeoff' | 'foundation' | 'practice';
+  from?: string[];
+  to?: string[];
+  text: string;
+}
+
+export interface SessionItem {
+  type: 'learn' | 'practice';
+  title: string;
+  subtitle: string;
+  pillarSlug: string;
+  href: string;
+  articleId?: string;
+  slug?: string;
+  estMinutes: number | null;
+  intent: SessionIntent;
+  confidence?: number;
+  primaryConceptSlug?: string | null;
+}
+
+export interface LearningDelta {
+  introduced: string[];
+  reinforced: string[];
+  unlocked: string[];
+}
+
+export interface SessionProof {
+  streakDays: number;
+  todayCount: number;
+  last7: { date: string; count: number }[];
+}
+
+export interface SessionState {
+  mode: SessionMode;
+  now: SessionItem | null;
+  upNext: SessionItem[];
+  proof: SessionProof;
+  track: { slug: string; name: string } | null;
 }
 
 function buildArticleLookup(library: LearningPillarWithTopics[]) {
@@ -102,11 +152,15 @@ function getStreakDays(completedAtDates: string[]) {
   return streak;
 }
 
-export async function getArticleCompletionStatus(userId: string, articleId: string) {
+function toIdentity(userId: string, googleId?: string): EffectiveIdentity {
+  return googleId ? { email: userId, googleId } : { email: userId };
+}
+
+export async function getArticleCompletionStatus(userId: string, articleId: string, googleId?: string) {
   const { data, error } = await supabase
     .from(PROGRESS_TABLE)
     .select('completed_at')
-    .eq('user_id', userId)
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
     .eq('article_id', articleId)
     .maybeSingle();
 
@@ -117,11 +171,11 @@ export async function getArticleCompletionStatus(userId: string, articleId: stri
   return { completed: true, completedAt: data.completed_at };
 }
 
-export async function getBookmarkStatus(userId: string, articleId: string) {
+export async function getBookmarkStatus(userId: string, articleId: string, googleId?: string) {
   const { data, error } = await supabase
     .from(BOOKMARKS_TABLE)
     .select('id')
-    .eq('user_id', userId)
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
     .eq('article_id', articleId)
     .maybeSingle();
 
@@ -132,14 +186,14 @@ export async function getBookmarkStatus(userId: string, articleId: string) {
   return { bookmarked: true };
 }
 
-export async function getProgressSummary(userId: string): Promise<ProgressSummary> {
+export async function getProgressSummary(userId: string, googleId?: string): Promise<ProgressSummary> {
   const library = await getLearningLibrary(false);
   const lookup = buildArticleLookup(library);
 
   const { data: progressRecords, error } = await supabase
     .from(PROGRESS_TABLE)
     .select('article_id, completed_at')
-    .eq('user_id', userId)
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
     .order('completed_at', { ascending: false });
 
   if (error) {
@@ -216,17 +270,19 @@ export async function getProgressSummary(userId: string): Promise<ProgressSummar
     pillars,
     recentActivity,
     nextArticle,
+    completedIds: Array.from(completedIds),
+    allCompletionDates: filteredRecords.map((r) => r.completed_at),
   };
 }
 
-export async function getUserBookmarks(userId: string): Promise<BookmarkItem[]> {
+export async function getUserBookmarks(userId: string, googleId?: string): Promise<BookmarkItem[]> {
   const library = await getLearningLibrary(false);
   const lookup = buildArticleLookup(library);
 
   const { data, error } = await supabase
     .from(BOOKMARKS_TABLE)
     .select('article_id, created_at')
-    .eq('user_id', userId)
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -251,3 +307,123 @@ export async function getUserBookmarks(userId: string): Promise<BookmarkItem[]> 
     })
     .filter((item): item is BookmarkItem => item !== null);
 }
+
+export async function getSessionState(userId: string, preferredTrackSlug?: string, googleId?: string): Promise<SessionState> {
+  const summary = await getProgressSummary(userId, googleId);
+  const library = await getLearningLibrary(false);
+  const normalizedPreferredTrack = preferredTrackSlug?.toLowerCase();
+  const preferredTrack = normalizedPreferredTrack
+    ? library.find((pillar) => pillar.slug === normalizedPreferredTrack)
+    : null;
+
+  const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS);
+  const userState = useGenerative
+    ? (await getUserLearningState(userId, preferredTrackSlug || 'dsa', googleId)).userState
+    : null;
+
+  const completedIds = new Set(summary.completedIds);
+  const collectItems = (pillars: LearningPillarWithTopics[], allowCompleted: boolean) => {
+    const items: SessionItem[] = [];
+
+    for (const pillar of pillars) {
+      for (const topic of pillar.topics) {
+        for (const article of topic.articles) {
+          if ((!completedIds.has(article.id) || allowCompleted) && items.length < 4) {
+            const intent = useGenerative && userState
+              ? deriveStateAwareIntent({
+                primaryConceptSlug: article.primary_concept ?? null,
+                userState,
+                articleSlug: article.slug,
+                pillarSlug: pillar.slug
+              })
+              : deriveStaticIntent(article.slug, pillar.slug);
+
+            items.push({
+              type: 'learn',
+              title: article.title,
+              subtitle: `${article.reading_time_minutes || 5} min read`,
+              pillarSlug: pillar.slug,
+              href: `/learn/${pillar.slug}/${article.slug}`,
+              articleId: article.id,
+              estMinutes: article.reading_time_minutes,
+              intent,
+              confidence: 0.9,
+              primaryConceptSlug: article.primary_concept ?? null
+            });
+          }
+        }
+      }
+    }
+
+    return items;
+  };
+
+  let incompleteItems: SessionItem[] = [];
+  if (preferredTrack) {
+    incompleteItems = collectItems([preferredTrack], false);
+    if (incompleteItems.length === 0) {
+      incompleteItems = collectItems([preferredTrack], true);
+    }
+  } else {
+    incompleteItems = collectItems(library, false);
+  }
+
+  const now = incompleteItems[0] || null;
+  const upNext = incompleteItems.slice(1, 4);
+
+  let mode: SessionMode = 'normal';
+  if (!now) {
+    mode = 'pick_track';
+  } else if (summary.recentActivity.length > 0) {
+    const lastCompletedAt = new Date(summary.recentActivity[0].completedAt);
+    const hoursSinceCompletion = (Date.now() - lastCompletedAt.getTime()) / (1000 * 60 * 60);
+    if (hoursSinceCompletion < 1) {
+      mode = 'just_finished';
+    }
+  }
+
+  const last7Map = new Map<string, number>();
+  const now7 = new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now7);
+    d.setDate(d.getDate() - i);
+    last7Map.set(d.toISOString().slice(0, 10), 0);
+  }
+  for (const completedAt of summary.allCompletionDates) {
+    const dateKey = completedAt.slice(0, 10);
+    if (last7Map.has(dateKey)) {
+      last7Map.set(dateKey, (last7Map.get(dateKey) || 0) + 1);
+    }
+  }
+  const last7 = Array.from(last7Map.entries())
+    .map(([date, count]) => ({ date, count }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayCount = last7Map.get(todayKey) || 0;
+
+  const track = now
+    ? { slug: now.pillarSlug, name: getPillarName(now.pillarSlug, library) }
+    : preferredTrack
+      ? { slug: preferredTrack.slug, name: preferredTrack.name }
+      : null;
+
+  return {
+    mode,
+    now,
+    upNext,
+    proof: {
+      streakDays: summary.streakDays,
+      todayCount,
+      last7,
+    },
+    track,
+  };
+}
+
+function getPillarName(slug: string, library: LearningPillarWithTopics[]): string {
+  const pillar = library.find((p) => p.slug === slug);
+  return pillar?.name || slug.replace(/-/g, ' ');
+}
+
+

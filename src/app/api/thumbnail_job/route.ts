@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import { UserRole, hasRole } from "@/types/roles";
 import type { ThumbnailJob } from '@/types/ThumbnailJob';
 import { ThumbnailJobStatus } from '@/types/ThumbnailJob';
 import { supabase } from '@/lib/supabase';
@@ -9,17 +12,22 @@ export async function GET(): Promise<NextResponse<{
   data?: ThumbnailJob[];
   error?: string;
 }>> {
-  // ADMIN and EDITOR ROLES ONLY
+  const session = await getServerSession(authOptions);
+  const userRole = session?.user?.role as UserRole | undefined;
+
+  if (!userRole || !hasRole(userRole, UserRole.EDITOR)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    // Get query parameters - only return non-deleted jobs, sorted by updated_at desc
     const { data } = await supabase
-        .from(TABLE_NAME)
-        .select('*')
-        .is('deleted_at', null)
-        .order('updated_at', { ascending: false, nullsFirst: false })
+      .from(TABLE_NAME)
+      .select('*')
+      .is('deleted_at', null)
+      .order('updated_at', { ascending: false, nullsFirst: false })
 
     return NextResponse.json({
-        data: data as ThumbnailJob[],
+      data: data as ThumbnailJob[],
     });
   } catch (error: unknown) {
     console.error('Error fetching videos:', error);
@@ -28,7 +36,7 @@ export async function GET(): Promise<NextResponse<{
       errorMessage = error.message;
     }
     return NextResponse.json(
-      { error: errorMessage},
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -36,7 +44,13 @@ export async function GET(): Promise<NextResponse<{
 
 
 export async function POST(request: Request) {
-  // ADMIN ROLE Only
+  const session = await getServerSession(authOptions);
+  const userRole = session?.user?.role as UserRole | undefined;
+
+  if (!userRole || !hasRole(userRole, UserRole.ADMIN)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const body = await request.json()
   const { video_url, video_title } = body;
   if (!video_url || !video_title) {

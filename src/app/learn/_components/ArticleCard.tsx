@@ -6,6 +6,7 @@ interface ArticleCardProps {
   pillarSlug: string;
   article: LearningArticle;
   showProgress?: boolean;
+  initialBookmarked?: boolean;
 }
 
 function formatDate(dateString: string) {
@@ -17,7 +18,12 @@ function formatDate(dateString: string) {
   });
 }
 
-export default function ArticleCard({ pillarSlug, article, showProgress = false }: ArticleCardProps) {
+export default function ArticleCard({
+  pillarSlug,
+  article,
+  showProgress = false,
+  initialBookmarked
+}: ArticleCardProps) {
   return (
     <div className="group relative">
       <Link
@@ -57,7 +63,11 @@ export default function ArticleCard({ pillarSlug, article, showProgress = false 
       {/* Floating bookmark button to avoid nesting <button> inside <a> */}
       {showProgress && (
         <div className="absolute right-5 top-5 z-10">
-          <BookmarkButton articleId={article.id} size="sm" />
+          <BookmarkButton
+            articleId={article.id}
+            size="sm"
+            initialBookmarked={initialBookmarked}
+          />
         </div>
       )}
     </div>

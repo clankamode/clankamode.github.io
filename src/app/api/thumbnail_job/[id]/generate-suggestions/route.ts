@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import { UserRole, hasRole } from "@/types/roles";
 import { GoogleGenAI } from '@google/genai';
 import { supabase } from '@/lib/supabase';
 import { ThumbnailJobStatus, ThumbnailSuggestionStatus } from '@/types/ThumbnailJob';
@@ -15,9 +18,15 @@ export async function POST(
   request: Request,
   { params }: PathParams
 ): Promise<NextResponse> {
+  const session = await getServerSession(authOptions);
+  const userRole = session?.user?.role as UserRole | undefined;
+
+  if (!userRole || !hasRole(userRole, UserRole.EDITOR)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { id } = await params;
 
-  // Get the job to verify it exists and get the video title
   const { data: job, error: jobError } = await supabase
     .from(TABLE_NAME)
     .select('id, video_title, suggested_thumbnails')
@@ -31,7 +40,6 @@ export async function POST(
     );
   }
 
-  // Get available headshots
   const { data: headshots } = await supabase
     .from(HEADSHOT_TABLE)
     .select('url, created_at')
@@ -46,23 +54,20 @@ export async function POST(
     );
   }
 
-  // Set status to generating before starting background task
   await supabase
     .from(TABLE_NAME)
-    .update({ 
+    .update({
       thumbnail_suggestion_status: ThumbnailSuggestionStatus.GENERATING,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id);
 
-  // Generate suggestions in background and return immediately
   generateThumbnailSuggestions(job.id, job.video_title, headshotUrls).catch(
     async (suggestionError) => {
       console.error('Failed to generate thumbnail suggestions:', suggestionError);
-      // Set status to failed on error
       await supabase
         .from(TABLE_NAME)
-        .update({ 
+        .update({
           thumbnail_suggestion_status: ThumbnailSuggestionStatus.FAILED,
           updated_at: new Date().toISOString(),
         })
@@ -178,10 +183,9 @@ async function generateThumbnailSuggestions(
       })
       .eq('id', jobId);
   } else {
-    // No images generated, mark as failed
     await supabase
       .from(TABLE_NAME)
-      .update({ 
+      .update({
         thumbnail_suggestion_status: ThumbnailSuggestionStatus.FAILED,
         updated_at: new Date().toISOString(),
       })

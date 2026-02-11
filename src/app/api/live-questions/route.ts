@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
+import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
+import { buildIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
+import { isMissingGoogleIdColumn } from '@/lib/supabase-compat';
 
 interface SupabaseQuestionRow {
   id: string;
@@ -11,11 +14,12 @@ interface SupabaseQuestionRow {
   LiveQuestionVotes?: Array<{ count: number }>;
 }
 
+
+
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req });
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token?.proxyEmail as string) || token?.email;
+    const identity = getEffectiveIdentityFromToken(token);
 
     const { data: questions, error: questionsError } = await supabase
       .from('LiveQuestions')
@@ -29,11 +33,18 @@ export async function GET(req: NextRequest) {
 
     let votedQuestionIds = new Set<string>();
 
-    if (userEmail) {
-      const { data: userVotes, error: votesError } = await supabase
+    if (identity) {
+      let { data: userVotes, error: votesError } = await supabase
         .from('LiveQuestionVotes')
         .select('question_id')
-        .eq('user_email', userEmail);
+        .or(buildIdentityOrFilter(identity, 'user_email'));
+
+      if (votesError && isMissingGoogleIdColumn(votesError)) {
+        ({ data: userVotes, error: votesError } = await supabase
+          .from('LiveQuestionVotes')
+          .select('question_id')
+          .eq('user_email', identity.email));
+      }
 
       if (votesError) {
         console.error('Error fetching user votes:', votesError);
@@ -63,11 +74,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
+    const identity = getEffectiveIdentityFromToken(token);
 
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token?.proxyEmail as string) || token?.email;
-
-    if (!userEmail) {
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -81,15 +90,30 @@ export async function POST(req: NextRequest) {
     // Use proxyName if available, otherwise use token name
     const userName = (token?.proxyName as string) || token?.name || null;
 
-    const { data: question, error: insertError } = await supabase
+    const adminClient = getSupabaseAdminClient();
+
+    let { data: question, error: insertError } = await adminClient
       .from('LiveQuestions')
       .insert({
         content,
-        user_email: userEmail,
+        user_email: identity.email,
+        google_id: identity.googleId ?? null,
         user_name: userName,
       })
       .select()
       .single();
+
+    if (insertError && isMissingGoogleIdColumn(insertError)) {
+      ({ data: question, error: insertError } = await adminClient
+        .from('LiveQuestions')
+        .insert({
+          content,
+          user_email: identity.email,
+          user_name: userName,
+        })
+        .select()
+        .single());
+    }
 
     if (insertError) {
       console.error('Error creating question:', insertError);

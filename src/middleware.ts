@@ -11,33 +11,53 @@ export async function middleware(req: NextRequest) {
         });
 
         const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+        const progressEnabled = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, { role: effectiveRole });
+        const sessionModeEnabled = isFeatureEnabled(FeatureFlags.SESSION_MODE, { role: effectiveRole });
+        const sessionFeaturesEnabled = progressEnabled && sessionModeEnabled;
 
-        // Special handling for home page
         if (req.nextUrl.pathname === '/') {
-            // Otherwise, allow access to home page
+            if (token) {
+                return NextResponse.redirect(new URL(sessionFeaturesEnabled ? '/home' : '/learn', req.url));
+            }
             return NextResponse.next();
         }
 
-        // Learn is public — allow without auth (except for progress/bookmarks)
+        if (req.nextUrl.pathname === '/home') {
+            if (!token) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+            if (!sessionFeaturesEnabled) {
+                return NextResponse.redirect(new URL('/learn', req.url));
+            }
+            return NextResponse.next();
+        }
+
+        if (req.nextUrl.pathname === '/explore') {
+            if (!token) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+            if (!sessionFeaturesEnabled) {
+                return NextResponse.redirect(new URL('/learn', req.url));
+            }
+            return NextResponse.next();
+        }
+
         if (req.nextUrl.pathname.startsWith('/learn') && !req.nextUrl.pathname.startsWith('/learn/progress')) {
             return NextResponse.next();
         }
 
-        // For all other protected routes, require authentication
         if (!token) {
             return NextResponse.redirect(new URL('/', req.url));
         }
 
         const userRole = effectiveRole;
 
-        // Check if the route is admin-related
         if (req.nextUrl.pathname.startsWith('/admin')) {
             if (!hasRole(userRole, UserRole.EDITOR)) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
         }
 
-        // Check if the route is thumbnail-related
         if (req.nextUrl.pathname.startsWith('/thumbnails') || req.nextUrl.pathname.startsWith('/api/thumbnail_job')) {
             if (!hasRole(userRole, UserRole.EDITOR)) {
                 return NextResponse.redirect(new URL('/', req.url));
@@ -48,14 +68,12 @@ export async function middleware(req: NextRequest) {
             }
         }
 
-        // Check if the route is AI-related
         if (req.nextUrl.pathname.startsWith('/ai') || req.nextUrl.pathname.startsWith('/api/chat')) {
             if (!hasRole(userRole, UserRole.EDITOR)) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
         }
 
-        // Check if the route is practice-test-related
         if (req.nextUrl.pathname.startsWith('/practice-test') || req.nextUrl.pathname.startsWith('/api/test-session')) {
             if (!hasRole(userRole, UserRole.USER)) {
                 return NextResponse.redirect(new URL('/', req.url));
@@ -67,7 +85,7 @@ export async function middleware(req: NextRequest) {
             req.nextUrl.pathname.startsWith('/api/progress') ||
             req.nextUrl.pathname.startsWith('/api/bookmarks')
         ) {
-            if (!isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, { role: userRole })) {
+            if (!progressEnabled) {
                 return NextResponse.redirect(new URL('/learn', req.url));
             }
         }
@@ -82,6 +100,8 @@ export async function middleware(req: NextRequest) {
 export const config = {
     matcher: [
         '/',
+        '/home',
+        '/explore',
         '/admin/:path*',
         '/analytics',
         '/thumbnails/:path*',
@@ -92,6 +112,6 @@ export const config = {
         '/api/progress/:path*',
         '/api/bookmarks',
         '/ai',
-        '/api/chat',
+        '/api/chat/:path*',
     ],
 }

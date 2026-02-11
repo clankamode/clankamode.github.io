@@ -31,6 +31,8 @@ export interface LearningArticle {
   order_index: number;
   created_at: string;
   updated_at: string;
+  concept_tags: string[];
+  primary_concept: string | null;
 }
 
 export interface LearningTopicWithArticles extends LearningTopic {

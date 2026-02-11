@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
+import { getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
-    
-    const effectiveEmail = (token?.proxyEmail as string | null) || token?.email;
-
-    if (!effectiveEmail) {
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -25,7 +24,7 @@ export async function POST(req: NextRequest) {
     // Verify the session belongs to the effective user
     const { data: sessionOwner, error: sessionOwnerError } = await supabase
       .from('TestSession')
-      .select('email')
+      .select('email, google_id')
       .eq('id', sessionId)
       .single();
 
@@ -37,7 +36,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (sessionOwner.email !== effectiveEmail) {
+    const ownsByEmail = sessionOwner.email === identity.email;
+    const ownsByGoogle = !!identity.googleId && sessionOwner.google_id === identity.googleId;
+    if (!ownsByEmail && !ownsByGoogle) {
       return NextResponse.json(
         { error: 'Forbidden' },
         { status: 403 }
@@ -166,4 +167,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

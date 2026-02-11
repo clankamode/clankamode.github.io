@@ -41,7 +41,7 @@ interface VideoSuggestion {
 
 type ContentPart =
     | { type: 'input_text'; text: string }
-    | { type: 'input_image'; image_url: string }
+    | { type: 'input_image'; image_url: string; detail: 'auto' | 'low' | 'high' }
     | { type: 'input_file'; file_id: string };
 
 type TransformedMessage =
@@ -69,8 +69,7 @@ export async function POST(req: NextRequest) {
 
         const ragTools = buildRagTools();
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const guidanceMessage: any = {
+        const guidanceMessage: TransformedMessage = {
             role: 'system',
             content: buildVideoGuidancePrompt(relevantVideos),
         };
@@ -92,6 +91,7 @@ export async function POST(req: NextRequest) {
                         content.push({
                             type: 'input_image',
                             image_url: attachment.url,
+                            detail: 'auto',
                         });
                     } else if (attachment.type === 'pdf' && attachment.file_id) {
                         content.push({
@@ -115,8 +115,7 @@ export async function POST(req: NextRequest) {
 
         const stream = await openai.responses.create({
             model: model,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            input: [guidanceMessage, ...transformedMessages] as any,
+            input: [guidanceMessage, ...transformedMessages],
             stream: true,
             max_output_tokens: 2000,
             ...(ragTools ? { tools: ragTools } : {}),

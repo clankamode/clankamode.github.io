@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
 :root {
+  /* Nav geometry defaults (used before client hydration) */
+  --nav-height-initial: 113px;
+  --nav-height-scrolled: 89px;
+  --nav-height: 113px;
+
   /* Brand -- The Gradient of Mastery */
   --color-brand-green: #2cbb5d;
   /* Novice / Primary */

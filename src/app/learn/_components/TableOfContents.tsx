@@ -54,8 +54,8 @@ export default function TableOfContents({ items }: TableOfContentsProps) {
             <a
               href={`#${item.id}`}
               className={cn(
-                'text-text-muted transition-colors hover:text-text-primary',
-                activeId === item.id && 'text-text-primary'
+                'block rounded-md border-l-2 border-l-transparent px-3 py-1.5 text-text-muted transition-all duration-200 hover:border-l-border-interactive hover:bg-surface-interactive hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/70',
+                activeId === item.id && 'border-l-brand-green bg-surface-interactive text-text-primary'
               )}
             >
               {item.text}

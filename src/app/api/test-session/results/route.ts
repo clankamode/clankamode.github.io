@@ -1,18 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
+import { buildUserIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req });
-    
-    const effectiveEmail = (token?.proxyEmail as string | null) || token?.email;
-
-    if (!effectiveEmail) {
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const userEmail = effectiveEmail;
     const { searchParams } = new URL(req.url);
     const sessionId = searchParams.get('sessionId');
 
@@ -25,7 +22,7 @@ export async function GET(req: NextRequest) {
       .from('TestSession')
       .select('id, completed_at, correct_answers, total_questions, score_percentage')
       .eq('id', sessionId)
-      .eq('email', userEmail)
+      .or(buildUserIdentityOrFilter(identity))
       .not('completed_at', 'is', null) // Ensure it's a completed session
       .single();
 
@@ -134,4 +131,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-

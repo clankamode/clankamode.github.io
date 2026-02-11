@@ -4,6 +4,7 @@ import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { getBookmarkStatus, getUserBookmarks } from '@/lib/progress';
 import { UserRole } from '@/types/roles';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
+import { buildUserIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
 const BOOKMARKS_TABLE = 'UserBookmarks';
 
@@ -16,18 +17,18 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = token.id as string | undefined;
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing user id' }, { status: 400 });
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
+      return NextResponse.json({ error: 'Missing user email' }, { status: 400 });
     }
 
     const articleId = req.nextUrl.searchParams.get('articleId');
     if (articleId) {
-      const status = await getBookmarkStatus(userId, articleId);
+      const status = await getBookmarkStatus(identity.email, articleId, identity.googleId);
       return NextResponse.json(status);
     }
 
-    const bookmarks = await getUserBookmarks(userId);
+    const bookmarks = await getUserBookmarks(identity.email, identity.googleId);
     return NextResponse.json(bookmarks);
   } catch (error) {
     console.error('Error in GET /api/bookmarks:', error);
@@ -44,9 +45,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = token.id as string | undefined;
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing user id' }, { status: 400 });
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
+      return NextResponse.json({ error: 'Missing user email' }, { status: 400 });
     }
 
     const { articleId } = await req.json();
@@ -59,10 +60,11 @@ export async function POST(req: NextRequest) {
       .from(BOOKMARKS_TABLE)
       .upsert(
         {
-          user_id: userId,
+          email: identity.email,
+          google_id: identity.googleId ?? null,
           article_id: articleId,
         },
-        { onConflict: 'user_id,article_id' }
+        { onConflict: 'email,article_id' }
       );
 
     if (error) {
@@ -86,9 +88,9 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = token.id as string | undefined;
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing user id' }, { status: 400 });
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
+      return NextResponse.json({ error: 'Missing user email' }, { status: 400 });
     }
 
     const { articleId } = await req.json();
@@ -100,7 +102,7 @@ export async function DELETE(req: NextRequest) {
     const { error } = await adminClient
       .from(BOOKMARKS_TABLE)
       .delete()
-      .eq('user_id', userId)
+      .or(buildUserIdentityOrFilter(identity))
       .eq('article_id', articleId);
 
     if (error) {

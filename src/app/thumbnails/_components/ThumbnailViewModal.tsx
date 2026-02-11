@@ -34,12 +34,76 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
   })
 
   const inputFileRef = useRef<HTMLInputElement>(null);
+  const pollRunRef = useRef(0);
   const [dragActive, setDragActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false)
   const [suggestionError, setSuggestionError] = useState<string | null>(null)
   const [isSuggestionsExpanded, setIsSuggestionsExpanded] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) pollRunRef.current += 1;
+  }, [isOpen])
+
+  useEffect(() => {
+    return () => { pollRunRef.current += 1; };
+  }, [])
+
+  const pollForSuggestionStatus = async (jobId: string) => {
+    const runId = ++pollRunRef.current
+    const maxAttempts = 30
+    let attempts = 0
+
+    const poll = async (): Promise<void> => {
+      if (runId !== pollRunRef.current) return
+
+      attempts++
+      try {
+        const res = await fetch(`/api/thumbnail_job/${jobId}`)
+        if (runId !== pollRunRef.current) return
+
+        if (res.ok) {
+          const data = await res.json()
+          const status = data.data?.thumbnail_suggestion_status || ThumbnailSuggestionStatus.IDLE
+          const suggested = data.data?.suggested_thumbnails || []
+
+          if (status === ThumbnailSuggestionStatus.COMPLETED) {
+            setFormData((prev) => ({
+              ...prev,
+              suggestedThumbnails: suggested,
+              suggestionStatus: status,
+            }))
+            setIsGeneratingSuggestions(false)
+            return
+          }
+
+          if (status === ThumbnailSuggestionStatus.FAILED) {
+            setFormData((prev) => ({
+              ...prev,
+              suggestionStatus: status,
+            }))
+            setIsGeneratingSuggestions(false)
+            setSuggestionError('Generation failed. Please try again.')
+            return
+          }
+        }
+      } catch (error) {
+        console.error('Error polling for suggestions:', error)
+      }
+
+      if (attempts < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, 3000))
+        if (runId !== pollRunRef.current) return
+        return poll()
+      } else {
+        setIsGeneratingSuggestions(false)
+        setSuggestionError('Generation timed out. Please try again.')
+      }
+    }
+
+    return poll()
+  }
 
   useEffect(() => {
     if (isOpen && thumbnailId) {
@@ -183,55 +247,6 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
     }
   }
 
-  const pollForSuggestionStatus = async (jobId: string) => {
-    const maxAttempts = 30 // 30 attempts * 3 seconds = 90 seconds max
-    let attempts = 0
-
-    const poll = async (): Promise<void> => {
-      attempts++
-      try {
-        const res = await fetch(`/api/thumbnail_job/${jobId}`)
-        if (res.ok) {
-          const data = await res.json()
-          const status = data.data?.thumbnail_suggestion_status || ThumbnailSuggestionStatus.IDLE
-          const suggested = data.data?.suggested_thumbnails || []
-
-          if (status === ThumbnailSuggestionStatus.COMPLETED) {
-            setFormData((prev) => ({
-              ...prev,
-              suggestedThumbnails: suggested,
-              suggestionStatus: status,
-            }))
-            setIsGeneratingSuggestions(false)
-            return
-          }
-
-          if (status === ThumbnailSuggestionStatus.FAILED) {
-            setFormData((prev) => ({
-              ...prev,
-              suggestionStatus: status,
-            }))
-            setIsGeneratingSuggestions(false)
-            setSuggestionError('Generation failed. Please try again.')
-            return
-          }
-        }
-      } catch (error) {
-        console.error('Error polling for suggestions:', error)
-      }
-
-      if (attempts < maxAttempts) {
-        await new Promise((resolve) => setTimeout(resolve, 3000))
-        return poll()
-      } else {
-        setIsGeneratingSuggestions(false)
-        setSuggestionError('Generation timed out. Please try again.')
-      }
-    }
-
-    return poll()
-  }
-
   const handleGenerateSuggestions = async () => {
     if (!thumbnailId || isGeneratingSuggestions) return
 
@@ -253,7 +268,6 @@ export default function ThumbnailViewModal({ isOpen, onClose, thumbnailId, onSub
         suggestionStatus: ThumbnailSuggestionStatus.GENERATING,
       }))
 
-      // Poll for status updates
       pollForSuggestionStatus(thumbnailId)
     } catch (error) {
       console.error('Error generating suggestions:', error)

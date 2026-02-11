@@ -1,32 +1,47 @@
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseAdminClient } from "@/lib/supabaseAdmin";
 import { UserRole } from "@/types/roles";
 
-const getRole = async (email: string): Promise<UserRole> => {
-  // For E2E tests, guarantee the admin role for our dedicated test account
+interface UserIdentity {
+  role: UserRole;
+  googleId: string | null;
+}
+
+const getUserIdentity = async (email: string, googleId?: string): Promise<UserIdentity> => {
   if (process.env.NODE_ENV !== 'production' && email === 'e2e-admin@example.com') {
-    return UserRole.ADMIN;
+    return { role: UserRole.ADMIN, googleId: googleId ?? null };
   }
 
-  // First, try to get the existing user
+  const supabase = getSupabaseAdminClient();
+
   const { data: user, error } = await supabase
     .from('Users')
-    .select('role')
+    .select('role, google_id')
     .eq('email', email)
     .single();
 
-  // If user exists, return their role
   if (user && !error) {
-    return user.role as UserRole;
+    if (googleId && user.google_id !== googleId) {
+      const { error: updateError } = await supabase
+        .from('Users')
+        .update({ google_id: googleId })
+        .eq('email', email);
+
+      if (updateError) {
+        console.error('Error updating google_id:', updateError);
+      }
+      return { role: user.role as UserRole, googleId };
+    }
+    return { role: user.role as UserRole, googleId: user.google_id as string | null };
   }
 
-  // If user doesn't exist, create them with the basic USER role
   const { data: newUser, error: upsertError } = await supabase
     .from('Users')
     .upsert(
       {
         email,
+        google_id: googleId,
         role: UserRole.USER
       },
       {
@@ -39,11 +54,10 @@ const getRole = async (email: string): Promise<UserRole> => {
 
   if (upsertError) {
     console.error('Error upserting user:', upsertError);
-    // Return USER as fallback even if upsert fails
-    return UserRole.USER;
+    return { role: UserRole.USER, googleId: googleId ?? null };
   }
 
-  return newUser?.role as UserRole || UserRole.USER;
+  return { role: (newUser?.role as UserRole) || UserRole.USER, googleId: googleId ?? null };
 };
 
 export const authOptions: NextAuthOptions = {
@@ -60,6 +74,9 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       const effectiveRole = (token.proxyRole as UserRole) || (token.role as UserRole);
       const effectiveEmail = (token.proxyEmail as string) || (token.email as string | null);
+      const effectiveUserId = token.proxyEmail
+        ? ((token.proxyGoogleId as string | null | undefined) ?? null)
+        : (token.id as string);
       const effectiveName = (token.proxyName as string) || (session.user?.name ?? token.name ?? null);
       const effectiveImage = (token.proxyImage as string) || (session.user?.image ?? (token as { image?: string }).image ?? null);
 
@@ -67,7 +84,7 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
-          id: token.id,
+          id: effectiveUserId,
           role: effectiveRole,
           email: effectiveEmail,
           name: effectiveName,
@@ -76,6 +93,7 @@ export const authOptions: NextAuthOptions = {
         proxy: token.proxyEmail
           ? {
             email: token.proxyEmail as string,
+            googleId: (token.proxyGoogleId as string | null) || null,
             role: token.proxyRole as UserRole,
             name: (token.proxyName as string | undefined) || undefined,
             image: (token.proxyImage as string | undefined) || undefined
@@ -101,31 +119,46 @@ export const authOptions: NextAuthOptions = {
         token.originalImage = (token as { originalImage?: string | null }).originalImage || user.image;
       }
 
-      // Always fetch the role from the database to keep the JWT token updated
-      // This ensures middleware has access to the current role
       if (token.email) {
-        token.role = await getRole(token.email as string);
+        const identity = await getUserIdentity(token.email as string, token.id as string | undefined);
+        token.role = identity.role;
         token.originalRole = token.originalRole || token.role;
       }
 
       if (trigger === 'update' && session && 'proxyEmail' in session) {
         const requestedProxyEmail = (session as { proxyEmail?: string | null }).proxyEmail;
 
-        // Clear proxy when admin submits an empty value
         if (!requestedProxyEmail) {
           delete (token as { proxyEmail?: string | null }).proxyEmail;
           delete (token as { proxyRole?: string | null }).proxyRole;
+          delete (token as { proxyGoogleId?: string | null }).proxyGoogleId;
           delete (token as { proxyName?: string | null }).proxyName;
           delete (token as { proxyImage?: string | null }).proxyImage;
         } else if (token.role === UserRole.ADMIN) {
-          const proxyRole = await getRole(requestedProxyEmail);
+          const proxyIdentity = await getUserIdentity(requestedProxyEmail);
           (token as { proxyEmail?: string }).proxyEmail = requestedProxyEmail;
-          (token as { proxyRole?: UserRole }).proxyRole = proxyRole;
+          (token as { proxyRole?: UserRole }).proxyRole = proxyIdentity.role;
+          (token as { proxyGoogleId?: string | null }).proxyGoogleId = proxyIdentity.googleId;
           (token as { proxyName?: string }).proxyName = (session as { proxyName?: string }).proxyName || requestedProxyEmail;
           (token as { proxyImage?: string | null }).proxyImage = (session as { proxyImage?: string | null }).proxyImage || null;
         }
       }
       return token;
+    },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith('/')) {
+        return url === '/' ? `${baseUrl}/home` : `${baseUrl}${url}`;
+      }
+
+      if (url.startsWith(baseUrl)) {
+        const path = url.slice(baseUrl.length);
+        if (path === '' || path === '/') {
+          return `${baseUrl}/home`;
+        }
+        return url;
+      }
+
+      return `${baseUrl}/home`;
     },
   },
 };

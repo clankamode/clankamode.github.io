@@ -2,13 +2,14 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  testMatch: '**/*.spec.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3005',
     trace: 'on-first-retry',
   },
 
@@ -23,7 +24,7 @@ export default defineConfig({
     },
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/user.json',
       },
@@ -31,7 +32,7 @@ export default defineConfig({
     },
     {
       name: 'firefox',
-      use: { 
+      use: {
         ...devices['Desktop Firefox'],
         storageState: 'playwright/.auth/user.json',
       },
@@ -39,7 +40,7 @@ export default defineConfig({
     },
     {
       name: 'webkit',
-      use: { 
+      use: {
         ...devices['Desktop Safari'],
         storageState: 'playwright/.auth/user.json',
       },
@@ -47,7 +48,7 @@ export default defineConfig({
     },
     {
       name: 'chromium-admin',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/admin.json',
       },
@@ -55,15 +56,15 @@ export default defineConfig({
     },
     {
       name: 'chromium-unauth',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
       },
     },
   ],
 
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
+    command: 'npm run dev -- -p 3005',
+    url: 'http://localhost:3005',
     reuseExistingServer: !process.env.CI,
   },
 }); 

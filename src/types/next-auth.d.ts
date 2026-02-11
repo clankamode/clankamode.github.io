@@ -4,7 +4,7 @@ import NextAuth from "next-auth"
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string
+      id?: string | null
       name?: string | null
       email?: string | null
       image?: string | null
@@ -13,6 +13,7 @@ declare module "next-auth" {
 
     proxy?: {
       email: string | null
+      googleId?: string | null
       name?: string | null
       image?: string | null
       role: string | null
@@ -29,14 +30,14 @@ declare module "next-auth" {
   }
 
   interface User {
-    id: string
+    id?: string
     role: string
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
-    id: string
+    id?: string
     role: string
     email?: string | null
     name?: string | null
@@ -45,6 +46,7 @@ declare module "next-auth/jwt" {
     proxyName?: string | null
     proxyImage?: string | null
     proxyRole?: string | null
+    proxyGoogleId?: string | null
     originalEmail?: string | null
     originalName?: string | null
     originalImage?: string | null

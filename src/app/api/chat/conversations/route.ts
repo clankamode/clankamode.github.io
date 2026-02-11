@@ -1,24 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
+import { buildUserIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
 // GET /api/chat/conversations - List user's conversations
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req });
-    
-    if (!token?.email) {
+
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token.proxyEmail as string) || token.email;
 
     // Get all conversations for the user, ordered by most recent
     const { data: conversations, error } = await supabase
       .from('ChatConversations')
       .select('*')
-      .eq('email', userEmail)
+      .or(buildUserIdentityOrFilter(identity))
       .eq('is_archived', false)
       .order('updated_at', { ascending: false });
 
@@ -44,13 +43,11 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
-    
-    if (!token?.email) {
+
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token.proxyEmail as string) || token.email;
     const body = await req.json();
     const { title, model } = body;
 
@@ -65,7 +62,8 @@ export async function POST(req: NextRequest) {
     const { data: conversation, error } = await supabase
       .from('ChatConversations')
       .insert({
-        email: userEmail,
+        email: identity.email,
+        google_id: identity.googleId ?? null,
         title: title || null,
         model,
         is_pinned: false,
@@ -91,4 +89,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

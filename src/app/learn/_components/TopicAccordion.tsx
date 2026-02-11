@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { LearningTopicWithArticles } from '@/types/content';
 import ArticleCard from './ArticleCard';
 
@@ -9,15 +9,20 @@ interface TopicAccordionProps {
   topic: LearningTopicWithArticles;
   defaultOpen?: boolean;
   showProgress?: boolean;
+  bookmarkedIds?: string[] | null;
 }
 
 export default function TopicAccordion({
   pillarSlug,
   topic,
   defaultOpen = false,
-  showProgress = false
+  showProgress = false,
+  bookmarkedIds = null
 }: TopicAccordionProps) {
   const [open, setOpen] = useState(defaultOpen);
+  const bookmarkedSet = useMemo(() => (
+    bookmarkedIds ? new Set(bookmarkedIds) : null
+  ), [bookmarkedIds]);
 
   return (
     <div className="border-b border-border-subtle py-6">
@@ -47,6 +52,7 @@ export default function TopicAccordion({
               pillarSlug={pillarSlug}
               article={article}
               showProgress={showProgress}
+              initialBookmarked={bookmarkedSet ? bookmarkedSet.has(article.id) : undefined}
             />
           ))}
           {topic.articles.length === 0 && (

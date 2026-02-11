@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function ProgressPage() {
   const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
+  const userId = session?.user?.email;
   const user = session?.user;
   const accessGranted = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, user);
 
@@ -40,8 +40,8 @@ export default async function ProgressPage() {
   }
 
   const [summary, bookmarks] = await Promise.all([
-    getProgressSummary(userId),
-    getUserBookmarks(userId),
+    getProgressSummary(userId, session.user.id ?? undefined),
+    getUserBookmarks(userId, session.user.id ?? undefined),
   ]);
 
   return (

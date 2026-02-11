@@ -3,6 +3,7 @@ import { getToken } from 'next-auth/jwt';
 import { UserRole } from '@/types/roles';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { getArticleCompletionStatus, getProgressSummary } from '@/lib/progress';
+import { getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,18 +14,18 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = token.id as string | undefined;
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing user id' }, { status: 400 });
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
+      return NextResponse.json({ error: 'Missing user identity' }, { status: 400 });
     }
 
     const articleId = req.nextUrl.searchParams.get('articleId');
     if (articleId) {
-      const status = await getArticleCompletionStatus(userId, articleId);
+      const status = await getArticleCompletionStatus(identity.email, articleId, identity.googleId);
       return NextResponse.json(status);
     }
 
-    const summary = await getProgressSummary(userId);
+    const summary = await getProgressSummary(identity.email, identity.googleId);
     return NextResponse.json(summary);
   } catch (error) {
     console.error('Error in GET /api/progress:', error);

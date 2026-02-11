@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
+import { buildUserIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
 // GET /api/chat/conversations/[id] - Get conversation with messages
 export async function GET(
@@ -9,13 +10,11 @@ export async function GET(
 ) {
   try {
     const token = await getToken({ req });
-    
-    if (!token?.email) {
+
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
 
     // Get the conversation
@@ -23,7 +22,7 @@ export async function GET(
       .from('ChatConversations')
       .select('*')
       .eq('id', conversationId)
-      .eq('email', userEmail)
+      .or(buildUserIdentityOrFilter(identity))
       .single();
 
     if (conversationError) {
@@ -82,13 +81,11 @@ export async function PATCH(
 ) {
   try {
     const token = await getToken({ req });
-    
-    if (!token?.email) {
+
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
     const body = await req.json();
     const { title } = body;
@@ -108,7 +105,7 @@ export async function PATCH(
         updated_at: new Date().toISOString(),
       })
       .eq('id', conversationId)
-      .eq('email', userEmail)
+      .or(buildUserIdentityOrFilter(identity))
       .select()
       .single();
 
@@ -143,13 +140,11 @@ export async function DELETE(
 ) {
   try {
     const token = await getToken({ req });
-    
-    if (!token?.email) {
+
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
 
     // Delete the conversation (messages will cascade delete)
@@ -157,7 +152,7 @@ export async function DELETE(
       .from('ChatConversations')
       .delete()
       .eq('id', conversationId)
-      .eq('email', userEmail);
+      .or(buildUserIdentityOrFilter(identity));
 
     if (error) {
       console.error('Error deleting conversation:', error);
@@ -176,4 +171,3 @@ export async function DELETE(
     );
   }
 }
-

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { getLearningPillarBySlug, getLearningPillarTree } from '@/lib/content';
+import { getUserBookmarks } from '@/lib/progress';
 import { UserRole, hasRole } from '@/types/roles';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import MobileSidebarToggle from '../_components/MobileSidebarToggle';
@@ -19,7 +20,6 @@ export default async function PillarPage({ params }: PillarPageProps) {
   const userRole = session?.user?.role as UserRole | undefined;
   const canViewDrafts = userRole ? hasRole(userRole, UserRole.EDITOR) : false;
 
-  // Use effectiveRole (proxy role) if available, otherwise session role
   const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
 
   const { pillar: pillarSlug } = await params;
@@ -29,6 +29,16 @@ export default async function PillarPage({ params }: PillarPageProps) {
   }
 
   const topics = await getLearningPillarTree(pillar.id, canViewDrafts);
+  let bookmarkedIds: string[] | null = null;
+
+  if (showProgress && session?.user?.email) {
+    try {
+      const bookmarks = await getUserBookmarks(session.user.email, session.user.id ?? undefined);
+      bookmarkedIds = bookmarks.map((bookmark) => bookmark.articleId);
+    } catch {
+      bookmarkedIds = null;
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-24">
@@ -73,6 +83,7 @@ export default async function PillarPage({ params }: PillarPageProps) {
                   topic={topic}
                   defaultOpen={index === 0}
                   showProgress={showProgress}
+                  bookmarkedIds={bookmarkedIds}
                 />
               ))}
             </div>

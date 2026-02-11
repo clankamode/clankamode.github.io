@@ -5,7 +5,6 @@ import { signIn, useSession } from 'next-auth/react';
 import { UserRole, hasRole } from '@/types/roles';
 import { useRouter } from 'next/navigation';
 
-// Extract YouTube video ID from various URL formats
 const extractYouTubeVideoId = (url: string): string | null => {
   const patterns = [
     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
@@ -20,35 +19,69 @@ const extractYouTubeVideoId = (url: string): string | null => {
   return null;
 };
 
-// Get YouTube thumbnail URL
 const getYouTubeThumbnail = (videoId: string): string => {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 };
 
-// Video Answer Preview - inline thumbnail for answered questions
+const oEmbedTitleCache = new Map<string, string>();
+const oEmbedInFlightCache = new Map<string, Promise<string | null>>();
+
+async function fetchYouTubeTitle(videoUrl: string): Promise<string | null> {
+  const cached = oEmbedTitleCache.get(videoUrl);
+  if (cached) return cached;
+
+  const inFlight = oEmbedInFlightCache.get(videoUrl);
+  if (inFlight) return inFlight;
+
+  const request = (async () => {
+    try {
+      const response = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`);
+      if (!response.ok) return null;
+      const data = await response.json();
+      const title = typeof data.title === 'string' ? data.title : null;
+      if (title) {
+        oEmbedTitleCache.set(videoUrl, title);
+      }
+      return title;
+    } catch {
+      return null;
+    } finally {
+      oEmbedInFlightCache.delete(videoUrl);
+    }
+  })();
+
+  oEmbedInFlightCache.set(videoUrl, request);
+  return request;
+}
+
 const VideoAnswerPreview = ({ videoId, videoUrl }: { videoId: string; videoUrl: string }) => {
-  const [videoTitle, setVideoTitle] = useState<string | null>(null);
-  const [isLoadingTitle, setIsLoadingTitle] = useState(true);
+  const [videoTitle, setVideoTitle] = useState<string | null>(() => oEmbedTitleCache.get(videoUrl) || null);
+  const [isLoadingTitle, setIsLoadingTitle] = useState(false);
+  const [shouldLoadTitle, setShouldLoadTitle] = useState(false);
   const thumbnailUrl = getYouTubeThumbnail(videoId);
 
   useEffect(() => {
-    // Fetch video title from YouTube oEmbed API (no API key required)
-    const fetchTitle = async () => {
-      try {
-        const response = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`);
-        if (response.ok) {
-          const data = await response.json();
-          setVideoTitle(data.title);
-        }
-      } catch (error) {
-        console.error('Error fetching video title:', error);
-      } finally {
-        setIsLoadingTitle(false);
-      }
-    };
+    if (!shouldLoadTitle || videoTitle) return;
 
-    fetchTitle();
-  }, [videoUrl]);
+    let isActive = true;
+    setIsLoadingTitle(true);
+
+    fetchYouTubeTitle(videoUrl)
+      .then((title) => {
+        if (isActive && title) {
+          setVideoTitle(title);
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLoadingTitle(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [shouldLoadTitle, videoTitle, videoUrl]);
 
   return (
     <a
@@ -56,6 +89,9 @@ const VideoAnswerPreview = ({ videoId, videoUrl }: { videoId: string; videoUrl: 
       target="_blank"
       rel="noopener noreferrer"
       className="group block"
+      onMouseEnter={() => setShouldLoadTitle(true)}
+      onFocus={() => setShouldLoadTitle(true)}
+      onTouchStart={() => setShouldLoadTitle(true)}
     >
       <div className="frame relative w-full max-w-md aspect-video rounded-lg overflow-hidden bg-surface-interactive transition-all">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -123,7 +159,6 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
   const isAdmin = hasRole(originalRole, UserRole.ADMIN);
 
   const filteredAndSortedQuestions = useMemo(() => {
-    // Filter by active tab
     const filtered = questions.filter((question) => {
       if (initialTab === 'answered') {
         return question.isArchived;
@@ -132,7 +167,6 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
       }
     });
 
-    // Sort by vote count (descending), then by creation date (ascending)
     return filtered.sort((a, b) => {
       if (b.voteCount !== a.voteCount) {
         return b.voteCount - a.voteCount;
@@ -157,7 +191,6 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
     }
   }, []);
 
-  // Fetch user-specific vote data on mount
   useEffect(() => {
     if (isAuthenticated) {
       fetchQuestions();
@@ -170,7 +203,6 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
       return;
     }
 
-    // Prevent double-clicks by checking if this question is already being voted on
     if (votingQuestionId === questionId) {
       return;
     }
@@ -249,14 +281,12 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
         )
       );
 
-      // Clear the input for this question
       setVideoUrlInputs((prev) => {
         const updated = { ...prev };
         delete updated[questionId];
         return updated;
       });
 
-      // Refresh to update the list
       router.refresh();
     } catch (err) {
       setError((err as Error).message);
@@ -377,4 +407,3 @@ export default function QuestionsList({ initialQuestions, initialTab }: Question
     </>
   );
 }
-

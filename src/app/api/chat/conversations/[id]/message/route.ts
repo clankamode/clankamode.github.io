@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
+import { buildUserIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
 // POST /api/chat/conversations/[id]/message - Save a message to conversation
 export async function POST(
@@ -10,12 +11,10 @@ export async function POST(
   try {
     const token = await getToken({ req });
     
-    if (!token?.email) {
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token.proxyEmail as string) || token.email;
     const { id: conversationId } = await params;
     const body = await req.json();
     const { role, content, token_count, attachments, generatedImages } = body;
@@ -39,7 +38,7 @@ export async function POST(
       .from('ChatConversations')
       .select('id')
       .eq('id', conversationId)
-      .eq('email', userEmail)
+      .or(buildUserIdentityOrFilter(identity))
       .single();
 
     if (conversationError) {
@@ -101,4 +100,3 @@ export async function POST(
     );
   }
 }
-

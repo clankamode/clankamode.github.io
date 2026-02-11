@@ -13,12 +13,13 @@ export default async function LearnPage() {
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role as UserRole | undefined;
   const canViewDrafts = userRole ? hasRole(userRole, UserRole.EDITOR) : false;
-  const userId = session?.user?.id;
+  const userEmail = session?.user?.email ?? undefined;
+  const userGoogleId = session?.user?.id ?? undefined;
   const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
 
   const [library, progressSummary] = await Promise.all([
     getLearningLibrary(canViewDrafts),
-    showProgress && userId ? getProgressSummary(userId) : null,
+    showProgress && userEmail ? getProgressSummary(userEmail, userGoogleId) : null,
   ]);
 
   const pillarCards = library.map((pillar) => {
@@ -41,7 +42,7 @@ export default async function LearnPage() {
           <p className="mt-6 text-lg text-text-secondary leading-relaxed">
             Four pillars. Clear progression. Everything you need to build the skills that compound.
           </p>
-          {showProgress && userId && (
+          {showProgress && userEmail && (
             <div className="mt-8">
               <Link
                 href="/learn/progress"

@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
+import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
+import { buildIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
+import { isMissingGoogleIdColumn } from '@/lib/supabase-compat';
+
+
 
 export async function POST(
   req: NextRequest,
@@ -8,11 +13,8 @@ export async function POST(
 ) {
   try {
     const token = await getToken({ req });
-
-    // Use proxyEmail if admin is proxying, otherwise use their own email
-    const userEmail = (token?.proxyEmail as string) || token?.email;
-
-    if (!userEmail) {
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -22,13 +24,24 @@ export async function POST(
       return NextResponse.json({ error: 'Question ID is required' }, { status: 400 });
     }
 
+    const adminClient = getSupabaseAdminClient();
+
     // First, check if vote exists
-    const { data: existingVote, error: fetchVoteError } = await supabase
+    let { data: existingVotes, error: fetchVoteError } = await supabase
       .from('LiveQuestionVotes')
       .select('id')
       .eq('question_id', questionId)
-      .eq('user_email', userEmail)
-      .maybeSingle();
+      .or(buildIdentityOrFilter(identity, 'user_email'))
+      .limit(10);
+
+    if (fetchVoteError && isMissingGoogleIdColumn(fetchVoteError)) {
+      ({ data: existingVotes, error: fetchVoteError } = await supabase
+        .from('LiveQuestionVotes')
+        .select('id')
+        .eq('question_id', questionId)
+        .eq('user_email', identity.email)
+        .limit(10));
+    }
 
     if (fetchVoteError) {
       console.error('Error checking existing vote:', fetchVoteError);
@@ -37,12 +50,21 @@ export async function POST(
 
     let hasVoted: boolean;
 
-    if (existingVote) {
-      // Remove existing vote
-      const { error: deleteError } = await supabase
+    if ((existingVotes?.length || 0) > 0) {
+      // Remove existing vote(s)
+      let { error: deleteError } = await adminClient
         .from('LiveQuestionVotes')
         .delete()
-        .eq('id', existingVote.id);
+        .eq('question_id', questionId)
+        .or(buildIdentityOrFilter(identity, 'user_email'));
+
+      if (deleteError && isMissingGoogleIdColumn(deleteError)) {
+        ({ error: deleteError } = await adminClient
+          .from('LiveQuestionVotes')
+          .delete()
+          .eq('question_id', questionId)
+          .eq('user_email', identity.email));
+      }
 
       if (deleteError) {
         console.error('Error removing vote:', deleteError);
@@ -51,12 +73,22 @@ export async function POST(
       hasVoted = false;
     } else {
       // Try to insert new vote
-      const { error: insertError } = await supabase
+      let { error: insertError } = await adminClient
         .from('LiveQuestionVotes')
         .insert({
           question_id: questionId,
-          user_email: userEmail,
+          user_email: identity.email,
+          google_id: identity.googleId ?? null,
         });
+
+      if (insertError && isMissingGoogleIdColumn(insertError)) {
+        ({ error: insertError } = await adminClient
+          .from('LiveQuestionVotes')
+          .insert({
+            question_id: questionId,
+            user_email: identity.email,
+          }));
+      }
 
       if (insertError) {
         // Check if it's a unique constraint violation (race condition)

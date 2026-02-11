@@ -35,7 +35,13 @@ export async function GET(
   request: Request,
   { params }: PathParams
 ): Promise<NextResponse> {
-  // ADMIN and EDITOR ROLES ONLY
+  const session = await getServerSession(authOptions);
+  const userRole = session?.user?.role as UserRole | undefined;
+
+  if (!userRole || !hasRole(userRole, UserRole.EDITOR)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { id } = await params
 
   const { data, error } = await supabase
@@ -55,22 +61,19 @@ export async function PATCH(
 ) {
   const { id } = await params
 
-  // ADMIN and EDITOR ROLES ONLY
-  
+  const session = await getServerSession(authOptions);
+  const userRole = session?.user?.role as UserRole | undefined;
+
+  if (!userRole || !hasRole(userRole, UserRole.EDITOR)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const body = await request.json()
   const { thumbnail, notes, status, favorite } = body;
 
   const now = new Date().toISOString();
 
-  // If favorite is provided, update the favorite field (ADMIN ONLY)
   if (favorite !== undefined) {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.role) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const userRole = session.user.role as UserRole;
     if (!hasRole(userRole, UserRole.ADMIN)) {
       return NextResponse.json({ error: 'Forbidden - Admin access required to favorite thumbnails' }, { status: 403 });
     }
@@ -87,9 +90,7 @@ export async function PATCH(
     })
   }
 
-  // If status is provided, only update the status
   if (status !== undefined) {
-    // Validate that the status is a valid ThumbnailJobStatus
     if (!Object.values(ThumbnailJobStatus).includes(status)) {
       return NextResponse.json({
         error: 'Invalid status value',
@@ -113,7 +114,7 @@ export async function PATCH(
       const message = previousStatus && previousStatus !== status
         ? `Status changed from ${previousStatus} to ${status}`
         : `Status set to ${status}`;
-      await logThumbnailActivity(id, 'STATUS_CHANGE', message);
+      await logThumbnailActivity(id, 'STATUS_CHANGE', message, session?.user?.email || 'system');
     }
 
     return NextResponse.json({
@@ -122,7 +123,6 @@ export async function PATCH(
     })
   }
 
-  // Otherwise, handle the normal thumbnail submission case
   if (!thumbnail || !notes) {
     return NextResponse.json({
       error: 'Thumbnail and Notes are required',
@@ -151,7 +151,8 @@ export async function PATCH(
     await logThumbnailActivity(
       id,
       hadThumbnail ? 'THUMBNAIL_UPDATED' : 'THUMBNAIL_UPLOADED',
-      message
+      message,
+      session?.user?.email || 'system'
     );
   }
 
@@ -167,8 +168,13 @@ export async function DELETE(
 ) {
   const { id } = await params
 
-  // ADMIN and EDITOR ROLES ONLY
-  // Soft delete by setting deleted_at timestamp
+  const session = await getServerSession(authOptions);
+  const userRole = session?.user?.role as UserRole | undefined;
+
+  if (!userRole || !hasRole(userRole, UserRole.EDITOR)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const now = new Date().toISOString();
   const { data, error } = await supabase
     .from('ThumbnailJob')
@@ -177,7 +183,7 @@ export async function DELETE(
     .select();
 
   if (!error) {
-    await logThumbnailActivity(id, 'STATUS_CHANGE', 'Thumbnail job deleted');
+    await logThumbnailActivity(id, 'STATUS_CHANGE', 'Thumbnail job deleted', session?.user?.email || 'system');
   }
 
   return NextResponse.json({
