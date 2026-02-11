@@ -3,10 +3,6 @@ import OpenAI from 'openai';
 import type { FileSearchTool } from 'openai/resources/responses/responses';
 import { supabase } from '@/lib/supabase';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
 export const runtime = 'edge';
 
 interface MessageAttachment {
@@ -50,6 +46,14 @@ type TransformedMessage =
 
 export async function POST(req: NextRequest) {
     try {
+        if (!process.env.OPENAI_API_KEY) {
+            return new Response(
+                JSON.stringify({ error: 'OpenAI API key not configured' }),
+                { status: 500, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
         const { messages, model = 'gpt-4o-mini' } = await req.json();
 
         if (!messages || !Array.isArray(messages)) {

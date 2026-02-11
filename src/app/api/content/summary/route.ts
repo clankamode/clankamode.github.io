@@ -3,10 +3,6 @@ import OpenAI from 'openai';
 import { UserRole } from '@/types/roles';
 import { requireAuth } from '@/lib/auth-helpers';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
 interface OpenAIResponseContent {
     type?: string;
     text?: string;
@@ -40,6 +36,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ summary: 'OpenAI API key not configured' }, { status: 500 });
         }
 
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
         const prompt = currentSummary
             ? `Rewrite this card teaser for the following article. Keep it under 120 characters, hook-focused, not a summary. Do not use em-dashes (—). Current teaser: "${currentSummary}"`
             : 'Write a short card teaser (under 120 characters) that hooks readers into clicking this article. Focus on the key insight or benefit, not a summary. Do not start with "Learn", "Discover", or "This article". Do not use em-dashes (—).';
