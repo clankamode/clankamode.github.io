@@ -163,6 +163,9 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
                         {children}
                       </td>
                     ),
+                    hr: () => (
+                      <hr className="mt-8 mb-3 border-border-subtle" />
+                    ),
                   }}
                 >
                   {block.content}
@@ -180,7 +183,11 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
           case 'diagram':
             return <DiagramBlock key={block.id} block={block} />;
           case 'divider':
-            return <hr key={block.id} className="border-border-subtle" />;
+            return (
+              <div key={block.id} className="mt-8 mb-3">
+                <hr className="border-border-subtle" />
+              </div>
+            );
           default:
             return null;
         }
