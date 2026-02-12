@@ -35,5 +35,8 @@ export default async function HomePage({
         : resolvedSearchParams?.track;
     const sessionState = await getSessionState(authSession.user.email, trackParam, authSession.user.id ?? undefined);
 
-    return <HomeClient sessionState={sessionState} />;
+    const { getLastInternalization } = await import('@/app/actions/fingerprint');
+    const primer = await getLastInternalization(authSession.user.email, authSession.user.id ?? undefined);
+
+    return <HomeClient sessionState={sessionState} primer={primer} />;
 }

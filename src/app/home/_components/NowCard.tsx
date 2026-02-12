@@ -6,13 +6,18 @@ import type { SessionState } from '@/lib/progress';
 import { useSession as useSessionContext, type SessionScope } from '@/contexts/SessionContext';
 import { logTelemetryEvent } from '@/lib/telemetry';
 
+
 interface NowCardProps {
     session: SessionState;
     userId?: string;
     googleId?: string | null;
+    primer?: {
+        label: string;
+        relativeTime: string;
+    } | null;
 }
 
-export default function NowCard({ session, userId, googleId }: NowCardProps) {
+export default function NowCard({ session, userId, googleId, primer }: NowCardProps) {
     const router = useRouter();
     const { commitSession } = useSessionContext();
     const { mode, now, upNext, track } = session;
@@ -182,50 +187,91 @@ export default function NowCard({ session, userId, googleId }: NowCardProps) {
     }
 
     return (
-        <section className="relative">
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary leading-tight tracking-tight">
-                {assertion.title}
-            </h1>
+        <section className="relative group perspective-1000">
+            <div className="relative overflow-hidden rounded-3xl bg-surface-interactive border border-border-subtle p-8 md:p-10 transition-all duration-500 hover:border-border-interactive hover:shadow-lift">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-accent-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-            <h3 className="mt-4 text-lg md:text-xl font-medium text-text-secondary leading-relaxed max-w-lg">
-                {assertion.reason}
-            </h3>
+                <div className="relative z-10 flex flex-col items-start gap-6">
+                    <div>
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="inline-flex items-center rounded-full bg-accent-primary/10 px-3 py-1 text-xs font-bold text-accent-primary ring-1 ring-inset ring-accent-primary/20 tracking-wider uppercase">
+                                {assertion.itemCount === 1 && assertion.trackName === 'Foundations' ? 'Recommended Entry' : 'Up Next'}
+                            </span>
+                            {primer && (
+                                <span className="text-[10px] uppercase tracking-widest text-text-muted flex items-center gap-1.5 font-medium animate-in fade-in slide-in-from-left-2 duration-700 delay-100">
+                                    <span className="w-1 h-1 rounded-full bg-text-muted" />
+                                    Last locked in: <span className="text-text-secondary border-b border-text-secondary/20">{primer.label}</span>
+                                </span>
+                            )}
+                        </div>
 
-            <div className="mt-6 flex items-center gap-4 text-sm text-text-muted">
-                <span className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent-primary/60" />
-                    {assertion.estMinutes} min
-                </span>
-                <span>·</span>
-                <span>{assertion.trackName}</span>
-                {isFirstTime && (
-                    <span className="px-1.5 py-0.5 rounded bg-accent-primary/10 text-accent-primary text-[10px] uppercase tracking-wider font-bold">
-                        Recommended
-                    </span>
-                )}
+                        <h1 className="text-4xl md:text-5xl font-bold text-text-primary leading-[1.1] tracking-tight text-balance">
+                            {assertion.title}
+                        </h1>
+
+                        <h3 className="mt-4 text-lg md:text-xl font-medium text-text-secondary leading-relaxed max-w-lg text-balance">
+                            {assertion.reason}
+                        </h3>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm font-medium text-text-muted mt-2">
+                        <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-dense border border-border-subtle">
+                            <span className="w-1.5 h-1.5 rounded-full bg-text-secondary" />
+                            {assertion.estMinutes} min
+                        </span>
+                        <span>{assertion.trackName}</span>
+                    </div>
+
+                    <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 w-full">
+                        <button
+                            onClick={() => handleStartRef.current()}
+                            disabled={isStarting}
+                            data-session-cta
+                            className="
+                                relative overflow-hidden group/btn inline-flex items-center justify-center rounded-full 
+                                bg-text-primary px-10 py-5 text-lg font-bold text-surface-ambient tracking-wide
+                                shadow-[0_4px_20px_rgba(0,0,0,0.1)] 
+                                transition-all duration-300 
+                                hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-text-primary/95
+                                active:scale-[0.98] active:translate-y-0.5
+                                disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100
+                                focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-4 focus:ring-offset-surface-interactive
+                            "
+                        >
+                            <span className="relative z-10 flex items-center gap-3">
+                                {isStarting ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-1 h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Initiating...
+                                    </>
+                                ) : (
+                                    <>
+                                        Start Session
+                                        <svg className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                        </svg>
+                                    </>
+                                )}
+                            </span>
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                        </button>
+
+                        <button
+                            onClick={() => setIsPicking(true)}
+                            className="text-sm font-semibold text-text-muted hover:text-text-primary transition-colors py-2 border-b border-transparent hover:border-text-primary/20"
+                        >
+                            Change track...
+                        </button>
+                    </div>
+                </div>
+
+                <div className="absolute bottom-6 right-8 text-[10px] font-mono text-text-muted opacity-40">
+                    PRESS <span className="border border-border-muted px-1 rounded mx-1">↵</span> TO START
+                </div>
             </div>
-
-            <div className="mt-10 flex flex-col items-start gap-4">
-                <button
-                    onClick={() => handleStartRef.current()}
-                    disabled={isStarting}
-                    data-session-cta
-                    className="inline-flex items-center justify-center rounded-full bg-white px-12 py-5 text-lg font-bold text-black shadow-[0_10px_30px_rgba(255,255,255,0.15)] transition-all hover:bg-white/95 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-background"
-                >
-                    Start session
-                </button>
-
-                <button
-                    onClick={() => setIsPicking(true)}
-                    className="text-sm text-text-muted hover:text-text-primary transition-colors px-4 py-2 -ml-4"
-                >
-                    Change track...
-                </button>
-            </div>
-
-            <p className="mt-8 text-sm text-text-muted">
-                Press <kbd className="px-1.5 py-0.5 rounded bg-white/5 font-mono text-xs">Enter</kbd> to start
-            </p>
         </section>
     );
 }

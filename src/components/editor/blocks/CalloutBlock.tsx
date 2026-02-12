@@ -31,7 +31,7 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
   const isCollapsible = block.collapsible && !editable;
   const [open, setOpen] = useState(true);
 
-  const tone = toneStyles[block.tone];
+  const tone = toneStyles[block.tone] ?? toneStyles.info;
 
   const getText = (children: ReactNode) =>
     Array.isArray(children) ? children.join('') : String(children ?? '');
@@ -41,7 +41,7 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
 
   return (
     <div className={`rounded-xl p-4 w-full ${editable ? '' : `frame bg-surface-dense ${tone.accent}`}`}>
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
         {editable ? (
           <select
             className="rounded-lg border border-transparent bg-transparent px-3 py-2 text-xs uppercase tracking-[0.2em] text-text-secondary transition focus-visible:text-text-primary focus-visible:outline-none"

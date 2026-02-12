@@ -3,7 +3,6 @@
 import { useChromeMode } from '@/hooks/useChromeMode';
 import SessionReaderShell from '@/components/session/SessionReaderShell';
 import SessionCommitControl from '@/components/session/SessionCommitControl';
-import SessionChecklist from '@/components/session/SessionChecklist';
 import MobileSidebarToggle from './MobileSidebarToggle';
 
 interface ArticleLayoutSwitcherProps {
@@ -13,7 +12,7 @@ interface ArticleLayoutSwitcherProps {
     breadcrumbs: React.ReactNode;
     standardFooter: React.ReactNode;
 
-    pillarName: string; // for mobile toggle
+    pillarName: string;
 }
 
 export default function ArticleLayoutSwitcher({
@@ -29,11 +28,7 @@ export default function ArticleLayoutSwitcher({
 
     if (isExecution) {
         return (
-            <SessionReaderShell
-                leftDrawerContent={<SessionChecklist />}
-                tableOfContents={tableOfContents} // Right drawer remains TOC ("On this page")
-            >
-                {/* Session Layout: Content + Commit Control */}
+            <SessionReaderShell tableOfContents={tableOfContents}>
                 {articleContent}
 
                 <SessionCommitControl />
@@ -47,14 +42,12 @@ export default function ArticleLayoutSwitcher({
             data-current-mode={mode}
         >
             <div className="grid gap-16 lg:grid-cols-[240px_minmax(0,1fr)_240px]">
-                {/* Left Sidebar */}
                 <aside className="hidden lg:block">
                     <div className="sticky top-28">
                         {pillarSidebar}
                     </div>
                 </aside>
 
-                {/* Center Content */}
                 <div className="min-w-0">
                     <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                         {breadcrumbs}
@@ -68,7 +61,6 @@ export default function ArticleLayoutSwitcher({
                     {standardFooter}
                 </div>
 
-                {/* Right Sidebar */}
                 <aside className="hidden lg:block">
                     <div className="sticky top-28">
                         {tableOfContents}

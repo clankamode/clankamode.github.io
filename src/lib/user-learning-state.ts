@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import type { UserLearningState } from '@/types/micro';
+import { buildIdentityOrFilter, type EffectiveIdentity } from '@/lib/auth-identity';
 
 export interface UserLearningStateResult {
     userState: UserLearningState;
@@ -69,10 +70,11 @@ async function fetchUserConceptStats(
     trackSlug: string,
     googleId?: string
 ): Promise<ConceptStat[]> {
+    const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
     const { data, error } = await supabase
         .from('UserConceptStats')
         .select('concept_slug, exposures, internalized_count, last_seen_at')
-        .or(`email.eq.${userId}${googleId ? `,google_id.eq.${googleId}` : ''}`)
+        .or(buildIdentityOrFilter(identity))
         .eq('track_slug', trackSlug);
 
     if (error || !data) {
@@ -94,10 +96,11 @@ async function fetchLastInternalization(
     trackSlug: string,
     googleId?: string
 ): Promise<InternalizationRecord | null> {
+    const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
     const { data, error } = await supabase
         .from('UserInternalizations')
         .select('concept_slug, picked, created_at')
-        .or(`email.eq.${userId}${googleId ? `,google_id.eq.${googleId}` : ''}`)
+        .or(buildIdentityOrFilter(identity))
         .eq('track_slug', trackSlug)
         .order('created_at', { ascending: false })
         .limit(1)

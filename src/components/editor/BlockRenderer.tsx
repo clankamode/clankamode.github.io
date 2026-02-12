@@ -102,7 +102,7 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
                     blockquote: ({ children, ...props }) => (
                       <blockquote
                         {...props}
-                        className="mt-6 border-l-2 border-border-interactive pl-4 text-text-secondary italic"
+                        className="mt-6 border-l-2 border-border-interactive pl-4 text-text-secondary italic [&_blockquote]:mt-3"
                       >
                         {children}
                       </blockquote>
@@ -129,6 +129,40 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
                         </a>
                       );
                     },
+                    table: ({ children, ...props }) => (
+                      <div className="my-6 w-full overflow-hidden rounded-lg border border-border-subtle bg-surface-dense">
+                        <div className="overflow-x-auto">
+                          <table {...props} className="w-full text-left text-sm">
+                            {children}
+                          </table>
+                        </div>
+                      </div>
+                    ),
+                    thead: ({ children, ...props }) => (
+                      <thead {...props} className="border-b border-border-subtle bg-surface-interactive/50">
+                        {children}
+                      </thead>
+                    ),
+                    tbody: ({ children, ...props }) => (
+                      <tbody {...props} className="divide-y divide-border-subtle/50">
+                        {children}
+                      </tbody>
+                    ),
+                    tr: ({ children, ...props }) => (
+                      <tr {...props} className="transition-colors hover:bg-white/5">
+                        {children}
+                      </tr>
+                    ),
+                    th: ({ children, ...props }) => (
+                      <th {...props} className="px-4 py-3 font-medium text-text-primary">
+                        {children}
+                      </th>
+                    ),
+                    td: ({ children, ...props }) => (
+                      <td {...props} className="px-4 py-3 text-text-secondary">
+                        {children}
+                      </td>
+                    ),
                   }}
                 >
                   {block.content}

@@ -3,11 +3,10 @@
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
 
 interface SessionHUDProps {
-    onToggleChecklist: () => void;
     onToggleTOC: () => void;
 }
 
-export default function SessionHUD({ onToggleChecklist, onToggleTOC }: SessionHUDProps) {
+export default function SessionHUD({ onToggleTOC }: SessionHUDProps) {
     const { state, abandonSession } = useSessionContext();
 
     if (state.phase !== 'execution' || !state.scope || !state.execution) {
@@ -20,14 +19,7 @@ export default function SessionHUD({ onToggleChecklist, onToggleTOC }: SessionHU
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/[0.05]">
             <div className="max-w-screen-xl mx-auto px-6 py-3 flex items-center justify-between">
-                <button
-                    onClick={onToggleChecklist}
-                    className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
-                    title="Toggle Session Plan (L)"
-                >
-                    <svg className="w-4 h-4 text-text-muted group-hover:text-accent-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-                    </svg>
+                <div className="flex items-center gap-2">
                     <span className="text-xs font-medium uppercase tracking-[0.15em] text-accent-primary">
                         Session
                     </span>
@@ -35,7 +27,7 @@ export default function SessionHUD({ onToggleChecklist, onToggleTOC }: SessionHU
                     <span className="text-sm text-text-secondary">
                         {track.name}
                     </span>
-                </button>
+                </div>
 
                 <div className="flex items-center gap-2">
                     {items.map((item, i) => (

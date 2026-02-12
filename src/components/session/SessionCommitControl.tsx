@@ -27,7 +27,6 @@ export default function SessionCommitControl({
         if (isCommitting) return;
 
         setIsCommitting(true);
-        await new Promise(resolve => setTimeout(resolve, 600));
 
         if (currentItem?.articleId) {
             try {
@@ -38,7 +37,7 @@ export default function SessionCommitControl({
                     },
                     body: JSON.stringify({ articleId: currentItem.articleId }),
                 });
-            } catch {}
+            } catch { }
         }
 
         if (onComplete) onComplete();
@@ -53,17 +52,6 @@ export default function SessionCommitControl({
 
     return (
         <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-12 pb-12 z-20 flex flex-col items-center justify-center pointer-events-none">
-            <div className={`mb-4 text-xs font-medium text-text-muted transition-opacity duration-300 ${isCommitting ? 'opacity-0' : 'opacity-100'}`}>
-                <span className="uppercase tracking-wider">Step {currentIndex + 1} of {items.length}</span>
-                {nextItem && (
-                    <>
-                        <span className="mx-2">·</span>
-                        <span className="text-text-secondary">Next: {nextItem.title}</span>
-                        <span className="ml-1 opacity-50">({nextItem.estMinutes || 5}m)</span>
-                    </>
-                )}
-            </div>
-
             <button
                 onClick={handleCommit}
                 disabled={isCommitting}

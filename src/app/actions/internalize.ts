@@ -2,7 +2,6 @@
 
 import { supabase } from '@/lib/supabase';
 import { type Internalization } from '@/lib/artifacts';
-import { buildUserIdentityOrFilter } from '@/lib/auth-identity';
 
 export async function saveInternalization(artifact: Internalization, userId?: string, trackSlug?: string, googleId?: string) {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -11,8 +10,6 @@ export async function saveInternalization(artifact: Internalization, userId?: st
     if (!userId) {
         return { success: false, error: 'Missing user identity' };
     }
-
-    const identity = googleId ? { email: userId, googleId } : { email: userId };
 
     const { error } = await supabase
         .from('UserInternalizations')
@@ -33,36 +30,26 @@ export async function saveInternalization(artifact: Internalization, userId?: st
     }
 
     if (artifact.concept && trackSlug) {
-        const { data: existingStats } = await supabase
-            .from('UserConceptStats')
-            .select('internalized_count')
-            .or(buildUserIdentityOrFilter(identity))
-            .eq('track_slug', trackSlug)
-            .eq('concept_slug', artifact.concept)
-            .maybeSingle();
+        const upsertRow = {
+            email: userId,
+            google_id: googleId ?? null,
+            track_slug: trackSlug,
+            concept_slug: artifact.concept,
+            exposures: 0,
+            internalized_count: 1,
+            last_seen_at: new Date().toISOString()
+        };
 
-        if (existingStats) {
+        const { error: rpcError } = await supabase.rpc('increment_concept_internalization', {
+            p_email: userId,
+            p_track_slug: trackSlug,
+            p_concept_slug: artifact.concept,
+        });
+
+        if (rpcError) {
             await supabase
                 .from('UserConceptStats')
-                .update({
-                    internalized_count: (existingStats.internalized_count || 0) + 1,
-                    last_seen_at: new Date().toISOString()
-                })
-                .or(buildUserIdentityOrFilter(identity))
-                .eq('track_slug', trackSlug)
-                .eq('concept_slug', artifact.concept);
-        } else {
-            await supabase
-                .from('UserConceptStats')
-                .insert({
-                    email: userId,
-                    google_id: googleId,
-                    track_slug: trackSlug,
-                    concept_slug: artifact.concept,
-                    exposures: 0,
-                    internalized_count: 1,
-                    last_seen_at: new Date().toISOString()
-                });
+                .upsert(upsertRow, { onConflict: 'email,track_slug,concept_slug' });
         }
     }
 

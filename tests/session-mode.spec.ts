@@ -46,13 +46,7 @@ test.describe('Session Mode Chrome Governor', () => {
         await expect(page.locator('aside.hidden.lg\\:block')).toHaveCount(0);
 
         // 4. Verify Drawer Interaction
-        // The drawer has data-drawer="pillar"
-        const pillarDrawer = page.locator('[data-drawer="pillar"]');
-
-        // Press 'l' to open pillar drawer
-        await page.keyboard.press('l');
-        await expect(pillarDrawer).toBeVisible();
-        await expect(pillarDrawer).not.toHaveClass(/translate-x-full/);
+        // The pillar drawer is removed in session mode V1 cleanup
 
         // Press 't' to open TOC drawer
         await page.keyboard.press('t');

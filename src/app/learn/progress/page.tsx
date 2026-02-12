@@ -5,6 +5,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { getProgressSummary, getUserBookmarks } from '@/lib/progress';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import ProgressDashboard from '../_components/ProgressDashboard';
+import InternalizationHistory from '../_components/InternalizationHistory';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,9 +40,12 @@ export default async function ProgressPage() {
     redirect('/learn');
   }
 
-  const [summary, bookmarks] = await Promise.all([
+  const [summary, bookmarks, fingerprint] = await Promise.all([
     getProgressSummary(userId, session.user.id ?? undefined),
     getUserBookmarks(userId, session.user.id ?? undefined),
+    isFeatureEnabled(FeatureFlags.SESSION_MODE, session?.user)
+      ? import('@/app/actions/fingerprint').then(mod => mod.getFingerprintData(userId!, session?.user?.id || undefined))
+      : Promise.resolve(null)
   ]);
 
   return (
@@ -57,7 +61,18 @@ export default async function ProgressPage() {
           </p>
         </div>
 
-        <ProgressDashboard summary={summary} bookmarks={bookmarks} />
+        <div className="space-y-12">
+          <ProgressDashboard summary={summary} bookmarks={bookmarks} />
+
+          {fingerprint && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2" />
+              <div className="lg:col-span-1">
+                <InternalizationHistory internalizations={fingerprint.internalizations} />
+              </div>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );

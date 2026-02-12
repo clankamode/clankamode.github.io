@@ -6,20 +6,16 @@ import SessionHUD from './SessionHUD';
 
 interface SessionReaderShellProps {
     children: React.ReactNode;
-    leftDrawerContent: React.ReactNode;
     tableOfContents: React.ReactNode;
 }
 
 export default function SessionReaderShell({
     children,
-    leftDrawerContent,
     tableOfContents,
 }: SessionReaderShellProps) {
-    const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
     const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
 
     useEffect(() => {
-        setLeftDrawerOpen(false);
         setRightDrawerOpen(false);
     }, []);
 
@@ -29,14 +25,10 @@ export default function SessionReaderShell({
                 return;
             }
 
-            if (e.key.toLowerCase() === 'l') {
-                setLeftDrawerOpen(prev => !prev);
-            }
             if (e.key.toLowerCase() === 't') {
                 setRightDrawerOpen(prev => !prev);
             }
             if (e.key === 'Escape') {
-                setLeftDrawerOpen(false);
                 setRightDrawerOpen(false);
             }
         };
@@ -48,38 +40,16 @@ export default function SessionReaderShell({
     return (
         <div className="min-h-screen bg-background text-text-primary">
             <SessionHUD
-                onToggleChecklist={() => setLeftDrawerOpen(prev => !prev)}
                 onToggleTOC={() => setRightDrawerOpen(prev => !prev)}
             />
 
             <main className={cn(
                 "mx-auto max-w-3xl px-6 pt-24 pb-32 transition-transform duration-300 ease-in-out",
-                leftDrawerOpen && "translate-x-64",
                 rightDrawerOpen && "-translate-x-64"
             )}>
                 {children}
             </main>
 
-            <aside
-                data-drawer="pillar"
-                className={cn(
-                    "fixed top-0 left-0 bottom-0 w-80 bg-surface-ambient border-r border-border-subtle z-40 transform transition-transform duration-300 ease-in-out pt-24 px-6 overflow-y-auto",
-                    leftDrawerOpen ? "translate-x-0" : "-translate-x-full"
-                )}
-            >
-                <div className="flex items-center justify-between mb-8">
-                    <span className="text-xs font-medium uppercase tracking-wider text-text-muted">
-                        Session Plan (L)
-                    </span>
-                    <button
-                        onClick={() => setLeftDrawerOpen(false)}
-                        className="text-text-muted hover:text-text-primary"
-                    >
-                        ✕
-                    </button>
-                </div>
-                {leftDrawerContent}
-            </aside>
 
             <aside
                 data-drawer="toc"
@@ -102,13 +72,10 @@ export default function SessionReaderShell({
                 {tableOfContents}
             </aside>
 
-            {(leftDrawerOpen || rightDrawerOpen) && (
+            {rightDrawerOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 transition-opacity"
-                    onClick={() => {
-                        setLeftDrawerOpen(false);
-                        setRightDrawerOpen(false);
-                    }}
+                    onClick={() => setRightDrawerOpen(false)}
                 />
             )}
         </div>

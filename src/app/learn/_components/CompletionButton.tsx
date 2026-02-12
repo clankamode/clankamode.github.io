@@ -14,20 +14,19 @@ export default function CompletionButton({
   initialCompleted = false,
 }: CompletionButtonProps) {
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
-  const [isSaving, setIsSaving] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const router = useRouter();
   const { state: sessionState, advanceItem } = useSessionContext();
 
   const isInSession = sessionState.phase === 'execution';
 
   const handleToggle = async () => {
-    if (isSaving) {
-      return;
-    }
+    if (status !== 'idle') return;
 
     const nextState = !isCompleted;
-    setIsCompleted(nextState);
-    setIsSaving(true);
+    setStatus('loading');
+
+    const startTime = Date.now();
 
     try {
       const response = await fetch('/api/progress/complete', {
@@ -38,25 +37,38 @@ export default function CompletionButton({
         body: JSON.stringify({ articleId }),
       });
 
+      const elapsed = Date.now() - startTime;
+      const minLoadTime = 300;
+      if (elapsed < minLoadTime) {
+        await new Promise(r => setTimeout(r, minLoadTime - elapsed));
+      }
+
       if (response.ok) {
-        if (isInSession) {
-          const nextIndex = (sessionState.execution?.currentIndex ?? 0) + 1;
-          const nextItem = sessionState.scope?.items[nextIndex];
+        setIsCompleted(nextState);
+        setStatus('success');
 
-          advanceItem();
+        if (isInSession && nextState) {
+          setTimeout(() => {
+            const currentIdx = sessionState.execution?.currentIndex ?? 0;
+            const items = sessionState.scope?.items ?? [];
+            const nextItem = items[currentIdx + 1] ?? null;
 
-          if (nextItem) {
-            router.push(nextItem.href);
-          } else {
-          }
+            if (nextItem) router.prefetch(nextItem.href);
+
+            advanceItem();
+
+            if (nextItem) {
+              router.push(nextItem.href);
+            }
+          }, 600);
+        } else {
+          setTimeout(() => setStatus('idle'), 1500);
         }
       } else {
-        setIsCompleted(!nextState);
+        setStatus('idle');
       }
     } catch {
-      setIsCompleted(!nextState);
-    } finally {
-      setIsSaving(false);
+      setStatus('idle');
     }
   };
 
@@ -64,19 +76,38 @@ export default function CompletionButton({
     <button
       type="button"
       onClick={handleToggle}
+      disabled={status !== 'idle'}
       aria-pressed={isCompleted}
-      className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${isCompleted
-          ? 'border-brand-green bg-brand-green text-black'
-          : 'border-border-subtle bg-surface-interactive text-text-primary hover:border-border-interactive'
-        } ${isSaving ? 'opacity-70' : ''}`}
+      className={`
+        group relative inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300
+        ${isCompleted
+          ? 'border-accent-primary bg-accent-primary text-surface-ambient shadow-[0_0_20px_rgba(44,187,93,0.3)]'
+          : 'border-border-subtle bg-surface-interactive text-text-primary hover:border-border-interactive hover:shadow-lift hover:-translate-y-0.5'
+        }
+        disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none
+      `}
     >
-      {isCompleted ? (
-        <>
-          <span className="text-base">✓</span>
-          Completed
-        </>
-      ) : (
-        'Mark as complete'
+      <span className="relative z-10 flex items-center gap-2">
+        {status === 'loading' ? (
+          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        ) : status === 'success' || (isCompleted && status === 'idle') ? (
+          <svg className={`h-4 w-4 ${status === 'success' ? 'animate-in zoom-in duration-300' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        ) : (
+          <span className="w-4 h-4 rounded-full border-2 border-text-muted group-hover:border-text-primary transition-colors" />
+        )}
+
+        {status === 'loading' ? 'Saving...' :
+          status === 'success' ? 'Completed' :
+            isCompleted ? 'Completed' : 'Mark Complete'}
+      </span>
+
+      {status === 'success' && (
+        <span className="absolute inset-0 rounded-full animate-ping bg-accent-primary opacity-20" />
       )}
     </button>
   );

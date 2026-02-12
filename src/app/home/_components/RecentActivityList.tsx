@@ -36,7 +36,7 @@ export default function RecentActivityList({ recentActivity }: RecentActivityLis
                         <li key={item.articleId}>
                             <Link
                                 href={`/learn/${item.pillarSlug}/${item.articleSlug}`}
-                                className="flex items-center justify-between p-3 -mx-3 rounded-lg hover:bg-white/[0.03] transition-colors"
+                                className="flex items-center justify-between p-3 -mx-3 rounded-lg border border-transparent hover:border-border-muted hover:bg-surface-interactive hover:shadow-lift hover:-translate-y-0.5 transition-all duration-300 group"
                             >
                                 <div className="flex items-center gap-3 min-w-0">
                                     <div className="flex-shrink-0 w-2 h-2 rounded-full bg-accent-primary/50" />

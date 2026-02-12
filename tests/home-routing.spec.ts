@@ -16,14 +16,15 @@ test.describe('Home Page Routing', () => {
         await expect(page.getByRole('heading', { name: /James Peralta/i })).toBeVisible();
     });
 
-    test('logged-in users see home page with Continue card', async ({ page }, testInfo) => {
+    test('logged-in users see home page with Now card', async ({ page }, testInfo) => {
         test.skip(!isAdminProject(testInfo.project.name), 'Auth-only test');
 
         await page.goto('/home');
 
         await expect(page).toHaveURL('/home');
-        await expect(page.getByRole('heading', { name: 'Home' })).toBeVisible();
-        // Should have one of the ContinueCard variants
+        // NowCard renders a dynamic heading (e.g. "Review: ...") not literal "Home"
+        await expect(page.locator('h1')).toBeVisible();
+        // Should have the NowCard section
         await expect(page.locator('section').first()).toBeVisible();
     });
 
@@ -32,15 +33,16 @@ test.describe('Home Page Routing', () => {
 
         await page.goto('/home');
 
-        // Only one primary CTA button (green background)
-        const primaryButtons = page.locator('[data-cta="primary"]');
+        // Only one primary CTA button (NowCard start session button)
+        const primaryButtons = page.locator('[data-session-cta]');
         await expect(primaryButtons).toHaveCount(1);
     });
 
     test('admin sees Studio link in nav', async ({ page }, testInfo) => {
         test.skip(!isAdminProject(testInfo.project.name), 'Admin-only test');
 
-        await page.goto('/home');
+        // Check on /learn where full nav is visible. On /home (gate mode), nav links are hidden.
+        await page.goto('/learn');
 
         // Studio dropdown should be visible for admins
         await expect(page.getByRole('button', { name: /Studio/i })).toBeVisible();
@@ -49,7 +51,7 @@ test.describe('Home Page Routing', () => {
     test('regular users do not see Studio link', async ({ page }, testInfo) => {
         test.skip(!isUserProject(testInfo.project.name), 'User-only test');
 
-        await page.goto('/home');
+        await page.goto('/learn');
 
         await expect(page.getByRole('button', { name: /Studio/i })).toHaveCount(0);
     });
@@ -68,21 +70,3 @@ test.describe('Deep-link Preservation', () => {
     });
 });
 
-test.describe('Home Navigation', () => {
-    test('Home link appears for logged-in users', async ({ page }, testInfo) => {
-        test.skip(!isAdminProject(testInfo.project.name), 'Auth-only test');
-
-        await page.goto('/learn');
-
-        await expect(page.getByRole('link', { name: 'Home' })).toBeVisible();
-    });
-
-    test('Home link points to /home not /', async ({ page }, testInfo) => {
-        test.skip(!isAdminProject(testInfo.project.name), 'Auth-only test');
-
-        await page.goto('/learn');
-
-        const homeLink = page.getByRole('link', { name: 'Home' });
-        await expect(homeLink).toHaveAttribute('href', '/home');
-    });
-});

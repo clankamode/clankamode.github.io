@@ -5,8 +5,7 @@ export default function Footer() {
     const currentYear = new Date().getFullYear();
     const pathname = usePathname();
 
-    // Hide footer on specific tool routes
-    if (pathname.startsWith('/ai') || pathname.startsWith('/admin') || pathname.startsWith('/thumbnails')) {
+    if (pathname.startsWith('/ai') || pathname.startsWith('/admin')) {
         return null;
     }
 

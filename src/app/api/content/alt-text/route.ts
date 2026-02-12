@@ -3,6 +3,10 @@ import OpenAI from 'openai';
 import { UserRole } from '@/types/roles';
 import { requireAuth } from '@/lib/auth-helpers';
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 interface OpenAIResponseContent {
   type?: string;
   text?: string;
@@ -37,7 +41,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ altText: null }, { status: 200 });
     }
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const response = await openai.responses.create({
       model: 'gpt-5-nano',
       input: [

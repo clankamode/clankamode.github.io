@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import type { SessionItem, LearningDelta } from '@/lib/progress';
 import type { Concept, ConceptDependency, UserConceptStats } from '@/types/concepts';
+import { buildIdentityOrFilter, type EffectiveIdentity } from '@/lib/auth-identity';
 
 interface ArticleConceptData {
     slug: string;
@@ -237,10 +238,11 @@ async function fetchUserConceptStats(
     trackSlug: string,
     googleId?: string
 ): Promise<UserConceptStats[]> {
+    const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
     const { data, error } = await supabase
         .from('UserConceptStats')
         .select('email, track_slug, concept_slug, exposures, internalized_count, last_seen_at')
-        .or(`email.eq.${userId}${googleId ? `,google_id.eq.${googleId}` : ''}`)
+        .or(buildIdentityOrFilter(identity))
         .eq('track_slug', trackSlug);
 
     if (error || !data) {

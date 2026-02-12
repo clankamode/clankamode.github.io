@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import type { SessionItem, LearningDelta } from '@/lib/progress';
 import { type MicroSessionProposal, microSessionProviderV0 } from '@/lib/session-micro';
@@ -81,11 +81,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const [state, setState] = useState<SessionState>(initialState);
     const router = useRouter();
     const pathname = usePathname();
+    const isMountedRef = useRef(true);
+
+    useEffect(() => {
+        return () => { isMountedRef.current = false; };
+    }, []);
 
     const isInSession = state.phase === 'execution';
 
     useEffect(() => {
-        if (state.phase === 'exit' && pathname !== '/home') {
+        if (state.phase === 'exit' && pathname !== '/home' && pathname !== '/learn/progress') {
             router.push('/home');
         }
     }, [state.phase, pathname, router]);
@@ -197,12 +202,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                             });
                         }
 
+                        if (!isMountedRef.current) return;
+
                         setState(prev => {
                             if (prev.phase !== 'exit' || !prev.exit) return prev;
                             return {
                                 ...prev,
                                 exit: {
-                                    ...prev.exit,
                                     ...prev.exit,
                                     delta: labeledDelta,
                                     rawDelta: result.delta,
@@ -274,7 +280,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                     durationMinutes,
                     nextRecommendation: null,
                     delta,
-                    rawDelta: delta, // raw delta is same as delta here (empty)
+                    rawDelta: delta,
                     primaryConcept: null,
                     microSessionProposal
                 },

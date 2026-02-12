@@ -5,13 +5,16 @@ import type { SessionState } from '@/lib/progress';
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
 import NowCard from './_components/NowCard';
 import SessionExitView from './_components/SessionExitView';
-import LeaveSessionButton from './_components/LeaveSessionButton';
 
 interface HomeClientProps {
     sessionState: SessionState | null;
+    primer?: {
+        label: string;
+        relativeTime: string;
+    } | null;
 }
 
-export default function HomeClient({ sessionState }: HomeClientProps) {
+export default function HomeClient({ sessionState, primer }: HomeClientProps) {
     const { data: authData, status } = useSession();
     const { state: sessionPhaseState } = useSessionContext();
 
@@ -33,8 +36,6 @@ export default function HomeClient({ sessionState }: HomeClientProps) {
         return <SessionExitView />;
     }
 
-    const showLeaveButton = sessionPhaseState.phase === 'execution';
-
     if (!sessionState) {
         return (
             <main
@@ -47,10 +48,10 @@ export default function HomeClient({ sessionState }: HomeClientProps) {
                             session={{ mode: 'pick_track', now: null, upNext: [], proof: { streakDays: 0, todayCount: 0, last7: [] }, track: null }}
                             userId={authData?.user?.email ?? undefined}
                             googleId={authData?.user?.id ?? undefined}
+                            primer={primer}
                         />
                     </div>
                 </div>
-                {showLeaveButton && <LeaveSessionButton />}
             </main>
         );
     }
@@ -66,10 +67,10 @@ export default function HomeClient({ sessionState }: HomeClientProps) {
                         session={sessionState}
                         userId={authData?.user?.email ?? undefined}
                         googleId={authData?.user?.id ?? undefined}
+                        primer={primer}
                     />
                 </div>
             </div>
-            {showLeaveButton && <LeaveSessionButton />}
         </main>
     );
 }
