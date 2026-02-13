@@ -14,7 +14,8 @@
     "dev:debug": "NODE_OPTIONS='--inspect' next dev --turbopack",
     "get_video_data": "tsx scripts/src/get_video_data.ts",
     "grade_sessions": "tsx scripts/src/grade_all_sessions.ts",
-    "update_sessions": "tsx scripts/src/update_test_sessions.ts"
+    "update_sessions": "tsx scripts/src/update_test_sessions.ts",
+    "test:daily-brief": "tsx scripts/src/test_daily_brief.ts"
   },
   "dependencies": {
     "@google/genai": "^1.38.0",
