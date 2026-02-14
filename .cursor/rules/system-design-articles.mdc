@@ -1,0 +1,130 @@
+---
+description: Guide for authoring System Design learning articles. Use when creating or updating system design articles in the Learn section.
+alwaysApply: true
+---
+
+# How to Author a System Design Article
+
+System design articles live in the same Supabase `LearningArticles` table as DSA articles. See the `article-authoring` rule for database fields, block syntax, SQL examples, and the publishing checklist — all of that is shared.
+
+This rule covers the **article structure and voice** specific to system design.
+
+## Voice and Tone
+
+- **Conversational and direct.** Same voice as DSA articles — explain like you're talking to a smart friend, not writing a textbook.
+- Short paragraphs. Bold key phrases. Break after every idea.
+- First sentence is a hook: what system are we designing and why it's interesting.
+- Use `:::divider` between every major section (same as data structure articles).
+- Use `:::code` blocks for schemas, API definitions, and pseudocode. Always include a descriptive `filename`.
+
+## Section Flow
+
+### 1. Hook
+
+1-2 sentences framing the system. What are we building and why does it matter?
+
+### 2. Requirements Gathering
+
+Split into two subsections:
+
+**Functional Requirements** — what the system must *do*. Bullet list of user-facing capabilities.
+
+```markdown
+## Functional Requirements
+
+- Users can send messages to other users in real time
+- Users can create group conversations
+- Messages are persisted and available across devices
+- Users can see read receipts
+```
+
+**Non-Functional Requirements** — how well the system must perform. Bullet list of quality attributes: scale, latency, availability, consistency, durability.
+
+```markdown
+## Non-Functional Requirements
+
+- Support 500M daily active users
+- Message delivery latency < 200ms
+- 99.99% availability
+- Messages must never be lost (durability)
+- Eventual consistency is acceptable for read receipts
+```
+
+Keep both lists tight — 4-6 bullets each. These set the constraints that drive every design decision later.
+
+### 3. High-Level Design
+
+Build up the architecture in layers. Each layer gets its own subsection:
+
+**Database Entities** — define the core data model first. What are the main entities and their relationships? Use a `:::code` block with a schema or table definition.
+
+```markdown
+## Database Entities
+
+:::code{lang="sql" filename="Core entities"}
+
+users (id, username, email, created_at)
+conversations (id, type, created_at)
+participants (conversation_id, user_id, joined_at)
+messages (id, conversation_id, sender_id, body, created_at)
+
+:::
+```
+
+**API Design** — define the key endpoints or operations the system exposes. Focus on the critical paths, not every CRUD endpoint.
+
+```markdown
+## API Design
+
+:::code{lang="text" filename="Core APIs"}
+
+POST /messages          — Send a message
+GET  /conversations/:id — Fetch conversation history
+POST /conversations     — Create a new conversation
+GET  /conversations     — List user's conversations
+
+:::
+```
+
+**Architecture Diagram** — describe how the components connect. Walk through the flow: client → load balancer → services → databases → caches → queues. Use a `:::code` block with ASCII or a text description of the diagram.
+
+### 4. Deep Dives
+
+Pick the 2-3 most important or complex aspects of the system and go deep on each. These are the sections that show real understanding.
+
+Each deep dive should:
+- State the problem or challenge clearly
+- Walk through the solution step by step
+- Explain tradeoffs and why this approach was chosen over alternatives
+- Include `:::code` blocks for schemas, algorithms, or protocol details where relevant
+
+Common deep dive topics: sharding strategy, caching layer, real-time delivery mechanism, consistency model, fan-out approach, rate limiting, conflict resolution.
+
+```markdown
+## Deep Dive: Real-Time Message Delivery
+
+The core challenge is getting messages to recipients with < 200ms latency at scale...
+```
+
+### 5. Alternative Approaches
+
+After the deep dives, discuss 2-3 alternative ways to solve the same problem. For each alternative:
+- Name the approach clearly (e.g., "Session-Based Auth" vs the JWT approach used in the main design)
+- Explain how it differs from the primary design
+- State when you'd pick it over the primary approach (tradeoffs, scale, simplicity)
+- Keep each alternative to 1-2 paragraphs — enough to show awareness, not a full redesign
+
+This section shows breadth of knowledge. The main design shows you can go deep; the alternatives show you know the landscape.
+
+### 6. Final Takeaway (optional)
+
+A brief recap of the key design decisions and tradeoffs. Not required but useful for longer articles.
+
+## Formatting Rules
+
+- Use `:::divider` between every major section (Requirements, High-Level Design, each Deep Dive).
+- Use `:::code` blocks for schemas, API definitions, and pseudocode. Always include `lang` and `filename`.
+- Bold key terms on first use.
+- Never use "Note:" or "Important:" callouts. Just say the thing.
+- Keep the requirements section tight. The design sections are where the depth lives.
+- No `# Title` H1 at the start of the body — the page renders the title from the `title` field.

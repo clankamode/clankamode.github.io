@@ -2,12 +2,10 @@
 
 import { ChannelStats } from '@/lib/youtube';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 
 interface HeroSectionProps {
   channelStats: ChannelStats | null;
-  channelId: string;
 }
 
 function ProfileImage({ src, alt, title }: { src: string; alt: string; title?: string }) {
@@ -36,7 +34,7 @@ function ProfileImage({ src, alt, title }: { src: string; alt: string; title?: s
   );
 }
 
-export default function HeroSection({ channelStats, channelId }: HeroSectionProps) {
+export default function HeroSection({ channelStats }: HeroSectionProps) {
   return (
     <section aria-label="Hero Section" className="relative bg-background pt-24 pb-16 px-4 md:px-8 overflow-x-hidden overflow-y-visible min-h-[80vh] flex items-center justify-center">
       {/* Ambient Background Glow */}
@@ -118,26 +116,61 @@ export default function HeroSection({ channelStats, channelId }: HeroSectionProp
           </a>
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
-          <a
-            href={`https://youtube.com/channel/${channelId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto"
-          >
-            <Button
-              size="lg"
-              className="h-14 w-full sm:w-auto px-10 bg-brand-green text-black hover:bg-brand-green/90 font-bold text-lg border-none shadow-none ring-0"
+        {/* Content Navigation */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
+          {[
+            {
+              href: '/learn/dsa',
+              title: 'DSA',
+              description: 'Algorithms & data structures for interviews',
+              accent: 'group-hover:text-emerald-400',
+              border: 'hover:border-emerald-500/30',
+            },
+            {
+              href: '/learn/system-design',
+              title: 'System Design',
+              description: 'Architecture, scaling & reliability',
+              accent: 'group-hover:text-blue-400',
+              border: 'hover:border-blue-500/30',
+            },
+            {
+              href: '/learn/job-hunt',
+              title: 'Job Hunt',
+              description: 'Positioning & landing interviews',
+              accent: 'group-hover:text-amber-400',
+              border: 'hover:border-amber-500/30',
+            },
+            {
+              href: '/learn/blog',
+              title: 'Blog',
+              description: 'Career notes & behind-the-scenes',
+              accent: 'group-hover:text-purple-400',
+              border: 'hover:border-purple-500/30',
+            },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`group flex items-center justify-between gap-3 px-5 py-4 rounded-xl border border-border-subtle bg-white/[0.02] ${item.border} hover:bg-white/[0.04] transition-all duration-200 hover:-translate-y-[1px]`}
             >
-              Watch on Youtube
-            </Button>
-          </a>
-          <Link href="/videos" className="w-full sm:w-auto">
-            <Button variant="ghost" size="lg" className="h-14 w-full sm:w-auto px-10 border border-white/10 hover:bg-white/5 text-foreground hover:border-white/30 transition-all font-medium text-lg">
-              Explore Content <span className="ml-2">→</span>
-            </Button>
-          </Link>
+              <div className="text-left">
+                <span className={`block text-base font-semibold text-foreground ${item.accent} transition-colors`}>
+                  {item.title}
+                </span>
+                <span className="block text-sm text-muted-foreground mt-0.5">
+                  {item.description}
+                </span>
+              </div>
+              <svg
+                className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

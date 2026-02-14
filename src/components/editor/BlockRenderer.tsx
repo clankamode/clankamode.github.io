@@ -26,7 +26,7 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
         switch (block.type) {
           case 'markdown':
             return (
-              <article key={block.id} className="prose max-w-none text-text-primary">
+              <article key={block.id} className="prose max-w-none text-text-primary [&>h2+h3]:mt-3 [&>h2+h2]:mt-6 [&>h3+h3]:mt-4">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeHighlight]}
@@ -53,7 +53,7 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
                       <h3
                         {...props}
                         id={slugifyHeading(getText(children))}
-                        className="mt-8 text-xl font-semibold tracking-tight text-text-primary"
+                        className="mt-6 text-xl font-semibold tracking-tight text-text-primary"
                       >
                         {children}
                       </h3>

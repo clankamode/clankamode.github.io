@@ -1,0 +1,126 @@
+---
+description: Guide for authoring DSA learning articles (data structures, patterns, concepts). Use when creating or updating articles in the Learn section.
+alwaysApply: true
+---
+
+# How to Author a DSA Learning Article
+
+Articles live in the Supabase `LearningArticles` table under a topic and pillar hierarchy:
+**Pillar** (e.g. DSA) → **Topic** (e.g. Data Structures, Patterns) → **Article**
+
+## Database Fields
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | UUID | Auto-generated |
+| `topic_id` | UUID | Parent topic |
+| `slug` | string | URL segment, kebab-case (e.g. `hash-maps-and-sets`) |
+| `title` | string | Display title |
+| `excerpt` | string or null | Short summary for cards |
+| `body` | string | Markdown + block directives (see below) |
+| `reading_time_minutes` | int | Estimate: word count / 200, rounded up |
+| `is_premium` | boolean | Gate behind premium (default false) |
+| `is_published` | boolean | Must be true to show to non-editors |
+| `order_index` | int | Sort order within the topic |
+| `concept_tags` | JSON | Array of concept slugs |
+| `primary_concept` | string or null | Main concept slug |
+
+## Block Syntax
+
+Articles use markdown with custom block directives parsed by `parseBlocks`:
+
+```
+:::code{lang="python" filename="Title shown above code block"}
+
+def example():
+    pass
+
+:::
+```
+
+```
+:::divider
+
+:::
+```
+
+- `:::code` — fenced code block with language and filename label
+- `:::divider` — visual section break (horizontal rule)
+- Standard markdown (headings, bold, bullets, links) works everywhere else
+
+## Article Structure: Data Structures
+
+Data structure articles follow this format. Use the Arrays and Stacks articles as reference.
+
+### Voice and Tone
+- **Conversational and direct.** Write like you're explaining to a smart friend, not a textbook.
+- Short paragraphs. Bold key phrases. Break after every idea.
+- First sentence of the article is a hook: why this data structure matters.
+- Second paragraph: "This post breaks down **what X is, how it works under the hood,** and **why its performance characteristics matter**."
+
+### Section Flow
+
+1. **Hook** — 1-2 sentences on why this matters. No preamble.
+2. **What is [structure]?** — Everyday analogy, conceptual definition.
+3. **How it works under the hood** — Memory layout, underlying implementation.
+4. **Time complexity of each operation** — One section per operation (insert, delete, search, access). State the Big-O, explain *why* in 2-3 sentences. Use `:::code` blocks for examples.
+5. **When a problem is secretly about [structure]** — Interview cues and signals.
+6. **Know the common operations in your language** — Python API cheat sheet with Big-O per method.
+7. **Final takeaway** — 3-4 bullet recap of the key insights.
+
+### Formatting Rules
+- Use `:::divider` between every major section.
+- Use `:::code{lang="python" filename="Description"}` for all code. Always include a descriptive filename.
+- Keep code blocks short (under 15 lines). Demonstrate one idea per block.
+- Bold key terms on first use.
+- Never use "Note:" or "Important:" callouts. Just say the thing.
+
+## Article Structure: Patterns
+
+Pattern articles follow a different structure. Use the Two Pointers or Sliding Window articles as reference.
+
+### Section Flow
+
+1. **Hook** — 1-2 sentence summary of what the pattern does.
+2. `---` (horizontal rule)
+3. **What Is It?** — Clear conceptual explanation, 2-3 paragraphs max.
+4. **When Do You Use It?** — Bullet list of problem types.
+5. **Cues to Recognize It** — Bullet list of keywords and signals in problem statements.
+6. **How to Implement It** — Step-by-step walkthrough + code template using `:::code` blocks.
+7. **Where People Get This Wrong** — Bullet list of specific, practical pitfalls.
+
+### Formatting Rules
+- No `:::divider` blocks (patterns use `---` after the hook only).
+- Use bold on keywords in "Cues to Recognize It" bullets.
+- Code comes from the Templates article (`/learn/dsa/templates`). Pull the matching template.
+- "Where People Get This Wrong" items start with a bolded mistake, then the explanation.
+
+## Creating via SQL
+
+Use `execute_sql` for data operations (not `apply_migration`):
+
+```sql
+-- Find the topic_id first
+SELECT id FROM "LearningTopics"
+WHERE slug = 'data-structures'
+  AND pillar_id = (SELECT id FROM "LearningPillars" WHERE slug = 'dsa');
+
+-- Insert article (use dollar-quoting for body to avoid escaping)
+INSERT INTO "LearningArticles" (topic_id, slug, title, body, is_published, order_index, reading_time_minutes)
+VALUES ('<topic_id>', 'my-slug', 'My Title', $b$body here$b$, true, 0, 5);
+
+-- Update article
+UPDATE "LearningArticles"
+SET body = $b$new body$b$, is_published = true, updated_at = now()
+WHERE id = '<uuid>';
+```
+
+## Publishing Checklist
+
+- [ ] `slug` is kebab-case, concise, unique within the topic
+- [ ] `title` matches the heading in the body
+- [ ] `body` follows the correct structure (data structure vs pattern)
+- [ ] `:::code` blocks have `lang` and `filename` attributes
+- [ ] `reading_time_minutes` is set (word count / 200, rounded up)
+- [ ] `order_index` places the article in the right position
+- [ ] `is_published` is set to `true`

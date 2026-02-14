@@ -15,12 +15,13 @@ export default async function Home() {
   ]);
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <HeroSection channelStats={channelStats} channelId={channelId} />
+      <HeroSection channelStats={channelStats} />
 
       <TabbedVideoSection
         latestVideos={latestVideos}
         popularVideos={popularVideos}
         viewAllHref="/videos"
+        youtubeChannelId={channelId}
       />
     </div>
   );
