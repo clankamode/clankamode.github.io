@@ -167,37 +167,52 @@ export interface Database {
             }
             InterviewQuestions: {
                 Row: {
+                    category: string | null
                     created_at: string | null
                     difficulty: string
                     helper_code: string
                     id: string
                     leetcode_number: number | null
+                    leetcode_url: string | null
                     name: string
+                    order_index: number | null
+                    pattern: string | null
                     prompt_full: string
+                    source: string[]
                     starter_code: string
                     test_cases: Json
                     video_ids: string[] | null
                 }
                 Insert: {
+                    category?: string | null
                     created_at?: string | null
                     difficulty: string
                     helper_code?: string
                     id?: string
                     leetcode_number?: number | null
+                    leetcode_url?: string | null
                     name: string
+                    order_index?: number | null
+                    pattern?: string | null
                     prompt_full: string
+                    source?: string[]
                     starter_code: string
                     test_cases?: Json
                     video_ids?: string[] | null
                 }
                 Update: {
+                    category?: string | null
                     created_at?: string | null
                     difficulty?: string
                     helper_code?: string
                     id?: string
                     leetcode_number?: number | null
+                    leetcode_url?: string | null
                     name?: string
+                    order_index?: number | null
+                    pattern?: string | null
                     prompt_full?: string
+                    source?: string[]
                     starter_code?: string
                     test_cases?: Json
                     video_ids?: string[] | null

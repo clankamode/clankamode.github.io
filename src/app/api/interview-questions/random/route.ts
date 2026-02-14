@@ -30,7 +30,8 @@ const fetchByDifficulty = async (difficulty: Difficulty) => {
   const { data, error } = await supabase
     .from('InterviewQuestions')
     .select('id, name, leetcode_number, difficulty, prompt_full, starter_code, helper_code, test_cases, video_ids')
-    .eq('difficulty', difficulty);
+    .eq('difficulty', difficulty)
+    .contains('source', ['MOCK_ASSESSMENTS']);
 
   if (error) {
     throw new Error(`Failed to load ${difficulty} questions.`);

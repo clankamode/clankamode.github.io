@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { PERALTA_75_LIST, QuestionCategory } from "./consts"
 
 import type { LeetCodeQuestion } from './consts';
@@ -279,6 +280,13 @@ export default function Component() {
                                     {question.title}
                                   </h4>
                                 </div>
+                                <Link
+                                  href={`/code-editor/practice/${question.id}`}
+                                  className="flex-shrink-0 px-3 py-1 text-xs font-semibold rounded-md bg-brand-green/10 text-brand-green border border-brand-green/20 hover:bg-brand-green/20 transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
+                                  title="Solve in Code Editor"
+                                >
+                                  Solve
+                                </Link>
                                 <a
                                   href={question.leetcodeUrl}
                                   target="_blank"
