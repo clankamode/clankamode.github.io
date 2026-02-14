@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
-import OpenAI from 'openai';
 
 const RESEND_API_URL = 'https://api.resend.com/emails';
 const DAILY_BRIEF_RECIPIENT = 'castleridge.labs@gmail.com';
@@ -10,6 +9,7 @@ interface RoleCountRow {
 }
 
 interface BriefMetrics {
+  usersGainedToday: number;
   totalUsers: number;
   adminCount: number;
   editorCount: number;
@@ -20,116 +20,41 @@ interface BriefMetrics {
   activeTestSessionsCount: number;
 }
 
-interface WeeklyTrendMetrics {
-  thisWeekUsers: number;
-  lastWeekUsers: number;
-  deltaUsers: number;
-  deltaPercent: number | null;
-}
-
-function getWindowBounds() {
+function getTodayWindowBounds() {
   const now = new Date();
-  const thisWeekStart = new Date(now);
-  thisWeekStart.setDate(now.getDate() - 7);
-
-  const lastWeekStart = new Date(thisWeekStart);
-  lastWeekStart.setDate(thisWeekStart.getDate() - 7);
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
 
   return {
     nowIso: now.toISOString(),
-    thisWeekStartIso: thisWeekStart.toISOString(),
-    lastWeekStartIso: lastWeekStart.toISOString(),
+    todayStartIso: todayStart.toISOString(),
   };
 }
 
-async function getWeeklyTrendMetrics(): Promise<WeeklyTrendMetrics> {
+async function getUsersGainedTodayCount(): Promise<number> {
   const adminClient = getSupabaseAdminClient();
-  const { nowIso, thisWeekStartIso, lastWeekStartIso } = getWindowBounds();
+  const { nowIso, todayStartIso } = getTodayWindowBounds();
 
-  const [thisWeekResult, lastWeekResult] = await Promise.all([
-    adminClient
-      .from('Users')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', thisWeekStartIso)
-      .lt('created_at', nowIso),
-    adminClient
-      .from('Users')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', lastWeekStartIso)
-      .lt('created_at', thisWeekStartIso),
-  ]);
+  const usersGainedTodayResult = await adminClient
+    .from('Users')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', todayStartIso)
+    .lt('created_at', nowIso);
 
-  if (thisWeekResult.error || lastWeekResult.error) {
-    console.error('Failed to collect weekly trend metrics:', {
-      thisWeekError: thisWeekResult.error?.message,
-      lastWeekError: lastWeekResult.error?.message,
+  if (usersGainedTodayResult.error) {
+    console.error('Failed to collect daily users gained metric:', {
+      usersGainedTodayError: usersGainedTodayResult.error.message,
     });
 
-    return {
-      thisWeekUsers: 0,
-      lastWeekUsers: 0,
-      deltaUsers: 0,
-      deltaPercent: null,
-    };
+    return 0;
   }
 
-  const thisWeekUsers = thisWeekResult.count ?? 0;
-  const lastWeekUsers = lastWeekResult.count ?? 0;
-  const deltaUsers = thisWeekUsers - lastWeekUsers;
-  const deltaPercent = lastWeekUsers > 0
-    ? Number(((deltaUsers / lastWeekUsers) * 100).toFixed(1))
-    : null;
-
-  return {
-    thisWeekUsers,
-    lastWeekUsers,
-    deltaUsers,
-    deltaPercent,
-  };
+  return usersGainedTodayResult.count ?? 0;
 }
 
-function buildFallbackTrendNarrative(trend: WeeklyTrendMetrics): string {
-  const direction = trend.deltaUsers > 0 ? 'up' : trend.deltaUsers < 0 ? 'down' : 'flat';
-  const pctLabel = trend.deltaPercent === null ? 'n/a' : `${trend.deltaPercent}%`;
-
-  return `New user growth is ${direction} week-over-week: ${trend.thisWeekUsers} new users in the last 7 days vs ${trend.lastWeekUsers} in the prior 7 days (${pctLabel}). Keep pushing top acquisition channels and monitor conversion quality as volume changes.`;
-}
-
-async function generateTrendNarrative(trend: WeeklyTrendMetrics): Promise<string> {
-  if (!process.env.OPENAI_API_KEY) {
-    return buildFallbackTrendNarrative(trend);
-  }
-
-  try {
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const response = await openai.responses.create({
-      model: 'gpt-4o-mini',
-      input: [
-        {
-          role: 'system',
-          content: 'You are a concise growth analyst. Write exactly 2 punchy sentences for an executive update. Mention trend direction and one practical recommendation. No emojis.',
-        },
-        {
-          role: 'user',
-          content: `Website weekly signup trend: this_week_new_users=${trend.thisWeekUsers}, last_week_new_users=${trend.lastWeekUsers}, delta_users=${trend.deltaUsers}, delta_percent=${trend.deltaPercent ?? 'n/a'}.`,
-        },
-      ],
-    });
-
-    const narrative = response.output_text?.trim();
-    if (!narrative) {
-      return buildFallbackTrendNarrative(trend);
-    }
-
-    return narrative;
-  } catch (error) {
-    console.error('Failed to generate trend narrative via OpenAI:', error);
-    return buildFallbackTrendNarrative(trend);
-  }
-}
-
-function buildBriefHtml(params: BriefMetrics & { trend: WeeklyTrendMetrics; trendNarrative: string }): string {
+function buildBriefHtml(params: BriefMetrics): string {
   const {
+    usersGainedToday,
     totalUsers,
     adminCount,
     editorCount,
@@ -138,8 +63,6 @@ function buildBriefHtml(params: BriefMetrics & { trend: WeeklyTrendMetrics; tren
     articlesCount,
     activeQuestionsCount,
     activeTestSessionsCount,
-    trend,
-    trendNarrative,
   } = params;
 
   return `
@@ -151,11 +74,11 @@ function buildBriefHtml(params: BriefMetrics & { trend: WeeklyTrendMetrics; tren
         </div>
 
         <div style="padding: 22px;">
-          <h3 style="margin: 0 0 10px; font-size: 16px; color: #111827;">Weekly Growth Pulse</h3>
+          <h3 style="margin: 0 0 10px; font-size: 16px; color: #111827;">Daily Users Gained</h3>
           <div style="padding: 12px 14px; border-radius: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; font-size: 13px; margin-bottom: 8px;">
-            Last 7 days: <strong>${trend.thisWeekUsers}</strong> new users · Prior 7 days: <strong>${trend.lastWeekUsers}</strong> · Delta: <strong>${trend.deltaUsers}</strong> (${trend.deltaPercent === null ? 'n/a' : `${trend.deltaPercent}%`})
+            New users today: <strong>${usersGainedToday}</strong>
           </div>
-          <p style="margin: 0 0 18px; font-size: 14px; line-height: 1.6; color: #1f2937;">${trendNarrative}</p>
+          <p style="margin: 0 0 18px; font-size: 14px; line-height: 1.6; color: #1f2937;">Track this number day-over-day to spot growth momentum and quickly validate acquisition experiments.</p>
 
           <h3 style="margin: 0 0 12px; font-size: 16px; color: #111827;">Audience</h3>
           <table role="presentation" cellspacing="0" cellpadding="0" style="width: 100%; border-collapse: separate; border-spacing: 10px; margin-bottom: 16px;">
@@ -211,17 +134,12 @@ function buildBriefHtml(params: BriefMetrics & { trend: WeeklyTrendMetrics; tren
   `;
 }
 
-function buildBriefText(params: BriefMetrics & { trend: WeeklyTrendMetrics; trendNarrative: string }): string {
+function buildBriefText(params: BriefMetrics): string {
   return [
     'Daily Website Brief',
     '',
-    'Weekly Growth Pulse',
-    `- Last 7 days new users: ${params.trend.thisWeekUsers}`,
-    `- Prior 7 days new users: ${params.trend.lastWeekUsers}`,
-    `- Delta users: ${params.trend.deltaUsers}`,
-    `- Delta %: ${params.trend.deltaPercent === null ? 'n/a' : `${params.trend.deltaPercent}%`}`,
-    '',
-    params.trendNarrative,
+    'Daily Users Gained',
+    `- New users today: ${params.usersGainedToday}`,
     '',
     'Audience',
     `- Total users: ${params.totalUsers}`,
@@ -298,6 +216,7 @@ export async function GET() {
 
     const [
       totalUsersResult,
+      usersGainedToday,
       roleRowsResult,
       videosCountResult,
       articlesCountResult,
@@ -305,6 +224,7 @@ export async function GET() {
       activeTestSessionsCountResult,
     ] = await Promise.all([
       adminClient.from('Users').select('*', { count: 'exact', head: true }),
+      getUsersGainedTodayCount(),
       adminClient.from('Users').select('role'),
       adminClient.from('Videos').select('*', { count: 'exact', head: true }),
       adminClient.from('LearningArticles').select('*', { count: 'exact', head: true }),
@@ -328,6 +248,7 @@ export async function GET() {
     const roles = (roleRowsResult.data || []) as RoleCountRow[];
 
     const metrics: BriefMetrics = {
+      usersGainedToday,
       totalUsers: totalUsersResult.count ?? 0,
       adminCount: roles.filter((row) => row.role === 'ADMIN').length,
       editorCount: roles.filter((row) => row.role === 'EDITOR').length,
@@ -338,13 +259,10 @@ export async function GET() {
       activeTestSessionsCount: activeTestSessionsCountResult.count ?? 0,
     };
 
-    const trend = await getWeeklyTrendMetrics();
-    const trendNarrative = await generateTrendNarrative(trend);
-
     const subject = buildSubjectLine();
 
-    const html = buildBriefHtml({ ...metrics, trend, trendNarrative });
-    const text = buildBriefText({ ...metrics, trend, trendNarrative });
+    const html = buildBriefHtml(metrics);
+    const text = buildBriefText(metrics);
 
     const emailResponse = await sendDailyBriefEmail({
       to: recipients,
@@ -357,8 +275,6 @@ export async function GET() {
       ok: true,
       recipients,
       metrics,
-      trend,
-      trendNarrative,
       emailResponse,
     });
   } catch (error) {
