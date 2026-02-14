@@ -39,6 +39,10 @@ export function useChromeMode(): ChromeMode {
 
     const isSessionModeEnabled = isFeatureEnabled(FeatureFlags.SESSION_MODE, session?.user);
 
+    if (pathname === '/home' && isSessionModeEnabled) {
+        return sessionState.phase === 'exit' ? 'exit' : 'gate';
+    }
+
     if (sessionState.phase === 'execution' && isSessionModeEnabled) {
         return 'execute';
     }
@@ -59,10 +63,6 @@ export function useChromeMode(): ChromeMode {
 
     if (isEditor && STUDIO_ROUTES.some(route => pathname.startsWith(route))) {
         return 'studio';
-    }
-
-    if (pathname === '/home' && isSessionModeEnabled) {
-        return 'gate';
     }
 
     return 'app';

@@ -15,6 +15,7 @@ import { logTelemetryEvent } from '@/lib/telemetry';
 export type SessionPhase = 'idle' | 'entry' | 'execution' | 'exit';
 type SessionTransitionStatus = 'ready' | 'advancing' | 'finalizing';
 const SESSION_STATE_STORAGE_KEY = 'session:state:v1';
+const LAST_MICRO_CONCEPT_STORAGE_KEY = 'session:last-micro-concept:v1';
 
 export interface SessionScope {
     track: { slug: string; name: string };
@@ -83,6 +84,26 @@ function toSessionProposal(p: MicroProposal): MicroSessionProposal {
         intent: { type: p.intent.type, text: p.intent.text },
         items: [{ title: p.item.title, href: p.item.href, type: p.item.type === 'learn' ? 'article' : 'exercise' }],
     };
+}
+
+function getLastMicroConcept(): string | null {
+    if (typeof window === 'undefined') return null;
+    try {
+        const value = window.localStorage.getItem(LAST_MICRO_CONCEPT_STORAGE_KEY);
+        if (!value) return null;
+        const trimmed = value.trim();
+        return trimmed.length > 0 ? trimmed : null;
+    } catch {
+        return null;
+    }
+}
+
+function setLastMicroConcept(conceptSlug: string): void {
+    if (typeof window === 'undefined') return;
+    try {
+        window.localStorage.setItem(LAST_MICRO_CONCEPT_STORAGE_KEY, conceptSlug);
+    } catch {
+    }
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null);
@@ -218,6 +239,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 const durationMinutes = Math.round(
                     (Date.now() - prev.execution.startedAt.getTime()) / 60000
                 );
+                const previousMicroConcept = getLastMicroConcept();
+                const proposalAvoidConcepts = previousMicroConcept ? [previousMicroConcept] : [];
 
                 const initialDelta: LearningDelta = {
                     introduced: [],
@@ -231,8 +254,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                         const p = proposeMicroSession({
                             trackSlug: scope.track.slug,
                             delta: currentDelta,
-                            conceptIndex: STATIC_CONCEPT_INDEX
+                            conceptIndex: STATIC_CONCEPT_INDEX,
+                            avoidConcepts: proposalAvoidConcepts,
                         });
+                        if (p?.targetConcept) {
+                            setLastMicroConcept(p.targetConcept);
+                        }
                         return p ? toSessionProposal(p) : null;
                     }
                     return microSessionProviderV0.propose({
@@ -265,15 +292,23 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                                 trackSlug,
                                 delta: result.delta,
                                 conceptIndex: STATIC_CONCEPT_INDEX,
-                                userState
+                                userState,
+                                avoidConcepts: proposalAvoidConcepts,
                             });
+                            if (p?.targetConcept) {
+                                setLastMicroConcept(p.targetConcept);
+                            }
                             freshProposal = p ? toSessionProposal(p) : null;
                         } else if (isFeatureEnabled(FeatureFlags.USE_MICRO_V1)) {
                             const p = proposeMicroSession({
                                 trackSlug,
                                 delta: result.delta,
-                                conceptIndex: STATIC_CONCEPT_INDEX
+                                conceptIndex: STATIC_CONCEPT_INDEX,
+                                avoidConcepts: proposalAvoidConcepts,
                             });
+                            if (p?.targetConcept) {
+                                setLastMicroConcept(p.targetConcept);
+                            }
                             freshProposal = p ? toSessionProposal(p) : null;
                         } else {
                             freshProposal = microSessionProviderV0.propose({
@@ -351,7 +386,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
             const microSessionProposal = isFeatureEnabled(FeatureFlags.USE_MICRO_V1)
                 ? (() => {
-                    const p = proposeMicroSession({ trackSlug: prev.scope.track.slug, delta, conceptIndex: STATIC_CONCEPT_INDEX });
+                    const previousMicroConcept = getLastMicroConcept();
+                    const p = proposeMicroSession({
+                        trackSlug: prev.scope.track.slug,
+                        delta,
+                        conceptIndex: STATIC_CONCEPT_INDEX,
+                        avoidConcepts: previousMicroConcept ? [previousMicroConcept] : [],
+                    });
+                    if (p?.targetConcept) {
+                        setLastMicroConcept(p.targetConcept);
+                    }
                     return p ? toSessionProposal(p) : null;
                 })()
                 : microSessionProviderV0.propose({ trackSlug: prev.scope.track.slug, delta });

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
 import { sanitizeIntentText } from '@/lib/intent-display';
+import { useRouter } from 'next/navigation';
 
 interface SessionHUDProps {
     onToggleTOC: () => void;
@@ -31,6 +32,7 @@ function formatTargetConcept(value: string | null | undefined): string | null {
 
 export default function SessionHUD({ onToggleTOC, viewLabel = 'View' }: SessionHUDProps) {
     const { state, abandonSession } = useSessionContext();
+    const router = useRouter();
     const [elapsedTime, setElapsedTime] = useState('0:00');
     const [isWhyOpen, setIsWhyOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -184,6 +186,7 @@ export default function SessionHUD({ onToggleTOC, viewLabel = 'View' }: SessionH
                                     onClick={() => {
                                         setIsMenuOpen(false);
                                         abandonSession();
+                                        router.replace('/home');
                                     }}
                                     className="w-full rounded-md px-3 py-2 text-left text-sm text-text-secondary transition-colors hover:bg-surface-interactive hover:text-red-400"
                                     role="menuitem"

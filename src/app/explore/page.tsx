@@ -74,7 +74,7 @@ export default function ExplorePage() {
                     <div className="space-y-2">
                         <TrackRow href="/learn/dsa" name="Data Structures & Algorithms" />
                         <TrackRow href="/learn/system-design" name="System Design" />
-                        <TrackRow href="/learn/interviews" name="Interview Prep" />
+                        <TrackRow href="/learn/job-hunt" name="Job Hunt" />
                     </div>
                 </section>
             </div>

@@ -210,7 +210,21 @@ function estimatePracticeMinutes(difficulty: PracticeDifficulty): number {
 }
 
 function isPracticeTrack(trackSlug: string): boolean {
-  return trackSlug === 'dsa' || trackSlug === 'interviews';
+  return trackSlug === 'dsa' || trackSlug === 'job-hunt' || trackSlug === 'interviews';
+}
+
+function normalizeTrackSlug(value?: string): string | undefined {
+  if (!value) return undefined;
+  const normalized = value.toLowerCase().trim();
+  const aliases: Record<string, string> = {
+    interviews: 'job-hunt',
+    'interview-prep': 'job-hunt',
+    interviewprep: 'job-hunt',
+    jobhunt: 'job-hunt',
+    systemdesign: 'system-design',
+    system_design: 'system-design',
+  };
+  return aliases[normalized] || normalized;
 }
 
 function formatConceptLabel(conceptSlug: string | null | undefined): string | null {
@@ -608,7 +622,7 @@ interface LearnCandidateCollection {
 export async function getSessionState(userId: string, preferredTrackSlug?: string, googleId?: string): Promise<SessionState> {
   const summary = await getProgressSummary(userId, googleId);
   const library = await getLearningLibrary(false);
-  const normalizedPreferredTrack = preferredTrackSlug?.toLowerCase();
+  const normalizedPreferredTrack = normalizeTrackSlug(preferredTrackSlug);
   const preferredTrack = normalizedPreferredTrack
     ? library.find((pillar) => pillar.slug === normalizedPreferredTrack)
     : null;

@@ -6,13 +6,22 @@ export interface ProposerInput {
     delta: LearningDelta;
     conceptIndex: ConceptIndex;
     userState?: UserLearningState;
+    avoidConcepts?: string[];
 }
 
 export function proposeMicroSession(input: ProposerInput): MicroProposal | null {
-    const { delta, conceptIndex, userState } = input;
+    const { delta, conceptIndex, userState, avoidConcepts = [] } = input;
+    const blockedConcepts = new Set(
+        avoidConcepts
+            .map((value) => normalizeConceptSlug(value))
+            .filter((value): value is string => !!value)
+    );
 
     if (userState && userState.stubbornConcepts.length > 0) {
         for (const slug of userState.stubbornConcepts) {
+            if (isBlockedConcept(slug, blockedConcepts)) {
+                continue;
+            }
             const candidates = conceptIndex[slug] || [];
             const practiceItems = candidates.filter(item => item.type === 'practice' && item.estMinutes <= 5);
 
@@ -32,11 +41,10 @@ export function proposeMicroSession(input: ProposerInput): MicroProposal | null 
         return null;
     }
 
-    let targetConcept: string | null = null;
-    targetConcept =
-        findFirstIndexed(delta.introduced, conceptIndex) ||
-        findFirstIndexed(delta.unlocked, conceptIndex) ||
-        findFirstIndexed(delta.reinforced, conceptIndex);
+    const targetConcept =
+        findFirstIndexed(delta.introduced, conceptIndex, blockedConcepts) ||
+        findFirstIndexed(delta.unlocked, conceptIndex, blockedConcepts) ||
+        findFirstIndexed(delta.reinforced, conceptIndex, blockedConcepts);
 
     if (!targetConcept) return null;
 
@@ -58,13 +66,28 @@ export function proposeMicroSession(input: ProposerInput): MicroProposal | null 
     };
 }
 
-function findFirstIndexed(slugs: string[], index: ConceptIndex): string | null {
+function findFirstIndexed(slugs: string[], index: ConceptIndex, blockedConcepts: Set<string>): string | null {
     for (const slug of slugs) {
+        if (isBlockedConcept(slug, blockedConcepts)) {
+            continue;
+        }
         if (index[slug]?.length > 0) {
             return slug;
         }
     }
     return null;
+}
+
+function normalizeConceptSlug(value: string | null | undefined): string | null {
+    if (!value) return null;
+    const normalized = value.trim().toLowerCase();
+    return normalized || null;
+}
+
+function isBlockedConcept(value: string, blockedConcepts: Set<string>): boolean {
+    const normalized = normalizeConceptSlug(value);
+    if (!normalized) return false;
+    return blockedConcepts.has(normalized);
 }
 
 function selectBestCandidate(items: ConceptIndexItem[], forcePractice: boolean): ConceptIndexItem {
@@ -158,4 +181,3 @@ function formatSlug(slug: string): string {
     const name = parts[parts.length - 1];
     return name.replace(/-/g, ' ');
 }
-

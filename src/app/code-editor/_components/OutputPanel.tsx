@@ -42,8 +42,8 @@ export function OutputPanel({
   }, [output, activeTab]);
 
   return (
-    <div className="flex h-full flex-col bg-surface-ambient">
-      <div className="flex items-center justify-between border-b border-border-subtle px-4">
+    <div className="flex h-full flex-col bg-[#08090b]">
+      <div className="flex items-center justify-between border-b border-white/10 bg-[#0d0f12] px-4">
         <div className="flex items-center gap-1">
           <TabButton
             label="Output"
@@ -70,7 +70,7 @@ export function OutputPanel({
         </div>
         <button
           onClick={onReset}
-          className="rounded-md border border-border-subtle px-3 py-1 font-mono text-xs text-text-secondary transition-colors hover:bg-surface-interactive hover:text-foreground"
+          className="rounded-md border border-white/10 px-3 py-1 font-mono text-xs text-text-secondary transition-colors hover:bg-white/5 hover:text-foreground"
         >
           Reset
         </button>
@@ -84,7 +84,7 @@ export function OutputPanel({
           hasRun={hasRun}
         />
       ) : (
-        <div ref={scrollRef} className="flex-1 overflow-auto p-4 font-mono text-sm leading-relaxed">
+        <div ref={scrollRef} className="flex-1 overflow-auto bg-[#07080a] p-4 font-mono text-sm leading-relaxed">
           {isRunning ? (
             <div className="flex h-full flex-col items-center justify-center gap-3">
               <Loader2 className="h-6 w-6 animate-spin text-brand-green" />

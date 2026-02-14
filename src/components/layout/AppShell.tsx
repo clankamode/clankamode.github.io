@@ -4,6 +4,7 @@ import { useChromeVisibility } from '@/hooks/useChromeMode';
 import { useSession } from '@/contexts/SessionContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import FeedbackWidget from '@/components/feedback/FeedbackWidget';
 
 
 interface AppShellProps {
@@ -24,6 +25,7 @@ export default function AppShell({ children }: AppShellProps) {
                 </main>
                 {showFooter && <Footer />}
             </div>
+            {mode !== 'execute' && mode !== 'exit' && <FeedbackWidget />}
         </div>
     );
 }

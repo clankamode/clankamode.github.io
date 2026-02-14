@@ -49,10 +49,10 @@ const THEME_COLORS: Record<string, string> = {
 };
 
 const EDITOR_OPTIONS = {
-  fontSize: 15,
+  fontSize: 16,
   fontFamily: "'JetBrains Mono', 'Fira Code', Menlo, Monaco, monospace",
   fontLigatures: true,
-  lineHeight: 24,
+  lineHeight: 25,
   letterSpacing: 0.3,
   minimap: { enabled: false },
   scrollbar: { verticalScrollbarSize: 8, horizontalScrollbarSize: 8 },

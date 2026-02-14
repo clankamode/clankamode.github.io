@@ -29,6 +29,13 @@ const iconMap: Record<string, ReactElement> = {
       <rect x="8" y="13" width="8" height="8" />
     </svg>
   ),
+  'job-hunt': (
+    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="4" y="7" width="16" height="12" rx="2" />
+      <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+      <path d="M4 12h16" />
+    </svg>
+  ),
   blog: (
     <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.5">
       <path d="M5 20h4l10-10-4-4L5 16v4z" />

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import type { SessionState } from '@/lib/progress';
+import type { SessionItem, SessionState } from '@/lib/progress';
 import { useSession as useSessionContext, type SessionScope } from '@/contexts/SessionContext';
 import { logTelemetryEvent } from '@/lib/telemetry';
 
@@ -49,6 +49,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                         type: 'foundation',
                         text: 'Master the O(1) access pattern that underlies all contiguous memory structures.'
                     },
+                    primaryConceptSlug: 'array.random-access-o1',
                     targetConcept: 'Array indexing invariants',
                 }],
                 estimatedMinutes: 5,
@@ -66,7 +67,8 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                 payload: {
                     itemCount: 1,
                     estMinutes: 5,
-                    primaryConcept: 'arrays'
+                    primaryConcept: 'array.random-access-o1',
+                    itemHref: '/learn/dsa/arrays',
                 },
                 dedupeKey: `committed_${sessionId}`
             });
@@ -103,7 +105,8 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                 payload: {
                     itemCount: scope.items.length,
                     estMinutes: scope.estimatedMinutes,
-                    primaryConcept: now.slug || now.href
+                    primaryConcept: getCanonicalConceptSlug(now),
+                    itemHref: now.href,
                 },
                 dedupeKey: `committed_${sessionId}`
             });
@@ -135,12 +138,13 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
             eventType: 'gate_shown',
             mode: 'gate',
             payload: {
-                conceptSlug: now?.slug || now?.href,
+                conceptSlug: getCanonicalConceptSlug(now || null),
+                itemHref: now?.href || null,
                 sessionMode: session.mode
             },
-            dedupeKey: `gate_${userId}_${track.slug}_${now?.slug || now?.href || 'init'}`
+            dedupeKey: `gate_${userId}_${track.slug}_${getCanonicalConceptSlug(now || null) || now?.href || 'init'}`
         });
-    }, [userId, track?.slug, now?.slug, now?.href, session.mode]);
+    }, [userId, track?.slug, now, session.mode]);
 
     const handleStartRef = useRef<() => void>(() => undefined);
     useEffect(() => {
@@ -180,7 +184,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     {[
                         { slug: 'dsa', label: 'Data Structures & Algorithms', time: '~20 min' },
                         { slug: 'system-design', label: 'System Design', time: '~25 min' },
-                        { slug: 'interviews', label: 'Interview Prep', time: '~15 min' },
+                        { slug: 'job-hunt', label: 'Job Hunt', time: '~15 min' },
                     ].map((t) => (
                         <button
                             key={t.slug}
@@ -367,4 +371,16 @@ function polishGateSubtitle(reason: string): string {
     }
 
     return clean;
+}
+
+function getCanonicalConceptSlug(item: SessionItem | null | undefined): string | null {
+    if (!item) return null;
+
+    const primary = item.primaryConceptSlug?.trim();
+    if (primary) return primary;
+
+    const slug = item.slug?.trim();
+    if (slug && !slug.startsWith('/')) return slug;
+
+    return null;
 }

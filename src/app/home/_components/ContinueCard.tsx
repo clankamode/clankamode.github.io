@@ -77,7 +77,7 @@ export default function ContinueCard({ summary }: ContinueCardProps) {
                 <div className="mt-8 flex flex-wrap gap-3">
                     <PillarPill href="/learn/dsa" label="DSA" />
                     <PillarPill href="/learn/system-design" label="System Design" />
-                    <PillarPill href="/learn/interviews" label="Interviews" />
+                    <PillarPill href="/learn/job-hunt" label="Job Hunt" />
                 </div>
                 <Link
                     href="/learn"

@@ -86,7 +86,7 @@ export default function SessionExitView() {
     }
 
     const { completedCount, durationMinutes } = state.exit;
-    const wasAbandoned = completedCount === 0 && durationMinutes < 2;
+    const wasAbandoned = completedCount === 0;
     const trackName = state.scope?.track?.name || 'Session';
 
     if (wasAbandoned) {

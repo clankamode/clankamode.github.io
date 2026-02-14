@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 export default function Footer() {
@@ -33,6 +34,11 @@ export default function Footer() {
                     </a>
                 </div>
                 <div className="mt-8 md:order-1 md:mt-0">
+                    <div className="mb-3 text-center">
+                        <Link href="/feedback" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                            Share feedback
+                        </Link>
+                    </div>
                     <p className="text-center text-sm leading-5 text-muted-foreground/60">
                         &copy; {currentYear} James Peralta. All rights reserved.
                     </p>

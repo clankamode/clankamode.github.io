@@ -96,7 +96,7 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
     ? `/session/practice/${question.leetcode_number}`
     : `/session/practice/${question.id}`;
   const backHref = context?.returnTo || (isSessionContext ? fallbackSessionReturn : '/peralta75');
-  const backLabel = 'Back';
+  const backLabel = isSessionContext ? 'Session' : 'Back';
   const [code, setCode] = useState(question.starter_code);
   const { isReady, isRunning, isLoading, output, run, reset } = usePythonRunner();
   const [testResults, setTestResults] = useState<TestCaseResult[]>([]);
@@ -283,21 +283,6 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
       </div>
 
       <div className="hidden md:flex h-screen flex-col overflow-hidden bg-surface-workbench">
-        {isSessionContext && (
-          <div className="border-b border-border-interactive bg-surface-ambient/95 px-4 py-2">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-text-muted">
-                  Session chamber {chamberMeta ? `· ${chamberMeta.track} · Step ${chamberMeta.step}/${chamberMeta.total}` : ''}
-                </p>
-                <p className="mt-1 text-sm text-text-secondary">
-                  Keep flow state: solve here, then complete this step before moving forward.
-                </p>
-              </div>
-
-            </div>
-          </div>
-        )}
         <div className="flex items-center justify-between border-b border-border-subtle px-4 py-2">
           <div className="flex items-center gap-3">
             <button
@@ -311,11 +296,16 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
             {question.leetcode_number && (
               <span className="font-mono text-xs text-text-muted">#{question.leetcode_number}</span>
             )}
+            {isSessionContext && chamberMeta && (
+              <span className="rounded-full border border-border-interactive bg-surface-interactive px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-text-muted">
+                {chamberMeta.track} · Step {chamberMeta.step}/{chamberMeta.total}
+              </span>
+            )}
             <span className="font-semibold text-sm text-foreground truncate max-w-[300px]">
               {question.name}
             </span>
             <DifficultyBadge difficulty={question.difficulty} />
-            {question.pattern && (
+            {!isSessionContext && question.pattern && (
               <span className="text-xs text-text-muted px-2 py-0.5 rounded bg-surface-interactive">
                 {question.pattern}
               </span>
