@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../api/auth/[...nextauth]/auth';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { getEffectiveIdentityFromSession } from '@/lib/auth-identity';
+import { headers } from 'next/headers';
 
 const ALLOWED_EVENTS = new Set([
     'gate_shown',
@@ -24,6 +25,12 @@ export async function logTelemetryAction(params: {
     payload?: Record<string, unknown>;
     dedupeKey?: string;
 }) {
+    // fast-exit for E2E tests to avoid polluting telemetry
+    const headerList = await headers();
+    if (headerList.get('x-e2e-test') === '1') {
+        return { success: true, skipped: true };
+    }
+
     const session = await getServerSession(authOptions);
     const identity = getEffectiveIdentityFromSession(session);
 
