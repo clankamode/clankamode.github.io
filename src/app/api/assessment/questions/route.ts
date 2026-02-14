@@ -4,10 +4,11 @@ import { supabase } from '@/lib/supabase';
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
-interface LeetCodeProblemRow {
-  id: number;
+interface InterviewQuestionRow {
+  id: string;
   name: string;
-  link: string;
+  leetcode_number: number | null;
+  leetcode_url: string | null;
   difficulty: string;
 }
 
@@ -15,7 +16,7 @@ interface AssessmentQuestion {
   id: string;
   title: string;
   difficulty: Difficulty;
-  url: string;
+  url: string | null;
 }
 
 const pickRandomItems = <T,>(items: T[], count: number): T[] => {
@@ -30,24 +31,47 @@ const pickRandomItems = <T,>(items: T[], count: number): T[] => {
   return picked;
 };
 
-const mapQuestion = (question: LeetCodeProblemRow): AssessmentQuestion => ({
-  id: String(question.id),
+const mapQuestion = (question: InterviewQuestionRow): AssessmentQuestion => ({
+  id: String(question.leetcode_number ?? question.id),
   title: question.name,
   difficulty: question.difficulty as Difficulty,
-  url: question.link,
+  url: question.leetcode_url,
 });
 
 const fetchQuestionsByDifficulty = async (difficulty: Difficulty) => {
   const { data, error } = await supabase
-    .from('LeetCodeProblems')
-    .select('id, name, link, difficulty')
-    .eq('difficulty', difficulty);
+    .from('InterviewQuestions')
+    .select('id, name, leetcode_number, leetcode_url, difficulty')
+    .eq('difficulty', difficulty)
+    .contains('source', ['MOCK_ASSESSMENTS'])
+    .not('leetcode_number', 'is', null)
+    .not('leetcode_url', 'is', null);
 
   if (error) {
     throw new Error(`Failed to load ${difficulty} questions.`);
   }
 
-  return (data || []) as LeetCodeProblemRow[];
+  return (data || []) as InterviewQuestionRow[];
+};
+
+const fetchQuestionByIdentifier = async (questionIdentifier: string) => {
+  const baseQuery = supabase
+    .from('InterviewQuestions')
+    .select('id, name, leetcode_number, leetcode_url, difficulty')
+    .contains('source', ['MOCK_ASSESSMENTS']);
+
+  const numericIdentifier = Number(questionIdentifier);
+  const query = Number.isFinite(numericIdentifier) && numericIdentifier > 0
+    ? baseQuery.eq('leetcode_number', numericIdentifier)
+    : baseQuery.eq('id', questionIdentifier);
+
+  const { data, error } = await query.maybeSingle();
+
+  if (error) {
+    throw new Error('Failed to load question.');
+  }
+
+  return data as InterviewQuestionRow | null;
 };
 
 export async function GET(req: NextRequest) {
@@ -58,6 +82,27 @@ export async function GET(req: NextRequest) {
   }
 
   const level = req.nextUrl.searchParams.get('level');
+  const questionIdParam = req.nextUrl.searchParams.get('questionId');
+
+  if (questionIdParam) {
+    if (!questionIdParam || questionIdParam.trim().length === 0) {
+      return NextResponse.json({ error: 'Invalid questionId' }, { status: 400 });
+    }
+
+    try {
+      const question = await fetchQuestionByIdentifier(questionIdParam.trim());
+      if (!question) {
+        return NextResponse.json({ error: 'Question not found' }, { status: 404 });
+      }
+
+      return NextResponse.json({
+        question: mapQuestion(question),
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to load question.';
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  }
 
   if (!level) {
     return NextResponse.json({ error: 'Level is required' }, { status: 400 });
@@ -70,7 +115,7 @@ export async function GET(req: NextRequest) {
       fetchQuestionsByDifficulty('Hard'),
     ]);
 
-    let selectedQuestions: LeetCodeProblemRow[] = [];
+    let selectedQuestions: InterviewQuestionRow[] = [];
 
     if (level === 'noob') {
       selectedQuestions = pickRandomItems(easy, 2);

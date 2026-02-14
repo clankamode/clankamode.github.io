@@ -13,6 +13,8 @@ import { getUserLearningState } from '@/lib/user-learning-state';
 import { logTelemetryEvent } from '@/lib/telemetry';
 
 export type SessionPhase = 'idle' | 'entry' | 'execution' | 'exit';
+type SessionTransitionStatus = 'ready' | 'advancing' | 'finalizing';
+const SESSION_STATE_STORAGE_KEY = 'session:state:v1';
 
 export interface SessionScope {
     track: { slug: string; name: string };
@@ -29,6 +31,9 @@ export interface SessionExecutionState {
     currentIndex: number;
     completedItems: string[];
     startedAt: Date;
+    currentChunk: number;
+    totalChunks: number;
+    transitionStatus: SessionTransitionStatus;
 }
 
 export interface SessionExitState {
@@ -46,6 +51,7 @@ export interface SessionState {
     scope: SessionScope | null;
     execution: SessionExecutionState | null;
     exit: SessionExitState | null;
+    transitionStatus: SessionTransitionStatus;
 }
 
 interface SessionContextValue {
@@ -56,6 +62,9 @@ interface SessionContextValue {
     completeSession: () => void;
     abandonSession: () => void;
     resetToEntry: () => void;
+    nextChunk: () => void;
+    prevChunk: () => void;
+    setTotalChunks: (total: number) => void;
 }
 
 const initialState: SessionState = {
@@ -63,6 +72,7 @@ const initialState: SessionState = {
     scope: null,
     execution: null,
     exit: null,
+    transitionStatus: 'ready',
 };
 
 function toSessionProposal(p: MicroProposal): MicroSessionProposal {
@@ -87,6 +97,40 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         return () => { isMountedRef.current = false; };
     }, []);
 
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const raw = window.sessionStorage.getItem(SESSION_STATE_STORAGE_KEY);
+        if (!raw) return;
+
+        try {
+            const parsed = JSON.parse(raw) as SessionState;
+            if (!parsed || !parsed.phase || parsed.phase === 'idle') return;
+
+            setState({
+                ...parsed,
+                execution: parsed.execution
+                    ? {
+                        ...parsed.execution,
+                        startedAt: new Date(parsed.execution.startedAt),
+                        transitionStatus: 'ready',
+                    }
+                    : null,
+                transitionStatus: 'ready',
+            });
+        } catch {
+            window.sessionStorage.removeItem(SESSION_STATE_STORAGE_KEY);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        if (state.phase === 'idle') {
+            window.sessionStorage.removeItem(SESSION_STATE_STORAGE_KEY);
+            return;
+        }
+        window.sessionStorage.setItem(SESSION_STATE_STORAGE_KEY, JSON.stringify(state));
+    }, [state]);
+
     const isInSession = state.phase === 'execution';
 
     useEffect(() => {
@@ -96,22 +140,45 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }, [state.phase, pathname, router]);
 
     const commitSession = useCallback((scope: SessionScope) => {
+        const sessionId = scope.sessionId || crypto.randomUUID();
+        const executionState: SessionExecutionState = {
+            sessionId,
+            currentIndex: 0,
+            completedItems: [],
+            startedAt: new Date(),
+            currentChunk: 0,
+            totalChunks: 1,
+            transitionStatus: 'ready',
+        };
+
+        if (scope.userId) {
+            logTelemetryEvent({
+                userId: scope.userId,
+                trackSlug: scope.track.slug,
+                sessionId,
+                eventType: 'session_started',
+                mode: 'execute',
+                payload: {
+                    itemCount: scope.items.length,
+                    estimatedMinutes: scope.estimatedMinutes,
+                },
+                dedupeKey: `session_started_${sessionId}`,
+            });
+        }
+
         setState({
             phase: 'execution',
-            scope,
-            execution: {
-                sessionId: scope.sessionId || crypto.randomUUID(),
-                currentIndex: 0,
-                completedItems: [],
-                startedAt: new Date(),
-            },
+            scope: { ...scope, sessionId },
+            execution: executionState,
             exit: null,
+            transitionStatus: 'ready',
         });
     }, []);
 
     const advanceItem = useCallback(() => {
         setState((prev) => {
             if (!prev.execution || !prev.scope) return prev;
+            if (prev.execution.transitionStatus !== 'ready' || prev.transitionStatus !== 'ready') return prev;
 
             const currentItem = prev.scope.items[prev.execution.currentIndex];
             const newCompletedItems = [...prev.execution.completedItems, currentItem?.href || ''];
@@ -130,6 +197,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                         index: prev.execution.currentIndex
                     },
                     dedupeKey: `completed_${prev.execution.sessionId}_${currentItem.href}`
+                });
+                logTelemetryEvent({
+                    userId: prev.scope.userId,
+                    trackSlug: prev.scope.track.slug,
+                    sessionId: prev.execution.sessionId,
+                    eventType: 'step_completed',
+                    mode: 'execute',
+                    payload: {
+                        stepIndex: prev.execution.currentIndex + 1,
+                        totalSteps: prev.scope.items.length,
+                        itemHref: currentItem.href,
+                    },
+                    dedupeKey: `step_completed_${prev.execution.sessionId}_${prev.execution.currentIndex}`,
                 });
             }
 
@@ -236,6 +316,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                         primaryConcept: scope.items[0]?.primaryConceptSlug || null,
                         microSessionProposal,
                     },
+                    transitionStatus: 'ready',
                 };
             }
 
@@ -245,7 +326,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                     ...prev.execution,
                     currentIndex: newIndex,
                     completedItems: newCompletedItems,
+                    currentChunk: 0,
+                    totalChunks: 1,
+                    transitionStatus: 'ready',
                 },
+                transitionStatus: 'ready',
             };
         });
     }, []);
@@ -284,6 +369,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                     primaryConcept: null,
                     microSessionProposal
                 },
+                transitionStatus: 'ready',
             };
         });
     }, []);
@@ -309,12 +395,56 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                     primaryConcept: null,
                     microSessionProposal: null,
                 },
+                transitionStatus: 'ready',
             };
         });
     }, []);
 
     const resetToEntry = useCallback(() => {
         setState(initialState);
+    }, []);
+
+    const nextChunk = useCallback(() => {
+        setState((prev) => {
+            if (!prev.execution || prev.execution.currentChunk >= prev.execution.totalChunks - 1) {
+                return prev;
+            }
+            return {
+                ...prev,
+                execution: {
+                    ...prev.execution,
+                    currentChunk: prev.execution.currentChunk + 1,
+                },
+            };
+        });
+    }, []);
+
+    const prevChunk = useCallback(() => {
+        setState((prev) => {
+            if (!prev.execution || prev.execution.currentChunk <= 0) {
+                return prev;
+            }
+            return {
+                ...prev,
+                execution: {
+                    ...prev.execution,
+                    currentChunk: prev.execution.currentChunk - 1,
+                },
+            };
+        });
+    }, []);
+
+    const setTotalChunks = useCallback((total: number) => {
+        setState((prev) => {
+            if (!prev.execution) return prev;
+            return {
+                ...prev,
+                execution: {
+                    ...prev.execution,
+                    totalChunks: Math.max(1, total),
+                },
+            };
+        });
     }, []);
 
     return (
@@ -327,6 +457,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 completeSession,
                 abandonSession,
                 resetToEntry,
+                nextChunk,
+                prevChunk,
+                setTotalChunks,
             }}
         >
             {children}

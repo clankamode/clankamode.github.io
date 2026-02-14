@@ -23,9 +23,7 @@ export function TestCasesPanel({ testCases, testResults, isRunning, hasRun }: Te
 
   return (
     <div className="flex h-full">
-      {/* ── Left: test case list ──────────────────────────────────── */}
       <div className="flex w-44 shrink-0 flex-col border-r border-border-subtle">
-        {/* Summary header */}
         <div className="border-b border-border-subtle px-3 py-2.5">
           {isRunning ? (
             <div className="flex items-center gap-2">
@@ -47,7 +45,6 @@ export function TestCasesPanel({ testCases, testResults, isRunning, hasRun }: Te
           )}
         </div>
 
-        {/* List */}
         <div className="flex-1 overflow-y-auto">
           {testCases.map((tc) => {
             const result = resultMap.get(tc.id);
@@ -71,7 +68,6 @@ export function TestCasesPanel({ testCases, testResults, isRunning, hasRun }: Te
         </div>
       </div>
 
-      {/* ── Right: detail view ────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto p-4">
         {isRunning ? (
           <div className="flex h-full flex-col items-center justify-center gap-3">
@@ -80,7 +76,6 @@ export function TestCasesPanel({ testCases, testResults, isRunning, hasRun }: Te
           </div>
         ) : (
           <div className="flex flex-col gap-5">
-            {/* Status badge */}
             {hasRun && selectedResult && (
               <DetailSection label="Status">
                 <span
@@ -105,17 +100,14 @@ export function TestCasesPanel({ testCases, testResults, isRunning, hasRun }: Te
               </DetailSection>
             )}
 
-            {/* Input */}
             <DetailSection label="Input">
               <CodeBlock>{selected.input}</CodeBlock>
             </DetailSection>
 
-            {/* Expected output */}
             <DetailSection label="Expected Output">
               <CodeBlock>{selected.expectedOutput}</CodeBlock>
             </DetailSection>
 
-            {/* Your output (only after a run) */}
             {hasRun && selectedResult && (
               <DetailSection label="Your Output">
                 <CodeBlock
@@ -139,8 +131,6 @@ export function TestCasesPanel({ testCases, testResults, isRunning, hasRun }: Te
     </div>
   );
 }
-
-/* ── Sub-components ────────────────────────────────────────────── */
 
 function StatusIcon({
   result,

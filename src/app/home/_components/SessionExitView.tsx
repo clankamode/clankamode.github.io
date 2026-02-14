@@ -12,6 +12,47 @@ import Link from 'next/link';
 export default function SessionExitView() {
     const { state, resetToEntry, commitSession } = useSessionContext();
     const router = useRouter();
+    const [isFinalizing, setIsFinalizing] = useState(false);
+    const [hasFinalized, setHasFinalized] = useState(false);
+
+    const finalizeAndReturn = async (skipped = false) => {
+        if (hasFinalized || isFinalizing) {
+            resetToEntry();
+            router.replace('/home');
+            router.refresh();
+            return;
+        }
+
+        const sessionId = state.scope?.sessionId || 'unknown';
+        const trackSlug = state.scope?.track?.slug || 'dsa';
+        const completedItems = state.scope?.items?.slice(0, state.exit?.completedCount || 0).map((item) => item.href) || [];
+
+        setIsFinalizing(true);
+        try {
+            await fetch('/api/session/finalize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId,
+                    trackSlug,
+                    completedItems,
+                    reflectionCompletedAt: skipped ? null : new Date().toISOString(),
+                    skipped,
+                }),
+            });
+            setHasFinalized(true);
+        } catch {
+        } finally {
+            setIsFinalizing(false);
+            resetToEntry();
+            router.replace('/home');
+            router.refresh();
+        }
+    };
+
+    const returnToDashboard = () => {
+        void finalizeAndReturn(ritualStatus === 'skipped');
+    };
 
     const [ritualStatus, setRitualStatus] = useState<'pending' | 'completed' | 'skipped'>('pending');
     const introduced = state.exit?.delta?.introduced || [];
@@ -63,7 +104,7 @@ export default function SessionExitView() {
                     </p>
 
                     <button
-                        onClick={resetToEntry}
+                        onClick={returnToDashboard}
                         className="w-full py-4 rounded-full bg-white/[0.03] border border-white/10 text-text-primary font-medium transition-all hover:bg-white/[0.06] hover:border-white/20"
                     >
                         Return to gate
@@ -78,7 +119,7 @@ export default function SessionExitView() {
             setRitualStatus(skipped ? 'skipped' : 'completed');
         } else {
             if (skipped) {
-                await resetToEntry();
+                void finalizeAndReturn(true);
             }
         }
     };
@@ -87,7 +128,7 @@ export default function SessionExitView() {
         if (state.exit?.microSessionProposal) {
             setRitualStatus('completed');
         } else {
-            await resetToEntry();
+            void finalizeAndReturn(false);
         }
     };
 
@@ -255,10 +296,11 @@ export default function SessionExitView() {
                                     </button>
 
                                     <button
-                                        onClick={resetToEntry}
+                                        onClick={returnToDashboard}
+                                        disabled={isFinalizing}
                                         className="inline-block text-[11px] font-bold uppercase tracking-[0.2em] text-text-muted hover:text-text-primary transition-colors py-4 px-8"
                                     >
-                                        Return to dashboard
+                                        {isFinalizing ? 'Saving...' : 'Return to dashboard'}
                                     </button>
                                 </div>
                             ) : (
@@ -272,10 +314,11 @@ export default function SessionExitView() {
                                         Done for now.
                                     </h2>
                                     <button
-                                        onClick={resetToEntry}
+                                        onClick={returnToDashboard}
+                                        disabled={isFinalizing}
                                         className="w-full py-4 rounded-full bg-white text-black font-bold text-sm uppercase tracking-widest hover:bg-white/90 transition-all shadow-lg"
                                     >
-                                        Return to dashboard
+                                        {isFinalizing ? 'Saving...' : 'Return to dashboard'}
                                     </button>
                                 </div>
                             )}

@@ -15,8 +15,6 @@ import {
   ResizableHandle,
 } from '@/components/ui/Resizable';
 
-/* ── Types ─────────────────────────────────────────────────────── */
-
 interface InterviewQuestion {
   id: string;
   name: string;
@@ -32,8 +30,6 @@ interface InterviewQuestion {
 interface MockInterviewEditorProps {
   questions: [InterviewQuestion, InterviewQuestion];
 }
-
-/* ── Test runner builder ───────────────────────────────────────── */
 
 const TEST_MARKER = '__TEST_RESULTS__:';
 
@@ -66,8 +62,6 @@ function buildTestRunnerCode(testCases: TestCase[]): string {
   return lines.join('\n');
 }
 
-/* ── Time's Up Overlay ─────────────────────────────────────────── */
-
 function TimesUpOverlay({ onExit }: { onExit: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in">
@@ -88,9 +82,7 @@ function TimesUpOverlay({ onExit }: { onExit: () => void }) {
   );
 }
 
-/* ── Main Component ────────────────────────────────────────────── */
-
-const TOTAL_TIME = 3000; // 50 minutes
+const TOTAL_TIME = 3000;
 
 export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
   const router = useRouter();
@@ -124,7 +116,6 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
     run(fullCode);
   }, [activeCode, activeQ, activeTestCases, questions, run]);
 
-  // Parse test results
   useEffect(() => {
     if (isRunning) return;
     for (const line of output) {
@@ -133,14 +124,12 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
           const json = line.text.slice(TEST_MARKER.length);
           setTestResults(JSON.parse(json));
         } catch {
-          // ignore malformed
         }
         break;
       }
     }
   }, [output, isRunning]);
 
-  // Check if current question is solved
   useEffect(() => {
     if (isRunning) return;
 
@@ -162,7 +151,6 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
     }
   }, [testResults, isRunning, activeQ, activeTestCases.length, q1Solved, q2Solved]);
 
-  // Switch to Q2 after dismissing Q1 success
   const handleQ1SuccessDismiss = useCallback(() => {
     setShowSuccess(false);
     setActiveQ(1);
@@ -198,7 +186,6 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
 
   return (
     <>
-      {/* Mobile gate */}
       <div className="flex md:hidden h-screen items-center justify-center bg-surface-ambient px-6">
         <div className="flex flex-col items-center gap-4 text-center">
           <Monitor className="h-10 w-10 text-text-muted" />
@@ -209,12 +196,9 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
         </div>
       </div>
 
-      {/* Desktop editor */}
       <div className="hidden md:flex h-screen flex-col overflow-hidden bg-surface-workbench">
-        {/* Top bar: question tabs + timer */}
         <div className="flex items-center justify-between border-b border-border-subtle px-4 py-2">
           <div className="flex items-center gap-2">
-            {/* Q1 tab */}
             <button
               onClick={() => handleTabSwitch(0)}
               className={`
@@ -240,7 +224,6 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
               </span>
             </button>
 
-            {/* Q2 tab */}
             <button
               onClick={() => handleTabSwitch(1)}
               disabled={!q1Solved}
@@ -272,15 +255,12 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
             </button>
           </div>
 
-          {/* Timer */}
           <CountdownTimer totalSeconds={TOTAL_TIME} onTimeUp={handleTimeUp} />
         </div>
 
-        {/* Editor + Output */}
         <ResizablePanelGroup orientation="horizontal" className="flex-1">
           <ResizablePanel defaultSize={50} minSize={30}>
             <div className="flex h-full flex-col">
-              {/* Run bar */}
               <div className="flex items-center gap-3 border-b border-border-subtle px-4 py-2">
                 <button
                   onClick={handleRun}
@@ -296,7 +276,6 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
                 <span className="font-mono text-sm text-text-secondary">{statusText}</span>
               </div>
 
-              {/* Monaco editor */}
               <div className="flex-1 overflow-hidden">
                 <MonacoWrapper
                   value={activeCode}
@@ -322,7 +301,6 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
         </ResizablePanelGroup>
       </div>
 
-      {/* Q1 solved overlay */}
       <SuccessOverlay
         show={showSuccess}
         onDismiss={handleQ1SuccessDismiss}
@@ -330,7 +308,6 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
         totalCount={q1TestCases.length}
       />
 
-      {/* All done overlay */}
       <SuccessOverlay
         show={showAllDone}
         onDismiss={handleAllDoneDismiss}
@@ -338,7 +315,6 @@ export function MockInterviewEditor({ questions }: MockInterviewEditorProps) {
         totalCount={q1TestCases.length + q2TestCases.length}
       />
 
-      {/* Time's up overlay */}
       {isFinished && <TimesUpOverlay onExit={() => router.push('/assessment')} />}
     </>
   );

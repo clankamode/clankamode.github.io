@@ -29,10 +29,13 @@ export default function CompletionButton({
     const startTime = Date.now();
 
     try {
+      const sessionId = sessionState.execution?.sessionId || 'standalone';
+      const idempotencyKey = `${sessionId}:${articleId}:${nextState ? 'complete' : 'uncomplete'}`;
       const response = await fetch('/api/progress/complete', {
         method: nextState ? 'POST' : 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          'x-idempotency-key': idempotencyKey,
         },
         body: JSON.stringify({ articleId }),
       });

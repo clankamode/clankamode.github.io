@@ -38,8 +38,8 @@ export function CountdownTimer({ totalSeconds, onTimeUp }: CountdownTimerProps) 
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   }, []);
 
-  const isWarning = remaining <= 300 && remaining > 60; // < 5 min
-  const isCritical = remaining <= 60;                    // < 1 min
+  const isWarning = remaining <= 300 && remaining > 60;
+  const isCritical = remaining <= 60;
 
   return (
     <div

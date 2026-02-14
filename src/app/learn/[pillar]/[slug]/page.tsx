@@ -9,7 +9,6 @@ import {
   getLearningPillarTree,
 } from '@/lib/content';
 import { UserRole, hasRole } from '@/types/roles';
-import ArticleRenderer from '../../_components/ArticleRenderer';
 import ArticleNav from '../../_components/ArticleNav';
 import Breadcrumbs from '../../_components/Breadcrumbs';
 import PillarSidebar from '../../_components/PillarSidebar';
@@ -22,9 +21,11 @@ import BookmarkButton from '../../_components/BookmarkButton';
 import { getArticleCompletionStatus, getBookmarkStatus } from '@/lib/progress';
 import ArticleLayoutSwitcher from '../../_components/ArticleLayoutSwitcher';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
+import ChunkedArticleRenderer from '@/components/session/ChunkedArticleRenderer';
 
 interface ArticlePageProps {
   params: Promise<{ pillar: string; slug: string }>;
+  searchParams: Promise<{ sessionChunk?: string | string[] }>;
 }
 
 function formatDate(dateString: string) {
@@ -43,8 +44,16 @@ function getPreviewContent(content: string) {
 
 export const dynamic = 'force-dynamic';
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
   const { pillar: pillarSlug, slug: articleSlug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const sessionChunkParam = Array.isArray(resolvedSearchParams?.sessionChunk)
+    ? resolvedSearchParams.sessionChunk[0]
+    : resolvedSearchParams?.sessionChunk;
+  const parsedSessionChunk = Number.parseInt(sessionChunkParam || '', 10);
+  const focusedChunkIndex = Number.isFinite(parsedSessionChunk) && parsedSessionChunk >= 0
+    ? parsedSessionChunk
+    : null;
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role as UserRole | undefined;
   const canViewDrafts = !!userRole && hasRole(userRole, UserRole.EDITOR);
@@ -111,29 +120,22 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         }
         articleContent={
           <>
-            <div className="mb-10 border-b border-border-subtle pb-8">
-              <p className="text-xs uppercase tracking-[0.3em] text-text-muted">
+            <div className="mb-10 border-b border-border-interactive pb-8">
+              <p className="text-xs uppercase tracking-[0.3em] text-text-secondary">
                 {pillar.name}
               </p>
-              <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+              <div className="mt-4 flex flex-wrap items-start gap-4">
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-text-primary">
                   {article.title}
                 </h1>
-                {showProgress && (
-                  <BookmarkButton
-                    articleId={article.id}
-                    initialBookmarked={bookmarkStatus?.bookmarked}
-                    size="sm"
-                  />
-                )}
               </div>
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-text-muted font-mono">
+              <div className="mt-4 flex flex-wrap items-center gap-4 font-mono text-sm text-text-secondary">
                 <span>{formatDate(article.updated_at)}</span>
-                <span className="text-text-muted/60">•</span>
+                <span className="text-text-secondary/75">•</span>
                 <span>{article.reading_time_minutes || 5} min read</span>
                 {article.is_premium && (
                   <>
-                    <span className="text-text-muted/60">•</span>
+                    <span className="text-text-secondary/75">•</span>
                     <span className="rounded-full bg-surface-dense px-3 py-1 text-[10px] font-semibold text-text-primary">
                       Premium
                     </span>
@@ -141,7 +143,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 )}
                 {canEdit && (
                   <>
-                    <span className="text-text-muted/60">•</span>
+                    <span className="text-text-secondary/75">•</span>
                     <Link
                       href={`/admin/content/${article.id}`}
                       className="text-brand-green hover:text-brand-emerald transition-colors"
@@ -150,10 +152,20 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     </Link>
                   </>
                 )}
+                {showProgress && (
+                  <>
+                    <span className="text-text-secondary/75">•</span>
+                    <BookmarkButton
+                      articleId={article.id}
+                      initialBookmarked={bookmarkStatus?.bookmarked}
+                      size="sm"
+                    />
+                  </>
+                )}
               </div>
             </div>
 
-            <ArticleRenderer content={contentToRender} />
+            <ChunkedArticleRenderer content={contentToRender} focusedChunkIndex={focusedChunkIndex} />
             {!canViewPremium && <PremiumGate />}
           </>
         }

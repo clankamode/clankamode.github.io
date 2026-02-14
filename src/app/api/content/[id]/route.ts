@@ -3,13 +3,9 @@ import { supabase } from '@/lib/supabase';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { UserRole } from '@/types/roles';
 import { requireAuth } from '@/lib/auth-helpers';
+import { estimateReadingTimeMinutes } from '@/lib/reading-time';
 
 const ARTICLES_TABLE = 'LearningArticles';
-
-function getReadingTimeMinutes(text: string): number {
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.ceil(words / 200));
-}
 
 export async function GET(
   req: NextRequest,
@@ -77,7 +73,9 @@ export async function PATCH(
       is_premium: body.is_premium ?? false,
       is_published: body.is_published ?? false,
       order_index: body.order_index ?? 0,
-      reading_time_minutes: body.body ? getReadingTimeMinutes(body.body) : (body.reading_time_minutes ?? undefined),
+      reading_time_minutes: body.body
+        ? estimateReadingTimeMinutes(body.body)
+        : (body.reading_time_minutes ?? undefined),
       topic_id: body.topic_id,
     };
 

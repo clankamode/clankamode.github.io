@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import type { SessionState } from '@/lib/progress';
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
 import NowCard from './_components/NowCard';
 import SessionExitView from './_components/SessionExitView';
+import { logTelemetryEvent } from '@/lib/telemetry';
 
 interface HomeClientProps {
     sessionState: SessionState | null;
@@ -17,6 +19,24 @@ interface HomeClientProps {
 export default function HomeClient({ sessionState, primer }: HomeClientProps) {
     const { data: authData, status } = useSession();
     const { state: sessionPhaseState } = useSessionContext();
+    const nextItemId = sessionState?.now?.practiceQuestionId || sessionState?.now?.articleId || sessionState?.now?.href || 'pick_track';
+
+    useEffect(() => {
+        if (!authData?.user?.email) return;
+        const trackSlug = sessionState?.track?.slug || 'dsa';
+        logTelemetryEvent({
+            userId: authData.user.email,
+            trackSlug,
+            sessionId: 'home_gate',
+            eventType: 'home_card_rendered',
+            mode: 'gate',
+            payload: {
+                mode: sessionState?.mode || 'pick_track',
+                nextItemId,
+            },
+            dedupeKey: `home_card_${authData.user.email}_${trackSlug}_${nextItemId}`,
+        });
+    }, [authData?.user?.email, sessionState?.track?.slug, sessionState?.mode, nextItemId]);
 
     if (status === 'loading') {
         return (

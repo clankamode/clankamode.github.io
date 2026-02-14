@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BlockEditor } from '@/components/editor/BlockEditor';
 import { BlockRenderer } from '@/components/editor/BlockRenderer';
 import { parseBlocks } from '@/components/editor/utils/parseBlocks';
+import { estimateReadingTimeMinutes } from '@/lib/reading-time';
 
 const MIN_LEFT_PERCENT = 25;
 const MAX_LEFT_PERCENT = 75;
@@ -64,7 +65,10 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
     return text.trim().split(/\s+/).filter(Boolean).length;
   }, [blocks]);
 
-  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+  const readingTime = useMemo(
+    () => estimateReadingTimeMinutes(value),
+    [value]
+  );
 
   return (
     <div className="flex flex-col gap-6">

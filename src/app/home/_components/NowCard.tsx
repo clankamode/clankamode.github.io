@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { SessionState } from '@/lib/progress';
 import { useSession as useSessionContext, type SessionScope } from '@/contexts/SessionContext';
@@ -25,6 +26,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
     const [isPicking, setIsPicking] = useState(false);
     const [isStarting, setIsStarting] = useState(false);
     const isFirstTime = mode === 'pick_track' || !now;
+    const streakDays = session.proof?.streakDays ?? 0;
 
     const assertion = isFirstTime ? {
         title: 'Data Structures',
@@ -46,7 +48,8 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     intent: {
                         type: 'foundation',
                         text: 'Master the O(1) access pattern that underlies all contiguous memory structures.'
-                    }
+                    },
+                    targetConcept: 'Array indexing invariants',
                 }],
                 estimatedMinutes: 5,
                 exitCondition: 'Complete item',
@@ -71,7 +74,8 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
             commitSession({ ...scope, sessionId });
             router.push('/learn/dsa/arrays');
         },
-        reason: 'Master the O(1) access pattern that underlies all contiguous memory structures.'
+        reason: 'Learn O(1) indexing first because it is the base move behind contiguous array problems.',
+        targetConcept: 'Array indexing invariants',
     } : {
         title: now!.title,
         subtitle: track?.name,
@@ -107,8 +111,20 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
             commitSession({ ...scope, sessionId });
             router.push(now.href);
         },
-        reason: now!.intent?.text || 'Next step in your learning path.'
+        reason: now!.intent?.text || 'Next step in your learning path.',
+        targetConcept: formatTargetConcept(now?.targetConcept || now?.primaryConceptSlug || null),
     };
+    const displayTitle = simplifyGateTitle(assertion.title);
+    const displayReason = polishGateSubtitle(assertion.reason);
+    const upcomingItems = !isFirstTime
+        ? upNext.slice(0, 2).map((item) => ({ title: item.title, estMinutes: item.estMinutes || 5 }))
+        : [];
+    const normalizedTarget = normalizeComparisonValue(assertion.targetConcept);
+    const filteredUpcomingItems = upcomingItems.filter((item) => {
+        const normalizedTitle = normalizeComparisonValue(item.title);
+        return !normalizedTarget || normalizedTitle !== normalizedTarget;
+    });
+    const nextItem = filteredUpcomingItems[0];
 
     useEffect(() => {
         if (!userId || !track?.slug) return;
@@ -154,7 +170,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     </h1>
                     <button
                         onClick={() => setIsPicking(false)}
-                        className="text-sm text-text-muted hover:text-text-primary transition-colors"
+                        className="inline-flex min-h-[40px] items-center rounded-full border border-border-subtle px-4 text-sm font-medium text-text-secondary transition-all hover:border-border-interactive hover:bg-surface-interactive hover:text-text-primary"
                     >
                         Cancel
                     </button>
@@ -170,8 +186,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                             key={t.slug}
                             onClick={() => {
                                 setIsPicking(false);
-                                router.push(`/home?track=${t.slug}`);
-                                router.refresh();
+                                router.push(`/home?track=${encodeURIComponent(t.slug)}`);
                             }}
                             className="w-full text-left p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all group"
                         >
@@ -200,29 +215,58 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                             {primer && (
                                 <span className="text-[10px] uppercase tracking-widest text-text-muted flex items-center gap-1.5 font-medium animate-in fade-in slide-in-from-left-2 duration-700 delay-100">
                                     <span className="w-1 h-1 rounded-full bg-text-muted" />
-                                    Last locked in: <span className="text-text-secondary border-b border-text-secondary/20">{primer.label}</span>
+                                    Last locked in:{' '}
+                                    <Link
+                                        href="/learn/progress"
+                                        className="text-text-secondary border-b border-text-secondary/30 hover:text-text-primary hover:border-text-primary/40 transition-colors"
+                                        title={`Open lock-in history (${primer.relativeTime})`}
+                                    >
+                                        {primer.label}
+                                    </Link>
                                 </span>
                             )}
                         </div>
 
                         <h1 className="text-4xl md:text-5xl font-bold text-text-primary leading-[1.1] tracking-tight text-balance">
-                            {assertion.title}
+                            {displayTitle}
                         </h1>
 
                         <h3 className="mt-4 text-lg md:text-xl font-medium text-text-secondary leading-relaxed max-w-lg text-balance">
-                            {assertion.reason}
+                            {displayReason}
                         </h3>
+                        {assertion.targetConcept && (
+                            <p className="mt-3 text-sm text-text-muted">
+                                <span className="font-semibold text-text-secondary">Target:</span> {assertion.targetConcept}
+                            </p>
+                        )}
+                        {nextItem && (
+                            <p className="mt-2 text-sm text-text-muted">
+                                <span className="font-semibold text-text-secondary">Next:</span>{' '}
+                                {nextItem.title}
+                                {nextItem.estMinutes > 0 ? ` (${nextItem.estMinutes} min)` : ''}
+                            </p>
+                        )}
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm font-medium text-text-muted mt-2">
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium text-text-muted">
+                        <span className="flex items-center gap-2 rounded-full border border-border-subtle bg-surface-dense px-3 py-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-text-secondary" />
+                            {assertion.itemCount} steps
+                        </span>
                         <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-dense border border-border-subtle">
                             <span className="w-1.5 h-1.5 rounded-full bg-text-secondary" />
                             {assertion.estMinutes} min
                         </span>
-                        <span>{assertion.trackName}</span>
+                        {streakDays > 0 && (
+                            <span className="flex items-center gap-2 rounded-full border border-border-subtle bg-surface-dense px-3 py-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-accent-primary" />
+                                {streakDays} day streak
+                            </span>
+                        )}
+                        <span className="px-1 text-text-secondary">{assertion.trackName}</span>
                     </div>
 
-                    <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 w-full">
+                    <div className="mt-8 w-full">
                         <button
                             onClick={() => handleStartRef.current()}
                             disabled={isStarting}
@@ -258,14 +302,14 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                             </span>
                             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
                         </button>
-
-                        <button
-                            onClick={() => setIsPicking(true)}
-                            className="text-sm font-semibold text-text-muted hover:text-text-primary transition-colors py-2 border-b border-transparent hover:border-text-primary/20"
-                        >
-                            Change track...
-                        </button>
                     </div>
+
+                    <button
+                        onClick={() => setIsPicking(true)}
+                        className="mt-3 text-xs font-semibold text-text-muted hover:text-text-secondary transition-colors py-1 border-b border-transparent hover:border-text-secondary/40"
+                    >
+                        Change track
+                    </button>
                 </div>
 
                 <div className="absolute bottom-6 right-8 text-[10px] font-mono text-text-muted opacity-40">
@@ -281,3 +325,46 @@ function isInputFocused(): boolean {
     return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement;
 }
 
+function formatTargetConcept(value: string | null): string | null {
+    if (!value) return null;
+    const trailing = value.split('.').pop() || value;
+    const label = trailing.replace(/[-_]/g, ' ').trim();
+    if (!label) return null;
+    return label[0].toUpperCase() + label.slice(1);
+}
+
+function normalizeComparisonValue(value: string | null | undefined): string {
+    return (value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+}
+
+function simplifyGateTitle(title: string): string {
+    const separator = [' · ', ' — ', ' – ', ' | '].find((token) => title.includes(token));
+    const simplified = separator ? title.split(separator)[0] : title;
+    return simplified.replace(/\s+\?$/, '').trim();
+}
+
+function polishGateSubtitle(reason: string): string {
+    const clean = reason.replace(/\s+/g, ' ').trim();
+    if (!clean) return 'Continue with your next concept.';
+
+    if (/aligning two indices/i.test(clean)) {
+        return 'Learn how two indices move toward a goal - the base move behind linear array problems.';
+    }
+
+    if (/^this\s+/i.test(clean)) {
+        const withoutThis = clean.replace(/^this\s+/i, '');
+        const normalizedLead = withoutThis
+            .replace(/^reinforces\b/i, 'Reinforce')
+            .replace(/^builds\b/i, 'Build')
+            .replace(/^makes\b/i, 'Make')
+            .replace(/^connects\b/i, 'Connect')
+            .replace(/^reveals\b/i, 'See')
+            .replace(/^breaks\b/i, 'Challenge');
+        return normalizedLead;
+    }
+
+    return clean;
+}

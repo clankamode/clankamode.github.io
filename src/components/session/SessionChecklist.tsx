@@ -3,6 +3,7 @@
 import { useSession } from '@/contexts/SessionContext';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { sanitizeIntentText } from '@/lib/intent-display';
 
 export default function SessionChecklist() {
     const { state } = useSession();
@@ -62,6 +63,14 @@ export default function SessionChecklist() {
                                 <span className="block text-xs text-text-muted mt-0.5">
                                     {item.estMinutes || 5} min · {item.type}
                                 </span>
+                                <span className="mt-1 block text-xs text-text-muted/90">
+                                    Why: {sanitizeIntentText(item.intent.text, { title: item.title, maxChars: 120, minChars: 24 })}
+                                </span>
+                                {(item.targetConcept || item.primaryConceptSlug) && (
+                                    <span className="mt-1 block text-[11px] uppercase tracking-[0.08em] text-text-muted">
+                                        Target: {item.targetConcept || item.primaryConceptSlug}
+                                    </span>
+                                )}
                             </div>
                         </li>
                     );

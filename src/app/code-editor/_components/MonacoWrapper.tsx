@@ -104,7 +104,6 @@ export function MonacoWrapper({ value, onChange, onRun }: MonacoWrapperProps) {
 
     monaco.editor.setTheme(THEME_NAME);
 
-    // Cmd/Ctrl + Enter → run code
     editor.addAction({
       id: 'run-python',
       label: 'Run Python',

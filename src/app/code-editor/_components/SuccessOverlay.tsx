@@ -3,8 +3,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { X } from 'lucide-react';
 
-/* ── 30 success messages ─────────────────────────────────────────── */
-
 const SUCCESS_MESSAGES = [
   { heading: 'Nailed it.', sub: 'All tests passed — clean sweep.' },
   { heading: 'Flawless.', sub: 'Every single test, green.' },
@@ -38,8 +36,6 @@ const SUCCESS_MESSAGES = [
   { heading: 'Peak.', sub: 'All tests passed. You\'re on fire.' },
 ] as const;
 
-/* ── Confetti ────────────────────────────────────────────────────── */
-
 const CONFETTI_COLORS = [
   '#2cbb5d', '#22d3ee', '#a78bfa', '#facc15',
   '#fb923c', '#f472b6', '#34d399', '#60a5fa',
@@ -47,12 +43,12 @@ const CONFETTI_COLORS = [
 
 interface ConfettiPiece {
   id: number;
-  angle: number;    // radians — direction it flies
-  distance: number; // how far it travels (px)
+  angle: number;
+  distance: number;
   delay: number;
   duration: number;
-  rotation: number; // initial rotation (deg)
-  spin: number;     // extra spin (deg)
+  rotation: number;
+  spin: number;
   size: number;
   color: string;
   shape: 'rect' | 'circle';
@@ -75,8 +71,6 @@ function generateConfetti(count: number): ConfettiPiece[] {
     };
   });
 }
-
-/* ── Component ───────────────────────────────────────────────────── */
 
 interface SuccessOverlayProps {
   show: boolean;
@@ -106,7 +100,6 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
     }
   }, [show]);
 
-  // Auto-dismiss after 4s
   useEffect(() => {
     if (phase !== 'visible') return;
     const t = setTimeout(() => handleDismiss(), 4000);
@@ -133,9 +126,7 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
   const isVisible = phase === 'entering' || phase === 'visible';
 
   return (
-    /* Wrapper: centered in viewport, pointer-events only on the card itself */
     <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-      {/* Confetti — burst outward from center */}
       <div className="absolute overflow-visible">
         {confetti.map((c) => {
           const endX = Math.cos(c.angle) * c.distance;
@@ -156,7 +147,6 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
                 animation: isVisible
                   ? `confettiBurst ${c.duration}s cubic-bezier(0.2, 0.8, 0.3, 1) ${c.delay}s forwards`
                   : 'none',
-                // CSS custom properties drive the keyframe
                 '--end-x': `${endX}px`,
                 '--end-y': `${endY}px`,
                 '--gravity': `${80 + Math.random() * 60}px`,
@@ -168,7 +158,6 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
         })}
       </div>
 
-      {/* Card — centered, non-blocking */}
       <div
         className="relative flex flex-col items-center gap-4 rounded-2xl border border-brand-green/20 px-8 py-6 pointer-events-auto transition-all duration-400 ease-out"
         style={{
@@ -183,7 +172,6 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
         }}
         onClick={handleDismiss}
       >
-        {/* Top row: check + heading */}
         <div className="flex items-center gap-3">
           <div
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-green/30"
@@ -213,12 +201,10 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
           </h2>
         </div>
 
-        {/* Subtitle */}
         <p className="max-w-[280px] text-center text-sm leading-relaxed text-text-secondary">
           {message.sub}
         </p>
 
-        {/* Score pill */}
         <div className="flex items-center gap-2 rounded-full border border-brand-green/20 bg-brand-green/5 px-3.5 py-1">
           <span className="font-mono text-xs font-semibold text-brand-green">
             {passedCount}/{totalCount}
@@ -226,7 +212,6 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
           <span className="text-[11px] text-text-muted">passed</span>
         </div>
 
-        {/* Close button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -239,7 +224,6 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
 
       </div>
 
-      {/* Keyframes */}
       <style jsx>{`
         @keyframes confettiBurst {
           0% {

@@ -12,15 +12,13 @@ import {
   ResizableHandle,
 } from '@/components/ui/Resizable';
 
-/* ── Test-case data model ──────────────────────────────────────── */
-
 export interface TestCase {
   id: number;
   label: string;
-  input: string;       // human-readable multi-line input
-  expectedOutput: string; // human-readable expected output
-  fnCall: string;      // Python expression, e.g. "two_sum([2,7,11,15], 9)"
-  expected: string;    // Python literal for comparison, e.g. "[0, 1]"
+  input: string;
+  expectedOutput: string;
+  fnCall: string;
+  expected: string;
   sortResult?: boolean;
 }
 
@@ -30,8 +28,6 @@ export interface TestCaseResult {
   actual: string;
   error?: string;
 }
-
-/* ── Two Sum test cases ────────────────────────────────────────── */
 
 const TEST_CASES: TestCase[] = [
   {
@@ -81,8 +77,6 @@ const TEST_CASES: TestCase[] = [
   },
 ];
 
-/* ── Build hidden test-runner Python code ──────────────────────── */
-
 const TEST_MARKER = '__TEST_RESULTS__:';
 
 function buildTestRunnerCode(testCases: TestCase[]): string {
@@ -114,7 +108,6 @@ function buildTestRunnerCode(testCases: TestCase[]): string {
   return lines.join('\n');
 }
 
-/* ── Default editor code (no asserts — test cases live in the UI) */
 
 const DEFAULT_CODE = `"""
 Two Sum
@@ -146,8 +139,6 @@ def two_sum(nums: list[int], target: int) -> list[int]:
     pass
 `;
 
-/* ── Component ─────────────────────────────────────────────────── */
-
 export function PythonEditor() {
   const [code, setCode] = useState(DEFAULT_CODE);
   const { isReady, isRunning, isLoading, output, run, reset } = usePythonRunner();
@@ -164,7 +155,6 @@ export function PythonEditor() {
     run(fullCode);
   }, [code, run]);
 
-  // Parse test results from output once execution finishes
   useEffect(() => {
     if (isRunning) return;
 
@@ -174,14 +164,12 @@ export function PythonEditor() {
           const json = line.text.slice(TEST_MARKER.length);
           setTestResults(JSON.parse(json));
         } catch {
-          // malformed — ignore
         }
         break;
       }
     }
   }, [output, isRunning]);
 
-  // Show success overlay when all tests pass for the first time this run
   useEffect(() => {
     if (isRunning) {
       prevAllPassedRef.current = false;
@@ -197,7 +185,6 @@ export function PythonEditor() {
     }
   }, [testResults, isRunning]);
 
-  // Filter __TEST_RESULTS__ lines from visible output
   const visibleOutput = output.filter((line) => !line.text.startsWith(TEST_MARKER));
 
   const statusText = isLoading
@@ -208,7 +195,6 @@ export function PythonEditor() {
 
   return (
     <>
-      {/* Mobile gate */}
       <div className="flex md:hidden h-screen items-center justify-center bg-surface-ambient px-6">
         <div className="flex flex-col items-center gap-4 text-center">
           <Monitor className="h-10 w-10 text-text-muted" />
@@ -219,13 +205,10 @@ export function PythonEditor() {
         </div>
       </div>
 
-      {/* Desktop editor */}
       <div className="hidden md:flex h-screen flex-col overflow-hidden bg-surface-workbench">
         <ResizablePanelGroup orientation="horizontal">
-          {/* Editor panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
             <div className="flex h-full flex-col">
-              {/* Run bar */}
               <div className="flex items-center gap-3 border-b border-border-subtle px-4 py-2">
                 <button
                   onClick={handleRun}
@@ -249,7 +232,6 @@ export function PythonEditor() {
                 </span>
               </div>
 
-              {/* Monaco */}
               <div className="flex-1 overflow-hidden">
                 <MonacoWrapper value={code} onChange={setCode} onRun={handleRun} />
               </div>
@@ -258,7 +240,6 @@ export function PythonEditor() {
 
           <ResizableHandle />
 
-          {/* Output panel */}
           <ResizablePanel defaultSize={50} minSize={25}>
             <OutputPanel
               output={visibleOutput}
@@ -272,7 +253,6 @@ export function PythonEditor() {
         </ResizablePanelGroup>
       </div>
 
-      {/* Success celebration */}
       <SuccessOverlay
         show={showSuccess}
         onDismiss={() => setShowSuccess(false)}

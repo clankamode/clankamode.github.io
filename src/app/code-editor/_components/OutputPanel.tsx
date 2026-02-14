@@ -43,7 +43,6 @@ export function OutputPanel({
 
   return (
     <div className="flex h-full flex-col bg-surface-ambient">
-      {/* Header with tabs */}
       <div className="flex items-center justify-between border-b border-border-subtle px-4">
         <div className="flex items-center gap-1">
           <TabButton
@@ -77,7 +76,6 @@ export function OutputPanel({
         </button>
       </div>
 
-      {/* Tab content */}
       {activeTab === 'tests' ? (
         <TestCasesPanel
           testCases={testCases}
@@ -111,8 +109,6 @@ export function OutputPanel({
   );
 }
 
-/* ── Tab button ────────────────────────────────────────────────── */
-
 function TabButton({
   label,
   isActive,
@@ -139,7 +135,6 @@ function TabButton({
     >
       {label}
 
-      {/* Running / idle dot */}
       {indicator === 'running' && (
         <span className="h-2 w-2 rounded-full bg-brand-green animate-pulse" />
       )}
@@ -147,7 +142,6 @@ function TabButton({
         <span className="h-2 w-2 rounded-full bg-brand-green/50" />
       )}
 
-      {/* Pass count badge */}
       {badge && (
         <span
           className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
@@ -160,7 +154,6 @@ function TabButton({
         </span>
       )}
 
-      {/* Active underline */}
       {isActive && (
         <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-brand-green" />
       )}

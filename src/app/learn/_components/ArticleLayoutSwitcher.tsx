@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useChromeMode } from '@/hooks/useChromeMode';
 import SessionReaderShell from '@/components/session/SessionReaderShell';
 import SessionCommitControl from '@/components/session/SessionCommitControl';
@@ -23,8 +25,16 @@ export default function ArticleLayoutSwitcher({
     standardFooter,
     pillarName
 }: ArticleLayoutSwitcherProps) {
+    const router = useRouter();
     const mode = useChromeMode();
     const isExecution = mode === 'execute';
+    const isExit = mode === 'exit';
+
+    useEffect(() => {
+        if (isExit) {
+            router.replace('/home');
+        }
+    }, [isExit, router]);
 
     if (isExecution) {
         return (
@@ -33,6 +43,16 @@ export default function ArticleLayoutSwitcher({
 
                 <SessionCommitControl />
             </SessionReaderShell>
+        );
+    }
+
+    if (isExit) {
+        return (
+            <div className="flex min-h-[70vh] items-center justify-center">
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-text-secondary">
+                    Completing session...
+                </p>
+            </div>
         );
     }
 

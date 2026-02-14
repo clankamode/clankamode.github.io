@@ -42,6 +42,16 @@ export async function middleware(req: NextRequest) {
             return NextResponse.next();
         }
 
+        if (req.nextUrl.pathname.startsWith('/session')) {
+            if (!token) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+            if (!sessionFeaturesEnabled) {
+                return NextResponse.redirect(new URL('/learn', req.url));
+            }
+            return NextResponse.next();
+        }
+
         if (req.nextUrl.pathname.startsWith('/learn') && !req.nextUrl.pathname.startsWith('/learn/progress')) {
             return NextResponse.next();
         }
@@ -116,6 +126,7 @@ export const config = {
         '/',
         '/home',
         '/explore',
+        '/session/:path*',
         '/admin/:path*',
         '/analytics',
         '/thumbnails/:path*',

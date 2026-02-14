@@ -116,7 +116,6 @@ export default function HeroSection({ channelStats }: HeroSectionProps) {
           </a>
         </div>
 
-        {/* Content Navigation */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
           {[
             {

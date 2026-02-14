@@ -9,9 +9,22 @@ import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { getUserLearningState } from '@/lib/user-learning-state';
 import { deriveStateAwareIntent, deriveStaticIntent } from '@/lib/gate-intent';
 import { buildIdentityOrFilter, type EffectiveIdentity } from '@/lib/auth-identity';
+import { planSessionItemsWithLLM } from '@/lib/session-llm-planner';
+import { chunkArticleByHeadings } from '@/lib/article-chunking';
+import { estimateReadingTimeMinutes } from '@/lib/reading-time';
+import { getFromCache, setInCache } from '@/lib/redis';
 
 const PROGRESS_TABLE = 'UserArticleProgress';
 const BOOKMARKS_TABLE = 'UserBookmarks';
+const PRACTICE_QUESTIONS_TABLE = 'InterviewQuestions';
+const SESSION_PLAN_LOCK_TTL_SECONDS = 20 * 60;
+const SESSION_FINALIZED_LOOKBACK_HOURS = 8;
+
+interface SessionPlanLock {
+  createdAt: number;
+  itemHrefs: string[];
+  items: SessionItem[];
+}
 
 interface ArticleLookupEntry {
   article: LearningArticle;
@@ -87,6 +100,14 @@ export interface SessionItem {
   intent: SessionIntent;
   confidence?: number;
   primaryConceptSlug?: string | null;
+  targetConcept?: string | null;
+  sessionChunkIndex?: number;
+  sessionChunkCount?: number;
+  sessionChunkTitle?: string | null;
+  sourceArticleTitle?: string | null;
+  practiceQuestionId?: string;
+  practiceQuestionUrl?: string;
+  practiceDifficulty?: 'Easy' | 'Medium' | 'Hard';
 }
 
 export interface LearningDelta {
@@ -107,6 +128,22 @@ export interface SessionState {
   upNext: SessionItem[];
   proof: SessionProof;
   track: { slug: string; name: string } | null;
+}
+
+interface PracticeQuestionRow {
+  id: string;
+  name: string;
+  leetcode_number: number | null;
+  leetcode_url: string | null;
+  difficulty: string;
+}
+
+type PracticeDifficulty = 'Easy' | 'Medium' | 'Hard';
+
+interface PracticePerformance {
+  recentScores: number[];
+  targetDifficulty: PracticeDifficulty;
+  rationale: string;
 }
 
 function buildArticleLookup(library: LearningPillarWithTopics[]) {
@@ -150,6 +187,124 @@ function getStreakDays(completedAtDates: string[]) {
   }
 
   return streak;
+}
+
+function normalizePracticeDifficulty(value: string): PracticeDifficulty | null {
+  if (value === 'Easy' || value === 'Medium' || value === 'Hard') {
+    return value;
+  }
+  return null;
+}
+
+function estimatePracticeMinutes(difficulty: PracticeDifficulty): number {
+  switch (difficulty) {
+    case 'Easy':
+      return 10;
+    case 'Medium':
+      return 15;
+    case 'Hard':
+      return 20;
+    default:
+      return 12;
+  }
+}
+
+function isPracticeTrack(trackSlug: string): boolean {
+  return trackSlug === 'dsa' || trackSlug === 'interviews';
+}
+
+function formatConceptLabel(conceptSlug: string | null | undefined): string | null {
+  if (!conceptSlug) return null;
+
+  const trailingSegment = conceptSlug.split('.').pop() || conceptSlug;
+  const label = trailingSegment
+    .replace(/[-_]/g, ' ')
+    .trim();
+
+  if (!label) return null;
+  return label[0].toUpperCase() + label.slice(1);
+}
+
+function getDayKeyUTC(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function simpleHash(input: string): number {
+  let hash = 0;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = (hash * 31 + input.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+function rankDeterministicBySeed<T>(
+  items: T[],
+  seed: string,
+  keySelector: (item: T) => string
+): T[] {
+  return [...items].sort((a, b) => {
+    const scoreA = simpleHash(`${seed}:${keySelector(a)}`);
+    const scoreB = simpleHash(`${seed}:${keySelector(b)}`);
+    if (scoreA !== scoreB) return scoreA - scoreB;
+    return keySelector(a).localeCompare(keySelector(b));
+  });
+}
+
+async function derivePracticePerformance(userId: string, googleId?: string): Promise<PracticePerformance> {
+  const { data, error } = await supabase
+    .from('TestSession')
+    .select('score_percentage, completed_at')
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
+    .not('completed_at', 'is', null)
+    .order('completed_at', { ascending: false })
+    .limit(6);
+
+  if (error || !data || data.length === 0) {
+    return {
+      recentScores: [],
+      targetDifficulty: 'Easy',
+      rationale: 'Starting at Easy because there is no recent assessment history yet.',
+    };
+  }
+
+  const recentScores = data
+    .map((row) => Number(row.score_percentage))
+    .filter((score) => Number.isFinite(score));
+
+  if (recentScores.length === 0) {
+    return {
+      recentScores: [],
+      targetDifficulty: 'Easy',
+      rationale: 'Starting at Easy because recent assessment scores were unavailable.',
+    };
+  }
+
+  const avgScore = recentScores.reduce((sum, score) => sum + score, 0) / recentScores.length;
+  const lastTwo = recentScores.slice(0, 2);
+  const hasConsistentHighRecent = lastTwo.length === 2 && lastTwo.every((score) => score >= 85);
+  const hasConsistentLowRecent = lastTwo.length === 2 && lastTwo.every((score) => score < 60);
+
+  if (hasConsistentHighRecent && avgScore >= 80) {
+    return {
+      recentScores,
+      targetDifficulty: 'Hard',
+      rationale: `Ramping to Hard because recent scores are strong (${Math.round(avgScore)}% avg).`,
+    };
+  }
+
+  if (hasConsistentLowRecent || avgScore < 65) {
+    return {
+      recentScores,
+      targetDifficulty: 'Easy',
+      rationale: `Staying at Easy to rebuild fundamentals (${Math.round(avgScore)}% avg).`,
+    };
+  }
+
+  return {
+    recentScores,
+    targetDifficulty: 'Medium',
+    rationale: `Ramping to Medium based on steady recent performance (${Math.round(avgScore)}% avg).`,
+  };
 }
 
 function toIdentity(userId: string, googleId?: string): EffectiveIdentity {
@@ -308,6 +463,148 @@ export async function getUserBookmarks(userId: string, googleId?: string): Promi
     .filter((item): item is BookmarkItem => item !== null);
 }
 
+async function getPracticeSessionCandidates(
+  trackSlug: string,
+  targetDifficulty: PracticeDifficulty,
+  rationale: string,
+  seed: string
+): Promise<SessionItem[]> {
+  if (!isPracticeTrack(trackSlug)) {
+    return [];
+  }
+
+  const [easyResult, mediumResult, hardResult] = await Promise.all([
+    supabase
+      .from(PRACTICE_QUESTIONS_TABLE)
+      .select('id, name, leetcode_number, leetcode_url, difficulty')
+      .eq('difficulty', 'Easy')
+      .contains('source', ['MOCK_ASSESSMENTS'])
+      .not('leetcode_number', 'is', null)
+      .not('leetcode_url', 'is', null)
+      .limit(18),
+    supabase
+      .from(PRACTICE_QUESTIONS_TABLE)
+      .select('id, name, leetcode_number, leetcode_url, difficulty')
+      .eq('difficulty', 'Medium')
+      .contains('source', ['MOCK_ASSESSMENTS'])
+      .not('leetcode_number', 'is', null)
+      .not('leetcode_url', 'is', null)
+      .limit(18),
+    supabase
+      .from(PRACTICE_QUESTIONS_TABLE)
+      .select('id, name, leetcode_number, leetcode_url, difficulty')
+      .eq('difficulty', 'Hard')
+      .contains('source', ['MOCK_ASSESSMENTS'])
+      .not('leetcode_number', 'is', null)
+      .not('leetcode_url', 'is', null)
+      .limit(12),
+  ]);
+
+  if (easyResult.error || mediumResult.error || hardResult.error) {
+    return [];
+  }
+
+  const easy = ((easyResult.data || []) as PracticeQuestionRow[])
+    .map((row) => ({ row, difficulty: normalizePracticeDifficulty(row.difficulty) }))
+    .filter((entry): entry is { row: PracticeQuestionRow & { leetcode_number: number; leetcode_url: string }; difficulty: PracticeDifficulty } => (
+      !!entry.difficulty &&
+      entry.row.leetcode_number !== null &&
+      entry.row.leetcode_url !== null
+    ));
+  const medium = ((mediumResult.data || []) as PracticeQuestionRow[])
+    .map((row) => ({ row, difficulty: normalizePracticeDifficulty(row.difficulty) }))
+    .filter((entry): entry is { row: PracticeQuestionRow & { leetcode_number: number; leetcode_url: string }; difficulty: PracticeDifficulty } => (
+      !!entry.difficulty &&
+      entry.row.leetcode_number !== null &&
+      entry.row.leetcode_url !== null
+    ));
+  const hard = ((hardResult.data || []) as PracticeQuestionRow[])
+    .map((row) => ({ row, difficulty: normalizePracticeDifficulty(row.difficulty) }))
+    .filter((entry): entry is { row: PracticeQuestionRow & { leetcode_number: number; leetcode_url: string }; difficulty: PracticeDifficulty } => (
+      !!entry.difficulty &&
+      entry.row.leetcode_number !== null &&
+      entry.row.leetcode_url !== null
+    ));
+
+  const rankedEasy = rankDeterministicBySeed(easy, `${seed}:easy`, ({ row }) => String(row.id));
+  const rankedMedium = rankDeterministicBySeed(medium, `${seed}:medium`, ({ row }) => String(row.id));
+  const rankedHard = rankDeterministicBySeed(hard, `${seed}:hard`, ({ row }) => String(row.id));
+
+  const mixByTarget: Record<PracticeDifficulty, { easy: number; medium: number; hard: number }> = {
+    Easy: { easy: 4, medium: 2, hard: 0 },
+    Medium: { easy: 2, medium: 4, hard: 1 },
+    Hard: { easy: 1, medium: 3, hard: 3 },
+  };
+
+  const mix = mixByTarget[targetDifficulty];
+  const picked = [
+    ...rankedEasy.slice(0, mix.easy),
+    ...rankedMedium.slice(0, mix.medium),
+    ...rankedHard.slice(0, mix.hard),
+  ];
+  const fallbackPool = [...rankedEasy, ...rankedMedium, ...rankedHard];
+  const selected = picked.length > 0 ? picked : fallbackPool.slice(0, 6);
+
+  return selected.map(({ row, difficulty }) => ({
+    type: 'practice',
+    title: row.name,
+    subtitle: `${difficulty} coding assessment`,
+    pillarSlug: trackSlug,
+    href: `/session/practice/${row.leetcode_number}`,
+    estMinutes: estimatePracticeMinutes(difficulty),
+    intent: {
+      type: 'practice',
+      text: `${rationale} Solve ${row.name} because live reps convert recognition into retrieval speed.`,
+    },
+    confidence: 0.86,
+    targetConcept: `${difficulty} interview problem solving`,
+    practiceQuestionId: String(row.leetcode_number),
+    practiceQuestionUrl: row.leetcode_url,
+    practiceDifficulty: difficulty,
+  }));
+}
+
+async function getRecentlyFinalizedItemHrefs(
+  userId: string,
+  trackSlug: string,
+  googleId?: string
+): Promise<Set<string>> {
+  const lookbackISO = new Date(Date.now() - SESSION_FINALIZED_LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('TelemetryEvents')
+    .select('payload')
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
+    .eq('track_slug', trackSlug)
+    .eq('event_type', 'session_finalized')
+    .gte('created_at', lookbackISO)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data || typeof data !== 'object') {
+    return new Set<string>();
+  }
+
+  const payload = (data as { payload?: unknown }).payload;
+  if (!payload || typeof payload !== 'object') {
+    return new Set<string>();
+  }
+
+  const completedItems = (payload as { completedItems?: unknown }).completedItems;
+  if (!Array.isArray(completedItems)) {
+    return new Set<string>();
+  }
+
+  return new Set(
+    completedItems.filter((item): item is string => typeof item === 'string' && item.length > 0)
+  );
+}
+
+interface LearnCandidateCollection {
+  fullItems: SessionItem[];
+  chunkItems: SessionItem[];
+}
+
 export async function getSessionState(userId: string, preferredTrackSlug?: string, googleId?: string): Promise<SessionState> {
   const summary = await getProgressSummary(userId, googleId);
   const library = await getLearningLibrary(false);
@@ -315,30 +612,43 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
   const preferredTrack = normalizedPreferredTrack
     ? library.find((pillar) => pillar.slug === normalizedPreferredTrack)
     : null;
+  const resolvedTrackSlug = preferredTrack?.slug || normalizedPreferredTrack || 'dsa';
 
   const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS);
   const userState = useGenerative
-    ? (await getUserLearningState(userId, preferredTrackSlug || 'dsa', googleId)).userState
+    ? (await getUserLearningState(userId, resolvedTrackSlug, googleId)).userState
     : null;
 
   const completedIds = new Set(summary.completedIds);
-  const collectItems = (pillars: LearningPillarWithTopics[], allowCompleted: boolean) => {
-    const items: SessionItem[] = [];
+  const collectItems = (
+    pillars: LearningPillarWithTopics[],
+    allowCompleted: boolean,
+    maxItems: number = 8,
+    includeChunkItems: boolean = false,
+    maxChunkItems: number = 10,
+    maxChunksPerArticle: number = 2
+  ): LearnCandidateCollection => {
+    const fullItems: SessionItem[] = [];
+    const chunkItems: SessionItem[] = [];
 
     for (const pillar of pillars) {
       for (const topic of pillar.topics) {
         for (const article of topic.articles) {
-          if ((!completedIds.has(article.id) || allowCompleted) && items.length < 4) {
-            const intent = useGenerative && userState
-              ? deriveStateAwareIntent({
-                primaryConceptSlug: article.primary_concept ?? null,
-                userState,
-                articleSlug: article.slug,
-                pillarSlug: pillar.slug
-              })
-              : deriveStaticIntent(article.slug, pillar.slug);
+          if (completedIds.has(article.id) && !allowCompleted) {
+            continue;
+          }
 
-            items.push({
+          const intent = useGenerative && userState
+            ? deriveStateAwareIntent({
+              primaryConceptSlug: article.primary_concept ?? null,
+              userState,
+              articleSlug: article.slug,
+              pillarSlug: pillar.slug
+            })
+            : deriveStaticIntent(article.slug, pillar.slug);
+
+          if (fullItems.length < maxItems) {
+            fullItems.push({
               type: 'learn',
               title: article.title,
               subtitle: `${article.reading_time_minutes || 5} min read`,
@@ -348,28 +658,182 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
               estMinutes: article.reading_time_minutes,
               intent,
               confidence: 0.9,
-              primaryConceptSlug: article.primary_concept ?? null
+              primaryConceptSlug: article.primary_concept ?? null,
+              targetConcept: formatConceptLabel(article.primary_concept) ?? article.title,
+              sourceArticleTitle: article.title,
             });
+          }
+
+          if (includeChunkItems && chunkItems.length < maxChunkItems) {
+            const chunks = chunkArticleByHeadings(article.body);
+            const nonTrivial = chunks.filter((chunk) => chunk.content.trim().length >= 80);
+            const selectedChunks = (nonTrivial.length > 0 ? nonTrivial : chunks).slice(0, maxChunksPerArticle);
+
+            for (const chunk of selectedChunks) {
+              if (chunkItems.length >= maxChunkItems) break;
+
+              const chunkMinutes = estimateReadingTimeMinutes(chunk.content, {
+                minMinutes: 2,
+                maxMinutes: 15,
+              });
+              const sectionTitle = chunk.title?.trim() || `Section ${chunk.index + 1}`;
+              chunkItems.push({
+                type: 'learn',
+                title: `${article.title} · ${sectionTitle}`,
+                subtitle: `Section ${chunk.index + 1}/${chunks.length} · ${chunkMinutes} min read`,
+                pillarSlug: pillar.slug,
+                href: `/learn/${pillar.slug}/${article.slug}?sessionChunk=${chunk.index}`,
+                articleId: article.id,
+                slug: article.slug,
+                estMinutes: chunkMinutes,
+                intent: {
+                  ...intent,
+                  text: `${intent.text} Focus this section because targeted retrieval beats broad rereads in short sessions.`,
+                },
+                confidence: 0.88,
+                primaryConceptSlug: article.primary_concept ?? null,
+                targetConcept:
+                  sectionTitle.toLowerCase() === 'introduction'
+                    ? (formatConceptLabel(article.primary_concept) ?? article.title)
+                    : sectionTitle,
+                sessionChunkIndex: chunk.index,
+                sessionChunkCount: chunks.length,
+                sessionChunkTitle: sectionTitle,
+                sourceArticleTitle: article.title,
+              });
+            }
+          }
+
+          if (fullItems.length >= maxItems && (!includeChunkItems || chunkItems.length >= maxChunkItems)) {
+            return { fullItems, chunkItems };
           }
         }
       }
     }
 
-    return items;
+    return { fullItems, chunkItems };
   };
 
-  let incompleteItems: SessionItem[] = [];
+  let articleCandidates: SessionItem[] = [];
+  let sectionCandidates: SessionItem[] = [];
   if (preferredTrack) {
-    incompleteItems = collectItems([preferredTrack], false);
-    if (incompleteItems.length === 0) {
-      incompleteItems = collectItems([preferredTrack], true);
+    const preferredCollection = collectItems([preferredTrack], false, 8, useGenerative, 10, 2);
+    articleCandidates = preferredCollection.fullItems;
+    sectionCandidates = preferredCollection.chunkItems;
+    if (articleCandidates.length === 0) {
+      const fallbackCollection = collectItems([preferredTrack], true, 8, useGenerative, 10, 2);
+      articleCandidates = fallbackCollection.fullItems;
+      sectionCandidates = fallbackCollection.chunkItems;
     }
   } else {
-    incompleteItems = collectItems(library, false);
+    const collection = collectItems(library, false, 8, useGenerative, 10, 2);
+    articleCandidates = collection.fullItems;
+    sectionCandidates = collection.chunkItems;
   }
 
-  const now = incompleteItems[0] || null;
-  const upNext = incompleteItems.slice(1, 4);
+  const plannerTrackSlug = preferredTrack?.slug || articleCandidates[0]?.pillarSlug || sectionCandidates[0]?.pillarSlug || resolvedTrackSlug;
+  const plannerTrackName = preferredTrack?.name || getPillarName(plannerTrackSlug, library);
+  const recentlyFinalizedItemHrefs = useGenerative
+    ? await getRecentlyFinalizedItemHrefs(userId, plannerTrackSlug, googleId)
+    : new Set<string>();
+  if (recentlyFinalizedItemHrefs.size > 0) {
+    articleCandidates = articleCandidates.filter((item) => !recentlyFinalizedItemHrefs.has(item.href));
+    sectionCandidates = sectionCandidates.filter((item) => !recentlyFinalizedItemHrefs.has(item.href));
+  }
+  const dayKey = getDayKeyUTC();
+  const practicePerformance = useGenerative
+    ? await derivePracticePerformance(userId, googleId)
+    : null;
+  const practiceCandidates = useGenerative
+    ? await getPracticeSessionCandidates(
+      plannerTrackSlug,
+      practicePerformance?.targetDifficulty || 'Easy',
+      practicePerformance?.rationale || 'Build retrieval speed with timed interview reps.',
+      `${userId}:${plannerTrackSlug}:${dayKey}`
+    )
+    : [];
+  const filteredPracticeCandidates = recentlyFinalizedItemHrefs.size > 0
+    ? practiceCandidates.filter((item) => !recentlyFinalizedItemHrefs.has(item.href))
+    : practiceCandidates;
+  const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+  const weeklyCompletions = summary.allCompletionDates.filter((value) => new Date(value).getTime() >= sevenDaysAgo).length;
+  const outcomeSignals = useGenerative ? {
+    completionRate: summary.totalArticles > 0 ? summary.completedArticles / summary.totalArticles : 0.6,
+    timeAdherence: Math.min(1, weeklyCompletions / 6),
+    nextDayReturnRate: summary.streakDays >= 2 ? 1 : summary.streakDays === 1 ? 0.6 : 0.2,
+    ritualQuality: userState?.lastInternalization
+      ? (userState.lastInternalization.picked === 'learned' ? 0.9 : 0.65)
+      : 0.45,
+  } : undefined;
+
+  let sessionItems = articleCandidates.slice(0, 3);
+
+  if (useGenerative) {
+    const learnPlannerPool = [...sectionCandidates.slice(0, 8), ...articleCandidates.slice(0, 6)];
+    const plannerCandidates = [
+      ...learnPlannerPool.map((item) => ({
+        id: item.sessionChunkIndex !== undefined
+          ? `learn:${item.articleId || item.href}:chunk:${item.sessionChunkIndex}`
+          : `learn:${item.articleId || item.href}`,
+        item,
+      })),
+      ...filteredPracticeCandidates.map((item) => ({
+        id: `practice:${item.practiceQuestionId || item.href}`,
+        item,
+      })),
+    ];
+    const plannerCandidateSet = new Set(plannerCandidates.map((candidate) => candidate.item.href));
+    const sessionPlanLockKey = `session-plan-lock:v1:${userId}:${plannerTrackSlug}`;
+    const existingPlanLock = await getFromCache<SessionPlanLock>(sessionPlanLockKey);
+
+    if (
+      existingPlanLock &&
+      Array.isArray(existingPlanLock.items) &&
+      existingPlanLock.items.length > 0 &&
+      Array.isArray(existingPlanLock.itemHrefs) &&
+      existingPlanLock.itemHrefs.every((href) => plannerCandidateSet.has(href))
+    ) {
+      sessionItems = existingPlanLock.items.slice(0, 3);
+    } else {
+      const plannedItems = await planSessionItemsWithLLM({
+        cacheKey: `${userId}:${plannerTrackSlug}:${dayKey}:${plannerCandidates.map((c) => c.id).join('|')}`,
+        budgetKey: `${userId}:${dayKey}`,
+        trackSlug: plannerTrackSlug,
+        trackName: plannerTrackName,
+        userState,
+        recentActivityTitles: summary.recentActivity.map((activity) => activity.title),
+        outcomeSignals,
+        practiceTargetDifficulty: practicePerformance?.targetDifficulty || null,
+        requirePracticeItem: isPracticeTrack(plannerTrackSlug) && filteredPracticeCandidates.length > 0,
+        candidates: plannerCandidates,
+        maxItems: 3,
+      });
+
+      if (plannedItems && plannedItems.length > 0) {
+        sessionItems = plannedItems;
+      } else if (filteredPracticeCandidates.length > 0) {
+        const baseLearn = sectionCandidates[0] || articleCandidates[0] || null;
+        sessionItems = baseLearn
+          ? [baseLearn, filteredPracticeCandidates[0]]
+          : [filteredPracticeCandidates[0]];
+      }
+
+      if (sessionItems.length > 0) {
+        await setInCache(
+          sessionPlanLockKey,
+          {
+            createdAt: Date.now(),
+            itemHrefs: sessionItems.map((item) => item.href),
+            items: sessionItems,
+          },
+          SESSION_PLAN_LOCK_TTL_SECONDS
+        );
+      }
+    }
+  }
+
+  const now = sessionItems[0] || null;
+  const upNext = sessionItems.slice(1, 4);
 
   let mode: SessionMode = 'normal';
   if (!now) {
@@ -406,7 +870,9 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
     ? { slug: now.pillarSlug, name: getPillarName(now.pillarSlug, library) }
     : preferredTrack
       ? { slug: preferredTrack.slug, name: preferredTrack.name }
-      : null;
+      : articleCandidates[0]
+        ? { slug: articleCandidates[0].pillarSlug, name: getPillarName(articleCandidates[0].pillarSlug, library) }
+        : null;
 
   return {
     mode,
@@ -425,5 +891,3 @@ function getPillarName(slug: string, library: LearningPillarWithTopics[]): strin
   const pillar = library.find((p) => p.slug === slug);
   return pillar?.name || slug.replace(/-/g, ' ');
 }
-
-

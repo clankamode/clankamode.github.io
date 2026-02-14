@@ -7,14 +7,14 @@ import { MonacoWrapper } from './MonacoWrapper';
 import { OutputPanel } from './OutputPanel';
 import { SuccessOverlay } from './SuccessOverlay';
 import { usePythonRunner } from '@/hooks/usePythonRunner';
+import { useSession as useSessionContext } from '@/contexts/SessionContext';
+import { logTelemetryEvent } from '@/lib/telemetry';
 import type { TestCase, TestCaseResult } from './PythonEditor';
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
 } from '@/components/ui/Resizable';
-
-/* ── Types ─────────────────────────────────────────────────────── */
 
 interface InterviewQuestion {
   id: string;
@@ -34,9 +34,12 @@ interface InterviewQuestion {
 
 interface PracticeEditorProps {
   question: InterviewQuestion;
+  context?: {
+    isSession?: boolean;
+    returnTo?: string | null;
+    sessionQuestionId?: string | null;
+  };
 }
-
-/* ── Test runner builder ───────────────────────────────────────── */
 
 const TEST_MARKER = '__TEST_RESULTS__:';
 
@@ -69,8 +72,6 @@ function buildTestRunnerCode(testCases: TestCase[]): string {
   return lines.join('\n');
 }
 
-/* ── Difficulty badge ──────────────────────────────────────────── */
-
 function DifficultyBadge({ difficulty }: { difficulty: string }) {
   const colorClass =
     difficulty === 'Easy'
@@ -86,18 +87,45 @@ function DifficultyBadge({ difficulty }: { difficulty: string }) {
   );
 }
 
-/* ── Main Component ────────────────────────────────────────────── */
-
-export function PracticeEditor({ question }: PracticeEditorProps) {
+export function PracticeEditor({ question, context }: PracticeEditorProps) {
   const router = useRouter();
+  const { state: sessionFlowState, advanceItem } = useSessionContext();
+  const isSessionContext = Boolean(context?.isSession);
+  const sessionQuestionId = context?.sessionQuestionId || null;
+  const fallbackSessionReturn = question.leetcode_number
+    ? `/session/practice/${question.leetcode_number}`
+    : `/session/practice/${question.id}`;
+  const backHref = context?.returnTo || (isSessionContext ? fallbackSessionReturn : '/peralta75');
+  const backLabel = 'Back';
   const [code, setCode] = useState(question.starter_code);
   const { isReady, isRunning, isLoading, output, run, reset } = usePythonRunner();
   const [testResults, setTestResults] = useState<TestCaseResult[]>([]);
   const [hasRun, setHasRun] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [completingSessionItem, setCompletingSessionItem] = useState(false);
   const prevAllPassedRef = useRef(false);
+  const currentSessionItem = sessionFlowState.phase === 'execution' && sessionFlowState.execution && sessionFlowState.scope
+    ? sessionFlowState.scope.items[sessionFlowState.execution.currentIndex] || null
+    : null;
+  const nextSessionItem = sessionFlowState.phase === 'execution' && sessionFlowState.execution && sessionFlowState.scope
+    ? sessionFlowState.scope.items[sessionFlowState.execution.currentIndex + 1] || null
+    : null;
+  const chamberMeta = sessionFlowState.phase === 'execution' && sessionFlowState.execution && sessionFlowState.scope
+    ? {
+      step: sessionFlowState.execution.currentIndex + 1,
+      total: sessionFlowState.scope.items.length,
+      track: sessionFlowState.scope.track.name,
+    }
+    : null;
+  const telemetrySessionId = sessionFlowState.execution?.sessionId || sessionFlowState.scope?.sessionId || 'session_practice';
+  const telemetryTrackSlug = sessionFlowState.scope?.track.slug || 'dsa';
+  const telemetryUserId = sessionFlowState.scope?.userId;
 
   const testCases = question.test_cases as TestCase[];
+  const allTestsPassed =
+    testResults.length === testCases.length &&
+    testResults.length > 0 &&
+    testResults.every((result) => result.passed);
 
   const handleRun = useCallback(() => {
     const helperCode = question.helper_code || '';
@@ -106,10 +134,39 @@ export function PracticeEditor({ question }: PracticeEditorProps) {
     setTestResults([]);
     setHasRun(true);
     prevAllPassedRef.current = false;
+    if (isSessionContext && sessionQuestionId) {
+      try {
+        window.sessionStorage.setItem(`session:practice:ran:${sessionQuestionId}`, '1');
+      } catch {
+        // no-op
+      }
+      logTelemetryEvent({
+        userId: telemetryUserId,
+        trackSlug: telemetryTrackSlug,
+        sessionId: telemetrySessionId,
+        eventType: 'practice_tests_ran',
+        mode: 'execute',
+        payload: {
+          questionId: sessionQuestionId,
+          leetcodeNumber: question.leetcode_number,
+        },
+        dedupeKey: `practice_tests_ran_${telemetrySessionId}_${sessionQuestionId}`,
+      });
+    }
     run(fullCode);
-  }, [code, question.helper_code, testCases, run]);
+  }, [
+    code,
+    question.helper_code,
+    question.leetcode_number,
+    testCases,
+    run,
+    isSessionContext,
+    sessionQuestionId,
+    telemetrySessionId,
+    telemetryTrackSlug,
+    telemetryUserId,
+  ]);
 
-  // Parse test results from output
   useEffect(() => {
     if (isRunning) return;
     for (const line of output) {
@@ -118,14 +175,12 @@ export function PracticeEditor({ question }: PracticeEditorProps) {
           const json = line.text.slice(TEST_MARKER.length);
           setTestResults(JSON.parse(json));
         } catch {
-          // ignore malformed
         }
         break;
       }
     }
   }, [output, isRunning]);
 
-  // Show success overlay when all tests pass
   useEffect(() => {
     if (isRunning) return;
     const allPassed =
@@ -146,10 +201,77 @@ export function PracticeEditor({ question }: PracticeEditorProps) {
     : isRunning
       ? 'Running Python 3 (Pyodide)…'
       : 'Python 3 (Pyodide)';
+  const completionLabel = completingSessionItem
+    ? 'Completing...'
+    : allTestsPassed
+      ? 'Complete challenge & continue'
+      : hasRun
+        ? 'Pass all tests to continue'
+        : 'Run tests to unlock completion';
+  const canAdvanceSession = allTestsPassed && !completingSessionItem && !!currentSessionItem && !isRunning;
+
+  const handleSessionComplete = useCallback(() => {
+    if (!isSessionContext || !sessionQuestionId) return;
+    if (completingSessionItem) return;
+    if (sessionFlowState.phase !== 'execution' || !sessionFlowState.execution || !sessionFlowState.scope) return;
+
+    if (!allTestsPassed) {
+      logTelemetryEvent({
+        userId: telemetryUserId,
+        trackSlug: telemetryTrackSlug,
+        sessionId: telemetrySessionId,
+        eventType: 'practice_completion_blocked',
+        mode: 'execute',
+        payload: {
+          questionId: sessionQuestionId,
+          hasRun,
+          passedCount: testResults.filter((result) => result.passed).length,
+          totalTests: testCases.length,
+        },
+        dedupeKey: `practice_completion_blocked_${telemetrySessionId}_${sessionQuestionId}`,
+      });
+      return;
+    }
+
+    setCompletingSessionItem(true);
+    logTelemetryEvent({
+      userId: telemetryUserId,
+      trackSlug: telemetryTrackSlug,
+      sessionId: telemetrySessionId,
+      eventType: 'practice_completion_confirmed',
+      mode: 'execute',
+      payload: {
+        questionId: sessionQuestionId,
+        via: 'tests_passed',
+      },
+      dedupeKey: `practice_completion_confirmed_${telemetrySessionId}_${sessionQuestionId}`,
+    });
+
+    advanceItem();
+    if (nextSessionItem) {
+      router.push(nextSessionItem.href);
+      return;
+    }
+    router.push('/home');
+  }, [
+    isSessionContext,
+    sessionQuestionId,
+    completingSessionItem,
+    sessionFlowState,
+    allTestsPassed,
+    telemetryUserId,
+    telemetryTrackSlug,
+    telemetrySessionId,
+    hasRun,
+    testResults,
+    testCases.length,
+    advanceItem,
+    nextSessionItem,
+    router,
+  ]);
 
   return (
     <>
-      {/* Mobile gate */}
       <div className="flex md:hidden h-screen items-center justify-center bg-surface-ambient px-6">
         <div className="flex flex-col items-center gap-4 text-center">
           <Monitor className="h-10 w-10 text-text-muted" />
@@ -160,17 +282,30 @@ export function PracticeEditor({ question }: PracticeEditorProps) {
         </div>
       </div>
 
-      {/* Desktop editor */}
       <div className="hidden md:flex h-screen flex-col overflow-hidden bg-surface-workbench">
-        {/* Top bar: question info + back button */}
+        {isSessionContext && (
+          <div className="border-b border-border-interactive bg-surface-ambient/95 px-4 py-2">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.16em] text-text-muted">
+                  Session chamber {chamberMeta ? `· ${chamberMeta.track} · Step ${chamberMeta.step}/${chamberMeta.total}` : ''}
+                </p>
+                <p className="mt-1 text-sm text-text-secondary">
+                  Keep flow state: solve here, then complete this step before moving forward.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        )}
         <div className="flex items-center justify-between border-b border-border-subtle px-4 py-2">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => router.push('/peralta75')}
+              onClick={() => router.push(backHref)}
               className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-text-secondary hover:text-foreground hover:bg-surface-interactive transition-all"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {backLabel}
             </button>
             <div className="h-5 w-px bg-border-subtle" />
             {question.leetcode_number && (
@@ -186,7 +321,7 @@ export function PracticeEditor({ question }: PracticeEditorProps) {
               </span>
             )}
           </div>
-          {question.leetcode_url && (
+          {!isSessionContext && question.leetcode_url && (
             <a
               href={question.leetcode_url}
               target="_blank"
@@ -194,16 +329,47 @@ export function PracticeEditor({ question }: PracticeEditorProps) {
               className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-text-secondary hover:text-foreground hover:bg-surface-interactive transition-all"
             >
               <ExternalLink className="h-3.5 w-3.5" />
-              LeetCode
+              View source
             </a>
           )}
-        </div>
 
-        {/* Editor + Output */}
+        </div>
+        {isSessionContext && (
+          <div className="border-b border-border-subtle bg-surface-interactive px-4 py-2.5">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm text-text-secondary">
+                  <span className="font-semibold text-text-primary">Goal:</span> pass tests, then complete challenge.
+                </p>
+                <p className="mt-1 text-xs text-text-muted">
+                  {allTestsPassed
+                    ? 'All tests passing. You can advance.'
+                    : hasRun
+                      ? `${testResults.filter((result) => result.passed).length}/${testCases.length} tests passing`
+                      : 'Run tests to unlock completion'}
+                </p>
+                {nextSessionItem && (
+                  <p className="mt-1 text-xs text-text-muted">
+                    Next: {nextSessionItem.title}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handleSessionComplete}
+                disabled={completingSessionItem || !currentSessionItem || isRunning}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-surface-dense disabled:text-text-muted ${canAdvanceSession
+                  ? 'bg-brand-green text-black hover:bg-brand-green/90'
+                  : 'border border-border-interactive bg-surface-workbench text-text-secondary hover:text-text-primary'}`}
+              >
+                {completionLabel}
+              </button>
+            </div>
+          </div>
+        )}
+
         <ResizablePanelGroup orientation="horizontal" className="flex-1">
           <ResizablePanel defaultSize={50} minSize={30}>
             <div className="flex h-full flex-col">
-              {/* Run bar */}
               <div className="flex items-center gap-3 border-b border-border-subtle px-4 py-2">
                 <button
                   onClick={handleRun}
@@ -219,7 +385,6 @@ export function PracticeEditor({ question }: PracticeEditorProps) {
                 <span className="font-mono text-sm text-text-secondary">{statusText}</span>
               </div>
 
-              {/* Monaco editor */}
               <div className="flex-1 overflow-hidden">
                 <MonacoWrapper
                   value={code}
@@ -245,7 +410,6 @@ export function PracticeEditor({ question }: PracticeEditorProps) {
         </ResizablePanelGroup>
       </div>
 
-      {/* Success celebration */}
       <SuccessOverlay
         show={showSuccess}
         onDismiss={() => setShowSuccess(false)}

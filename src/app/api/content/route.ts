@@ -3,15 +3,11 @@ import { supabase } from '@/lib/supabase';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { UserRole } from '@/types/roles';
 import { requireAuth } from '@/lib/auth-helpers';
+import { estimateReadingTimeMinutes } from '@/lib/reading-time';
 
 const PILLARS_TABLE = 'LearningPillars';
 const TOPICS_TABLE = 'LearningTopics';
 const ARTICLES_TABLE = 'LearningArticles';
-
-function getReadingTimeMinutes(text: string): number {
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.ceil(words / 200));
-}
 
 async function getTopicIdsByPillar(slug: string) {
   const { data: pillar, error: pillarError } = await supabase
@@ -142,7 +138,7 @@ export async function POST(req: NextRequest) {
         is_premium: !!is_premium,
         is_published: !!is_published,
         order_index: order_index ?? 0,
-        reading_time_minutes: reading_time_minutes ?? getReadingTimeMinutes(contentBody),
+        reading_time_minutes: reading_time_minutes ?? estimateReadingTimeMinutes(contentBody),
       })
       .select()
       .single();

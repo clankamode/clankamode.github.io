@@ -2,8 +2,6 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 
-/* ── Message protocol ────────────────────────────────────────── */
-
 /** Messages the UI sends to the worker. */
 interface WorkerInMessage {
   type: 'init' | 'run' | 'interrupt';
@@ -18,14 +16,10 @@ interface WorkerOutMessage {
   data?: string;
 }
 
-/* ── Output line model ───────────────────────────────────────── */
-
 export interface OutputLine {
   text: string;
   stream: 'stdout' | 'stderr' | 'result' | 'system';
 }
-
-/* ── Hook return type ────────────────────────────────────────── */
 
 interface UsePythonRunnerReturn {
   /** Whether Pyodide has finished loading and is ready. */
@@ -42,8 +36,6 @@ interface UsePythonRunnerReturn {
   reset: () => void;
 }
 
-/* ── Constants ───────────────────────────────────────────────── */
-
 const TIMEOUT_MS = 5_000; // kill worker after 5 s
 const WORKER_PATH = '/workers/python.worker.js';
 const MAX_INIT_RETRIES = 3;
@@ -53,8 +45,6 @@ const MIN_SPINNER_MS = 1_000; // show spinner for at least 1 s
 const INITIAL_OUTPUT: OutputLine[] = [
   { text: 'Initializing Python environment…', stream: 'system' },
 ];
-
-/* ── Hook ────────────────────────────────────────────────────── */
 
 export function usePythonRunner(): UsePythonRunnerReturn {
   const workerRef = useRef<Worker | null>(null);
@@ -72,8 +62,6 @@ export function usePythonRunner(): UsePythonRunnerReturn {
 
   // Mirror isRunning in a ref so the `run` callback always sees the latest value
   const isRunningRef = useRef(false);
-
-  /* ── Worker lifecycle ──────────────────────────────────────── */
 
   const destroyWorker = useCallback(() => {
     if (timeoutRef.current) {
@@ -106,7 +94,6 @@ export function usePythonRunner(): UsePythonRunnerReturn {
     worker.onmessage = (e: MessageEvent<WorkerOutMessage>) => {
       const msg = e.data;
 
-      /* ── ready (Pyodide loaded) ────────────────────────────── */
       if (msg.type === 'ready') {
         retryCountRef.current = 0; // successful init resets retries
         setIsReady(true);
@@ -189,14 +176,11 @@ export function usePythonRunner(): UsePythonRunnerReturn {
     worker.postMessage(msg);
   }, [destroyWorker]);
 
-  /* Boot worker on mount, tear down on unmount */
   useEffect(() => {
     createWorker();
     return () => destroyWorker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  /* ── Run ───────────────────────────────────────────────────── */
 
   const run = useCallback(
     (code: string) => {
@@ -232,8 +216,6 @@ export function usePythonRunner(): UsePythonRunnerReturn {
     },
     [isReady, createWorker],
   );
-
-  /* ── Reset ─────────────────────────────────────────────────── */
 
   const reset = useCallback(() => {
     if (timeoutRef.current) {

@@ -346,30 +346,6 @@ export interface Database {
                     }
                 ]
             }
-            LeetCodeProblems: {
-                Row: {
-                    created_at: string
-                    difficulty: string
-                    id: number
-                    link: string
-                    name: string
-                }
-                Insert: {
-                    created_at?: string
-                    difficulty: string
-                    id: number
-                    link: string
-                    name: string
-                }
-                Update: {
-                    created_at?: string
-                    difficulty?: string
-                    id?: number
-                    link?: string
-                    name?: string
-                }
-                Relationships: []
-            }
             LiveQuestions: {
                 Row: {
                     content: string

@@ -1,0 +1,75 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
+import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
+import { getEffectiveIdentityFromToken } from '@/lib/auth-identity';
+import { UserRole } from '@/types/roles';
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
+import { invalidateCache } from '@/lib/redis';
+
+export async function POST(req: NextRequest) {
+  try {
+    const token = await getToken({ req });
+    const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+    if (!token || !isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS, { role: effectiveRole })) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const identity = getEffectiveIdentityFromToken(token);
+    if (!identity) {
+      return NextResponse.json({ error: 'Missing identity' }, { status: 400 });
+    }
+
+    const {
+      sessionId,
+      trackSlug,
+      completedItems,
+      reflectionCompletedAt,
+      skipped,
+    } = await req.json();
+
+    if (!sessionId || typeof sessionId !== 'string') {
+      return NextResponse.json({ error: 'sessionId is required' }, { status: 400 });
+    }
+
+    if (!trackSlug || typeof trackSlug !== 'string') {
+      return NextResponse.json({ error: 'trackSlug is required' }, { status: 400 });
+    }
+
+    const normalizedCompletedItems = Array.isArray(completedItems)
+      ? completedItems.filter((item): item is string => typeof item === 'string' && item.length > 0)
+      : [];
+
+    const admin = getSupabaseAdminClient();
+    const dedupeKey = `session_finalized_${sessionId}`;
+    const payload = {
+      completedItems: normalizedCompletedItems,
+      reflection_completed_at: reflectionCompletedAt ?? null,
+      skipped: Boolean(skipped),
+    };
+
+    const { error } = await admin
+      .from('TelemetryEvents')
+      .insert({
+        email: identity.email,
+        google_id: identity.googleId ?? null,
+        track_slug: trackSlug,
+        session_id: sessionId,
+        event_type: 'session_finalized',
+        mode: 'exit',
+        payload,
+        dedupe_key: dedupeKey,
+      });
+
+    if (error && !error.message.toLowerCase().includes('duplicate')) {
+      console.error('[session/finalize] failed:', error.message);
+      return NextResponse.json({ error: 'Failed to finalize session' }, { status: 500 });
+    }
+
+    await invalidateCache(`session-plan-lock:v1:${identity.email}:${trackSlug}`);
+
+    return NextResponse.json({ finalized: true, dedupeKey });
+  } catch (error) {
+    console.error('[session/finalize] unexpected:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

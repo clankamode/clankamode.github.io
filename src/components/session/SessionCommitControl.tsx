@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
 
@@ -14,11 +14,21 @@ export default function SessionCommitControl({
     const { state, advanceItem } = useSessionContext();
     const router = useRouter();
     const [isCommitting, setIsCommitting] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const revealOffset = 320;
+        const updateVisibility = () => setIsVisible(window.scrollY > revealOffset);
+
+        updateVisibility();
+        window.addEventListener('scroll', updateVisibility, { passive: true });
+        return () => window.removeEventListener('scroll', updateVisibility);
+    }, []);
 
     if (!state.scope || !state.execution) return null;
 
     const { items } = state.scope;
-    const { currentIndex } = state.execution;
+    const { currentIndex, sessionId } = state.execution;
     const currentItem = items[currentIndex] ?? null;
     const isLastItem = currentIndex >= items.length - 1;
     const nextItem = !isLastItem ? items[currentIndex + 1] : null;
@@ -34,6 +44,7 @@ export default function SessionCommitControl({
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-idempotency-key': `${sessionId}:${currentItem.articleId}:complete`,
                     },
                     body: JSON.stringify({ articleId: currentItem.articleId }),
                 });
@@ -51,11 +62,15 @@ export default function SessionCommitControl({
     };
 
     return (
-        <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-12 pb-12 z-20 flex flex-col items-center justify-center pointer-events-none">
+        <div
+            className={`sticky bottom-0 left-0 right-0 z-20 flex flex-col items-center justify-center bg-gradient-to-t from-background via-background/95 to-transparent pt-10 pb-9 transition-all duration-300 ${
+                isVisible ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-5 opacity-0 pointer-events-none'
+            }`}
+        >
             <button
                 onClick={handleCommit}
                 disabled={isCommitting}
-                className="pointer-events-auto group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-foreground text-background font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-100 disabled:scale-100"
+                className="group relative inline-flex items-center gap-3 rounded-full border border-border-interactive bg-foreground px-7 py-3 text-[15px] font-semibold text-background shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-all hover:scale-[1.015] active:scale-[0.985] disabled:opacity-100 disabled:scale-100"
             >
                 {isCommitting ? (
                     <>

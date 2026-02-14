@@ -136,11 +136,13 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
   const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
   const showSessionMode = isFeatureEnabled(FeatureFlags.SESSION_MODE, session?.user);
   const showSessionFeatures = showProgress && showSessionMode;
+  const showExploreQuickLink = mode === 'gate' && pathname === '/home' && showSessionFeatures;
 
   const handleLeaveSession = () => {
     setIsAccountMenuOpen(false);
     resetToEntry();
-    router.push(showSessionFeatures ? '/explore' : '/learn');
+    const destination = showSessionFeatures ? '/explore' : '/learn';
+    router.push(destination);
   };
 
   const handleSignOut = async () => {
@@ -300,15 +302,28 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 </div>
                 {(mode === 'gate' || mode === 'exit') ? (
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="md"
-                      onClick={handleLeaveSession}
-                      className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
-                      aria-label="Back to dashboard"
-                    >
-                      Back to dashboard
-                    </Button>
+                    {showExploreQuickLink && (
+                      <Button
+                        variant="ghost"
+                        size="md"
+                        onClick={() => router.push('/explore')}
+                        className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
+                        aria-label="Explore"
+                      >
+                        Explore
+                      </Button>
+                    )}
+                    {pathname !== '/home' && (
+                      <Button
+                        variant="ghost"
+                        size="md"
+                        onClick={handleLeaveSession}
+                        className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
+                        aria-label={showSessionFeatures ? 'Back to Explore' : 'Back to Learn'}
+                      >
+                        {showSessionFeatures ? 'Back to Explore' : 'Back to Learn'}
+                      </Button>
+                    )}
                     <div className="relative" ref={accountMenuRef}>
                       <button
                         type="button"

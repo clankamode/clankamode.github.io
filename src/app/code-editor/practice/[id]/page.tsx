@@ -20,27 +20,41 @@ interface InterviewQuestion {
 
 interface PageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ source?: string; returnTo?: string; sessionQuestionId?: string }>;
 }
 
-export default async function PracticePage({ params }: PageProps) {
+export default async function PracticePage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { source, returnTo, sessionQuestionId } = await searchParams;
 
   if (!id) {
     redirect('/peralta75');
   }
 
-  const { data, error } = await supabase
+  const numericId = Number(id);
+  const questionQuery = supabase
     .from('InterviewQuestions')
-    .select('id, leetcode_number, name, difficulty, category, pattern, leetcode_url, prompt_full, starter_code, helper_code, test_cases, order_index, source')
-    .eq('leetcode_number', parseInt(id, 10))
-    .contains('source', ['PERALTA_75'])
-    .single();
+    .select('id, leetcode_number, name, difficulty, category, pattern, leetcode_url, prompt_full, starter_code, helper_code, test_cases, order_index, source');
+
+  const { data, error } = Number.isFinite(numericId) && numericId > 0
+    ? await questionQuery.eq('leetcode_number', numericId).maybeSingle()
+    : await questionQuery.eq('id', id).maybeSingle();
 
   if (error || !data) {
     redirect('/peralta75');
   }
 
   const question = data as InterviewQuestion;
+  const safeReturnTo = typeof returnTo === 'string' && returnTo.startsWith('/') ? returnTo : null;
 
-  return <PracticeEditor question={question} />;
+  return (
+    <PracticeEditor
+      question={question}
+      context={{
+        isSession: source === 'session',
+        returnTo: safeReturnTo,
+        sessionQuestionId: sessionQuestionId || null,
+      }}
+    />
+  );
 }

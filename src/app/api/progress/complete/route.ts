@@ -6,6 +6,19 @@ import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { buildUserIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
 const PROGRESS_TABLE = 'UserArticleProgress';
+const IDEMPOTENCY_TTL_MS = 10 * 60 * 1000;
+const seenIdempotencyKeys = new Map<string, number>();
+
+function consumeIdempotencyKey(rawKey: string | null): boolean {
+  if (!rawKey) return false;
+  const now = Date.now();
+  for (const [key, expiry] of seenIdempotencyKeys.entries()) {
+    if (expiry <= now) seenIdempotencyKeys.delete(key);
+  }
+  if (seenIdempotencyKeys.has(rawKey)) return true;
+  seenIdempotencyKeys.set(rawKey, now + IDEMPOTENCY_TTL_MS);
+  return false;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,6 +37,11 @@ export async function POST(req: NextRequest) {
     const { articleId } = await req.json();
     if (!articleId || typeof articleId !== 'string') {
       return NextResponse.json({ error: 'articleId is required' }, { status: 400 });
+    }
+
+    const idempotencyKey = req.headers.get('x-idempotency-key');
+    if (consumeIdempotencyKey(idempotencyKey)) {
+      return NextResponse.json({ completed: true, deduped: true });
     }
 
     const adminClient = getSupabaseAdminClient();
@@ -68,6 +86,11 @@ export async function DELETE(req: NextRequest) {
     const { articleId } = await req.json();
     if (!articleId || typeof articleId !== 'string') {
       return NextResponse.json({ error: 'articleId is required' }, { status: 400 });
+    }
+
+    const idempotencyKey = req.headers.get('x-idempotency-key');
+    if (consumeIdempotencyKey(idempotencyKey)) {
+      return NextResponse.json({ completed: false, deduped: true });
     }
 
     const adminClient = getSupabaseAdminClient();

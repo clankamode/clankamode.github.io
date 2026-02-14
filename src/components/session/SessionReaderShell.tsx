@@ -7,11 +7,13 @@ import SessionHUD from './SessionHUD';
 interface SessionReaderShellProps {
     children: React.ReactNode;
     tableOfContents: React.ReactNode;
+    viewLabel?: string;
 }
 
 export default function SessionReaderShell({
     children,
     tableOfContents,
+    viewLabel = 'View',
 }: SessionReaderShellProps) {
     const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
 
@@ -41,6 +43,7 @@ export default function SessionReaderShell({
         <div className="min-h-screen bg-background text-text-primary">
             <SessionHUD
                 onToggleTOC={() => setRightDrawerOpen(prev => !prev)}
+                viewLabel={viewLabel}
             />
 
             <main className={cn(
@@ -60,7 +63,7 @@ export default function SessionReaderShell({
             >
                 <div className="flex items-center justify-between mb-8">
                     <span className="text-xs font-medium uppercase tracking-wider text-text-muted">
-                        On this page (T)
+                        {viewLabel} options (T)
                     </span>
                     <button
                         onClick={() => setRightDrawerOpen(false)}

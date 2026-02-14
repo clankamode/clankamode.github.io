@@ -9,10 +9,18 @@ import { headers } from 'next/headers';
 const ALLOWED_EVENTS = new Set([
     'gate_shown',
     'session_committed',
+    'session_started',
     'item_completed',
+    'step_completed',
     'micro_shown',
     'micro_clicked',
-    'ritual_completed'
+    'ritual_completed',
+    'session_finalized',
+    'home_card_rendered',
+    'coding_workspace_opened',
+    'practice_tests_ran',
+    'practice_completion_confirmed',
+    'practice_completion_blocked'
 ]);
 
 const MAX_PAYLOAD_SIZE = 4096; // 4KB limit
