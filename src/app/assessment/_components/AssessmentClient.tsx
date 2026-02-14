@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -61,23 +62,12 @@ const levels: Array<{
     },
   ];
 
-interface AssessmentQuestion {
-  id: string;
-  title: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  url: string;
-}
-
 export default function AssessmentClient() {
   const { status } = useSession();
+  const router = useRouter();
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const selectedLevelData = levels.find((level) => level.id === selectedLevel);
-  const selectedLevelLabel = selectedLevelData?.title ?? 'Assessment';
 
   const handleStart = async (levelId: string) => {
     if (status !== 'authenticated') {
@@ -90,7 +80,7 @@ export default function AssessmentClient() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/assessment/questions?level=${levelId}`);
+      const response = await fetch(`/api/interview-questions/random?level=${levelId}`);
 
       if (!response.ok) {
         const data = await response.json();
@@ -98,21 +88,18 @@ export default function AssessmentClient() {
       }
 
       const data = await response.json();
-      setQuestions(data.questions || []);
-      setIsModalOpen(true);
+      const questions = data.questions || [];
+
+      if (questions.length < 2) {
+        throw new Error('Not enough questions available');
+      }
+
+      router.push(`/code-editor/mock?q1=${questions[0].id}&q2=${questions[1].id}`);
     } catch (fetchError) {
       const message = fetchError instanceof Error ? fetchError.message : 'Failed to load questions';
       setError(message);
-    } finally {
       setLoading(false);
     }
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setQuestions([]);
-    setSelectedLevel(null);
-    setError(null);
   };
 
   return (
@@ -210,77 +197,6 @@ export default function AssessmentClient() {
         )}
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-ambient/80 backdrop-blur-sm px-4 animate-in fade-in">
-          <Card className="frame w-full max-w-lg bg-surface-workbench shadow-2xl border-border-subtle">
-            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-              <div className="space-y-1">
-                <CardTitle className="text-2xl">Your {selectedLevelLabel} assessment</CardTitle>
-                <CardDescription>Two non-premium LeetCode questions ready to go.</CardDescription>
-              </div>
-              <Button variant="ghost" size="sm" onClick={handleClose} className="h-8 w-8 p-0 rounded-full">
-                ✕
-              </Button>
-            </CardHeader>
-
-            <CardContent className="space-y-3 pt-4">
-              {questions.length === 0 ? (
-                <div className="rounded-lg border border-border-subtle bg-surface-interactive p-4 text-center text-base text-muted-foreground">
-                  No questions returned yet. Please close and try again.
-                </div>
-              ) : (
-                questions.map((question) => (
-                  <div
-                    key={question.id}
-                    className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface-interactive p-4 hover:border-border-interactive transition-colors"
-                  >
-                    <div>
-                      <p className="font-semibold text-foreground">
-                        {question.title}
-                      </p>
-                      <span className={cn(
-                        "text-sm px-2 py-0.5 rounded-full mt-1 inline-block",
-                        question.difficulty === 'Easy' && "bg-brand-green/10 text-brand-green",
-                        question.difficulty === 'Medium' && "bg-brand-amber/10 text-brand-amber",
-                        question.difficulty === 'Hard' && "bg-brand-gold/10 text-brand-gold"
-                      )}>
-                        {question.difficulty}
-                      </span>
-                    </div>
-                    <a
-                      href={question.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-shrink-0 text-muted-foreground hover:text-foreground transition-colors p-2 hover:bg-surface-dense rounded-full"
-                      title="View on LeetCode"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6m0 0v6m0-6L10 14"
-                        />
-                      </svg>
-                    </a>
-                  </div>
-                ))
-              )}
-            </CardContent>
-
-            <CardFooter className="justify-end pt-2">
-              <Button variant="outline" onClick={handleClose}>
-                Close
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

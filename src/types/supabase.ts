@@ -165,6 +165,45 @@ export interface Database {
                 }
                 Relationships: []
             }
+            InterviewQuestions: {
+                Row: {
+                    created_at: string | null
+                    difficulty: string
+                    helper_code: string
+                    id: string
+                    leetcode_number: number | null
+                    name: string
+                    prompt_full: string
+                    starter_code: string
+                    test_cases: Json
+                    video_ids: string[] | null
+                }
+                Insert: {
+                    created_at?: string | null
+                    difficulty: string
+                    helper_code?: string
+                    id?: string
+                    leetcode_number?: number | null
+                    name: string
+                    prompt_full: string
+                    starter_code: string
+                    test_cases?: Json
+                    video_ids?: string[] | null
+                }
+                Update: {
+                    created_at?: string | null
+                    difficulty?: string
+                    helper_code?: string
+                    id?: string
+                    leetcode_number?: number | null
+                    name?: string
+                    prompt_full?: string
+                    starter_code?: string
+                    test_cases?: Json
+                    video_ids?: string[] | null
+                }
+                Relationships: []
+            }
             LearningArticles: {
                 Row: {
                     body: string

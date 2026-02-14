@@ -46,6 +46,13 @@ export async function middleware(req: NextRequest) {
             return NextResponse.next();
         }
 
+        if (req.nextUrl.pathname.startsWith('/code-editor/mock') || req.nextUrl.pathname.startsWith('/api/interview-questions')) {
+            if (!token) {
+                return NextResponse.redirect(new URL('/assessment', req.url));
+            }
+            return NextResponse.next();
+        }
+
         if (!token) {
             return NextResponse.redirect(new URL('/', req.url));
         }
@@ -113,5 +120,7 @@ export const config = {
         '/api/bookmarks',
         '/ai',
         '/api/chat/:path*',
+        '/code-editor/mock',
+        '/api/interview-questions/:path*',
     ],
 }
