@@ -65,7 +65,9 @@ export async function middleware(req: NextRequest) {
 
         if (req.nextUrl.pathname.startsWith('/code-editor/practice') || req.nextUrl.pathname.startsWith('/api/peralta75')) {
             if (!token) {
-                return NextResponse.redirect(new URL('/peralta75', req.url));
+                const signInUrl = new URL('/api/auth/signin', req.url);
+                signInUrl.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
+                return NextResponse.redirect(signInUrl);
             }
             return NextResponse.next();
         }

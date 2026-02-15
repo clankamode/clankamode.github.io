@@ -5,18 +5,29 @@ import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 
 type FeedbackCategory = 'bug' | 'idea' | 'content' | 'other';
 
+interface FeedbackAttachment {
+  url: string;
+  name?: string;
+}
+
 interface FeedbackPayload {
   category: FeedbackCategory;
   message: string;
   pagePath: string | null;
+  pageUrl: string | null;
   contactEmail: string | null;
+  attachmentUrls: FeedbackAttachment[];
 }
 
 const FEEDBACK_CATEGORIES = new Set<FeedbackCategory>(['bug', 'idea', 'content', 'other']);
 const MIN_MESSAGE_LENGTH = 10;
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_PAGE_PATH_LENGTH = 512;
+const MAX_PAGE_URL_LENGTH = 2048;
 const MAX_EMAIL_LENGTH = 254;
+const MAX_ATTACHMENTS = 5;
+const MAX_ATTACHMENT_URL_LENGTH = 1024;
+const MAX_ATTACHMENT_NAME_LENGTH = 256;
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 8;
@@ -87,6 +98,46 @@ function parsePagePath(value: unknown): string | null {
   return path;
 }
 
+function parsePageUrl(value: unknown): string | null {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const url = value.trim();
+  if (!url) {
+    return null;
+  }
+
+  if (url.length > MAX_PAGE_URL_LENGTH) {
+    throw new Error('Page URL is too long.');
+  }
+
+  try {
+    new URL(url);
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+function parseAttachmentUrls(value: unknown): FeedbackAttachment[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const out: FeedbackAttachment[] = [];
+  for (const item of value.slice(0, MAX_ATTACHMENTS)) {
+    if (!item || typeof item !== 'object') continue;
+    const url = (item as Record<string, unknown>).url;
+    if (typeof url !== 'string' || !url.trim()) continue;
+    if (url.length > MAX_ATTACHMENT_URL_LENGTH) continue;
+    const name = (item as Record<string, unknown>).name;
+    const nameStr = typeof name === 'string' ? name.slice(0, MAX_ATTACHMENT_NAME_LENGTH) : undefined;
+    out.push({ url: url.trim(), name: nameStr || undefined });
+  }
+  return out;
+}
+
 function parsePayload(payload: unknown): FeedbackPayload {
   if (!payload || typeof payload !== 'object') {
     throw new Error('Invalid request body.');
@@ -117,7 +168,9 @@ function parsePayload(payload: unknown): FeedbackPayload {
     category: category as FeedbackCategory,
     message,
     pagePath: parsePagePath(candidate.pagePath),
+    pageUrl: parsePageUrl(candidate.pageUrl),
     contactEmail: parseOptionalEmail(candidate.contactEmail),
+    attachmentUrls: parseAttachmentUrls(candidate.attachmentUrls),
   };
 }
 
@@ -152,6 +205,8 @@ export async function POST(req: NextRequest) {
       metadata: {
         source: 'feedback_widget',
         ip: clientIp,
+        ...(payload.pageUrl && { page_url: payload.pageUrl }),
+        ...(payload.attachmentUrls.length > 0 && { attachments: payload.attachmentUrls }),
       },
     });
 

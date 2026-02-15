@@ -22,6 +22,7 @@ import { getArticleCompletionStatus, getBookmarkStatus } from '@/lib/progress';
 import ArticleLayoutSwitcher from '../../_components/ArticleLayoutSwitcher';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import ChunkedArticleRenderer from '@/components/session/ChunkedArticleRenderer';
+import { getPracticeQuestionForArticleSlug } from '@/lib/practice';
 
 interface ArticlePageProps {
   params: Promise<{ pillar: string; slug: string }>;
@@ -87,10 +88,14 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
   const { prev, next } = getAdjacentArticles(flatArticles, article.slug);
   const [completionStatus, bookmarkStatus] = showProgress && userId
     ? await Promise.all([
-      getArticleCompletionStatus(userId, article.id, session?.user?.id ?? undefined),
-      getBookmarkStatus(userId, article.id, session?.user?.id ?? undefined),
-    ])
+        getArticleCompletionStatus(userId, article.id, session?.user?.id ?? undefined),
+        getBookmarkStatus(userId, article.id, session?.user?.id ?? undefined),
+      ])
     : [null, null];
+  const practiceQuestion = await getPracticeQuestionForArticleSlug(article.slug);
+  const practiceHref = practiceQuestion
+    ? `/code-editor/practice/${practiceQuestion.id}?returnTo=${encodeURIComponent(`/learn/${pillarSlug}/${articleSlug}`)}`
+    : null;
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-24">
@@ -152,6 +157,17 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
                       initialBookmarked={bookmarkStatus?.bookmarked}
                       size="sm"
                     />
+                  </>
+                )}
+                {practiceHref && (
+                  <>
+                    <span>·</span>
+                    <Link
+                      href={practiceHref}
+                      className="inline-flex items-center uppercase tracking-[0.08em] text-brand-green transition-colors hover:text-brand-emerald"
+                    >
+                      Practice
+                    </Link>
                   </>
                 )}
               </div>

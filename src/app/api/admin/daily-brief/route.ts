@@ -18,38 +18,81 @@ interface BriefMetrics {
   articlesCount: number;
   activeQuestionsCount: number;
   activeTestSessionsCount: number;
+  signupsChartImageUrl: string | null;
 }
 
-function getTodayWindowBounds() {
-  const now = new Date();
-  const todayStart = new Date(now);
-  todayStart.setHours(0, 0, 0, 0);
-
-  return {
-    nowIso: now.toISOString(),
-    todayStartIso: todayStart.toISOString(),
-  };
+interface SignupsByDayRow {
+  day: string;
+  count: number;
 }
 
-async function getUsersGainedTodayCount(): Promise<number> {
+async function getSignupsByDayLast30(): Promise<SignupsByDayRow[]> {
   const adminClient = getSupabaseAdminClient();
-  const { nowIso, todayStartIso } = getTodayWindowBounds();
+  const { data, error } = await adminClient.rpc('get_signups_by_day_last_30');
 
-  const usersGainedTodayResult = await adminClient
-    .from('Users')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', todayStartIso)
-    .lt('created_at', nowIso);
-
-  if (usersGainedTodayResult.error) {
-    console.error('Failed to collect daily users gained metric:', {
-      usersGainedTodayError: usersGainedTodayResult.error.message,
-    });
-
-    return 0;
+  if (error) {
+    console.error('Failed to fetch signups by day:', error.message);
+    return [];
   }
 
-  return usersGainedTodayResult.count ?? 0;
+  const rows = (data ?? []) as { day: string; count: number }[];
+  return rows.map((r) => ({ day: r.day, count: Number(r.count) }));
+}
+
+function buildSignupsChartUrl(rows: SignupsByDayRow[]): string | null {
+  const now = new Date();
+  const start = new Date(now);
+  start.setDate(start.getDate() - 29);
+  start.setHours(0, 0, 0, 0);
+
+  const byDay = new Map<string, number>();
+  for (const r of rows) byDay.set(r.day, r.count);
+
+  const labels: string[] = [];
+  const data: number[] = [];
+  const cursor = new Date(start);
+  while (cursor <= now) {
+    const key = cursor.toISOString().slice(0, 10);
+    labels.push(cursor.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    data.push(byDay.get(key) ?? 0);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  const maxY = Math.max(1, ...data);
+  const chartConfig = {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: 'count', data, backgroundColor: '#34d399' }],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#d1d5db' } } },
+      scales: {
+        x: {
+          title: { display: true, text: 'Date', color: '#9ca3af' },
+          ticks: { color: '#9ca3af', maxRotation: 45 },
+          grid: { color: 'rgba(255,255,255,0.06)' },
+        },
+        y: {
+          title: { display: true, text: 'Signups', color: '#9ca3af' },
+          beginAtZero: true,
+          suggestedMax: maxY,
+          ticks: { color: '#9ca3af' },
+          grid: { color: 'rgba(255,255,255,0.06)' },
+        },
+      },
+    },
+  };
+
+  const base = 'https://quickchart.io/chart';
+  const params = new URLSearchParams({
+    c: JSON.stringify(chartConfig),
+    backgroundColor: '#09090b',
+    width: '640',
+    height: '320',
+  });
+  return `${base}?${params.toString()}`;
 }
 
 function buildBriefHtml(params: BriefMetrics): string {
@@ -63,7 +106,18 @@ function buildBriefHtml(params: BriefMetrics): string {
     articlesCount,
     activeQuestionsCount,
     activeTestSessionsCount,
+    signupsChartImageUrl,
   } = params;
+
+  const chartSection =
+    signupsChartImageUrl &&
+    `
+          <h3 style="margin: 24px 0 10px; font-size: 16px; color: #111827;">Signups last 30 days</h3>
+          <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6; color: #1f2937;">Daily new user signups (dark chart, green bars).</p>
+          <div style="margin-bottom: 18px; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; background: #09090b;">
+            <img src="${signupsChartImageUrl}" alt="Signups last 30 days" width="640" height="320" style="display: block; max-width: 100%; height: auto;" />
+          </div>
+`;
 
   return `
     <div style="margin: 0; padding: 24px 12px; background-color: #f3f4f6; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: #111827;">
@@ -79,7 +133,7 @@ function buildBriefHtml(params: BriefMetrics): string {
             New users today: <strong>${usersGainedToday}</strong>
           </div>
           <p style="margin: 0 0 18px; font-size: 14px; line-height: 1.6; color: #1f2937;">Track this number day-over-day to spot growth momentum and quickly validate acquisition experiments.</p>
-
+${chartSection ?? ''}
           <h3 style="margin: 0 0 12px; font-size: 16px; color: #111827;">Audience</h3>
           <table role="presentation" cellspacing="0" cellpadding="0" style="width: 100%; border-collapse: separate; border-spacing: 10px; margin-bottom: 16px;">
             <tr>
@@ -135,11 +189,13 @@ function buildBriefHtml(params: BriefMetrics): string {
 }
 
 function buildBriefText(params: BriefMetrics): string {
+  const chartNote = params.signupsChartImageUrl ? ['', 'Signups last 30 days: see chart in HTML version.'] : [];
   return [
     'Daily Website Brief',
     '',
     'Daily Users Gained',
     `- New users today: ${params.usersGainedToday}`,
+    ...chartNote,
     '',
     'Audience',
     `- Total users: ${params.totalUsers}`,
@@ -216,21 +272,25 @@ export async function GET() {
 
     const [
       totalUsersResult,
-      usersGainedToday,
       roleRowsResult,
       videosCountResult,
       articlesCountResult,
       activeQuestionsCountResult,
       activeTestSessionsCountResult,
+      signupsByDayRows,
     ] = await Promise.all([
       adminClient.from('Users').select('*', { count: 'exact', head: true }),
-      getUsersGainedTodayCount(),
       adminClient.from('Users').select('role'),
       adminClient.from('Videos').select('*', { count: 'exact', head: true }),
       adminClient.from('LearningArticles').select('*', { count: 'exact', head: true }),
       adminClient.from('LiveQuestions').select('*', { count: 'exact', head: true }).eq('is_archived', false),
       adminClient.from('TestSession').select('*', { count: 'exact', head: true }).is('completed_at', null),
+      getSignupsByDayLast30(),
     ]);
+
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const usersGainedToday =
+      signupsByDayRows.find((r) => r.day === todayKey)?.count ?? 0;
 
     if (totalUsersResult.error || roleRowsResult.error || videosCountResult.error || articlesCountResult.error || activeQuestionsCountResult.error || activeTestSessionsCountResult.error) {
       console.error('Failed to collect daily brief metrics:', {
@@ -257,6 +317,7 @@ export async function GET() {
       articlesCount: articlesCountResult.count ?? 0,
       activeQuestionsCount: activeQuestionsCountResult.count ?? 0,
       activeTestSessionsCount: activeTestSessionsCountResult.count ?? 0,
+      signupsChartImageUrl: buildSignupsChartUrl(signupsByDayRows),
     };
 
     const subject = buildSubjectLine();

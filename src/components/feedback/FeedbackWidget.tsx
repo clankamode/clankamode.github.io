@@ -1,10 +1,14 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/Button';
+import FeedbackAttachmentZone, {
+  type FeedbackAttachment,
+  type FeedbackAttachmentZoneRef,
+} from '@/components/feedback/FeedbackAttachmentZone';
 
 type FeedbackCategory = 'bug' | 'idea' | 'content' | 'other';
 
@@ -34,6 +38,11 @@ export default function FeedbackWidget() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [attachments, setAttachments] = useState<FeedbackAttachment[]>([]);
+  const [isUploadingAttachment, setIsUploadingAttachment] = useState(false);
+  const [attachmentError, setAttachmentError] = useState<string | null>(null);
+  const [messageAreaDrag, setMessageAreaDrag] = useState(false);
+  const attachmentZoneRef = useRef<FeedbackAttachmentZoneRef>(null);
 
   const shouldHide = useMemo(() => {
     return pathname.startsWith('/admin') || pathname.startsWith('/ai') || pathname.startsWith('/login') || pathname.startsWith('/feedback');
@@ -61,6 +70,39 @@ export default function FeedbackWidget() {
     return () => window.removeEventListener('keydown', onEscape);
   }, [isOpen]);
 
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent) => {
+      const files = e.clipboardData?.files;
+      if (!files?.length) return;
+      const hasImagesOrPdf = Array.from(files).some(
+        (f) => f.type.startsWith('image/') || f.type === 'application/pdf'
+      );
+      if (hasImagesOrPdf) {
+        e.preventDefault();
+        attachmentZoneRef.current?.addFiles(Array.from(files));
+      }
+    },
+    []
+  );
+
+  const handleMessageDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setMessageAreaDrag(false);
+      if (e.dataTransfer.files?.length) {
+        attachmentZoneRef.current?.addFiles(Array.from(e.dataTransfer.files));
+      }
+    },
+    []
+  );
+
+  const handleMessageDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMessageAreaDrag(e.type === 'dragenter' || e.type === 'dragover');
+  }, []);
+
   if (shouldHide) {
     return null;
   }
@@ -73,6 +115,7 @@ export default function FeedbackWidget() {
     setCategory('idea');
     setMessage('');
     setSubmitError(null);
+    setAttachments([]);
   };
 
   const closeModal = () => {
@@ -95,6 +138,8 @@ export default function FeedbackWidget() {
         typeof window !== 'undefined'
           ? `${window.location.pathname}${window.location.search}`
           : pathname;
+      const pageUrl =
+        typeof window !== 'undefined' ? window.location.href : null;
 
       const response = await fetch('/api/feedback', {
         method: 'POST',
@@ -106,6 +151,8 @@ export default function FeedbackWidget() {
           message: message.trim(),
           contactEmail: contactEmail.trim() || null,
           pagePath: pathWithQuery,
+          pageUrl,
+          attachmentUrls: attachments.map((a) => ({ url: a.url, name: a.name })),
         }),
       });
 
@@ -130,7 +177,8 @@ export default function FeedbackWidget() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-5 left-5 z-40 min-h-[44px] rounded-full border border-border-subtle bg-surface-interactive/90 px-4 py-3 text-sm font-semibold text-foreground shadow-[0_20px_50px_-25px_rgba(0,0,0,0.7)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-border-interactive hover:bg-surface-dense/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="fixed z-40 min-h-[48px] min-w-[48px] rounded-full border border-border-subtle bg-surface-interactive/90 px-4 py-3 text-sm font-semibold text-foreground shadow-[0_20px_50px_-25px_rgba(0,0,0,0.7)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-border-interactive hover:bg-surface-dense/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation"
+          style={{ left: 'max(1rem, env(safe-area-inset-left))', bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
           aria-label="Open feedback form"
         >
           <span className="inline-flex items-center gap-2">
@@ -142,11 +190,12 @@ export default function FeedbackWidget() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex flex-col items-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm"
           onClick={closeModal}
+          style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
         >
           <div
-            className="w-full max-w-2xl rounded-2xl border border-border-subtle bg-surface-ambient/95 p-6 shadow-[0_30px_100px_-30px_rgba(0,0,0,0.8)]"
+            className="w-full max-w-2xl flex-shrink-0 rounded-2xl border border-border-subtle bg-surface-ambient/95 p-4 sm:p-6 shadow-[0_30px_100px_-30px_rgba(0,0,0,0.8)] my-auto min-h-0"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mb-5 flex items-start justify-between gap-4">
@@ -159,7 +208,7 @@ export default function FeedbackWidget() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-white/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="-m-2 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-white/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring touch-manipulation"
                 aria-label="Close feedback modal"
               >
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -186,10 +235,10 @@ export default function FeedbackWidget() {
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} onPaste={handlePaste} className="space-y-5">
                 <div className="grid gap-2">
                   <label className="text-sm font-medium text-foreground">Feedback type</label>
-                  <div className="grid gap-2 md:grid-cols-2">
+                  <div className="grid gap-2 grid-cols-2">
                     {FEEDBACK_CATEGORIES.map((item) => {
                       const active = category === item.value;
                       return (
@@ -197,7 +246,7 @@ export default function FeedbackWidget() {
                           key={item.value}
                           type="button"
                           onClick={() => setCategory(item.value)}
-                          className={`rounded-xl border p-3 text-left transition-all ${active
+                          className={`min-h-[44px] rounded-xl border p-3 text-left transition-all touch-manipulation ${active
                             ? 'border-brand-green/60 bg-brand-green/10'
                             : 'border-border-subtle bg-surface-interactive/70 hover:border-border-interactive hover:bg-surface-dense/70'
                             }`}
@@ -214,16 +263,31 @@ export default function FeedbackWidget() {
                   <label htmlFor="feedback-message" className="text-sm font-medium text-foreground">
                     Message
                   </label>
-                  <textarea
-                    id="feedback-message"
-                    value={message}
-                    onChange={(event) => setMessage(event.target.value)}
-                    placeholder="What happened, what did you expect, and what would make it better?"
-                    rows={6}
-                    maxLength={MAX_MESSAGE_LENGTH}
-                    className="w-full rounded-xl border border-border-subtle bg-surface-interactive px-4 py-3 text-sm text-foreground placeholder:text-text-muted focus:border-brand-green/40 focus:outline-none focus:ring-2 focus:ring-brand-green/30"
-                    autoFocus
-                  />
+                  <p className="text-xs text-text-secondary">
+                    Paste or drop screenshots and attachments into the message box.
+                  </p>
+                  <div
+                    className={`rounded-xl border transition-colors ${
+                      messageAreaDrag
+                        ? 'border-brand-green/50 bg-brand-green/5'
+                        : 'border-border-subtle'
+                    }`}
+                    onDragEnter={handleMessageDrag}
+                    onDragOver={handleMessageDrag}
+                    onDragLeave={handleMessageDrag}
+                    onDrop={handleMessageDrop}
+                  >
+                    <textarea
+                      id="feedback-message"
+                      value={message}
+                      onChange={(event) => setMessage(event.target.value)}
+                      placeholder="What happened, what did you expect, and what would make it better?"
+                      rows={5}
+                      maxLength={MAX_MESSAGE_LENGTH}
+                      className="w-full rounded-xl border-0 bg-surface-interactive px-4 py-3 text-base text-foreground placeholder:text-text-muted focus:border-brand-green/40 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:ring-inset min-[480px]:text-sm"
+                      autoFocus
+                    />
+                  </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-text-secondary">Minimum {MIN_MESSAGE_LENGTH} characters.</span>
                     <span className={trimmedLength > MAX_MESSAGE_LENGTH ? 'text-red-300' : 'text-text-secondary'}>
@@ -231,6 +295,20 @@ export default function FeedbackWidget() {
                     </span>
                   </div>
                 </div>
+
+                <FeedbackAttachmentZone
+                  ref={attachmentZoneRef}
+                  attachments={attachments}
+                  onAttachmentsChange={setAttachments}
+                  isUploading={isUploadingAttachment}
+                  onUploadingChange={setIsUploadingAttachment}
+                  onError={setAttachmentError}
+                  disabled={isSubmitting}
+                  className="mt-2"
+                />
+                {attachmentError && (
+                  <p className="text-sm text-red-300">{attachmentError}</p>
+                )}
 
                 <div className="grid gap-2">
                   <label htmlFor="feedback-email" className="text-sm font-medium text-foreground">
@@ -242,7 +320,7 @@ export default function FeedbackWidget() {
                     value={contactEmail}
                     onChange={(event) => setContactEmail(event.target.value)}
                     placeholder="you@example.com"
-                    className="w-full rounded-xl border border-border-subtle bg-surface-interactive px-4 py-3 text-sm text-foreground placeholder:text-text-muted focus:border-brand-green/40 focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                    className="w-full rounded-xl border border-border-subtle bg-surface-interactive px-4 py-3 text-base text-foreground placeholder:text-text-muted focus:border-brand-green/40 focus:outline-none focus:ring-2 focus:ring-brand-green/30 min-[480px]:text-sm"
                   />
                 </div>
 
@@ -252,20 +330,22 @@ export default function FeedbackWidget() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-end gap-3">
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
                   <Link
                     href="/feedback"
                     onClick={closeModal}
-                    className="text-sm text-text-secondary hover:text-foreground transition-colors"
+                    className="min-h-[44px] flex items-center justify-center text-sm text-text-secondary hover:text-foreground transition-colors touch-manipulation sm:justify-start"
                   >
                     Open full form
                   </Link>
-                  <Button type="button" variant="ghost" onClick={closeModal} disabled={isSubmitting}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" variant="novice" disabled={!canSubmit}>
-                    {isSubmitting ? 'Sending...' : 'Send feedback'}
-                  </Button>
+                  <div className="flex gap-3 sm:flex-none">
+                    <Button type="button" variant="ghost" onClick={closeModal} disabled={isSubmitting} className="min-h-[44px] flex-1 sm:flex-none touch-manipulation">
+                      Cancel
+                    </Button>
+                    <Button type="submit" variant="novice" disabled={!canSubmit} className="min-h-[44px] flex-1 sm:flex-none touch-manipulation">
+                      {isSubmitting ? 'Sending...' : 'Send'}
+                    </Button>
+                  </div>
                 </div>
               </form>
             )}
