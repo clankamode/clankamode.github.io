@@ -81,7 +81,6 @@ export default function SessionExitView() {
             });
             setHasFinalized(true);
             hasFinalizedRef.current = true;
-        } catch {
         } finally {
             setIsFinalizing(false);
             resetToEntry();

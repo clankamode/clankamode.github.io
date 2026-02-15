@@ -20,10 +20,7 @@ describe('Goat Latin Database Invariants', () => {
         expect(tc1).toBeDefined();
         if (!tc1) return;
 
-        // Verify "tele" prefix corruption
         expect(tc1.expectedOutput).not.toContain('tele');
-
-        // Verify "y instead of a" corruption
         expect(tc1.expected).not.toContain('way');
         expect(tc1.expected).not.toContain('fay');
     });

@@ -58,6 +58,7 @@ const PLANNER_RANKER_MODEL = resolveRankerModel(process.env.OPENAI_SESSION_PLANN
 const PLANNER_DAILY_CALL_BUDGET = resolvePlannerDailyCallBudget(process.env.OPENAI_SESSION_PLANNER_DAILY_CALL_BUDGET);
 const PLANNER_REASONING_EFFORT = resolveReasoningEffort(process.env.OPENAI_SESSION_PLANNER_REASONING_EFFORT);
 const EXPLOITATION_RATIO = 0.7;
+const PLANNER_DEBUG_LOGS = process.env.OPENAI_SESSION_PLANNER_DEBUG === 'true';
 const CONCEPT_PREREQUISITES: Record<string, string[]> = {
   arrays: [],
   strings: [],
@@ -114,7 +115,27 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
     requirePracticeItem: requiresPractice,
     userState: input.userState,
     outcomeSignals: input.outcomeSignals,
+    recentActivityTitles: input.recentActivityTitles,
   });
+  const logPlannerSelection = (source: string, selected: SessionItem[], available: SessionPlannerCandidate[]) => {
+    if (!PLANNER_DEBUG_LOGS) return;
+
+    console.info('[session-planner] selection', {
+      source,
+      selected: selected.map((item) => ({
+        href: item.href,
+        type: item.type,
+        concept: candidateConceptKey(item),
+        minutes: item.estMinutes ?? 5,
+      })),
+      availableTop: available.slice(0, 5).map((candidate) => ({
+        id: candidate.id,
+        type: candidate.item.type,
+        concept: candidateConceptKey(candidate.item),
+        minutes: candidate.item.estMinutes ?? 5,
+      })),
+    });
+  };
 
   const cacheNamespaceKey = input.cacheKey ? `session-plan:v2:${input.cacheKey}` : null;
   if (cacheNamespaceKey) {
@@ -134,13 +155,15 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
         maxItems,
         requiresPractice
       );
-      return rebalanceExplorationMix(
+      const cachedPlan = rebalanceExplorationMix(
         cachedItems,
         effectiveCandidates,
         input.userState,
         maxItems,
         22
       );
+      logPlannerSelection('cache', cachedPlan, effectiveCandidates);
+      return cachedPlan;
     }
   }
 
@@ -199,6 +222,7 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
     for (let attempt = 1; attempt <= MAX_PLANNER_ATTEMPTS; attempt += 1) {
       const canSpend = await consumeBudgetCall(budgetKey);
       if (!canSpend) {
+        logPlannerSelection('budget-fallback', heuristicFallback, rankedCandidates);
         return heuristicFallback;
       }
 
@@ -274,6 +298,7 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
           await setInCache(cacheNamespaceKey, validation.parsed, secondsUntilNextUTCDay());
         }
 
+        logPlannerSelection('llm', balancedItems, rankedCandidates);
         return balancedItems;
       } catch (error) {
         console.error(`LLM session planning failed on attempt ${attempt}:`, error);
@@ -282,7 +307,9 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
     }
   }
 
-  return bestPlan || heuristicFallback;
+  const fallbackPlan = bestPlan || heuristicFallback;
+  logPlannerSelection(bestPlan ? 'best-model' : 'heuristic-fallback', fallbackPlan, rankedCandidates);
+  return fallbackPlan;
 }
 
 function extractOutputText(response: unknown): string | null {
@@ -343,7 +370,12 @@ async function rankCandidatesStageA(input: {
   recentActivityTitles: string[];
   practiceTargetDifficulty: 'Easy' | 'Medium' | 'Hard' | null;
 }): Promise<SessionPlannerCandidate[]> {
-  const heuristicRanked = rankCandidatesHeuristically(input.candidates, input.userState, input.outcomeSignals);
+  const heuristicRanked = rankCandidatesHeuristically(
+    input.candidates,
+    input.userState,
+    input.outcomeSignals,
+    input.recentActivityTitles
+  );
   if (!plannerClient || input.candidates.length <= 3) {
     return heuristicRanked;
   }
@@ -619,10 +651,12 @@ function finalizeSelectedItems(
   }
 
   const withLearnGuard = enforceAtLeastOneLearn(selectedItems, candidates, maxItems);
-  const capped = capTotalMinutes(withLearnGuard, 22);
-  return requirePracticeItem
+  const diversified = enforcePlanDiversity(withLearnGuard, candidates, maxItems, 22);
+  const capped = capTotalMinutes(diversified, 22);
+  const guarded = requirePracticeItem
     ? enforceAtLeastOnePractice(capped, candidates, maxItems, 22)
     : capped;
+  return enforcePlanDiversity(guarded, candidates, maxItems, 22);
 }
 
 function enforceAtLeastOnePractice(
@@ -740,14 +774,47 @@ function normalizeConceptKey(value: string | null | undefined): string | null {
   return CONCEPT_ALIASES[normalized] || normalized;
 }
 
-function rankCandidatesHeuristically(
+function normalizeTitleTokens(value: string): Set<string> {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+  if (!normalized) return new Set();
+  return new Set(normalized.split(/\s+/).filter((part) => part.length > 1));
+}
+
+function titleSimilarity(a: string, b: string): number {
+  const aTokens = normalizeTitleTokens(a);
+  const bTokens = normalizeTitleTokens(b);
+  if (aTokens.size === 0 || bTokens.size === 0) return 0;
+
+  let overlap = 0;
+  for (const token of aTokens) {
+    if (bTokens.has(token)) overlap += 1;
+  }
+
+  const denominator = Math.max(aTokens.size, bTokens.size);
+  return denominator > 0 ? overlap / denominator : 0;
+}
+
+export function highestTitleSimilarity(title: string, recentTitles: string[]): number {
+  if (recentTitles.length === 0) return 0;
+  let best = 0;
+  for (const recent of recentTitles) {
+    best = Math.max(best, titleSimilarity(title, recent));
+  }
+  return best;
+}
+
+export function rankCandidatesHeuristically(
   candidates: SessionPlannerCandidate[],
   userState: UserLearningState | null,
-  outcomeSignals?: PlannerOutcomeSignals
+  outcomeSignals?: PlannerOutcomeSignals,
+  recentActivityTitles: string[] = []
 ): SessionPlannerCandidate[] {
   return [...candidates].sort((a, b) => {
-    const scoreA = heuristicCandidateScore(a.item, userState, outcomeSignals);
-    const scoreB = heuristicCandidateScore(b.item, userState, outcomeSignals);
+    const scoreA = heuristicCandidateScore(a.item, userState, outcomeSignals, recentActivityTitles);
+    const scoreB = heuristicCandidateScore(b.item, userState, outcomeSignals, recentActivityTitles);
     if (scoreA !== scoreB) return scoreB - scoreA;
     return (a.item.estMinutes ?? 5) - (b.item.estMinutes ?? 5);
   });
@@ -756,7 +823,8 @@ function rankCandidatesHeuristically(
 function heuristicCandidateScore(
   item: SessionItem,
   userState: UserLearningState | null,
-  outcomeSignals?: PlannerOutcomeSignals
+  outcomeSignals?: PlannerOutcomeSignals,
+  recentActivityTitles: string[] = []
 ): number {
   const completionRate = clamp01(outcomeSignals?.completionRate ?? 0.65);
   const timeAdherence = clamp01(outcomeSignals?.timeAdherence ?? 0.65);
@@ -767,6 +835,7 @@ function heuristicCandidateScore(
   const concept = candidateConceptKey(item);
   const stubborn = new Set((userState?.stubbornConcepts || []).map((value) => normalizeConceptKey(value)).filter(Boolean) as string[]);
   const recent = new Set((userState?.recentConcepts || []).map((value) => normalizeConceptKey(value)).filter(Boolean) as string[]);
+  const activitySimilarity = highestTitleSimilarity(item.title, recentActivityTitles);
 
   let score = confidence * 6;
   score += item.type === 'practice' ? 1 : 2;
@@ -779,18 +848,27 @@ function heuristicCandidateScore(
   score += (1 - Math.abs(0.72 - completionRate)) * 2;
   score += (1 - Math.abs(0.7 - timeAdherence)) * 1.5;
   score += nextDayReturnRate;
+  if (activitySimilarity >= 0.85) score -= 3.5;
+  else if (activitySimilarity >= 0.65) score -= 2;
+  else if (activitySimilarity >= 0.5) score -= 0.8;
 
   return score;
 }
 
-function buildHeuristicPlan(input: {
+export function buildHeuristicPlan(input: {
   candidates: SessionPlannerCandidate[];
   maxItems: number;
   requirePracticeItem: boolean;
   userState: UserLearningState | null;
   outcomeSignals?: PlannerOutcomeSignals;
+  recentActivityTitles?: string[];
 }): SessionItem[] {
-  const ranked = rankCandidatesHeuristically(input.candidates, input.userState, input.outcomeSignals);
+  const ranked = rankCandidatesHeuristically(
+    input.candidates,
+    input.userState,
+    input.outcomeSignals,
+    input.recentActivityTitles || []
+  );
   const selected: SessionItem[] = [];
   const usedHrefs = new Set<string>();
   let totalMinutes = 0;
@@ -813,9 +891,58 @@ function buildHeuristicPlan(input: {
   const withPractice = input.requirePracticeItem
     ? enforceAtLeastOnePractice(withLearn, input.candidates, input.maxItems, 22)
     : withLearn;
-
-  const capped = capTotalMinutes(withPractice, 22);
+  const diversified = enforcePlanDiversity(withPractice, input.candidates, input.maxItems, 22);
+  const capped = capTotalMinutes(diversified, 22);
   return rebalanceExplorationMix(capped, ranked, input.userState, input.maxItems, 22);
+}
+
+export function enforcePlanDiversity(
+  items: SessionItem[],
+  candidates: SessionPlannerCandidate[],
+  maxItems: number,
+  maxMinutes: number
+): SessionItem[] {
+  if (items.length <= 1) return items.slice(0, maxItems);
+
+  const result = [...items];
+  const usedHrefs = new Set(result.map((item) => item.href));
+  const totalMinutes = result.reduce((sum, item) => sum + (item.estMinutes ?? 5), 0);
+
+  const duplicateIndex = result.findIndex((item, index) => {
+    if (index === 0) return false;
+    const existingArticle = result.slice(0, index).some((entry) => entry.articleId && entry.articleId === item.articleId);
+    const existingConcept = result.slice(0, index).some((entry) => candidateConceptKey(entry) && candidateConceptKey(entry) === candidateConceptKey(item));
+    return existingArticle || existingConcept;
+  });
+
+  if (duplicateIndex === -1) {
+    return result.slice(0, maxItems);
+  }
+
+  const removable = result[duplicateIndex];
+  const removableMinutes = removable.estMinutes ?? 5;
+
+  const replacement = candidates
+    .map((candidate) => candidate.item)
+    .find((candidate) => {
+      if (usedHrefs.has(candidate.href)) return false;
+      const replacementMinutes = candidate.estMinutes ?? 5;
+      const projectedMinutes = totalMinutes - removableMinutes + replacementMinutes;
+      if (projectedMinutes > maxMinutes) return false;
+      const articleConflict = result.some((item, idx) => idx !== duplicateIndex && item.articleId && item.articleId === candidate.articleId);
+      if (articleConflict) return false;
+      const concept = candidateConceptKey(candidate);
+      const conceptConflict = result.some((item, idx) => idx !== duplicateIndex && concept && candidateConceptKey(item) === concept);
+      if (conceptConflict) return false;
+      return true;
+    });
+
+  if (!replacement) {
+    return result.slice(0, maxItems);
+  }
+
+  result[duplicateIndex] = replacement;
+  return result.slice(0, maxItems);
 }
 
 function rebalanceExplorationMix(
@@ -1137,4 +1264,3 @@ export function buildPlannerPrompt(input: PromptInput): string {
     `Candidates: ${JSON.stringify(input.compactCandidates)}`,
   ].join('\n');
 }
-
