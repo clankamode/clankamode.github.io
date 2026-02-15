@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from '@/contexts/SessionContext';
 import { chunkArticleByHeadings, getChunkByIndex } from '@/lib/article-chunking';
 import ArticleRenderer from '@/app/learn/_components/ArticleRenderer';
+import { cn } from '@/lib/utils';
 
 interface ChunkedArticleRendererProps {
     content: string;
@@ -91,74 +92,139 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
     }, [state.phase, state.execution, renderedChunks.length, nextChunk, prevChunk, handleAdvanceArticle]);
 
     if (state.phase !== 'execution' || !state.execution) {
-        return <ArticleRenderer content={content} />;
+        return <ArticleRenderer content={content} mode="default" />;
     }
 
     const currentChunk = getChunkByIndex(renderedChunks, currentChunkIndex);
 
     if (!currentChunk) {
-        return <ArticleRenderer content={content} />;
+        return <ArticleRenderer content={content} mode="execution" />;
     }
 
     const isFirstChunk = currentChunkIndex === 0;
 
     return (
         <div>
-            <div className="mb-6 border-b border-border-interactive pb-4">
-                <div className="flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-text-secondary">
-                    <span>
-                        {isFocusedMode
-                            ? `Section ${(focusedChunk?.index ?? 0) + 1} of ${chunks.length}`
-                            : `Section ${currentChunkIndex + 1} of ${chunks.length}`}
-                    </span>
-                    <span>·</span>
-                    <span>{currentChunk.title}</span>
+            {/* Enhanced Section Header */}
+            <div
+                data-reading-boundary="section-header"
+                className="mb-5 border-t border-border-interactive/35 pt-2 before:absolute before:left-[-2.5rem] before:top-[9px] before:h-px before:w-[2.5rem] before:bg-border-interactive/32 after:absolute after:left-[-2.5rem] after:top-[9px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/45"
+            >
+                {/* Section title with better hierarchy */}
+                <h2 className="text-2xl font-semibold tracking-tight text-text-primary">
+                    {currentChunk.title}
+                </h2>
+            </div>
+
+            {/* Content */}
+            <div>
+                <ArticleRenderer content={currentChunk.content} mode="execution" />
+            </div>
+
+            {/* Enhanced Navigation */}
+            <div
+                data-reading-boundary="step-control"
+                className="mt-10 border-t border-border-interactive/35 pt-4 before:absolute before:left-[-2.5rem] before:top-[7px] before:h-px before:w-[2.5rem] before:bg-border-interactive/32 after:absolute after:left-[-2.5rem] after:top-[7px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/45"
+            >
+                {/* Visual Progress Indicator - Enhanced */}
+                <div className="mb-4 space-y-2 lg:hidden">
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-text-muted">
+                            Step {currentChunkIndex + 1} of {chunks.length}
+                        </span>
+                        <span className={cn(
+                            "text-xs font-mono transition-all duration-300",
+                            currentChunkIndex === chunks.length - 1
+                                ? "text-emerald-400"
+                                : "text-text-muted"
+                        )}>
+                            {Math.round(((currentChunkIndex + 1) / chunks.length) * 100)}%
+                        </span>
+                    </div>
+                    <div className="flex gap-1">
+                        {Array.from({ length: chunks.length }).map((_, i) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    'h-1.5 flex-1 rounded-full transition-all duration-500 ease-out',
+                                    i < currentChunkIndex
+                                        ? 'bg-emerald-500/70'
+                                        : i === currentChunkIndex
+                                        ? 'bg-gradient-to-r from-emerald-500 to-blue-500 shadow-lg shadow-emerald-500/20'
+                                        : 'bg-white/10'
+                                )}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            <div className="[&_p]:text-text-primary/85 [&_li]:text-text-primary/80 [&_blockquote]:text-text-primary/80">
-                <ArticleRenderer content={currentChunk.content} />
-            </div>
+                {/* Navigation Buttons */}
+                <div className="flex items-center justify-between gap-4">
+                    {/* Left: Previous Button */}
+                    {isFirstChunk ? (
+                        <div className="flex items-center gap-2 py-2 text-xs text-text-muted">
+                            <span className="inline-block h-4 w-4 rounded border border-text-muted/20" />
+                            {isFocusedMode ? 'Current section' : 'Start of article'}
+                        </div>
+                    ) : (
+                        <button
+                            onClick={prevChunk}
+                            className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-surface-interactive/35 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                        >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                            <span>Previous</span>
+                            <span className="text-xs text-text-muted">H</span>
+                        </button>
+                    )}
 
-            <div className="mt-12 flex items-center justify-between border-t border-border-interactive pt-8">
-                {isFirstChunk ? (
-                    <p className="px-4 py-2.5 text-sm text-text-secondary">
-                        {isFocusedMode ? 'Current section' : 'Start of article'}
-                    </p>
-                ) : (
+                    {/* Right: Next/Complete Button - Enhanced */}
                     <button
-                        onClick={prevChunk}
-                        className="flex items-center gap-2 rounded-lg border border-border-subtle px-4 py-2.5 text-sm font-medium text-text-primary transition-colors hover:border-border-interactive hover:bg-surface-interactive"
+                        onClick={() => {
+                            if (isLastChunk) {
+                                handleAdvanceArticle();
+                            } else {
+                                nextChunk();
+                            }
+                        }}
+                        disabled={isLastChunk && isCompletingArticle}
+                        className={cn(
+                            'group relative flex items-center gap-2.5 rounded-lg px-5 py-3 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-70',
+                            isLastChunk
+                                ? 'bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 text-white shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 hover:brightness-110'
+                                : 'border border-white/10 bg-white/5 text-text-primary backdrop-blur-sm hover:border-emerald-500/30 hover:bg-white/10'
+                        )}
                     >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        <span>Previous section</span>
-                        <span className="text-xs text-text-secondary">← or H</span>
+                        {isLastChunk && !isCompletingArticle && (
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        )}
+                        <span>
+                            {isLastChunk
+                                ? isCompletingArticle
+                                    ? 'Completing...'
+                                    : isFocusedMode
+                                    ? 'Complete Section'
+                                    : 'Complete Article'
+                                : 'Next Section'}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-xs opacity-70">L</span>
+                            {isCompletingArticle ? (
+                                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                            ) : (
+                                <svg className={cn("h-4 w-4 transition-transform", isLastChunk ? "group-hover:translate-x-0.5" : "group-hover:translate-x-1")} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            )}
+                        </div>
                     </button>
-                )}
-
-                <button
-                    onClick={() => {
-                        if (isLastChunk) {
-                            handleAdvanceArticle();
-                        } else {
-                            nextChunk();
-                        }
-                    }}
-                    disabled={isLastChunk && isCompletingArticle}
-                    className="flex items-center gap-2 rounded-lg border border-accent-primary/35 bg-accent-primary/12 px-4 py-2.5 text-sm font-semibold text-accent-primary transition-colors hover:bg-accent-primary/20 disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                    <span>
-                        {isLastChunk
-                            ? (isCompletingArticle ? 'Completing...' : (isFocusedMode ? 'Mark section complete' : 'Mark complete'))
-                            : 'Next section'}
-                    </span>
-                    <span className="hidden sm:inline text-xs text-accent-primary/70">→ or L</span>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+                </div>
             </div>
         </div>
     );

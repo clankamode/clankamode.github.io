@@ -28,6 +28,7 @@
 
 # misc
 .DS_Store
+/artifacts
 *.pem
 PR_DESCRIPTION.md
 CODE_REVIEW_CHECKLIST.md

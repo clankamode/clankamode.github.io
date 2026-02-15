@@ -97,15 +97,15 @@ export default function SessionExitView() {
                         Session ended early
                     </p>
                     <h1 className="text-3xl font-bold text-text-primary mb-4">
-                        That&apos;s okay.
+                        Good checkpoint.
                     </h1>
                     <p className="text-text-secondary mb-12">
-                        Progress isn&apos;t linear. See you next time.
+                        You kept the chain alive. Come back when you&apos;re ready and pick up right where you left off.
                     </p>
 
                     <button
                         onClick={returnToDashboard}
-                        className="w-full py-4 rounded-full bg-white/[0.03] border border-white/10 text-text-primary font-medium transition-all hover:bg-white/[0.06] hover:border-white/20"
+                        className="w-full py-4 rounded-full border border-border-interactive/60 bg-surface-interactive/30 text-text-primary font-medium transition-all hover:border-border-interactive/85 hover:bg-surface-interactive/45"
                     >
                         Return to gate
                     </button>

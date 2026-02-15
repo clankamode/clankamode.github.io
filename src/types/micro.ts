@@ -23,6 +23,13 @@ export interface MicroProposal {
     };
 }
 
+export interface FailureMode {
+    conceptSlug: string;
+    errorType: 'timeout' | 'logic_error' | 'syntax_error' | 'other';
+    count: number;
+    lastMessage?: string;
+}
+
 export interface UserLearningState {
     lastInternalization?: {
         conceptSlug: string;
@@ -32,4 +39,6 @@ export interface UserLearningState {
     stubbornConcepts: string[];
     recentConcepts: string[];
     nextConceptSlug?: string;
+    failureModes: FailureMode[];
+    aggregateHistory: string[];
 }

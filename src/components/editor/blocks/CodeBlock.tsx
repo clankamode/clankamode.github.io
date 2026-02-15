@@ -1,11 +1,13 @@
 'use client';
 
 import { memo, useEffect, useMemo, useState } from 'react';
+import { cn } from '@/lib/utils';
 import type { CodeBlock as CodeBlockType } from '../types';
 
 interface CodeBlockProps {
   block: CodeBlockType;
   editable?: boolean;
+  mode?: 'default' | 'execution';
   onChange?: (updates: Partial<CodeBlockType>) => void;
 }
 
@@ -69,12 +71,13 @@ type HLJSApi = {
   highlight: (code: string, options: { language: string; ignoreIllegals: boolean }) => { value: string };
 };
 
-function CodeBlockComponent({ block, editable = false, onChange }: CodeBlockProps) {
+function CodeBlockComponent({ block, editable = false, mode = 'default', onChange }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const [hljs, setHljs] = useState<HLJSApi | null>(null);
   const highlightedLines = parseHighlightRanges(block.highlight);
   const normalizedContent = block.content.replace(/^\n+/, '');
   const lines = normalizedContent.split('\n');
+  const isExecutionMode = mode === 'execution';
 
   useEffect(() => {
     import('highlight.js')
@@ -174,20 +177,54 @@ function CodeBlockComponent({ block, editable = false, onChange }: CodeBlockProp
 
   // Preview mode: styled code block
   return (
-    <div className="relative overflow-hidden rounded-xl border border-border-subtle bg-surface-ambient transition-all hover:border-border-interactive">
+    <div
+      className={cn(
+        'relative overflow-hidden border',
+        isExecutionMode
+          ? 'rounded-none border-border-interactive/90 bg-surface-dense'
+          : 'rounded-xl border-border-subtle bg-surface-ambient transition-all hover:border-border-interactive'
+      )}
+    >
       <div className="group/code relative font-mono">
-        <div className="absolute top-3 right-4 z-20 flex items-center gap-3 opacity-0 transition-opacity group-hover/code:opacity-100">
-          {block.filename && <span className="text-[10px] uppercase tracking-widest text-text-muted">{block.filename}</span>}
+        <div
+          className={cn(
+            isExecutionMode
+              ? 'z-20 flex items-center justify-between border-b border-border-interactive/80 bg-surface-workbench/45 px-3 py-2'
+              : 'absolute right-4 top-3 z-20 flex items-center gap-3 opacity-0 transition-opacity group-hover/code:opacity-100'
+          )}
+        >
+          <div className={cn('flex items-center gap-2', isExecutionMode ? 'text-[11px] uppercase tracking-[0.14em]' : 'text-[10px]')}>
+            {block.language && (
+              <span className={cn(isExecutionMode ? 'text-text-secondary' : 'hidden')}>
+                {block.language}
+              </span>
+            )}
+            {block.filename && (
+              <span className={cn(isExecutionMode ? 'text-text-primary' : 'uppercase tracking-widest text-text-muted')}>
+                {block.filename}
+              </span>
+            )}
+          </div>
           <button
             type="button"
-            className="rounded-full border border-border-subtle bg-surface-interactive/40 px-3 py-1 text-[10px] uppercase tracking-wider text-text-secondary backdrop-blur-sm transition hover:border-border-interactive hover:text-text-primary"
+            className={cn(
+              'text-[10px] uppercase tracking-wider transition',
+              isExecutionMode
+                ? 'border border-border-subtle/70 px-2 py-0.5 text-text-muted hover:text-text-primary'
+                : 'rounded-full border border-border-subtle bg-surface-interactive/40 px-3 py-1 text-text-secondary backdrop-blur-sm hover:border-border-interactive hover:text-text-primary'
+            )}
             onClick={handleCopy}
           >
             {copied ? 'Copied' : 'Copy'}
           </button>
         </div>
-        <pre className="overflow-x-auto px-4 py-4 text-sm text-text-primary">
-          <code className="grid gap-1 font-mono">
+        <pre
+          className={cn(
+            'overflow-x-auto text-text-primary',
+            isExecutionMode ? 'px-1.5 py-2.5 text-[15px] leading-6 sm:text-base' : 'px-4 py-4 text-sm'
+          )}
+        >
+          <code className={cn('grid font-mono', isExecutionMode ? 'gap-0.5' : 'gap-1')}>
             {lines.map((originalLine, index) => {
               const lineNumber = index + 1;
               const highlighted = highlightedLines.has(lineNumber);
@@ -195,10 +232,15 @@ function CodeBlockComponent({ block, editable = false, onChange }: CodeBlockProp
               return (
                 <span
                   key={`${block.id}-line-${lineNumber}`}
-                  className={`flex gap-4 rounded px-2 py-0.5 ${highlighted ? 'bg-surface-interactive/70' : ''
-                    }`}
+                  className={cn(
+                    'flex',
+                    isExecutionMode ? 'gap-3 px-2 py-0.5' : 'gap-4 px-2 py-0.5',
+                    highlighted && (isExecutionMode ? 'border-l border-border-interactive bg-surface-workbench/60' : 'bg-surface-interactive/70')
+                  )}
                 >
-                  <span className="w-6 text-right text-xs text-text-muted">{lineNumber}</span>
+                  <span className={cn('w-7 text-right text-text-muted', isExecutionMode ? 'text-[11px]' : 'text-xs')}>
+                    {lineNumber}
+                  </span>
                   <span
                     className="whitespace-pre-wrap"
                     dangerouslySetInnerHTML={{ __html: highlightedLine || ' ' }}

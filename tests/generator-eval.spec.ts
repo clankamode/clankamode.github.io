@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 import type { Concept, ConceptDependency, UserConceptStats } from '../src/types/concepts';
 import { proposeMicroSession } from '../src/lib/micro-proposer';
 import type { ConceptIndex, ConceptIndexItem, MicroProposal, UserLearningState } from '../src/types/micro';
-import type { LearningDelta } from '../src/lib/progress';
+import type { LearningDelta, SessionItem } from '../src/lib/progress';
+import { planSessionItemsWithLLM } from '../src/lib/session-llm-planner';
 
 function computeIntroducedReinforced(
     seenTags: string[],
@@ -57,7 +58,7 @@ function computeUnlocked(
     }
 
     const unlocked: string[] = [];
-    for (const [concept, hardDeps] of depsMap.entries()) {
+    for (const [concept, hardDeps] of Array.from(depsMap.entries())) {
         if (hardDeps.length === 0) continue;
         const prevOk = hardDeps.every(dep => prevSatisfied.has(dep));
         const postOk = hardDeps.every(dep => postSatisfied.has(dep));
@@ -315,7 +316,9 @@ test.describe('MicroSession Proposal V2 (State-Aware)', () => {
     const emptyState: UserLearningState = {
         stubbornConcepts: [],
         recentConcepts: [],
-        nextConceptSlug: undefined
+        nextConceptSlug: undefined,
+        failureModes: [],
+        aggregateHistory: []
     };
 
     test('should prioritize Stubborn concepts and force Practice intent', () => {
@@ -391,6 +394,8 @@ test.describe('Wiring-Level Integration', () => {
         const userState: UserLearningState = {
             stubbornConcepts: ['stubborn.concept'],
             recentConcepts: [],
+            failureModes: [],
+            aggregateHistory: []
         };
         const delta: LearningDelta = { introduced: [], reinforced: [], unlocked: [] };
 
@@ -411,6 +416,8 @@ test.describe('Wiring-Level Integration', () => {
         const userState: UserLearningState = {
             stubbornConcepts: [],
             recentConcepts: [],
+            failureModes: [],
+            aggregateHistory: []
         };
         const delta: LearningDelta = { introduced: [], reinforced: [], unlocked: ['short.unlocked'] };
 
@@ -434,6 +441,8 @@ test.describe('Wiring-Level Integration', () => {
         const userState: UserLearningState = {
             stubbornConcepts: ['stubborn.concept'],
             recentConcepts: [],
+            failureModes: [],
+            aggregateHistory: []
         };
         const delta: LearningDelta = { introduced: ['other.concept'], reinforced: [], unlocked: [] };
 
@@ -465,6 +474,8 @@ test.describe('Wiring-Level Integration', () => {
         const userState: UserLearningState = {
             stubbornConcepts: [],
             recentConcepts: [],
+            failureModes: [],
+            aggregateHistory: []
         };
         const delta: LearningDelta = { introduced: [], reinforced: [], unlocked: [] };
 
@@ -482,6 +493,8 @@ test.describe('Wiring-Level Integration', () => {
         const userState: UserLearningState = {
             stubbornConcepts: ['stubborn.concept'],
             recentConcepts: [],
+            failureModes: [],
+            aggregateHistory: []
         };
         const delta: LearningDelta = { introduced: ['unlocked.concept'], reinforced: [], unlocked: [] };
 
@@ -509,6 +522,8 @@ test.describe('Gate Intent Wiring (O2 Strategy A)', () => {
         const userState: UserLearningState = {
             stubbornConcepts: ['arrays.basics'],
             recentConcepts: [],
+            failureModes: [],
+            aggregateHistory: []
         };
 
         const intent = deriveStateAwareIntent({
@@ -533,7 +548,9 @@ test.describe('Gate Intent Wiring (O2 Strategy A)', () => {
                 conceptSlug: 'arrays.basics',
                 picked: 'learned',
                 createdAt: new Date().toISOString()
-            }
+            },
+            failureModes: [],
+            aggregateHistory: []
         };
 
         const intent = deriveStateAwareIntent({
@@ -568,6 +585,8 @@ test.describe('Gate Intent Wiring (O2 Strategy A)', () => {
         const userState: UserLearningState = {
             stubbornConcepts: [],
             recentConcepts: [],
+            failureModes: [],
+            aggregateHistory: []
         };
 
         const intent = deriveStateAwareIntent({

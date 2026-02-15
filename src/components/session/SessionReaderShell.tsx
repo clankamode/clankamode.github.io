@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import SessionHUD from './SessionHUD';
+import ExecutionSurface from './ExecutionSurface';
+import SessionRail from './SessionRail';
 
 interface SessionReaderShellProps {
     children: React.ReactNode;
@@ -47,17 +49,19 @@ export default function SessionReaderShell({
             />
 
             <main className={cn(
-                "mx-auto max-w-3xl px-6 pt-24 pb-32 transition-transform duration-300 ease-in-out",
+                "pt-16 pb-20 transition-transform duration-300 ease-in-out",
                 rightDrawerOpen && "-translate-x-64"
             )}>
-                {children}
+                <ExecutionSurface rail={<SessionRail onToggleDetails={() => setRightDrawerOpen(prev => !prev)} />}>
+                    {children}
+                </ExecutionSurface>
             </main>
 
 
             <aside
                 data-drawer="toc"
                 className={cn(
-                    "fixed top-0 right-0 bottom-0 w-80 bg-surface-ambient border-l border-border-subtle z-40 transform transition-transform duration-300 ease-in-out pt-24 px-6 overflow-y-auto",
+                    "fixed top-0 right-0 bottom-0 z-40 w-80 border-l border-border-subtle bg-surface-ambient transform transition-transform duration-300 ease-in-out pt-24 px-6 overflow-y-auto",
                     rightDrawerOpen ? "translate-x-0" : "translate-x-full"
                 )}
             >

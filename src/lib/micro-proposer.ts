@@ -143,13 +143,6 @@ function generateIntent(
         };
     }
 
-    if (delta.introduced.includes(conceptSlug)) {
-        return {
-            type: 'foundation',
-            text: `This builds ${label} because it’s the prerequisite your recent sessions keep bumping into.`
-        };
-    }
-
     const type: 'foundation' | 'bridge' | 'practice' =
         delta.introduced.includes(conceptSlug) ? 'foundation' :
             delta.unlocked.includes(conceptSlug) ? 'bridge' : 'practice';
@@ -157,7 +150,9 @@ function generateIntent(
     if (type === 'foundation') {
         return {
             type,
-            text: `This makes ${label} concrete because it’s the first load-bearing piece for what’s next.`
+            text: state
+                ? `This builds ${label} because it’s the prerequisite your recent sessions keep bumping into.`
+                : `This makes ${label} concrete because it’s the first load-bearing piece for what’s next.`
         };
     }
 

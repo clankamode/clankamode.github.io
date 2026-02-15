@@ -120,41 +120,44 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
         }
         articleContent={
           <>
-            <div className="mb-10 border-b border-border-interactive pb-8">
-              <p className="text-xs uppercase tracking-[0.3em] text-text-secondary">
+            <div className="article-spec-header relative mb-8 border-b border-border-interactive/82 px-1.5 py-2.5 before:absolute before:left-[-2.5rem] before:top-[22px] before:h-px before:w-[2.5rem] before:bg-border-interactive/65 after:absolute after:left-[-2.5rem] after:top-[22px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/80">
+              <p className="article-spec-kicker font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">
                 {pillar.name}
               </p>
-              <div className="mt-4 flex flex-wrap items-start gap-4">
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-text-primary">
+              <div className="mt-2 flex flex-wrap items-start gap-2">
+                <h1 className="article-spec-title text-4xl font-extrabold tracking-tight text-text-primary md:text-5xl">
                   {article.title}
                 </h1>
               </div>
-              <div className="mt-4 flex flex-wrap items-center gap-4 font-mono text-sm text-text-secondary">
+              {article.excerpt && (
+                <p className="article-spec-subtitle mt-1 max-w-[65ch] text-base text-text-secondary">
+                  {article.excerpt}
+                </p>
+              )}
+              <div className="article-spec-meta mt-1.5 flex flex-wrap items-center gap-1.5 font-mono text-sm text-text-muted">
                 <span>{formatDate(article.updated_at)}</span>
-                <span className="text-text-secondary/75">•</span>
+                <span>·</span>
                 <span>{article.reading_time_minutes || 5} min read</span>
                 {article.is_premium && (
                   <>
-                    <span className="text-text-secondary/75">•</span>
-                    <span className="rounded-full bg-surface-dense px-3 py-1 text-[10px] font-semibold text-text-primary">
-                      Premium
-                    </span>
+                    <span>·</span>
+                    <span className="uppercase tracking-[0.1em]">Premium</span>
                   </>
                 )}
                 {canEdit && (
                   <>
-                    <span className="text-text-secondary/75">•</span>
-                    <Link
-                      href={`/admin/content/${article.id}`}
-                      className="text-brand-green hover:text-brand-emerald transition-colors"
-                    >
-                      Edit article
-                    </Link>
+                    <span>·</span>
+                  <Link
+                    href={`/admin/content/${article.id}`}
+                    className="inline-flex items-center uppercase tracking-[0.08em] text-text-muted transition-colors hover:text-text-secondary"
+                  >
+                    Edit article
+                  </Link>
                   </>
                 )}
                 {showProgress && (
                   <>
-                    <span className="text-text-secondary/75">•</span>
+                    <span>·</span>
                     <BookmarkButton
                       articleId={article.id}
                       initialBookmarked={bookmarkStatus?.bookmarked}

@@ -1,5 +1,7 @@
 # James Peralta Personal Website
 
+> **For AI Assistants**: See [`CLAUDE.md`](./CLAUDE.md) for development conventions and patterns.
+
 A modern personal website showcasing videos, blog posts, and portfolio items. Built with Next.js, TypeScript, and TailwindCSS.
 
 ## Features

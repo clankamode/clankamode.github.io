@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import type { UserLearningState } from '@/types/micro';
+import type { UserLearningState, FailureMode } from '@/types/micro';
 import { buildIdentityOrFilter, type EffectiveIdentity } from '@/lib/auth-identity';
 
 export interface UserLearningStateResult {
@@ -7,6 +7,7 @@ export interface UserLearningStateResult {
     debugInfo: {
         stubbornCount: number;
         recentCount: number;
+        failureModeCount: number;
         hasLastInternalization: boolean;
     };
 }
@@ -19,9 +20,10 @@ export async function getUserLearningState(
     trackSlug: string,
     googleId?: string
 ): Promise<UserLearningStateResult> {
-    const [conceptStats, lastInternalization] = await Promise.all([
+    const [conceptStats, lastInternalization, telemetryEvents] = await Promise.all([
         fetchUserConceptStats(userId, trackSlug, googleId),
         fetchLastInternalization(userId, trackSlug, googleId),
+        fetchRecentFailureTelemetry(userId, trackSlug, googleId),
     ]);
 
     const now = new Date();
@@ -42,10 +44,17 @@ export async function getUserLearningState(
         }
     }
 
+    const failureModes = aggregateFailureModes(telemetryEvents);
+    const aggregateHistory = failureModes.length > 0
+        ? [`Struggling with: ${failureModes.map(f => f.conceptSlug).join(', ')}`]
+        : [];
+
     const userState: UserLearningState = {
         stubbornConcepts,
         recentConcepts,
         lastInternalization: lastInternalization ?? undefined,
+        failureModes,
+        aggregateHistory,
     };
 
     return {
@@ -53,9 +62,63 @@ export async function getUserLearningState(
         debugInfo: {
             stubbornCount: stubbornConcepts.length,
             recentCount: recentConcepts.length,
+            failureModeCount: failureModes.length,
             hasLastInternalization: !!lastInternalization,
         },
     };
+}
+
+interface TelemetryEventRow {
+    payload: Record<string, unknown> | null;
+    created_at: string;
+}
+
+async function fetchRecentFailureTelemetry(
+    userId: string,
+    trackSlug: string,
+    googleId?: string
+): Promise<TelemetryEventRow[]> {
+    const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
+    const { data, error } = await supabase
+        .from('TelemetryEvents')
+        .select('payload, created_at')
+        .or(buildIdentityOrFilter(identity))
+        .eq('track_slug', trackSlug)
+        .eq('event_type', 'practice_completion_blocked')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+    if (error || !data) return [];
+    return data;
+}
+
+function aggregateFailureModes(events: TelemetryEventRow[]): FailureMode[] {
+    const modes: Record<string, FailureMode> = {};
+
+    for (const event of events) {
+        const payload = event.payload as { questionId?: string; failedDetails?: Array<{ error?: string }> } | null;
+        if (!payload || !payload.questionId) continue;
+
+        const concept = payload.questionId;
+        const failedDetails = payload.failedDetails || [];
+
+        for (const detail of failedDetails) {
+            const errorType = detail.error?.toLowerCase().includes('timeout') ? 'timeout' : 'logic_error';
+            const key = `${concept}:${errorType}`;
+
+            if (!modes[key]) {
+                modes[key] = {
+                    conceptSlug: concept,
+                    errorType,
+                    count: 0,
+                    lastMessage: detail.error,
+                };
+            }
+            modes[key].count += 1;
+        }
+    }
+
+    return Object.values(modes);
 }
 
 interface ConceptStat {

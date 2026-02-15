@@ -208,7 +208,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
     return (
         <section className="relative group perspective-1000">
             <div className="relative overflow-hidden rounded-3xl bg-surface-interactive border border-border-subtle p-8 md:p-10 transition-all duration-500 hover:border-border-interactive hover:shadow-lift">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-accent-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col items-start gap-6">
                     <div>
@@ -276,14 +276,14 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                             disabled={isStarting}
                             data-session-cta
                             className="
-                                relative overflow-hidden group/btn inline-flex items-center justify-center rounded-full 
-                                bg-text-primary px-10 py-5 text-lg font-bold text-surface-ambient tracking-wide
-                                shadow-[0_4px_20px_rgba(0,0,0,0.1)] 
-                                transition-all duration-300 
-                                hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-text-primary/95
-                                active:scale-[0.98] active:translate-y-0.5
+                                relative overflow-hidden group/btn inline-flex items-center justify-center rounded-full
+                                bg-emerald-600 px-10 py-4 text-base font-bold text-white tracking-wide
+                                shadow-[0_4px_20px_rgba(16,185,129,0.15)]
+                                transition-all duration-300
+                                hover:bg-emerald-500 hover:shadow-[0_6px_24px_rgba(16,185,129,0.2)]
+                                active:scale-[0.98]
                                 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100
-                                focus:outline-none focus:ring-2 focus:ring-accent-primary focus:ring-offset-4 focus:ring-offset-surface-interactive
+                                focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-4 focus:ring-offset-surface-interactive
                             "
                         >
                             <span className="relative z-10 flex items-center gap-3">
@@ -304,7 +304,6 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                                     </>
                                 )}
                             </span>
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
                         </button>
                     </div>
 

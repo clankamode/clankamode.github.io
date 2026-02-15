@@ -13,6 +13,7 @@ import { planSessionItemsWithLLM } from '@/lib/session-llm-planner';
 import { chunkArticleByHeadings } from '@/lib/article-chunking';
 import { estimateReadingTimeMinutes } from '@/lib/reading-time';
 import { getFromCache, setInCache } from '@/lib/redis';
+import type { UserLearningState } from '@/types/micro';
 
 const PROGRESS_TABLE = 'UserArticleProgress';
 const BOOKMARKS_TABLE = 'UserBookmarks';
@@ -108,6 +109,7 @@ export interface SessionItem {
   practiceQuestionId?: string;
   practiceQuestionUrl?: string;
   practiceDifficulty?: 'Easy' | 'Medium' | 'Hard';
+  practiceQuestionDescription?: string;
 }
 
 export interface LearningDelta {
@@ -136,6 +138,7 @@ interface PracticeQuestionRow {
   leetcode_number: number | null;
   leetcode_url: string | null;
   difficulty: string;
+  prompt_full: string;
 }
 
 type PracticeDifficulty = 'Easy' | 'Medium' | 'Hard';
@@ -439,7 +442,7 @@ export async function getProgressSummary(userId: string, googleId?: string): Pro
     pillars,
     recentActivity,
     nextArticle,
-    completedIds: Array.from(completedIds),
+    completedIds: Array.from(completedIds) as string[],
     allCompletionDates: filteredRecords.map((r) => r.completed_at),
   };
 }
@@ -490,7 +493,7 @@ async function getPracticeSessionCandidates(
   const [easyResult, mediumResult, hardResult] = await Promise.all([
     supabase
       .from(PRACTICE_QUESTIONS_TABLE)
-      .select('id, name, leetcode_number, leetcode_url, difficulty')
+      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full')
       .eq('difficulty', 'Easy')
       .contains('source', ['MOCK_ASSESSMENTS'])
       .not('leetcode_number', 'is', null)
@@ -498,7 +501,7 @@ async function getPracticeSessionCandidates(
       .limit(18),
     supabase
       .from(PRACTICE_QUESTIONS_TABLE)
-      .select('id, name, leetcode_number, leetcode_url, difficulty')
+      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full')
       .eq('difficulty', 'Medium')
       .contains('source', ['MOCK_ASSESSMENTS'])
       .not('leetcode_number', 'is', null)
@@ -506,7 +509,7 @@ async function getPracticeSessionCandidates(
       .limit(18),
     supabase
       .from(PRACTICE_QUESTIONS_TABLE)
-      .select('id, name, leetcode_number, leetcode_url, difficulty')
+      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full')
       .eq('difficulty', 'Hard')
       .contains('source', ['MOCK_ASSESSMENTS'])
       .not('leetcode_number', 'is', null)
@@ -575,6 +578,7 @@ async function getPracticeSessionCandidates(
     practiceQuestionId: String(row.leetcode_number),
     practiceQuestionUrl: row.leetcode_url,
     practiceDifficulty: difficulty,
+    practiceQuestionDescription: row.prompt_full,
   }));
 }
 
@@ -629,7 +633,7 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
   const resolvedTrackSlug = preferredTrack?.slug || normalizedPreferredTrack || 'dsa';
 
   const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS);
-  const userState = useGenerative
+  const userState: UserLearningState | null = useGenerative
     ? (await getUserLearningState(userId, resolvedTrackSlug, googleId)).userState
     : null;
 
@@ -825,6 +829,13 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
 
       if (plannedItems && plannedItems.length > 0) {
         sessionItems = plannedItems;
+        console.log('[AI Session Planner] Selected Items:', sessionItems.map(item => ({
+          id: item.slug || item.practiceQuestionId,
+          estMinutes: item.estMinutes,
+          articleId: item.articleId,
+          concepts: item.primaryConceptSlug ? [item.primaryConceptSlug] : [],
+          intent: item.intent.text
+        })));
       } else if (filteredPracticeCandidates.length > 0) {
         const baseLearn = sectionCandidates[0] || articleCandidates[0] || null;
         sessionItems = baseLearn

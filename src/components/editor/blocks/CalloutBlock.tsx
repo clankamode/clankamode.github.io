@@ -5,11 +5,13 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import { slugifyHeading } from '@/app/learn/_components/markdown';
+import { cn } from '@/lib/utils';
 import type { CalloutBlock as CalloutBlockType } from '../types';
 
 interface CalloutBlockProps {
   block: CalloutBlockType;
   editable?: boolean;
+  mode?: 'default' | 'execution';
   onChange?: (updates: Partial<CalloutBlockType>) => void;
 }
 
@@ -20,16 +22,33 @@ const toneLabels: Record<CalloutBlockType['tone'], string> = {
   important: 'Important',
 };
 
-const toneStyles: Record<CalloutBlockType['tone'], { label: string; accent: string }> = {
-  tip: { label: 'Tip', accent: 'border-l-2 border-l-emerald-400/70' },
-  warning: { label: 'Warning', accent: 'border-l-2 border-l-amber-300/70' },
-  info: { label: 'Info', accent: 'border-l-2 border-l-sky-300/70' },
-  important: { label: 'Important', accent: 'border-l-2 border-l-red-400/70' },
+const toneStyles: Record<CalloutBlockType['tone'], { label: string; accent: string; executionAccent: string }> = {
+  tip: {
+    label: '✓ Tip',
+    accent: 'border-l-2 border-l-emerald-400/70',
+    executionAccent: 'border-l-4 border-l-emerald-500 bg-emerald-500/10 shadow-lg shadow-emerald-500/5'
+  },
+  warning: {
+    label: '⚠ Warning',
+    accent: 'border-l-2 border-l-amber-300/70',
+    executionAccent: 'border-l-4 border-l-amber-500 bg-amber-500/10 shadow-lg shadow-amber-500/5'
+  },
+  info: {
+    label: 'ℹ Info',
+    accent: 'border-l-2 border-l-sky-300/70',
+    executionAccent: 'border-l-4 border-l-blue-500 bg-blue-500/10 shadow-lg shadow-blue-500/5'
+  },
+  important: {
+    label: '⚡ Important',
+    accent: 'border-l-2 border-l-red-400/70',
+    executionAccent: 'border-l-4 border-l-red-500 bg-red-500/10 shadow-lg shadow-red-500/5'
+  },
 };
 
-function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlockProps) {
+function CalloutBlockComponent({ block, editable = false, mode = 'default', onChange }: CalloutBlockProps) {
   const isCollapsible = block.collapsible && !editable;
   const [open, setOpen] = useState(true);
+  const isExecutionMode = mode === 'execution';
 
   const tone = toneStyles[block.tone] ?? toneStyles.info;
 
@@ -40,7 +59,16 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
   const shouldShowContent = editable || (isCollapsible ? open : true);
 
   return (
-    <div className={`rounded-xl p-4 w-full ${editable ? '' : `frame bg-surface-dense ${tone.accent}`}`}>
+    <div
+      className={cn(
+        'w-full',
+        editable
+          ? 'rounded-xl p-4'
+          : isExecutionMode
+            ? `rounded-lg backdrop-blur-sm ${tone.executionAccent} px-5 py-4`
+            : `frame rounded-xl bg-surface-dense p-4 ${tone.accent}`
+      )}
+    >
       <div className="flex items-center gap-4">
         {editable ? (
           <select
@@ -56,7 +84,16 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
           </select>
         ) : (
           <div className="flex items-center gap-3">
-            <p className="text-xs uppercase tracking-[0.25em] text-text-muted">{tone.label}</p>
+            <p
+              className={cn(
+                'font-medium',
+                isExecutionMode
+                  ? 'text-sm tracking-wide text-text-primary'
+                  : 'text-[10px] uppercase tracking-[0.12em] text-text-muted'
+              )}
+            >
+              {tone.label}
+            </p>
             {isCollapsible && (
               <button
                 type="button"
@@ -109,12 +146,24 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
         />
       ) : (
         shouldShowContent && (
-          <div className="mt-3 space-y-2">
+          <div className={isExecutionMode ? 'mt-2.5 space-y-1.5' : 'mt-3 space-y-2'}>
             {block.title && (
-              <h3 className="text-lg font-semibold tracking-tight text-text-primary">{block.title}</h3>
+              <h3
+                className={cn(
+                  'font-semibold text-text-primary',
+                  isExecutionMode ? 'text-base leading-6 tracking-[-0.01em]' : 'text-lg tracking-tight'
+                )}
+              >
+                {block.title}
+              </h3>
             )}
             {block.content ? (
-              <div className="prose prose-sm max-w-none w-full text-sm text-text-secondary">
+              <div
+                className={cn(
+                  'prose prose-sm w-full max-w-none',
+                  isExecutionMode ? 'text-[15px] text-text-primary/86 sm:text-base' : 'text-sm text-text-secondary'
+                )}
+              >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeHighlight]}
@@ -132,7 +181,10 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
                       <h2
                         {...props}
                         id={slugifyHeading(getText(children))}
-                        className="mt-4 text-xl font-semibold tracking-tight text-text-primary"
+                        className={cn(
+                          'text-xl font-semibold text-text-primary',
+                          isExecutionMode ? 'mt-3 tracking-[-0.01em]' : 'mt-4 tracking-tight'
+                        )}
                       >
                         {children}
                       </h2>
@@ -147,7 +199,12 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
                       </h3>
                     ),
                     p: ({ children, ...props }) => (
-                      <p {...props} className="mt-2 leading-relaxed text-text-secondary">
+                      <p
+                        {...props}
+                        className={cn(
+                          isExecutionMode ? 'mt-2 leading-7 text-text-primary/86' : 'mt-2 leading-relaxed text-text-secondary'
+                        )}
+                      >
                         {children}
                       </p>
                     ),
@@ -156,7 +213,12 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
                       if (!isBlock) {
                         return (
                           <code
-                            className="rounded bg-surface-interactive px-1.5 py-0.5 text-xs text-text-primary"
+                            className={cn(
+                              'rounded font-mono',
+                              isExecutionMode
+                                ? 'border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[13px] text-emerald-300'
+                                : 'bg-surface-interactive px-1.5 py-0.5 text-xs text-emerald-400'
+                            )}
                             {...props}
                           >
                             {children}
@@ -172,25 +234,45 @@ function CalloutBlockComponent({ block, editable = false, onChange }: CalloutBlo
                     pre: ({ children, ...props }) => (
                       <pre
                         {...props}
-                        className="mt-3 overflow-x-auto rounded-lg border border-border-subtle bg-surface-interactive p-3 text-xs"
+                        className={cn(
+                          'mt-3 overflow-x-auto border',
+                          isExecutionMode
+                            ? 'rounded-none border-border-interactive/80 bg-surface-dense p-3 text-[13px]'
+                            : 'rounded-lg border-border-subtle bg-surface-interactive p-3 text-xs'
+                        )}
                       >
                         {children}
                       </pre>
                     ),
                     ul: ({ children, ...props }) => (
-                      <ul {...props} className="mt-2 list-disc space-y-1 pl-5 text-text-secondary">
+                      <ul
+                        {...props}
+                        className={cn(
+                          'mt-2 list-disc pl-5',
+                          isExecutionMode ? 'space-y-1 text-text-primary/85' : 'space-y-1 text-text-secondary'
+                        )}
+                      >
                         {children}
                       </ul>
                     ),
                     ol: ({ children, ...props }) => (
-                      <ol {...props} className="mt-2 list-decimal space-y-1 pl-5 text-text-secondary">
+                      <ol
+                        {...props}
+                        className={cn(
+                          'mt-2 list-decimal pl-5',
+                          isExecutionMode ? 'space-y-1 text-text-primary/85' : 'space-y-1 text-text-secondary'
+                        )}
+                      >
                         {children}
                       </ol>
                     ),
                     blockquote: ({ children, ...props }) => (
                       <blockquote
                         {...props}
-                        className="mt-2 border-l-2 border-border-interactive pl-3 text-text-secondary italic"
+                        className={cn(
+                          'mt-2 border-l-2 border-border-interactive pl-3',
+                          isExecutionMode ? 'text-text-primary/82' : 'text-text-secondary italic'
+                        )}
                       >
                         {children}
                       </blockquote>

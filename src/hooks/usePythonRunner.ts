@@ -36,8 +36,7 @@ interface UsePythonRunnerReturn {
   reset: () => void;
 }
 
-const TIMEOUT_MS = 5_000; // kill worker after 5 s
-const WORKER_PATH = '/workers/python.worker.js';
+const TIMEOUT_MS = 5_000;
 const MAX_INIT_RETRIES = 3;
 const INIT_BACKOFF_BASE_MS = 1_000; // 1 s, 2 s, 4 s
 const MIN_SPINNER_MS = 1_000; // show spinner for at least 1 s
@@ -89,7 +88,7 @@ export function usePythonRunner(): UsePythonRunnerReturn {
     destroyWorker();
     setIsLoading(true);
 
-    const worker = new Worker(WORKER_PATH);
+    const worker = new Worker(new URL('../workers/python.worker.js', import.meta.url));
 
     worker.onmessage = (e: MessageEvent<WorkerOutMessage>) => {
       const msg = e.data;

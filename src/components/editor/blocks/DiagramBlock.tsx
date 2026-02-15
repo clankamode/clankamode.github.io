@@ -2,18 +2,21 @@
 
 import { memo, useEffect, useMemo, useState } from 'react';
 import mermaid from 'mermaid';
+import { cn } from '@/lib/utils';
 import type { DiagramBlock as DiagramBlockType } from '../types';
 
 interface DiagramBlockProps {
   block: DiagramBlockType;
   editable?: boolean;
+  mode?: 'default' | 'execution';
   onChange?: (updates: Partial<DiagramBlockType>) => void;
 }
 
-function DiagramBlockComponent({ block, editable = false, onChange }: DiagramBlockProps) {
+function DiagramBlockComponent({ block, editable = false, mode = 'default', onChange }: DiagramBlockProps) {
   const [svg, setSvg] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const renderId = useMemo(() => `diagram-${Math.random().toString(36).slice(2, 9)}`, []);
+  const isExecutionMode = mode === 'execution';
 
   useEffect(() => {
     if (editable) return; // Don't render in edit mode
@@ -68,7 +71,19 @@ function DiagramBlockComponent({ block, editable = false, onChange }: DiagramBlo
 
   // Preview mode: rendered diagram only
   return (
-    <div className="rounded-xl border border-border-subtle bg-surface-dense p-4">
+    <div
+      className={cn(
+        'border p-4',
+        isExecutionMode
+          ? 'rounded-none border-border-interactive/80 bg-surface-workbench/45'
+          : 'rounded-xl border-border-subtle bg-surface-dense'
+      )}
+    >
+      {isExecutionMode && (
+        <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.1em] text-text-secondary">
+          Diagram
+        </p>
+      )}
       {error ? (
         <p className="text-sm text-text-muted">Unable to render diagram: {error}</p>
       ) : svg ? (

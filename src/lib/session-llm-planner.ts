@@ -168,44 +168,27 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
     estMinutes: candidate.item.estMinutes ?? 5,
     confidence: clampConfidence(candidate.item.confidence),
     targetConcept: candidate.item.targetConcept ?? null,
+    concepts: candidate.item.primaryConceptSlug ? [candidate.item.primaryConceptSlug] : [],
+    articleId: candidate.item.articleId || null,
+    sectionId: candidate.item.sessionChunkIndex ?? null,
     intentType: candidate.item.intent.type,
     intentText: candidate.item.intent.text,
     href: candidate.item.href,
+    description: candidate.item.practiceQuestionDescription || null,
   }));
 
-  const prompt = [
-    'You are selecting a short personalized learning session plan.',
-    `Track: ${input.trackName} (${input.trackSlug}).`,
-    `Pick 2-${maxItems} items from the candidate list, but pick 1 item if quality is low.`,
-    'Prefer mixing learn + practice when practice is relevant.',
-    'When focused sections are available, prefer mixing sections from different articles over rereading full articles.',
-    'Optimize for highest learning leverage in the next 20 minutes.',
-    'Pick a concrete and ambitious next step, not a safe generic step.',
-    'Hard constraints:',
-    '- Only use candidate IDs exactly as provided.',
-    '- No duplicate IDs.',
-    '- Keep total estimated time <= 22 minutes.',
-    '- If learn items exist, include at least one learn item.',
-    ...(input.requirePracticeItem && hasPracticeCandidate
-      ? ['- Include at least one practice item.']
-      : []),
-    '- Keep intent text causal and concrete (must include "because").',
-    '- Avoid motivational fluff.',
-    'Return strict JSON only with this shape:',
-    '{"selected":[{"id":"candidate-id","intentType":"foundation|bridge|tradeoff|practice","intentText":"one concise causal sentence","targetConcept":"short concept label"}]}',
-    'intentText must explain why this item is next and stay under 140 chars.',
-    'targetConcept should be a clear label like "Pointer invariants" or "Medium interview problem solving".',
-    '',
-    `Recent activity titles: ${input.recentActivityTitles.join(' | ') || 'none'}`,
-    `User stubborn concepts: ${input.userState?.stubbornConcepts.join(', ') || 'none'}`,
-    `User recent concepts: ${input.userState?.recentConcepts.join(', ') || 'none'}`,
-    `Last internalization: ${formatLastInternalization(input.userState)}`,
-    `Outcome signals: ${formatOutcomeSignals(input.outcomeSignals)}`,
-    `Practice target difficulty: ${input.practiceTargetDifficulty || 'none'}`,
-    `Policy: target ${Math.round(EXPLOITATION_RATIO * 100)}% exploit (weak/recent concepts) and ${Math.round((1 - EXPLOITATION_RATIO) * 100)}% explore (new concepts) when feasible.`,
-    '',
-    `Candidates: ${JSON.stringify(compactCandidates)}`,
-  ].join('\n');
+  const prompt = buildPlannerPrompt({
+    trackName: input.trackName,
+    trackSlug: input.trackSlug,
+    maxItems,
+    requirePracticeItem: !!input.requirePracticeItem,
+    hasPracticeCandidate,
+    recentActivityTitles: input.recentActivityTitles,
+    userState: input.userState,
+    outcomeSignals: input.outcomeSignals,
+    practiceTargetDifficulty: input.practiceTargetDifficulty || null,
+    compactCandidates,
+  });
 
   let bestPlan: SessionItem[] | null = null;
   let bestScore = -Infinity;
@@ -1055,3 +1038,103 @@ function scorePlan(
 
   return score;
 }
+
+interface CompactCandidate {
+  id: string;
+  type: string;
+  scope: string;
+  title: string;
+  subtitle: string | null;
+  estMinutes: number;
+  confidence: number;
+  targetConcept: string | null;
+  concepts: string[];
+  articleId: string | null;
+  sectionId: number | null;
+  intentType: string;
+  intentText: string;
+  href: string;
+  description: string | null;
+}
+
+interface PromptInput {
+  trackName: string;
+  trackSlug: string;
+  maxItems: number;
+  requirePracticeItem: boolean;
+  hasPracticeCandidate: boolean;
+  recentActivityTitles: string[];
+  userState: UserLearningState | null;
+  outcomeSignals?: PlannerOutcomeSignals;
+  practiceTargetDifficulty: string | null;
+  compactCandidates: CompactCandidate[];
+}
+
+export function buildPlannerPrompt(input: PromptInput): string {
+  return [
+    'You are selecting a short personalized learning session plan.',
+    `Track: ${input.trackName} (${input.trackSlug}).`,
+    `Pick 2-${input.maxItems} items from the candidate list, but pick 1 item if quality is low.`,
+    'Prefer mixing learn + practice when practice is relevant.',
+    'When focused sections are available, prefer mixing sections from different articles over rereading full articles.',
+    'Optimize for highest learning leverage in the next 20 minutes.',
+    'Pick a concrete and ambitious next step, not a safe generic step.',
+    'Hard constraints:',
+    '- Only use candidate IDs exactly as provided.',
+    '- No duplicate IDs.',
+    '- Keep total estimated time <= 22 minutes.',
+    '- If learn items exist, include at least one learn item.',
+    ...(input.requirePracticeItem && input.hasPracticeCandidate
+      ? ['- Include at least one practice item.']
+      : []),
+    '- Keep intent text causal and concrete (must include "because").',
+    '- Avoid motivational fluff.',
+    'Return strict JSON only with this shape:',
+    '{"selected":[{"id":"candidate-id","intentType":"foundation|bridge|tradeoff|practice","intentText":"one concise causal sentence","targetConcept":"short concept label"}]}',
+    'intentText must explain why this item is next and stay under 140 chars.',
+    'targetConcept should be a clear label like "Pointer invariants" or "Medium interview problem solving".',
+    '',
+    `Recent activity titles: ${input.recentActivityTitles.join(' | ') || 'none'}`,
+    `User stubborn concepts: ${input.userState?.stubbornConcepts.join(', ') || 'none'}`,
+    `User recent concepts: ${input.userState?.recentConcepts.join(', ') || 'none'}`,
+    `User failure modes: ${JSON.stringify(input.userState?.failureModes || [])}`,
+    `User aggregate history: ${input.userState?.aggregateHistory.join(' | ') || 'none'}`,
+    `Last internalization: ${formatLastInternalization(input.userState)}`,
+    `Outcome signals: ${formatOutcomeSignals(input.outcomeSignals)}`,
+    `Practice target difficulty: ${input.practiceTargetDifficulty || 'none'}`,
+    `Policy: target ${Math.round(EXPLOITATION_RATIO * 100)}% exploit (weak/recent/struggling concepts) and ${Math.round((1 - EXPLOITATION_RATIO) * 100)}% explore (new concepts) when feasible.`,
+    '',
+    'Decision rubric (must follow):',
+    '- Score each candidate: leverage (0-3) + fit_to_failure_modes (0-3) + novelty (0-2) - redundancy (0-3) - time_risk (0-2).',
+    '- leverage: how much skill gain per minute.',
+    '- fit_to_failure_modes: directly addresses listed failure modes / stubborn concepts.',
+    '- novelty: not in recentActivityTitles/recentConcepts.',
+    '- redundancy: same article/concept as recent activity OR overlaps another selected item.',
+    '- time_risk: likely to exceed its estimate or cause context switching.',
+    '- Select highest total scores subject to constraints.',
+    '',
+    'Quality gating:',
+    '- "Quality is low" ONLY if: (max candidate score <= 2) OR (no candidate matches failure modes/stubborn concepts AND no strong new concept exists).',
+    '- If quality is low, select exactly 1 best candidate and set intentText to explain the limitation.',
+    '',
+    'Selection hygiene:',
+    '- Before returning JSON, internally compute scores for ALL candidates and select the highest-scoring set.',
+    '- If you cannot compute scores from provided fields, treat missing data as 0 and explain via intentText.',
+    '',
+    'Diversity & Selection rules:',
+    '- If selecting 2+ items: ensure at least 2 distinct targetConcepts.',
+    '- Avoid selecting 2 items from the same article unless they are different sections with clearly different targetConcepts.',
+    '- If requirePracticeItem is true, practice must target a failure mode or stubborn concept when possible.',
+    '- If candidates include focused_sections, prefer selecting them unless a full_article score is higher by >= 2.',
+    '- Redundancy is HIGH (-3) if articleId matches a recentActivityTitles item or another selected item and targetConcept overlaps.',
+    '- Redundancy is MED (-2) if candidate concepts overlap recentConcepts or stubbornConcepts but does not directly target the failure mode.',
+    '',
+    'Intent & Output rules:',
+    '- Order selected items in the exact sequence the user should do them (highest dependency first).',
+    '- intentText must reference either a failure mode/stubborn concept OR a specific gap implied by recent activity, and include "because".',
+    '- intentType must be consistent: practice only if it is an actual practice item; bridge requires from->to style rationale; tradeoff only if it’s explicitly a tradeoff.',
+    '',
+    `Candidates: ${JSON.stringify(input.compactCandidates)}`,
+  ].join('\n');
+}
+

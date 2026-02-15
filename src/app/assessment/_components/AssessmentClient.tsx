@@ -283,44 +283,39 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
           </div>
         }
       >
-        <div className="space-y-5 pb-10">
-          <div className="border-b border-border-interactive pb-4">
-            <p className="text-xs uppercase tracking-[0.16em] text-text-secondary">Session practice</p>
-            <h1 className="mt-2 text-4xl font-semibold tracking-tight text-text-primary">Coding assessment</h1>
-            <p className="mt-1.5 text-base text-text-secondary">
+        <div className="space-y-4 pb-10">
+          <div className="article-spec-header relative border-b border-border-interactive/82 px-1.5 py-2.5 before:absolute before:left-[-2.5rem] before:top-[22px] before:h-px before:w-[2.5rem] before:bg-border-interactive/65 after:absolute after:left-[-2.5rem] after:top-[22px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/80">
+            <p className="article-spec-kicker font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">Session practice</p>
+            <h1 className="article-spec-title mt-2 text-4xl font-semibold tracking-tight text-text-primary">Coding assessment</h1>
+            <p className="article-spec-subtitle mt-1 text-base text-text-secondary">
               This is a session gate. Solve in the coding chamber, then complete from there to continue.
             </p>
           </div>
 
-          <Card className="frame border-border-interactive bg-surface-workbench/90 hover:border-border-interactive hover:bg-surface-workbench/90">
-            <CardContent className="space-y-4 pt-5">
+          <Card className="rounded-none border-0 bg-transparent shadow-none">
+            <CardContent className="space-y-3 pt-4">
               {loadingSessionQuestion ? (
                 <p className="text-muted-foreground">Loading question...</p>
               ) : sessionQuestionError ? (
-                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+                <div className="rounded-sm border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
                   {sessionQuestionError}
                 </div>
               ) : sessionQuestion ? (
                 <>
-                  <div className="rounded-xl border border-border-subtle bg-surface-interactive p-4 md:p-5">
+                  <div className="border border-border-interactive/75 bg-transparent p-4 md:p-5">
                     <p className="text-2xl font-semibold leading-tight text-text-primary">{sessionQuestion.title}</p>
                     <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                      <span className={cn(
-                        'inline-flex rounded-full px-2.5 py-1 text-xs font-medium',
-                        sessionQuestion.difficulty === 'Easy' && 'bg-brand-green/10 text-brand-green',
-                        sessionQuestion.difficulty === 'Medium' && 'bg-brand-amber/10 text-brand-amber',
-                        sessionQuestion.difficulty === 'Hard' && 'bg-brand-gold/10 text-brand-gold'
-                      )}>
+                      <span className="inline-flex border border-border-subtle/65 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-text-muted">
                         {sessionQuestion.difficulty}
                       </span>
                       {sessionTarget && (
-                        <span className="inline-flex rounded-full border border-border-subtle bg-surface-dense px-2.5 py-1 text-xs text-text-secondary">
+                        <span className="inline-flex border border-border-subtle/65 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-text-muted">
                           Target: {sessionTarget}
                         </span>
                       )}
                     </div>
                   </div>
-                  <div className="rounded-xl border border-border-subtle bg-surface-interactive/70 px-4 py-2.5">
+                  <div className="border-t border-border-subtle/55 px-4 py-1.5">
                     <p className="text-sm text-text-secondary">
                       {nextSessionItem
                         ? `After completion: ${nextSessionItem.title}`
@@ -334,14 +329,13 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
             </CardContent>
             <CardFooter className="flex flex-wrap items-center gap-2.5 px-6 pb-4 pt-0">
               {sessionQuestion && (
-                <Button
-                  variant="novice"
+                <button
+                  type="button"
                   onClick={() => {
                     try {
                       window.sessionStorage.setItem(getPracticeOpenedKey(sessionQuestion.id), '1');
                       setWorkspaceOpenedDetected(true);
                     } catch {
-                      // no-op
                     }
                     logTelemetryEvent({
                       userId: sessionState.scope?.userId,
@@ -364,9 +358,10 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
                       }
                     ));
                   }}
+                  className="inline-flex min-h-[36px] items-center justify-center border border-border-interactive/72 bg-transparent px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.08em] text-text-secondary transition-colors hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   {hasPracticeSignal ? 'Resume coding chamber' : 'Open coding chamber'}
-                </Button>
+                </button>
               )}
             </CardFooter>
             <div className="px-6 pb-5">
@@ -375,18 +370,18 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
               </p>
               <div className="mt-2.5 flex flex-wrap gap-2">
                 <span className={cn(
-                  'rounded-full border px-2.5 py-1 text-xs',
+                  'border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em]',
                   workspaceOpenedDetected
-                    ? 'border-brand-green/30 bg-brand-green/10 text-brand-green'
-                    : 'border-border-subtle bg-surface-interactive text-text-muted'
+                    ? 'border-border-subtle/80 text-text-secondary'
+                    : 'border-border-subtle/55 text-text-muted'
                 )}>
                   {workspaceOpenedDetected ? 'Workspace opened' : 'Workspace not opened'}
                 </span>
                 <span className={cn(
-                  'rounded-full border px-2.5 py-1 text-xs',
+                  'border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em]',
                   workspaceRunDetected
-                    ? 'border-brand-green/30 bg-brand-green/10 text-brand-green'
-                    : 'border-border-subtle bg-surface-interactive text-text-muted'
+                    ? 'border-border-subtle/80 text-text-secondary'
+                    : 'border-border-subtle/55 text-text-muted'
                 )}>
                   {workspaceRunDetected ? 'Tests run detected' : 'Tests not run yet'}
                 </span>
@@ -451,7 +446,6 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
                       window.sessionStorage.setItem(getPracticeOpenedKey(sessionQuestion.id), '1');
                       setWorkspaceOpenedDetected(true);
                     } catch {
-                      // no-op
                     }
                     logTelemetryEvent({
                       userId: sessionState.scope?.userId,

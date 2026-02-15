@@ -138,7 +138,6 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
       try {
         window.sessionStorage.setItem(`session:practice:ran:${sessionQuestionId}`, '1');
       } catch {
-        // no-op
       }
       logTelemetryEvent({
         userId: telemetryUserId,
@@ -227,6 +226,13 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
           hasRun,
           passedCount: testResults.filter((result) => result.passed).length,
           totalTests: testCases.length,
+          failedDetails: testResults
+            .filter((r) => !r.passed)
+            .map((r) => ({
+              error: r.error || 'Assertion failed',
+              actual: r.actual,
+            }))
+            .slice(0, 3),
         },
         dedupeKey: `practice_completion_blocked_${telemetrySessionId}_${sessionQuestionId}`,
       });
