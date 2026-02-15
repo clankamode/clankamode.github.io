@@ -3,7 +3,7 @@
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
 import { useRouter } from 'next/navigation';
 import type { SessionItem } from '@/lib/progress';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { logTelemetryEvent } from '@/lib/telemetry';
 import { AnimatePresence, motion } from 'framer-motion';
 import { proposeRitualChoices, type IntentType } from '@/lib/ritual_prompts';
@@ -14,33 +14,73 @@ export default function SessionExitView() {
     const router = useRouter();
     const [isFinalizing, setIsFinalizing] = useState(false);
     const [hasFinalized, setHasFinalized] = useState(false);
+    const hasFinalizedRef = useRef(false);
+
+    const [ritualStatus, setRitualStatus] = useState<'pending' | 'completed' | 'skipped'>('pending');
+
+    useEffect(() => {
+        hasFinalizedRef.current = hasFinalized;
+    }, [hasFinalized]);
+
+    const finalizePayload = useMemo(() => {
+        const sessionId = state.scope?.sessionId || 'unknown';
+        const trackSlug = state.scope?.track?.slug || 'dsa';
+        const completedItems = state.scope?.items?.slice(0, state.exit?.completedCount || 0).map((item) => item.href) || [];
+        const skipped = ritualStatus === 'skipped';
+
+        return {
+            sessionId,
+            trackSlug,
+            completedItems,
+            reflectionCompletedAt: skipped ? null : new Date().toISOString(),
+            skipped,
+        };
+    }, [state.scope, state.exit?.completedCount, ritualStatus]);
+
+    const sendFinalizeBeacon = (payload: {
+        sessionId: string;
+        trackSlug: string;
+        completedItems: string[];
+        reflectionCompletedAt: string | null;
+        skipped: boolean;
+    }): boolean => {
+        const body = JSON.stringify(payload);
+        if (navigator.sendBeacon) {
+            const blob = new Blob([body], { type: 'application/json' });
+            if (navigator.sendBeacon('/api/session/finalize', blob)) return true;
+        }
+        void fetch('/api/session/finalize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body,
+            keepalive: true,
+        });
+        return true;
+    };
 
     const finalizeAndReturn = async (skipped = false) => {
-        if (hasFinalized || isFinalizing) {
+        if (hasFinalizedRef.current || isFinalizing) {
             resetToEntry();
             router.replace('/home');
             router.refresh();
             return;
         }
 
-        const sessionId = state.scope?.sessionId || 'unknown';
-        const trackSlug = state.scope?.track?.slug || 'dsa';
-        const completedItems = state.scope?.items?.slice(0, state.exit?.completedCount || 0).map((item) => item.href) || [];
+        const payload = {
+            ...finalizePayload,
+            skipped,
+            reflectionCompletedAt: skipped ? null : new Date().toISOString(),
+        };
 
         setIsFinalizing(true);
         try {
             await fetch('/api/session/finalize', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sessionId,
-                    trackSlug,
-                    completedItems,
-                    reflectionCompletedAt: skipped ? null : new Date().toISOString(),
-                    skipped,
-                }),
+                body: JSON.stringify(payload),
             });
             setHasFinalized(true);
+            hasFinalizedRef.current = true;
         } catch {
         } finally {
             setIsFinalizing(false);
@@ -54,7 +94,33 @@ export default function SessionExitView() {
         void finalizeAndReturn(ritualStatus === 'skipped');
     };
 
-    const [ritualStatus, setRitualStatus] = useState<'pending' | 'completed' | 'skipped'>('pending');
+    useEffect(() => {
+        if (state.phase !== 'exit') return;
+
+        const finalizeOnPageHide = () => {
+            if (hasFinalizedRef.current) return;
+            if (!state.scope?.sessionId) return;
+
+            const sent = sendFinalizeBeacon(finalizePayload);
+            if (sent) {
+                hasFinalizedRef.current = true;
+            }
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                finalizeOnPageHide();
+            }
+        };
+
+        window.addEventListener('pagehide', finalizeOnPageHide);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            window.removeEventListener('pagehide', finalizeOnPageHide);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [finalizePayload, state.phase, state.scope?.sessionId]);
+
     const introduced = state.exit?.delta?.introduced || [];
     const introducedSlugs = state.exit?.rawDelta?.introduced || [];
 

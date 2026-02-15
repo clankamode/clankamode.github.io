@@ -11,8 +11,7 @@ serve(async (req) => {
         const payload = await req.json()
         const { record, type, table, schema } = payload
 
-        // Only process INSERT events on public.Users for now
-        if (type !== 'INSERT' || table !== 'Users' || schema !== 'public') {
+        if (type !== 'INSERT' || schema !== 'public') {
             return new Response('Ignored event type', { status: 200 })
         }
 
@@ -21,43 +20,65 @@ serve(async (req) => {
             return new Response('Configuration Error', { status: 500 })
         }
 
-        const { email, id, created_at, google_id } = record
-        const name = email.split('@')[0]
+        type DiscordEmbed = {
+            title: string
+            description: string
+            color: number
+            fields: Array<{ name: string; value: string; inline: boolean }>
+            footer: { text: string }
+            timestamp: string
+        }
 
-        const message = {
-            embeds: [
-                {
-                    title: "🎉 New User Signup!",
-                    description: `**${name}** just joined the platform`,
-                    color: 5763719, // green
-                    fields: [
-                        {
-                            name: "📧 Email",
-                            value: `\`${email}\``,
-                            inline: true
-                        },
-                        {
-                            name: "👤 Username",
-                            value: `\`${name}\``,
-                            inline: true
-                        },
-                        {
-                            name: "🔢 User ID",
-                            value: `\`${id}\``,
-                            inline: true
-                        },
-                        {
-                            name: "🔗 Google ID",
-                            value: google_id ? `\`${google_id}\`` : '`Not set`',
-                            inline: true
-                        },
-                    ],
-                    footer: {
-                        text: "User Registration System"
-                    },
-                    timestamp: new Date(created_at).toISOString()
-                }
-            ]
+        let message: { embeds: DiscordEmbed[] }
+
+        if (table === 'Users') {
+            const { email, id, created_at, google_id } = record
+            const name = email.split('@')[0]
+
+            message = {
+                embeds: [
+                    {
+                        title: "🎉 New User Signup!",
+                        description: `**${name}** just joined the platform`,
+                        color: 5763719,
+                        fields: [
+                            { name: "📧 Email", value: `\`${email}\``, inline: true },
+                            { name: "🔢 User ID", value: `\`${id}\``, inline: true },
+                            { name: "🔗 Google ID", value: google_id ? `\`${google_id}\`` : '`Not set`', inline: true },
+                        ],
+                        footer: { text: "Registration System" },
+                        timestamp: new Date(created_at).toISOString()
+                    }
+                ]
+            }
+        } else if (table === 'UserFeedback') {
+            const { category, message: fbMessage, user_email, page_path, created_at } = record
+            const user = user_email || 'Anonymous'
+
+            const categoryColors: Record<string, number> = {
+                bug: 15548997,
+                idea: 3447003,
+                content: 15844367,
+                other: 9807270
+            }
+
+            message = {
+                embeds: [
+                    {
+                        title: `📨 New Feedback: ${category.toUpperCase()}`,
+                        description: fbMessage,
+                        color: categoryColors[category] || 5793266,
+                        fields: [
+                            { name: "👤 User", value: `\`${user}\``, inline: true },
+                            { name: "📍 Page", value: `\`${page_path || 'Direct'}\``, inline: true },
+                        ],
+                        footer: { text: "User Feedback System" },
+                        timestamp: new Date(created_at).toISOString()
+                    }
+                ]
+            }
+        } else {
+            return new Response('Ignored table', { status: 200 })
         }
 
         const response = await fetch(DISCORD_WEBHOOK_URL, {
