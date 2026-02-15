@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSession as useSessionContext } from '@/contexts/SessionContext';
 
 interface CompletionButtonProps {
   articleId: string;
@@ -15,10 +13,6 @@ export default function CompletionButton({
 }: CompletionButtonProps) {
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
-  const router = useRouter();
-  const { state: sessionState, advanceItem } = useSessionContext();
-
-  const isInSession = sessionState.phase === 'execution';
 
   const handleToggle = async () => {
     if (status !== 'idle') return;
@@ -29,8 +23,7 @@ export default function CompletionButton({
     const startTime = Date.now();
 
     try {
-      const sessionId = sessionState.execution?.sessionId || 'standalone';
-      const idempotencyKey = `${sessionId}:${articleId}:${nextState ? 'complete' : 'uncomplete'}`;
+      const idempotencyKey = `standalone:${articleId}:${nextState ? 'complete' : 'uncomplete'}`;
       const response = await fetch('/api/progress/complete', {
         method: nextState ? 'POST' : 'DELETE',
         headers: {
@@ -49,24 +42,7 @@ export default function CompletionButton({
       if (response.ok) {
         setIsCompleted(nextState);
         setStatus('success');
-
-        if (isInSession && nextState) {
-          setTimeout(() => {
-            const currentIdx = sessionState.execution?.currentIndex ?? 0;
-            const items = sessionState.scope?.items ?? [];
-            const nextItem = items[currentIdx + 1] ?? null;
-
-            if (nextItem) router.prefetch(nextItem.href);
-
-            advanceItem();
-
-            if (nextItem) {
-              router.push(nextItem.href);
-            }
-          }, 600);
-        } else {
-          setTimeout(() => setStatus('idle'), 1500);
-        }
+        setTimeout(() => setStatus('idle'), 1500);
       } else {
         setStatus('idle');
       }

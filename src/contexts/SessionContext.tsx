@@ -4,13 +4,14 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, ty
 import { useRouter, usePathname } from 'next/navigation';
 import type { SessionItem, LearningDelta } from '@/lib/progress';
 import { type MicroSessionProposal, microSessionProviderV0 } from '@/lib/session-micro';
-import { deriveLearningDelta, resolveDeltaLabels, fetchConceptDictionary } from '@/lib/delta-derivation';
+import { deriveLearningDelta, resolveDeltaLabels, fetchConceptDictionary, updateUserConceptStats } from '@/lib/delta-derivation';
 import { proposeMicroSession } from '@/lib/micro-proposer';
 import type { MicroProposal } from '@/types/micro';
 import { STATIC_CONCEPT_INDEX } from '@/lib/concept-index';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { getUserLearningState } from '@/lib/user-learning-state';
 import { logTelemetryEvent } from '@/lib/telemetry';
+import { createTransitionLock, type TransitionKind } from '@/lib/transition-lock';
 
 export type SessionPhase = 'idle' | 'entry' | 'execution' | 'exit';
 type SessionTransitionStatus = 'ready' | 'advancing' | 'finalizing';
@@ -110,9 +111,11 @@ const SessionContext = createContext<SessionContextValue | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
     const [state, setState] = useState<SessionState>(initialState);
+    const stateRef = useRef<SessionState>(initialState);
     const router = useRouter();
     const pathname = usePathname();
     const isMountedRef = useRef(true);
+    const transitionLockRef = useRef(createTransitionLock());
 
     useEffect(() => {
         return () => { isMountedRef.current = false; };
@@ -142,6 +145,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             window.sessionStorage.removeItem(SESSION_STATE_STORAGE_KEY);
         }
     }, []);
+
+    useEffect(() => {
+        stateRef.current = state;
+    }, [state]);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -196,10 +203,60 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         });
     }, []);
 
-    const advanceItem = useCallback(() => {
+    const setTransitionStatus = useCallback((kind: TransitionKind) => {
+        setState((prev) => ({
+            ...prev,
+            transitionStatus: kind,
+            execution: prev.execution
+                ? {
+                    ...prev.execution,
+                    transitionStatus: kind,
+                }
+                : prev.execution,
+        }));
+    }, []);
+
+    const resetTransitionStatus = useCallback((kind: TransitionKind) => {
         setState((prev) => {
-            if (!prev.execution || !prev.scope) return prev;
-            if (prev.execution.transitionStatus !== 'ready' || prev.transitionStatus !== 'ready') return prev;
+            if (prev.transitionStatus !== kind) {
+                return prev;
+            }
+
+            return {
+                ...prev,
+                transitionStatus: 'ready',
+                execution: prev.execution
+                    ? {
+                        ...prev.execution,
+                        transitionStatus: 'ready',
+                    }
+                    : prev.execution,
+            };
+        });
+    }, []);
+
+    const runWithTransitionLock = useCallback((kind: TransitionKind, operation: () => void) => {
+        if (!transitionLockRef.current.acquire(kind)) {
+            return false;
+        }
+
+        setTransitionStatus(kind);
+
+        try {
+            operation();
+            return true;
+        } finally {
+            setTimeout(() => {
+                transitionLockRef.current.release();
+                resetTransitionStatus(kind);
+            }, 0);
+        }
+    }, [resetTransitionStatus, setTransitionStatus]);
+
+    const advanceItem = useCallback(() => {
+        runWithTransitionLock('advancing', () => {
+            const prev = stateRef.current;
+            if (!prev.execution || !prev.scope) return;
 
             const currentItem = prev.scope.items[prev.execution.currentIndex];
             const newCompletedItems = [...prev.execution.completedItems, currentItem?.href || ''];
@@ -270,6 +327,22 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
                 const completedItems = scope.items.slice(0, newIndex);
                 const trackSlug = scope.track.slug;
+                const microSessionProposal = getProposal(initialDelta);
+
+                setState({
+                    phase: 'exit',
+                    scope: prev.scope,
+                    execution: null,
+                    exit: {
+                        completedCount: newCompletedItems.length,
+                        durationMinutes,
+                        nextRecommendation: null,
+                        delta: initialDelta,
+                        primaryConcept: scope.items[0]?.primaryConceptSlug || null,
+                        microSessionProposal,
+                    },
+                    transitionStatus: 'ready',
+                });
 
                 setTimeout(async () => {
                     try {
@@ -280,6 +353,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                             completedItems,
                             scope.googleId
                         );
+                        if (userId && result.debugInfo.seenTags.length > 0) {
+                            await updateUserConceptStats(
+                                userId,
+                                trackSlug,
+                                result.debugInfo.seenTags,
+                                undefined,
+                                scope.googleId
+                            );
+                        }
                         const conceptDict = await fetchConceptDictionary(trackSlug);
                         const labeledDelta = resolveDeltaLabels(result.delta, conceptDict);
 
@@ -319,12 +401,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
                         if (!isMountedRef.current) return;
 
-                        setState(prev => {
-                            if (prev.phase !== 'exit' || !prev.exit) return prev;
+                        setState(prevState => {
+                            if (prevState.phase !== 'exit' || !prevState.exit) return prevState;
                             return {
-                                ...prev,
+                                ...prevState,
                                 exit: {
-                                    ...prev.exit,
+                                    ...prevState.exit,
                                     delta: labeledDelta,
                                     rawDelta: result.delta,
                                     primaryConcept: scope.items[0]?.primaryConceptSlug || null,
@@ -336,26 +418,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                         console.error('Delta derivation failed:', e);
                     }
                 }, 0);
-
-                const microSessionProposal = getProposal(initialDelta);
-
-                return {
-                    phase: 'exit',
-                    scope: prev.scope,
-                    execution: null,
-                    exit: {
-                        completedCount: newCompletedItems.length,
-                        durationMinutes,
-                        nextRecommendation: null,
-                        delta: initialDelta,
-                        primaryConcept: scope.items[0]?.primaryConceptSlug || null,
-                        microSessionProposal,
-                    },
-                    transitionStatus: 'ready',
-                };
+                return;
             }
 
-            return {
+            setState({
                 ...prev,
                 execution: {
                     ...prev.execution,
@@ -366,83 +432,89 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                     transitionStatus: 'ready',
                 },
                 transitionStatus: 'ready',
-            };
+            });
         });
-    }, []);
+    }, [runWithTransitionLock]);
 
     const completeSession = useCallback(() => {
-        setState((prev) => {
-            if (!prev.execution || !prev.scope) return prev;
+        runWithTransitionLock('finalizing', () => {
+            setState((prev) => {
+                if (!prev.execution || !prev.scope) return prev;
+                if (prev.execution.transitionStatus !== 'finalizing' || prev.transitionStatus !== 'finalizing') return prev;
 
-            const durationMinutes = Math.round(
-                (Date.now() - prev.execution.startedAt.getTime()) / 60000
-            );
+                const durationMinutes = Math.round(
+                    (Date.now() - prev.execution.startedAt.getTime()) / 60000
+                );
 
-            const delta: LearningDelta = {
-                introduced: [],
-                reinforced: [],
-                unlocked: []
-            };
+                const delta: LearningDelta = {
+                    introduced: [],
+                    reinforced: [],
+                    unlocked: []
+                };
 
-            const microSessionProposal = isFeatureEnabled(FeatureFlags.USE_MICRO_V1)
-                ? (() => {
-                    const previousMicroConcept = getLastMicroConcept();
-                    const p = proposeMicroSession({
-                        trackSlug: prev.scope.track.slug,
+                const microSessionProposal = isFeatureEnabled(FeatureFlags.USE_MICRO_V1)
+                    ? (() => {
+                        const previousMicroConcept = getLastMicroConcept();
+                        const p = proposeMicroSession({
+                            trackSlug: prev.scope.track.slug,
+                            delta,
+                            conceptIndex: STATIC_CONCEPT_INDEX,
+                            avoidConcepts: previousMicroConcept ? [previousMicroConcept] : [],
+                        });
+                        if (p?.targetConcept) {
+                            setLastMicroConcept(p.targetConcept);
+                        }
+                        return p ? toSessionProposal(p) : null;
+                    })()
+                    : microSessionProviderV0.propose({ trackSlug: prev.scope.track.slug, delta });
+
+                return {
+                    phase: 'exit',
+                    scope: prev.scope,
+                    execution: null,
+                    exit: {
+                        completedCount: prev.execution.completedItems.length,
+                        durationMinutes,
+                        nextRecommendation: null,
                         delta,
-                        conceptIndex: STATIC_CONCEPT_INDEX,
-                        avoidConcepts: previousMicroConcept ? [previousMicroConcept] : [],
-                    });
-                    if (p?.targetConcept) {
-                        setLastMicroConcept(p.targetConcept);
-                    }
-                    return p ? toSessionProposal(p) : null;
-                })()
-                : microSessionProviderV0.propose({ trackSlug: prev.scope.track.slug, delta });
-
-            return {
-                phase: 'exit',
-                scope: prev.scope,
-                execution: null,
-                exit: {
-                    completedCount: prev.execution.completedItems.length,
-                    durationMinutes,
-                    nextRecommendation: null,
-                    delta,
-                    rawDelta: delta,
-                    primaryConcept: null,
-                    microSessionProposal
-                },
-                transitionStatus: 'ready',
-            };
+                        rawDelta: delta,
+                        primaryConcept: null,
+                        microSessionProposal
+                    },
+                    transitionStatus: 'ready',
+                };
+            });
         });
-    }, []);
+    }, [runWithTransitionLock]);
 
     const abandonSession = useCallback(() => {
-        setState((prev) => {
-            if (!prev.execution || !prev.scope) return prev;
+        runWithTransitionLock('finalizing', () => {
+            setState((prev) => {
+                if (!prev.execution || !prev.scope) return prev;
+                if (prev.execution.transitionStatus !== 'finalizing' || prev.transitionStatus !== 'finalizing') return prev;
 
-            const durationMinutes = Math.round(
-                (Date.now() - prev.execution.startedAt.getTime()) / 60000
-            );
+                const durationMinutes = Math.round(
+                    (Date.now() - prev.execution.startedAt.getTime()) / 60000
+                );
 
-            return {
-                phase: 'exit',
-                scope: prev.scope,
-                execution: null,
-                exit: {
-                    completedCount: prev.execution.completedItems.length,
-                    durationMinutes,
-                    nextRecommendation: null,
-                    delta: { introduced: [], reinforced: [], unlocked: [] },
-                    rawDelta: { introduced: [], reinforced: [], unlocked: [] },
-                    primaryConcept: null,
-                    microSessionProposal: null,
-                },
-                transitionStatus: 'ready',
-            };
+                return {
+                    phase: 'exit',
+                    scope: prev.scope,
+                    execution: null,
+                    exit: {
+                        completedCount: prev.execution.completedItems.length,
+                        durationMinutes,
+                        nextRecommendation: null,
+                        delta: { introduced: [], reinforced: [], unlocked: [] },
+                        rawDelta: { introduced: [], reinforced: [], unlocked: [] },
+                        primaryConcept: null,
+                        microSessionProposal: null,
+                    },
+                    transitionStatus: 'ready',
+                };
+            });
         });
-    }, []);
+    }, [runWithTransitionLock]);
 
     const resetToEntry = useCallback(() => {
         setState(initialState);

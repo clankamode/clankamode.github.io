@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChromeMode } from '@/hooks/useChromeMode';
 import SessionReaderShell from '@/components/session/SessionReaderShell';
-import SessionCommitControl from '@/components/session/SessionCommitControl';
 import MobileSidebarToggle from './MobileSidebarToggle';
 
 interface ArticleLayoutSwitcherProps {
@@ -40,8 +39,6 @@ export default function ArticleLayoutSwitcher({
         return (
             <SessionReaderShell tableOfContents={tableOfContents}>
                 {articleContent}
-
-                <SessionCommitControl />
             </SessionReaderShell>
         );
     }

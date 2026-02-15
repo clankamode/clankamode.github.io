@@ -151,25 +151,71 @@ export async function updateUserConceptStats(
     userId: string,
     trackSlug: string,
     seenTags: string[],
-    internalizedConcept?: string
+    internalizedConcept?: string,
+    googleId?: string
 ): Promise<void> {
     const now = new Date().toISOString();
+    const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
 
     for (const tag of seenTags) {
-        await supabase.rpc('increment_concept_exposure', {
+        const { error } = await supabase.rpc('increment_concept_exposure', {
             p_email: userId,
             p_track_slug: trackSlug,
             p_concept_slug: tag,
             p_last_seen_at: now,
         });
+
+        if (error) {
+            const { data: existing } = await supabase
+                .from('UserConceptStats')
+                .select('exposures, internalized_count')
+                .or(buildIdentityOrFilter(identity))
+                .eq('track_slug', trackSlug)
+                .eq('concept_slug', tag)
+                .maybeSingle();
+
+            await supabase
+                .from('UserConceptStats')
+                .upsert({
+                    email: userId,
+                    google_id: googleId ?? null,
+                    track_slug: trackSlug,
+                    concept_slug: tag,
+                    exposures: (existing?.exposures ?? 0) + 1,
+                    internalized_count: existing?.internalized_count ?? 0,
+                    last_seen_at: now,
+                }, { onConflict: 'email,track_slug,concept_slug' });
+        }
     }
 
     if (internalizedConcept) {
-        await supabase.rpc('increment_concept_internalization', {
+        const { error } = await supabase.rpc('increment_concept_internalization', {
             p_email: userId,
             p_track_slug: trackSlug,
             p_concept_slug: internalizedConcept,
         });
+
+        if (error) {
+            const { data: existing } = await supabase
+                .from('UserConceptStats')
+                .select('exposures, internalized_count')
+                .or(buildIdentityOrFilter(identity))
+                .eq('track_slug', trackSlug)
+                .eq('concept_slug', internalizedConcept)
+                .maybeSingle();
+
+            await supabase
+                .from('UserConceptStats')
+                .upsert({
+                    email: userId,
+                    google_id: googleId ?? null,
+                    track_slug: trackSlug,
+                    concept_slug: internalizedConcept,
+                    exposures: existing?.exposures ?? 0,
+                    internalized_count: (existing?.internalized_count ?? 0) + 1,
+                    last_seen_at: now,
+                }, { onConflict: 'email,track_slug,concept_slug' });
+        }
     }
 }
 

@@ -32,6 +32,7 @@ describe('execution reading surface invariants', () => {
     const shellSource = readWorkspaceFile('src/components/session/SessionReaderShell.tsx');
     const hudSource = readWorkspaceFile('src/components/session/SessionHUD.tsx');
     const surfaceSource = readWorkspaceFile('src/components/session/ExecutionSurface.tsx');
+    const layoutSwitcherSource = readWorkspaceFile('src/app/learn/_components/ArticleLayoutSwitcher.tsx');
 
     expect(shellSource).toContain('ExecutionSurface');
     expect(shellSource).toContain('SessionRail');
@@ -39,5 +40,7 @@ describe('execution reading surface invariants', () => {
     expect(surfaceSource).toContain('ReadingGrid');
     expect(hudSource).toContain('EXECUTION_SURFACE_LAYOUT_CLASS');
     expect(hudSource).not.toContain('max-w-screen-xl');
+    expect(layoutSwitcherSource).toContain('SessionReaderShell');
+    expect(layoutSwitcherSource).not.toContain('SessionCommitControl');
   });
 });
