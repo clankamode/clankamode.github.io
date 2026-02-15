@@ -84,6 +84,7 @@ export default async function PillarPage({ params }: PillarPageProps) {
                   defaultOpen={index === 0}
                   showProgress={showProgress}
                   bookmarkedIds={bookmarkedIds}
+                  isSignedIn={!!session}
                 />
               ))}
             </div>

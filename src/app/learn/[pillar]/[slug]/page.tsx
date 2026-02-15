@@ -129,21 +129,10 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
                   {article.title}
                 </h1>
               </div>
-              {article.excerpt && (
-                <p className="article-spec-subtitle mt-1 max-w-[65ch] text-base text-text-secondary">
-                  {article.excerpt}
-                </p>
-              )}
               <div className="article-spec-meta mt-1.5 flex flex-wrap items-center gap-1.5 font-mono text-sm text-text-muted">
                 <span>{formatDate(article.updated_at)}</span>
                 <span>·</span>
                 <span>{article.reading_time_minutes || 5} min read</span>
-                {article.is_premium && (
-                  <>
-                    <span>·</span>
-                    <span className="uppercase tracking-[0.1em]">Premium</span>
-                  </>
-                )}
                 {canEdit && (
                   <>
                     <span>·</span>

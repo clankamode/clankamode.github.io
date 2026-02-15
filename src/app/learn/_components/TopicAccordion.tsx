@@ -10,6 +10,7 @@ interface TopicAccordionProps {
   defaultOpen?: boolean;
   showProgress?: boolean;
   bookmarkedIds?: string[] | null;
+  isSignedIn?: boolean;
 }
 
 export default function TopicAccordion({
@@ -17,7 +18,8 @@ export default function TopicAccordion({
   topic,
   defaultOpen = false,
   showProgress = false,
-  bookmarkedIds = null
+  bookmarkedIds = null,
+  isSignedIn = false
 }: TopicAccordionProps) {
   const [open, setOpen] = useState(defaultOpen);
   const bookmarkedSet = useMemo(() => (
@@ -53,6 +55,7 @@ export default function TopicAccordion({
               article={article}
               showProgress={showProgress}
               initialBookmarked={bookmarkedSet ? bookmarkedSet.has(article.id) : undefined}
+              showSignInBadge={!isSignedIn}
             />
           ))}
           {topic.articles.length === 0 && (

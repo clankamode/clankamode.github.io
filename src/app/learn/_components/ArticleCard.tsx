@@ -7,6 +7,7 @@ interface ArticleCardProps {
   article: LearningArticle;
   showProgress?: boolean;
   initialBookmarked?: boolean;
+  showSignInBadge?: boolean;
 }
 
 function formatDate(dateString: string) {
@@ -22,7 +23,8 @@ export default function ArticleCard({
   pillarSlug,
   article,
   showProgress = false,
-  initialBookmarked
+  initialBookmarked,
+  showSignInBadge = true
 }: ArticleCardProps) {
   return (
     <div className="group relative">
@@ -33,9 +35,9 @@ export default function ArticleCard({
         <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] font-semibold text-text-muted">
           <div className="flex items-center gap-2">
             <span>Article</span>
-            {article.is_premium && (
+            {article.is_premium && showSignInBadge && (
               <span className="rounded-full bg-brand-green/10 px-2 py-0.5 text-[10px] text-brand-green border border-brand-green/20">
-                Premium
+                Sign in to read
               </span>
             )}
           </div>
