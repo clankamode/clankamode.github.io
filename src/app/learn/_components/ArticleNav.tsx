@@ -29,7 +29,7 @@ export default function ArticleNav({ previous, next }: ArticleNavProps) {
       <p className="text-xs uppercase tracking-[0.2em] text-text-muted">
         {item.label}
       </p>
-      <h3 className="text-lg font-semibold tracking-tight text-text-primary group-hover:text-white">
+      <h3 className="text-lg font-semibold tracking-tight text-text-primary transition-colors">
         {item.title}
       </h3>
       {item.topicName && (

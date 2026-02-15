@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { LearningArticle } from '@/types/content';
+import { cn } from '@/lib/utils';
 import BookmarkButton from './BookmarkButton';
 
 interface ArticleCardProps {
@@ -45,7 +46,9 @@ export default function ArticleCard({
           {showProgress && <div className="h-[30px] w-[30px]" />}
         </div>
 
-        <h3 className="text-xl md:text-2xl font-bold tracking-tight text-text-primary group-hover:text-white transition-colors duration-300">
+        <h3 className={cn(
+          'text-xl md:text-2xl font-bold tracking-tight text-text-primary transition-colors duration-300'
+        )}>
           {article.title}
         </h3>
 

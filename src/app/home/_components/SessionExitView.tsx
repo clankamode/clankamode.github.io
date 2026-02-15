@@ -343,7 +343,7 @@ export default function SessionExitView() {
                                                 {state.exit.microSessionProposal.estimatedMinutes}m
                                             </span>
                                         </div>
-                                        <h3 className="text-2xl font-bold text-text-primary group-hover:text-white transition-colors leading-tight">
+                                        <h3 className="text-2xl font-bold text-text-primary transition-colors leading-tight">
                                             {state.exit.microSessionProposal.label}
                                         </h3>
                                         <p className="text-sm text-text-muted mt-3 leading-relaxed">
