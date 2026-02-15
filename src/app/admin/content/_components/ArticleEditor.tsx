@@ -20,6 +20,7 @@ interface ArticleData {
   body: string;
   is_premium: boolean;
   is_published: boolean;
+  practice_question_id: string | null;
 }
 
 interface PillarTopic {

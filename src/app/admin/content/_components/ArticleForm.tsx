@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface ArticleData {
   id: string;
@@ -11,6 +11,12 @@ interface ArticleData {
   body: string;
   is_premium: boolean;
   is_published: boolean;
+  practice_question_id: string | null;
+}
+
+interface PracticeQuestion {
+  id: string;
+  name: string;
 }
 
 interface PillarTopic {
@@ -31,6 +37,14 @@ export default function ArticleForm({ article, pillars, onChange }: ArticleFormP
   const [summaryState, setSummaryState] = useState<'idle' | 'generating' | 'success' | 'error'>('idle');
   const [previousSummary, setPreviousSummary] = useState<string | null>(null);
   const [slugLocked, setSlugLocked] = useState(false);
+  const [practiceQuestions, setPracticeQuestions] = useState<PracticeQuestion[]>([]);
+
+  useEffect(() => {
+    fetch('/api/content/practice-questions')
+      .then((res) => res.ok ? res.json() : [])
+      .then((data) => setPracticeQuestions(Array.isArray(data) ? data : []))
+      .catch(() => setPracticeQuestions([]));
+  }, []);
 
   const topicOptions = pillars.flatMap((pillar) =>
     pillar.topics.map((topic) => ({
@@ -294,6 +308,30 @@ export default function ArticleForm({ article, pillars, onChange }: ArticleFormP
                 <div className="flex items-center justify-between">
                   <label className="text-xs uppercase tracking-[0.2em] text-text-muted">URL</label>
                   <span className="text-[10px] text-text-muted/60">Also called a slug.</span>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs uppercase tracking-[0.2em] text-text-muted">Practice question</label>
+                    <span className="text-[10px] text-text-muted/60">Shows &quot;Practice&quot; link on article page.</span>
+                  </div>
+                  <select
+                    className="w-full rounded-lg border border-border-subtle bg-surface-dense px-4 py-2 text-text-primary transition-colors focus-visible:border-border-interactive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    value={article.practice_question_id ?? ''}
+                    onChange={(event) =>
+                      onChange({
+                        ...article,
+                        practice_question_id: event.target.value || null,
+                      })
+                    }
+                  >
+                    <option value="">None</option>
+                    {practiceQuestions.map((q) => (
+                      <option key={q.id} value={q.id}>
+                        {q.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="flex items-center gap-2">

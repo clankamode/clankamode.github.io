@@ -33,6 +33,7 @@ export interface LearningArticle {
   updated_at: string;
   concept_tags: string[];
   primary_concept: string | null;
+  practice_question_id: string | null;
 }
 
 export interface LearningTopicWithArticles extends LearningTopic {

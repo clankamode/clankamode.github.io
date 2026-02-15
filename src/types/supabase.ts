@@ -229,6 +229,7 @@ export interface Database {
                     is_premium: boolean
                     is_published: boolean
                     order_index: number | null
+                    practice_question_id: string | null
                     primary_concept: string | null
                     reading_time_minutes: number | null
                     slug: string
@@ -245,6 +246,7 @@ export interface Database {
                     is_premium?: boolean
                     is_published?: boolean
                     order_index?: number | null
+                    practice_question_id?: string | null
                     primary_concept?: string | null
                     reading_time_minutes?: number | null
                     slug: string
@@ -261,6 +263,7 @@ export interface Database {
                     is_premium?: boolean
                     is_published?: boolean
                     order_index?: number | null
+                    practice_question_id?: string | null
                     primary_concept?: string | null
                     reading_time_minutes?: number | null
                     slug?: string
@@ -274,6 +277,13 @@ export interface Database {
                         columns: ["topic_id"]
                         isOneToOne: false
                         referencedRelation: "LearningTopics"
+                        referencedColumns: ["id"]
+                    },
+                    {
+                        foreignKeyName: "LearningArticles_practice_question_id_fkey"
+                        columns: ["practice_question_id"]
+                        isOneToOne: false
+                        referencedRelation: "InterviewQuestions"
                         referencedColumns: ["id"]
                     }
                 ]

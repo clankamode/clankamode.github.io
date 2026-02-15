@@ -22,7 +22,6 @@ import { getArticleCompletionStatus, getBookmarkStatus } from '@/lib/progress';
 import ArticleLayoutSwitcher from '../../_components/ArticleLayoutSwitcher';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import ChunkedArticleRenderer from '@/components/session/ChunkedArticleRenderer';
-import { getPracticeQuestionForArticleSlug } from '@/lib/practice';
 
 interface ArticlePageProps {
   params: Promise<{ pillar: string; slug: string }>;
@@ -92,9 +91,8 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
         getBookmarkStatus(userId, article.id, session?.user?.id ?? undefined),
       ])
     : [null, null];
-  const practiceQuestion = await getPracticeQuestionForArticleSlug(article.slug);
-  const practiceHref = practiceQuestion
-    ? `/code-editor/practice/${practiceQuestion.id}?returnTo=${encodeURIComponent(`/learn/${pillarSlug}/${articleSlug}`)}`
+  const practiceHref = article.practice_question_id
+    ? `/code-editor/practice/${article.practice_question_id}?returnTo=${encodeURIComponent(`/learn/${pillarSlug}/${articleSlug}`)}`
     : null;
 
   return (
