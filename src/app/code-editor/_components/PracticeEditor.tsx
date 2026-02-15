@@ -311,11 +311,6 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
               {question.name}
             </span>
             <DifficultyBadge difficulty={question.difficulty} />
-            {!isSessionContext && question.pattern && (
-              <span className="text-xs text-text-muted px-2 py-0.5 rounded bg-surface-interactive">
-                {question.pattern}
-              </span>
-            )}
           </div>
           {!isSessionContext && question.leetcode_url && (
             <a
