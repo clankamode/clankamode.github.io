@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth';
 import OpenAI from 'openai';
 import { authOptions } from '../api/auth/[...nextauth]/auth';
+import { FeatureFlags, isFeatureEnabled } from '@/lib/flags';
+import { buildAIDecisionDedupeKey, logAIDecision } from '@/lib/ai-decision-registry';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { UserRole, hasRole } from '@/types/roles';
 import type { FrictionState, FrictionTriagePayload, FrictionTriageStatus } from '@/types/friction';
@@ -12,6 +14,9 @@ const MAX_OWNER_LENGTH = 120;
 const MAX_NOTES_LENGTH = 2000;
 const DEFAULT_LOOKBACK_DAYS = 14;
 const MAX_RATIONALE_LENGTH = 500;
+const AUTO_TRIAGE_COOLDOWN_MS = 2 * 60 * 60 * 1000;
+const TRIAGE_BRIEF_PROMPT_VERSION = 'triage_brief_v1';
+const TRIAGE_RECOMMEND_PROMPT_VERSION = 'triage_recommend_v1';
 
 type SnapshotEvidenceRow = {
   created_at: string;
@@ -41,6 +46,7 @@ type ExistingTriageRow = {
   status: string | null;
   owner: string | null;
   notes: string | null;
+  updated_at?: string | null;
 };
 
 interface OpenAIResponseContent {
@@ -341,6 +347,7 @@ export async function generateFrictionTriageBriefAction(payload: {
     };
 
     let generatedBrief: string;
+    let briefModel = 'deterministic-fallback';
 
     if (!process.env.OPENAI_API_KEY) {
       generatedBrief = [
@@ -350,6 +357,7 @@ export async function generateFrictionTriageBriefAction(payload: {
       ].join('\n');
     } else {
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      briefModel = 'gpt-5-nano';
       const prompt = [
         'You are assisting an admin triage queue for learning-session friction.',
         'Write a concise triage brief with exactly three labeled lines:',
@@ -419,6 +427,31 @@ export async function generateFrictionTriageBriefAction(payload: {
       return { success: false as const, error: 'Failed to save AI brief' };
     }
 
+    await logAIDecision({
+      decisionType: 'triage_brief',
+      decisionMode: 'assist',
+      trackSlug: payload.trackSlug,
+      stepIndex: payload.stepIndex,
+      actorEmail: email,
+      model: briefModel,
+      promptVersion: TRIAGE_BRIEF_PROMPT_VERSION,
+      confidence: confidenceAvg,
+      rationale: generatedBrief,
+      inputJson: evidence,
+      outputJson: { brief: generatedBrief, appliedStatus: after.status, appliedOwner: after.owner },
+      applied: true,
+      source: 'session_intelligence',
+      dedupeKey: buildAIDecisionDedupeKey({
+        decisionType: 'triage_brief',
+        decisionMode: 'assist',
+        trackSlug: payload.trackSlug,
+        stepIndex: payload.stepIndex,
+        source: 'session_intelligence',
+        status: after.status,
+        owner: after.owner,
+      }),
+    });
+
     await writeTriageAuditEntry({
       actionType: 'ai_brief',
       actorEmail: email,
@@ -456,6 +489,10 @@ export async function recommendAndApplyFrictionTriageAction(payload: {
     return { success: false as const, error: 'Unauthorized' };
   }
 
+  if (payload.source === 'ai_auto_batch' && !isFeatureEnabled(FeatureFlags.AI_TRIAGE_AUTOMATION, session?.user ?? null)) {
+    return { success: false as const, error: 'AI auto-triage is disabled' };
+  }
+
   if (!isValidTrackSlug(payload.trackSlug)) {
     return { success: false as const, error: 'Invalid track slug' };
   }
@@ -474,7 +511,7 @@ export async function recommendAndApplyFrictionTriageAction(payload: {
     const [{ data: existingRow }, { data: snapshotsData }, { data: trackTriageData }] = await Promise.all([
       supabase
         .from('SessionFrictionTriage')
-        .select('status, owner, notes')
+        .select('status, owner, notes, updated_at')
         .eq('track_slug', payload.trackSlug)
         .eq('step_index', payload.stepIndex)
         .maybeSingle(),
@@ -531,6 +568,15 @@ export async function recommendAndApplyFrictionTriageAction(payload: {
 
     const existingStatus = (existingRow?.status as FrictionTriageStatus | undefined) ?? 'new';
     const existingOwner = normalizeText((existingRow?.owner as string | null) ?? null, MAX_OWNER_LENGTH);
+    const existingUpdatedAt = typeof existingRow?.updated_at === 'string' ? existingRow.updated_at : null;
+
+    if (payload.source === 'ai_auto_batch' && existingUpdatedAt) {
+      const sinceLastUpdateMs = Date.now() - new Date(existingUpdatedAt).getTime();
+      if (sinceLastUpdateMs < AUTO_TRIAGE_COOLDOWN_MS) {
+        return { success: false as const, error: 'Skipped: hotspot updated recently' };
+      }
+    }
+
     const fallbackStatus: FrictionTriageStatus =
       stuckRate >= 0.35 || snapshots.length >= 6 ? 'investigating' : existingStatus;
     const fallbackOwner = existingOwner ?? ownerCandidates[0] ?? null;
@@ -538,9 +584,11 @@ export async function recommendAndApplyFrictionTriageAction(payload: {
     let recommendedOwner = fallbackOwner;
     let rationale =
       `Risk signal ${stuckRate.toFixed(2)} stuck rate over ${snapshots.length} samples; recommended ${fallbackStatus}.`;
+    let recommendationModel = 'deterministic-fallback';
 
     if (process.env.OPENAI_API_KEY) {
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      recommendationModel = 'gpt-5-nano';
       const prompt = [
         'Recommend triage assignment for a hotspot.',
         'Return JSON only with keys: status, owner, rationale.',
@@ -626,6 +674,45 @@ export async function recommendAndApplyFrictionTriageAction(payload: {
       console.warn('[friction-triage] ai recommendation upsert failed:', error.message);
       return { success: false as const, error: 'Failed to apply recommendation' };
     }
+
+    await logAIDecision({
+      decisionType: 'triage_recommendation',
+      decisionMode: payload.source === 'ai_auto_batch' ? 'auto' : 'assist',
+      trackSlug: payload.trackSlug,
+      stepIndex: payload.stepIndex,
+      actorEmail: email,
+      model: recommendationModel,
+      promptVersion: TRIAGE_RECOMMEND_PROMPT_VERSION,
+      confidence: confidenceAvg,
+      rationale,
+      inputJson: {
+        lookbackDays,
+        sampleSize: snapshots.length,
+        stuckRate,
+        avgConfidence: confidenceAvg,
+        avgElapsedRatio: elapsedRatioAvg,
+        existingStatus,
+        existingOwner,
+        ownerCandidates,
+      },
+      outputJson: {
+        recommendedStatus,
+        recommendedOwner,
+        appliedStatus: after.status,
+        appliedOwner: after.owner,
+      },
+      applied: true,
+      source: payload.source ?? 'ai_recommendation',
+      dedupeKey: buildAIDecisionDedupeKey({
+        decisionType: 'triage_recommendation',
+        decisionMode: payload.source === 'ai_auto_batch' ? 'auto' : 'assist',
+        trackSlug: payload.trackSlug,
+        stepIndex: payload.stepIndex,
+        source: payload.source ?? 'ai_recommendation',
+        status: after.status,
+        owner: after.owner,
+      }),
+    });
 
     await writeTriageAuditEntry({
       actionType: payload.source === 'ai_auto_batch' ? 'ai_auto_batch' : 'ai_recommendation',

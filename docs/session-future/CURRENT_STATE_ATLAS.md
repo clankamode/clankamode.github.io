@@ -366,13 +366,16 @@ Admin observability and triage:
    - `/Users/issackjohn/repos/personal-website/src/app/actions/friction-triage.ts`
 3. Triage table:
    - `SessionFrictionTriage`
-4. Capabilities:
+4. AI decision registry:
+   - `SessionAIDecisions`
+5. Capabilities:
    - friction queue filters and risk sorting
    - hotspot drill-down evidence
    - manual status and owner updates
    - AI brief generation
    - AI owner and status recommendation
    - batch auto-triage for top queue rows
+   - AI replay summary with override proxy metrics
 
 ## 9) Access Control and Routing
 
@@ -400,6 +403,7 @@ Relevant tests:
 7. `/Users/issackjohn/repos/personal-website/tests/unit/friction-classifier.test.ts`
 8. `/Users/issackjohn/repos/personal-website/tests/unit/friction-payload-shape.test.ts`
 9. `/Users/issackjohn/repos/personal-website/tests/unit/session-friction-integration.test.ts`
+10. `/Users/issackjohn/repos/personal-website/tests/unit/session-ai-replay.test.ts`
 
 Coverage strengths:
 
@@ -424,7 +428,7 @@ This section captures objective seams, not future proposals:
 3. Learning-state exposure updates are not clearly invoked in session completion path.
 4. Chunking is heading-level and may vary in granularity by content authoring style.
 5. Cross-surface continuity between assessment and coding chamber is functional but verbose.
-6. AI triage updates mutate state quickly; explicit review audit timeline is still pending.
+6. AI triage updates depend on override-proxy interpretation; direct quality labels are still not explicit.
 
 ## 12) Known Strong Foundations
 

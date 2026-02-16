@@ -17,10 +17,11 @@ Completed or partially completed work:
    - hotspot drill-down
    - triage workflow with status and owner
    - AI-assisted brief and recommendation actions
+   - AI decision registry and replay readout
 3. Remaining reliability and governance work is still required:
    - progression invariants hardening depth
    - finalize and writeback reconciliation
-   - AI triage safety and audit model
+   - AI triage quality scoring beyond override proxies
 
 ## How To Use
 

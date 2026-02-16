@@ -6,6 +6,7 @@ export const FeatureFlags = {
     USE_MICRO_V1: 'use_micro_v1',
     GENERATIVE_SESSIONS: 'generative_sessions',
     FRICTION_INTELLIGENCE: 'friction_intelligence',
+    AI_TRIAGE_AUTOMATION: 'ai_triage_automation',
 } as const;
 
 export type FeatureFlag = (typeof FeatureFlags)[keyof typeof FeatureFlags];
@@ -33,6 +34,10 @@ export const flags: Record<FeatureFlag, FlagConfig> = {
         allowRoles: [UserRole.ADMIN],
     },
     [FeatureFlags.FRICTION_INTELLIGENCE]: {
+        defaultValue: false,
+        allowRoles: [UserRole.ADMIN],
+    },
+    [FeatureFlags.AI_TRIAGE_AUTOMATION]: {
         defaultValue: false,
         allowRoles: [UserRole.ADMIN],
     },

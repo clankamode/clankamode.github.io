@@ -505,6 +505,63 @@ export interface Database {
                 }
                 Relationships: []
             }
+            SessionAIDecisions: {
+                Row: {
+                    actor_email: string
+                    applied: boolean
+                    confidence: number | null
+                    created_at: string
+                    decision_mode: string
+                    decision_type: string
+                    dedupe_key: string | null
+                    id: string
+                    input_json: Json
+                    model: string
+                    output_json: Json
+                    prompt_version: string
+                    rationale: string | null
+                    source: string
+                    step_index: number
+                    track_slug: string
+                }
+                Insert: {
+                    actor_email: string
+                    applied?: boolean
+                    confidence?: number | null
+                    created_at?: string
+                    decision_mode: string
+                    decision_type: string
+                    dedupe_key?: string | null
+                    id?: string
+                    input_json?: Json
+                    model: string
+                    output_json?: Json
+                    prompt_version: string
+                    rationale?: string | null
+                    source?: string
+                    step_index: number
+                    track_slug: string
+                }
+                Update: {
+                    actor_email?: string
+                    applied?: boolean
+                    confidence?: number | null
+                    created_at?: string
+                    decision_mode?: string
+                    decision_type?: string
+                    dedupe_key?: string | null
+                    id?: string
+                    input_json?: Json
+                    model?: string
+                    output_json?: Json
+                    prompt_version?: string
+                    rationale?: string | null
+                    source?: string
+                    step_index?: number
+                    track_slug?: string
+                }
+                Relationships: []
+            }
             SessionFrictionTriage: {
                 Row: {
                     created_at: string

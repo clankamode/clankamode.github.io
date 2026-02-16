@@ -6,8 +6,10 @@ import {
   recommendAndApplyFrictionTriageAction,
   upsertFrictionTriageAction,
 } from '@/app/actions/friction-triage';
+import { reviewAIDecisionAction } from '@/app/actions/ai-decision-review';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
+import { FeatureFlags, isFeatureEnabled } from '@/lib/flags';
 import { UserRole, hasRole } from '@/types/roles';
 import {
   buildFunnelByFirstItem,
@@ -21,6 +23,7 @@ import {
   buildFrictionMonitorMetrics,
   type FrictionSnapshotInput,
 } from '@/lib/friction-monitor';
+import { buildAIDecisionReplaySummary } from '@/lib/session-ai-replay';
 import type { FrictionState, FrictionTrigger, FrictionTriageStatus } from '@/types/friction';
 
 export const dynamic = 'force-dynamic';
@@ -89,11 +92,37 @@ type FrictionTriageAuditRow = {
   metadata: Record<string, unknown> | null;
 };
 
+type AIDecisionRow = {
+  id: string;
+  created_at: string;
+  decision_type: string;
+  decision_mode: string;
+  track_slug: string;
+  step_index: number;
+  actor_email: string;
+  confidence: number | null;
+  source: string;
+  output_json: Record<string, unknown> | null;
+};
+
+type AIDecisionAuditRow = {
+  created_at: string;
+  action_type: string;
+  track_slug: string;
+  step_index: number;
+  after_status: string | null;
+  after_owner: string | null;
+};
+
 type IntelligenceTab = 'quality' | 'friction';
 type RangeKey = '1d' | '7d' | '14d' | '30d';
 type TrackKey = 'all' | string;
 type QueueStatusKey = 'open' | 'all' | FrictionTriageStatus;
 type QueueOwnerKey = 'all' | 'unassigned' | string;
+type AIDecisionTypeKey = 'all' | 'triage_brief' | 'triage_recommendation';
+type AIDecisionModeKey = 'all' | 'suggest' | 'assist' | 'auto';
+type AIDecisionSourceKey = 'all' | 'session_intelligence' | 'ai_recommendation' | 'ai_auto_batch';
+type AIDecisionOutcomeKey = 'all' | 'confirmed' | 'overridden' | 'inconclusive' | 'unreviewed';
 
 const RANGE_DAYS: Record<RangeKey, number> = {
   '1d': 1,
@@ -104,6 +133,7 @@ const RANGE_DAYS: Record<RangeKey, number> = {
 
 const DEFAULT_TRACKS = ['all', 'dsa', 'job-hunt', 'system-design'] as const;
 const TRIAGE_STATUSES: FrictionTriageStatus[] = ['new', 'investigating', 'resolved'];
+const AUTO_TRIAGE_MINUTES_COOLDOWN = 120;
 
 function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
@@ -190,6 +220,30 @@ function parseQueueOwner(raw: string | string[] | undefined): QueueOwnerKey {
   return value.toLowerCase();
 }
 
+function parseAIDecisionType(raw: string | string[] | undefined): AIDecisionTypeKey {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  if (value === 'triage_brief' || value === 'triage_recommendation') return value;
+  return 'all';
+}
+
+function parseAIDecisionMode(raw: string | string[] | undefined): AIDecisionModeKey {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  if (value === 'suggest' || value === 'assist' || value === 'auto') return value;
+  return 'all';
+}
+
+function parseAIDecisionSource(raw: string | string[] | undefined): AIDecisionSourceKey {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  if (value === 'session_intelligence' || value === 'ai_recommendation' || value === 'ai_auto_batch') return value;
+  return 'all';
+}
+
+function parseAIDecisionOutcome(raw: string | string[] | undefined): AIDecisionOutcomeKey {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  if (value === 'confirmed' || value === 'overridden' || value === 'inconclusive' || value === 'unreviewed') return value;
+  return 'all';
+}
+
 function buildLink(params: {
   tab: IntelligenceTab;
   range: RangeKey;
@@ -198,6 +252,10 @@ function buildLink(params: {
   focusStep?: number | null;
   queueStatus?: QueueStatusKey;
   queueOwner?: QueueOwnerKey;
+  aiType?: AIDecisionTypeKey;
+  aiMode?: AIDecisionModeKey;
+  aiSource?: AIDecisionSourceKey;
+  aiOutcome?: AIDecisionOutcomeKey;
 }): string {
   const query = new URLSearchParams();
   query.set('tab', params.tab);
@@ -207,6 +265,10 @@ function buildLink(params: {
   if (typeof params.focusStep === 'number') query.set('focusStep', String(params.focusStep));
   if (params.queueStatus) query.set('queueStatus', params.queueStatus);
   if (params.queueOwner) query.set('queueOwner', params.queueOwner);
+  if (params.aiType) query.set('aiType', params.aiType);
+  if (params.aiMode) query.set('aiMode', params.aiMode);
+  if (params.aiSource) query.set('aiSource', params.aiSource);
+  if (params.aiOutcome) query.set('aiOutcome', params.aiOutcome);
   return `/admin/session-intelligence?${query.toString()}`;
 }
 
@@ -333,6 +395,42 @@ async function fetchFrictionTriageAuditRows(trackSlug: string, stepIndex: number
   return data as FrictionTriageAuditRow[];
 }
 
+async function fetchAIDecisionRows(sinceIso: string, track: TrackKey): Promise<AIDecisionRow[]> {
+  const admin = getSupabaseAdminClient();
+  let query = admin
+    .from('SessionAIDecisions')
+    .select('id, created_at, decision_type, decision_mode, track_slug, step_index, actor_email, confidence, source, output_json')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: false })
+    .limit(1500);
+
+  if (track !== 'all') {
+    query = query.eq('track_slug', track);
+  }
+
+  const { data, error } = await query;
+  if (error || !data) return [];
+  return data as AIDecisionRow[];
+}
+
+async function fetchAIDecisionAuditRows(sinceIso: string, track: TrackKey): Promise<AIDecisionAuditRow[]> {
+  const admin = getSupabaseAdminClient();
+  let query = admin
+    .from('SessionFrictionTriageAudit')
+    .select('created_at, action_type, track_slug, step_index, after_status, after_owner')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: true })
+    .limit(5000);
+
+  if (track !== 'all') {
+    query = query.eq('track_slug', track);
+  }
+
+  const { data, error } = await query;
+  if (error || !data) return [];
+  return data as AIDecisionAuditRow[];
+}
+
 export default async function SessionIntelligencePage({
   searchParams,
 }: {
@@ -344,10 +442,15 @@ export default async function SessionIntelligencePage({
     focusStep?: string | string[];
     queueStatus?: string | string[];
     queueOwner?: string | string[];
+    aiType?: string | string[];
+    aiMode?: string | string[];
+    aiSource?: string | string[];
+    aiOutcome?: string | string[];
   }>;
 }) {
   const session = await getServerSession(authOptions);
   const userRole = (session?.user?.role as UserRole | undefined) ?? UserRole.USER;
+  const autoTriageEnabled = isFeatureEnabled(FeatureFlags.AI_TRIAGE_AUTOMATION, session?.user ?? null);
 
   if (!session?.user?.email) {
     redirect('/');
@@ -365,16 +468,22 @@ export default async function SessionIntelligencePage({
   const focusStep = parseFocusStep(resolvedParams?.focusStep);
   const queueStatus = parseQueueStatus(resolvedParams?.queueStatus);
   const queueOwner = parseQueueOwner(resolvedParams?.queueOwner);
+  const aiType = parseAIDecisionType(resolvedParams?.aiType);
+  const aiMode = parseAIDecisionMode(resolvedParams?.aiMode);
+  const aiSource = parseAIDecisionSource(resolvedParams?.aiSource);
+  const aiOutcome = parseAIDecisionOutcome(resolvedParams?.aiOutcome);
 
   const now = Date.now();
   const sinceIso = new Date(now - RANGE_DAYS[range] * 24 * 60 * 60 * 1000).toISOString();
 
-  const [committedRows, completedRows, finalizedRows, frictionSnapshots, frictionTriageRows] = await Promise.all([
+  const [committedRows, completedRows, finalizedRows, frictionSnapshots, frictionTriageRows, aiDecisionRows, aiAuditRows] = await Promise.all([
     fetchTelemetryRows('session_committed', sinceIso, track),
     fetchTelemetryRows('item_completed', sinceIso, track),
     fetchTelemetryRows('session_finalized', sinceIso, track),
     fetchFrictionSnapshots(sinceIso, track),
     fetchFrictionTriageRows(track),
+    fetchAIDecisionRows(sinceIso, track),
+    fetchAIDecisionAuditRows(sinceIso, track),
   ]);
 
   const committedEvents: CommittedEventInput[] = committedRows
@@ -416,6 +525,19 @@ export default async function SessionIntelligencePage({
   const repeatedItems = repeatAnalysis.itemRepeats.filter((item) => item.repeatedCount > 0).slice(0, 12);
 
   const frictionMetrics = buildFrictionMonitorMetrics(frictionSnapshots, { alertThreshold: 0.3, hotspotMinSamples: 3 });
+  const aiReplaySummary = buildAIDecisionReplaySummary(aiDecisionRows, aiAuditRows, {
+    recentLimit: 20,
+    decisionType: aiType === 'all' ? null : aiType,
+    decisionMode: aiMode === 'all' ? null : aiMode,
+    source: aiSource === 'all' ? null : aiSource,
+    reviewOutcome: aiOutcome === 'all' ? null : aiOutcome,
+  });
+  const aiAssistGroup = aiReplaySummary.groups.find(
+    (group) => group.decisionType === 'triage_recommendation' && group.decisionMode === 'assist'
+  );
+  const aiAutoGroup = aiReplaySummary.groups.find(
+    (group) => group.decisionType === 'triage_recommendation' && group.decisionMode === 'auto'
+  );
   const triageByHotspot = new Map(
     frictionTriageRows.map((row) => [triageKey(row.track_slug, row.step_index), row] as const)
   );
@@ -455,6 +577,12 @@ export default async function SessionIntelligencePage({
           ? !row.owner
           : row.owner === queueOwner;
     return statusMatches && ownerMatches;
+  });
+  const autoTriageEligibleRows = triageQueueRows.filter((row) => {
+    if (row.status === 'resolved') return false;
+    if (!row.updatedAt) return true;
+    const ageMinutes = (Date.now() - new Date(row.updatedAt).getTime()) / (1000 * 60);
+    return Number.isFinite(ageMinutes) && ageMinutes >= AUTO_TRIAGE_MINUTES_COOLDOWN;
   });
 
   const dynamicTracks = Array.from(
@@ -567,6 +695,20 @@ export default async function SessionIntelligencePage({
     }
   }
 
+  async function adjudicateAIDecision(formData: FormData) {
+    'use server';
+
+    const decisionId = formData.get('decisionId');
+    const label = formData.get('label');
+    const notes = formData.get('notes');
+    if (typeof decisionId !== 'string' || typeof label !== 'string') return;
+    await reviewAIDecisionAction({
+      decisionId,
+      label,
+      notes: typeof notes === 'string' ? notes : null,
+    });
+  }
+
   return (
     <main className="min-h-screen bg-background pt-24 pb-16">
       <section className="mx-auto max-w-7xl px-6">
@@ -582,13 +724,13 @@ export default async function SessionIntelligencePage({
 
         <div className="mb-4 inline-flex rounded-xl border border-border-subtle bg-surface-interactive p-1">
           <Link
-            href={buildLink({ tab: 'quality', range, track, queueStatus, queueOwner })}
+            href={buildLink({ tab: 'quality', range, track, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
             className={`rounded-lg px-4 py-2 text-sm ${tab === 'quality' ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
           >
             Recommendation Quality
           </Link>
           <Link
-            href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner })}
+            href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
             className={`rounded-lg px-4 py-2 text-sm ${tab === 'friction' ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
           >
             Friction Monitor
@@ -599,7 +741,7 @@ export default async function SessionIntelligencePage({
           {(['1d', '7d', '14d', '30d'] as RangeKey[]).map((option) => (
             <Link
               key={option}
-              href={buildLink({ tab, range: option, track, focusTrack, focusStep, queueStatus, queueOwner })}
+              href={buildLink({ tab, range: option, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
               className={`rounded-full border px-3 py-1 text-xs ${option === range ? 'border-border-interactive text-text-primary bg-surface-interactive' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface-interactive'}`}
             >
               {option}
@@ -619,6 +761,10 @@ export default async function SessionIntelligencePage({
                 focusStep: option === focusTrack ? focusStep : null,
                 queueStatus,
                 queueOwner,
+                aiType,
+                aiMode,
+                aiSource,
+                aiOutcome,
               })}
               className={`rounded-full border px-3 py-1 text-xs ${option === track ? 'border-border-interactive text-text-primary bg-surface-interactive' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface-interactive'}`}
             >
@@ -729,6 +875,315 @@ export default async function SessionIntelligencePage({
             </div>
 
             <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-lg font-semibold text-text-primary">AI Decision Replay</h2>
+                <div className="flex items-center gap-3 text-xs">
+                  <Link
+                    href={`/api/admin/session-intelligence/ai-replay?days=${RANGE_DAYS[range]}&decisionType=${aiType}&decisionMode=${aiMode}&source=${aiSource}&reviewOutcome=${aiOutcome}`}
+                    className="text-cyan-300 hover:text-cyan-200"
+                  >
+                    Open JSON
+                  </Link>
+                  <Link
+                    href={`/api/admin/session-intelligence/ai-replay?format=csv&days=${RANGE_DAYS[range]}&decisionType=${aiType}&decisionMode=${aiMode}&source=${aiSource}&reviewOutcome=${aiOutcome}`}
+                    className="text-cyan-300 hover:text-cyan-200"
+                  >
+                    Open CSV
+                  </Link>
+                </div>
+              </div>
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                {(['all', 'triage_brief', 'triage_recommendation'] as AIDecisionTypeKey[]).map((option) => (
+                  <Link
+                    key={`aiType:${option}`}
+                    href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType: option, aiMode, aiSource, aiOutcome })}
+                    className={`rounded-full border px-3 py-1 text-xs ${aiType === option ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
+                  >
+                    type: {option}
+                  </Link>
+                ))}
+              </div>
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                {(['all', 'assist', 'auto', 'suggest'] as AIDecisionModeKey[]).map((option) => (
+                  <Link
+                    key={`aiMode:${option}`}
+                    href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode: option, aiSource, aiOutcome })}
+                    className={`rounded-full border px-3 py-1 text-xs ${aiMode === option ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
+                  >
+                    mode: {option}
+                  </Link>
+                ))}
+              </div>
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                {(['all', 'session_intelligence', 'ai_recommendation', 'ai_auto_batch'] as AIDecisionSourceKey[]).map((option) => (
+                  <Link
+                    key={`aiSource:${option}`}
+                    href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource: option, aiOutcome })}
+                    className={`rounded-full border px-3 py-1 text-xs ${aiSource === option ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
+                  >
+                    source: {option}
+                  </Link>
+                ))}
+              </div>
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                {(['all', 'confirmed', 'overridden', 'inconclusive', 'unreviewed'] as AIDecisionOutcomeKey[]).map((option) => (
+                  <Link
+                    key={`aiOutcome:${option}`}
+                    href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome: option })}
+                    className={`rounded-full border px-3 py-1 text-xs ${aiOutcome === option ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
+                  >
+                    outcome: {option}
+                  </Link>
+                ))}
+              </div>
+              <div className="mb-4 grid gap-3 md:grid-cols-5">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Decisions Logged ({range})</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{aiReplaySummary.totalDecisions}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Assist Override Rate</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {aiAssistGroup ? formatPercent(aiAssistGroup.overrideRate) : '0.0%'}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Auto Override Rate</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {aiAutoGroup ? formatPercent(aiAutoGroup.overrideRate) : '0.0%'}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Average Confidence</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {aiReplaySummary.confidence.average === null ? '-' : aiReplaySummary.confidence.average.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+              <div className="mb-4 grid gap-3 md:grid-cols-4">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Confirmed</p>
+                  <p className="mt-1 text-xl font-semibold text-emerald-300">{formatPercent(aiReplaySummary.outcomes.confirmedRate)}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Overridden</p>
+                  <p className="mt-1 text-xl font-semibold text-amber-300">{formatPercent(aiReplaySummary.outcomes.overriddenRate)}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Unreviewed</p>
+                  <p className="mt-1 text-xl font-semibold text-blue-300">{formatPercent(aiReplaySummary.outcomes.unreviewedRate)}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Inconclusive</p>
+                  <p className="mt-1 text-xl font-semibold text-sky-300">{formatPercent(aiReplaySummary.outcomes.inconclusiveRate)}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Review Latency (p50/p90 min)</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {aiReplaySummary.reviewLatency.p50Minutes === null || aiReplaySummary.reviewLatency.p90Minutes === null
+                      ? '-'
+                      : `${Math.round(aiReplaySummary.reviewLatency.p50Minutes)}/${Math.round(aiReplaySummary.reviewLatency.p90Minutes)}`}
+                  </p>
+                </div>
+              </div>
+              <p className="mb-4 text-xs text-text-muted">
+                Confidence bins: high {aiReplaySummary.confidence.high}, medium {aiReplaySummary.confidence.medium}, low {aiReplaySummary.confidence.low}, unknown {aiReplaySummary.confidence.unknown}
+              </p>
+              {aiReplaySummary.insights.length > 0 && (
+                <div className="mb-4 rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="mb-2 text-xs uppercase tracking-wider text-text-muted">Actionable Insights</p>
+                  <ul className="space-y-2 text-sm">
+                    {aiReplaySummary.insights.map((insight) => (
+                      <li key={insight.id} className="text-text-secondary">
+                        <span className={`mr-2 rounded-full px-2 py-0.5 text-xs ${insight.severity === 'critical' ? 'bg-red-900/40 text-red-300' : insight.severity === 'warning' ? 'bg-amber-900/40 text-amber-300' : 'bg-blue-900/40 text-blue-300'}`}>
+                          {insight.severity}
+                        </span>
+                        <span className="text-text-primary">{insight.title}:</span> {insight.message}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="mb-4 overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-text-muted">
+                    <tr>
+                      <th className="py-2">Type</th>
+                      <th className="py-2">Mode</th>
+                      <th className="py-2">Total</th>
+                      <th className="py-2">Overrides</th>
+                      <th className="py-2">Override Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {aiReplaySummary.groups.map((group) => (
+                      <tr key={`${group.decisionType}:${group.decisionMode}`} className="border-t border-border-subtle">
+                        <td className="py-2 text-text-secondary">{group.decisionType}</td>
+                        <td className="py-2 text-text-secondary">{group.decisionMode}</td>
+                        <td className="py-2 text-text-primary">{group.total}</td>
+                        <td className="py-2 text-text-secondary">{group.overrides}</td>
+                        <td className="py-2 text-text-primary">{formatPercent(group.overrideRate)}</td>
+                      </tr>
+                    ))}
+                    {aiReplaySummary.groups.length === 0 && (
+                      <tr className="border-t border-border-subtle">
+                        <td className="py-3 text-text-muted" colSpan={5}>No AI decisions in this window yet.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mb-4 overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-text-muted">
+                    <tr>
+                      <th className="py-2">Source</th>
+                      <th className="py-2">Total</th>
+                      <th className="py-2">Overrides</th>
+                      <th className="py-2">Override Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {aiReplaySummary.sources.map((row) => (
+                      <tr key={row.source} className="border-t border-border-subtle">
+                        <td className="py-2 text-text-secondary">{row.source}</td>
+                        <td className="py-2 text-text-primary">{row.total}</td>
+                        <td className="py-2 text-text-secondary">{row.overrides}</td>
+                        <td className="py-2 text-text-primary">{formatPercent(row.overrideRate)}</td>
+                      </tr>
+                    ))}
+                    {aiReplaySummary.sources.length === 0 && (
+                      <tr className="border-t border-border-subtle">
+                        <td className="py-3 text-text-muted" colSpan={4}>No source-level data in this window.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mb-4 overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-text-muted">
+                    <tr>
+                      <th className="py-2">Hotspot</th>
+                      <th className="py-2">Total</th>
+                      <th className="py-2">Overrides</th>
+                      <th className="py-2">Override Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {aiReplaySummary.hotspots.slice(0, 10).map((row) => (
+                      <tr key={`${row.trackSlug}:${row.stepIndex}`} className="border-t border-border-subtle">
+                        <td className="py-2 text-text-secondary">{`${row.trackSlug}:${row.stepIndex}`}</td>
+                        <td className="py-2 text-text-primary">{row.total}</td>
+                        <td className="py-2 text-text-secondary">{row.overrides}</td>
+                        <td className="py-2 text-text-primary">{formatPercent(row.overrideRate)}</td>
+                      </tr>
+                    ))}
+                    {aiReplaySummary.hotspots.length === 0 && (
+                      <tr className="border-t border-border-subtle">
+                        <td className="py-3 text-text-muted" colSpan={4}>No hotspot-level data in this window.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mb-4 overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-text-muted">
+                    <tr>
+                      <th className="py-2">Confidence Bucket</th>
+                      <th className="py-2">Total</th>
+                      <th className="py-2">Overrides</th>
+                      <th className="py-2">Override Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {aiReplaySummary.calibration.map((row) => (
+                      <tr key={row.bucket} className="border-t border-border-subtle">
+                        <td className="py-2 text-text-secondary">{row.bucket}</td>
+                        <td className="py-2 text-text-primary">{row.total}</td>
+                        <td className="py-2 text-text-secondary">{row.overrides}</td>
+                        <td className="py-2 text-text-primary">{formatPercent(row.overrideRate)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-text-muted">
+                    <tr>
+                      <th className="py-2">Time</th>
+                      <th className="py-2">Type</th>
+                      <th className="py-2">Mode</th>
+                      <th className="py-2">Hotspot</th>
+                      <th className="py-2">Confidence</th>
+                      <th className="py-2">Outcome</th>
+                      <th className="py-2">First Review (min)</th>
+                      <th className="py-2">Adjudicate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {aiReplaySummary.recent.map((row) => (
+                      <tr key={`${row.createdAt}:${row.trackSlug}:${row.stepIndex}:${row.decisionType}`} className="border-t border-border-subtle">
+                        <td className="py-2 text-text-secondary">{new Date(row.createdAt).toLocaleString()}</td>
+                        <td className="py-2 text-text-secondary">{row.decisionType}</td>
+                        <td className="py-2 text-text-secondary">{row.decisionMode}</td>
+                        <td className="py-2 text-text-secondary">{`${row.trackSlug}:${row.stepIndex}`}</td>
+                        <td className="py-2 text-text-primary">{row.confidence === null ? '-' : row.confidence.toFixed(2)}</td>
+                        <td className={`py-2 font-medium ${row.reviewOutcome === 'overridden' ? 'text-amber-300' : row.reviewOutcome === 'confirmed' ? 'text-emerald-300' : row.reviewOutcome === 'inconclusive' ? 'text-sky-300' : 'text-blue-300'}`}>
+                          {row.reviewOutcome}
+                        </td>
+                        <td className="py-2 text-text-secondary">{row.minutesToFirstManualUpdate === null ? '-' : row.minutesToFirstManualUpdate.toFixed(1)}</td>
+                        <td className="py-2">
+                          <form action={adjudicateAIDecision} className="flex flex-wrap items-center gap-1">
+                            <input type="hidden" name="decisionId" value={row.id} />
+                            <select
+                              name="label"
+                              defaultValue={row.reviewLabel ?? 'confirmed'}
+                              className="rounded border border-border-subtle bg-surface px-2 py-1 text-xs text-text-primary"
+                            >
+                              <option value="confirmed">confirmed</option>
+                              <option value="overridden">overridden</option>
+                              <option value="inconclusive">inconclusive</option>
+                            </select>
+                            <input
+                              name="notes"
+                              defaultValue={row.reviewNotes ?? ''}
+                              placeholder="optional note"
+                              className="w-40 rounded border border-border-subtle bg-surface px-2 py-1 text-xs text-text-primary placeholder:text-text-muted"
+                            />
+                            <button
+                              type="submit"
+                              className="rounded border border-border-interactive px-2 py-1 text-xs text-text-primary hover:bg-surface"
+                            >
+                              Save
+                            </button>
+                          </form>
+                          {(row.reviewedBy || row.reviewedAt) && (
+                            <p className="mt-1 text-[11px] text-text-muted">
+                              {row.reviewedBy || 'admin'} {row.reviewedAt ? `at ${new Date(row.reviewedAt).toLocaleString()}` : ''}
+                            </p>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    {aiReplaySummary.recent.length === 0 && (
+                      <tr className="border-t border-border-subtle">
+                        <td className="py-3 text-text-muted" colSpan={8}>No recent decisions to replay.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                 <h2 className="text-lg font-semibold text-text-primary">Triage Queue</h2>
                 <p className="text-xs text-text-muted">Sorted by risk score (stuck share * sample size)</p>
@@ -739,7 +1194,7 @@ export default async function SessionIntelligencePage({
                   type="hidden"
                   name="targets"
                   value={JSON.stringify(
-                    triageQueueRows.slice(0, 5).map((row) => ({
+                    autoTriageEligibleRows.slice(0, 5).map((row) => ({
                       trackSlug: row.trackSlug,
                       stepIndex: row.stepIndex,
                     }))
@@ -748,17 +1203,22 @@ export default async function SessionIntelligencePage({
                 <button
                   type="submit"
                   className="rounded-full border border-emerald-700/60 bg-emerald-950/30 px-4 py-1.5 text-xs text-emerald-200 hover:bg-emerald-900/40 disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={triageQueueRows.length === 0}
+                  disabled={!autoTriageEnabled || autoTriageEligibleRows.length === 0}
                 >
-                  AI Auto-triage Top 5
+                  AI Auto-triage Top 5 Eligible
                 </button>
+                <span className="text-xs text-text-muted">
+                  {autoTriageEnabled
+                    ? `Eligible: ${autoTriageEligibleRows.length} (cooldown ${AUTO_TRIAGE_MINUTES_COOLDOWN}m)`
+                    : 'Auto-triage disabled by feature flag'}
+                </span>
               </form>
 
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 {(['open', 'all', 'new', 'investigating', 'resolved'] as QueueStatusKey[]).map((status) => (
                   <Link
                     key={status}
-                    href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus: status, queueOwner })}
+                    href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus: status, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
                     className={`rounded-full border px-3 py-1 text-xs ${queueStatus === status ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
                   >
                     {status}
@@ -768,13 +1228,13 @@ export default async function SessionIntelligencePage({
 
               <div className="mb-4 flex flex-wrap items-center gap-2">
                 <Link
-                  href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: 'all' })}
+                  href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: 'all', aiType, aiMode, aiSource, aiOutcome })}
                   className={`rounded-full border px-3 py-1 text-xs ${queueOwner === 'all' ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
                 >
                   all owners
                 </Link>
                 <Link
-                  href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: 'unassigned' })}
+                  href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: 'unassigned', aiType, aiMode, aiSource, aiOutcome })}
                   className={`rounded-full border px-3 py-1 text-xs ${queueOwner === 'unassigned' ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
                 >
                   unassigned
@@ -782,7 +1242,7 @@ export default async function SessionIntelligencePage({
                 {queueOwnerOptions.map((owner) => (
                   <Link
                     key={owner}
-                    href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: owner })}
+                    href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: owner, aiType, aiMode, aiSource, aiOutcome })}
                     className={`rounded-full border px-3 py-1 text-xs ${queueOwner === owner ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
                   >
                     {owner}
@@ -813,6 +1273,10 @@ export default async function SessionIntelligencePage({
                               focusStep: row.stepIndex,
                               queueStatus,
                               queueOwner,
+                              aiType,
+                              aiMode,
+                              aiSource,
+                              aiOutcome,
                             })}
                             className="text-xs text-cyan-300 hover:text-cyan-200"
                           >
@@ -893,6 +1357,10 @@ export default async function SessionIntelligencePage({
                                 focusStep: row.stepIndex,
                                 queueStatus,
                                 queueOwner,
+                                aiType,
+                                aiMode,
+                                aiSource,
+                                aiOutcome,
                               })}
                               className="text-xs text-cyan-300 hover:text-cyan-200"
                             >
@@ -918,7 +1386,7 @@ export default async function SessionIntelligencePage({
                     </p>
                   </div>
                   <Link
-                    href={buildLink({ tab: 'friction', range, track, queueStatus, queueOwner })}
+                    href={buildLink({ tab: 'friction', range, track, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
                     className="rounded-full border border-border-subtle px-3 py-1 text-xs text-text-secondary hover:bg-surface"
                   >
                     Clear
