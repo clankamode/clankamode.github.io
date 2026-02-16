@@ -20,6 +20,11 @@ const BOOKMARKS_TABLE = 'UserBookmarks';
 const PRACTICE_QUESTIONS_TABLE = 'InterviewQuestions';
 const SESSION_PLAN_LOCK_TTL_SECONDS = 20 * 60;
 const SESSION_FINALIZED_LOOKBACK_HOURS = 8;
+const SESSION_FINALIZED_LOOKBACK_ROWS = 12;
+const ITEM_COMPLETED_LOOKBACK_DAYS = 7;
+const ITEM_COMPLETED_LOOKBACK_ROWS = 120;
+const SESSION_COMMITTED_LOOKBACK_DAYS = 7;
+const SESSION_COMMITTED_LOOKBACK_ROWS = 120;
 
 interface SessionPlanLock {
   createdAt: number;
@@ -240,6 +245,17 @@ function formatConceptLabel(conceptSlug: string | null | undefined): string | nu
 
   if (!label) return null;
   return label[0].toUpperCase() + label.slice(1);
+}
+
+export function normalizeSessionItemHref(href: string): string {
+  return href.split('?')[0].split('#')[0];
+}
+
+export function resolvePrimaryConceptSlug(article: LearningArticle): string {
+  if (article.primary_concept?.trim()) {
+    return article.primary_concept.trim();
+  }
+  return `article.${article.slug}`;
 }
 
 function getDayKeyUTC(): string {
@@ -596,26 +612,90 @@ async function getRecentlyFinalizedItemHrefs(
     .eq('event_type', 'session_finalized')
     .gte('created_at', lookbackISO)
     .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(SESSION_FINALIZED_LOOKBACK_ROWS);
 
-  if (error || !data || typeof data !== 'object') {
+  if (error || !data) {
     return new Set<string>();
   }
 
-  const payload = (data as { payload?: unknown }).payload;
-  if (!payload || typeof payload !== 'object') {
+  const hrefs = new Set<string>();
+  for (const row of data) {
+    const payload = (row as { payload?: unknown }).payload;
+    if (!payload || typeof payload !== 'object') continue;
+    const completedItems = (payload as { completedItems?: unknown }).completedItems;
+    if (!Array.isArray(completedItems)) continue;
+
+    for (const item of completedItems) {
+      if (typeof item !== 'string' || item.length === 0) continue;
+      hrefs.add(normalizeSessionItemHref(item));
+    }
+  }
+
+  return hrefs;
+}
+
+async function getRecentlyCompletedItemHrefs(
+  userId: string,
+  trackSlug: string,
+  googleId?: string
+): Promise<Set<string>> {
+  const lookbackISO = new Date(Date.now() - ITEM_COMPLETED_LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('TelemetryEvents')
+    .select('payload')
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
+    .eq('track_slug', trackSlug)
+    .eq('event_type', 'item_completed')
+    .gte('created_at', lookbackISO)
+    .order('created_at', { ascending: false })
+    .limit(ITEM_COMPLETED_LOOKBACK_ROWS);
+
+  if (error || !data) {
     return new Set<string>();
   }
 
-  const completedItems = (payload as { completedItems?: unknown }).completedItems;
-  if (!Array.isArray(completedItems)) {
+  const hrefs = new Set<string>();
+  for (const row of data) {
+    const payload = (row as { payload?: unknown }).payload;
+    if (!payload || typeof payload !== 'object') continue;
+    const itemHref = (payload as { itemHref?: unknown }).itemHref;
+    if (typeof itemHref !== 'string' || itemHref.length === 0) continue;
+    hrefs.add(normalizeSessionItemHref(itemHref));
+  }
+
+  return hrefs;
+}
+
+async function getRecentlyCommittedItemHrefs(
+  userId: string,
+  trackSlug: string,
+  googleId?: string
+): Promise<Set<string>> {
+  const lookbackISO = new Date(Date.now() - SESSION_COMMITTED_LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('TelemetryEvents')
+    .select('payload')
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
+    .eq('track_slug', trackSlug)
+    .eq('event_type', 'session_committed')
+    .gte('created_at', lookbackISO)
+    .order('created_at', { ascending: false })
+    .limit(SESSION_COMMITTED_LOOKBACK_ROWS);
+
+  if (error || !data) {
     return new Set<string>();
   }
 
-  return new Set(
-    completedItems.filter((item): item is string => typeof item === 'string' && item.length > 0)
-  );
+  const hrefs = new Set<string>();
+  for (const row of data) {
+    const payload = (row as { payload?: unknown }).payload;
+    if (!payload || typeof payload !== 'object') continue;
+    const itemHref = (payload as { itemHref?: unknown }).itemHref;
+    if (typeof itemHref !== 'string' || itemHref.length === 0) continue;
+    hrefs.add(normalizeSessionItemHref(itemHref));
+  }
+
+  return hrefs;
 }
 
 interface LearnCandidateCollection {
@@ -656,9 +736,10 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
             continue;
           }
 
+          const primaryConceptSlug = resolvePrimaryConceptSlug(article);
           const intent = useGenerative && userState
             ? deriveStateAwareIntent({
-              primaryConceptSlug: article.primary_concept ?? null,
+              primaryConceptSlug,
               userState,
               articleSlug: article.slug,
               pillarSlug: pillar.slug
@@ -676,8 +757,8 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
               estMinutes: article.reading_time_minutes,
               intent,
               confidence: 0.9,
-              primaryConceptSlug: article.primary_concept ?? null,
-              targetConcept: formatConceptLabel(article.primary_concept) ?? article.title,
+              primaryConceptSlug,
+              targetConcept: formatConceptLabel(primaryConceptSlug) ?? article.title,
               sourceArticleTitle: article.title,
             });
           }
@@ -709,10 +790,10 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
                   text: `${intent.text} Focus this section because targeted retrieval beats broad rereads in short sessions.`,
                 },
                 confidence: 0.88,
-                primaryConceptSlug: article.primary_concept ?? null,
+                primaryConceptSlug,
                 targetConcept:
                   sectionTitle.toLowerCase() === 'introduction'
-                    ? (formatConceptLabel(article.primary_concept) ?? article.title)
+                    ? (formatConceptLabel(primaryConceptSlug) ?? article.title)
                     : sectionTitle,
                 sessionChunkIndex: chunk.index,
                 sessionChunkCount: chunks.length,
@@ -754,9 +835,20 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
   const recentlyFinalizedItemHrefs = useGenerative
     ? await getRecentlyFinalizedItemHrefs(userId, plannerTrackSlug, googleId)
     : new Set<string>();
-  if (recentlyFinalizedItemHrefs.size > 0) {
-    articleCandidates = articleCandidates.filter((item) => !recentlyFinalizedItemHrefs.has(item.href));
-    sectionCandidates = sectionCandidates.filter((item) => !recentlyFinalizedItemHrefs.has(item.href));
+  const recentlyCompletedItemHrefs = useGenerative
+    ? await getRecentlyCompletedItemHrefs(userId, plannerTrackSlug, googleId)
+    : new Set<string>();
+  const recentlyCommittedItemHrefs = useGenerative
+    ? await getRecentlyCommittedItemHrefs(userId, plannerTrackSlug, googleId)
+    : new Set<string>();
+  const recentExclusionHrefs = new Set<string>([
+    ...Array.from(recentlyFinalizedItemHrefs),
+    ...Array.from(recentlyCompletedItemHrefs),
+    ...Array.from(recentlyCommittedItemHrefs),
+  ]);
+  if (recentExclusionHrefs.size > 0) {
+    articleCandidates = articleCandidates.filter((item) => !recentExclusionHrefs.has(normalizeSessionItemHref(item.href)));
+    sectionCandidates = sectionCandidates.filter((item) => !recentExclusionHrefs.has(normalizeSessionItemHref(item.href)));
   }
   const dayKey = getDayKeyUTC();
   const practicePerformance = useGenerative
@@ -770,8 +862,8 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
       `${userId}:${plannerTrackSlug}:${dayKey}`
     )
     : [];
-  const filteredPracticeCandidates = recentlyFinalizedItemHrefs.size > 0
-    ? practiceCandidates.filter((item) => !recentlyFinalizedItemHrefs.has(item.href))
+  const filteredPracticeCandidates = recentExclusionHrefs.size > 0
+    ? practiceCandidates.filter((item) => !recentExclusionHrefs.has(normalizeSessionItemHref(item.href)))
     : practiceCandidates;
   const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
   const weeklyCompletions = summary.allCompletionDates.filter((value) => new Date(value).getTime() >= sevenDaysAgo).length;

@@ -6,6 +6,24 @@ import { UserRole } from '@/types/roles';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { invalidateCache } from '@/lib/redis';
 
+const PROGRESS_TABLE = 'UserArticleProgress';
+
+function extractLearnArticleSlugsFromCompletedItems(items: string[]): string[] {
+  const slugs = new Set<string>();
+
+  for (const href of items) {
+    if (typeof href !== 'string' || !href.startsWith('/learn/')) continue;
+    const [pathOnly] = href.split('?');
+    const segments = pathOnly.split('/').filter(Boolean);
+    if (segments.length < 3) continue;
+    const articleSlug = segments[2]?.trim();
+    if (!articleSlug) continue;
+    slugs.add(articleSlug);
+  }
+
+  return Array.from(slugs);
+}
+
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
@@ -63,6 +81,34 @@ export async function POST(req: NextRequest) {
     if (error && !error.message.toLowerCase().includes('duplicate')) {
       console.error('[session/finalize] failed:', error.message);
       return NextResponse.json({ error: 'Failed to finalize session' }, { status: 500 });
+    }
+
+    const completedLearnSlugs = extractLearnArticleSlugsFromCompletedItems(normalizedCompletedItems);
+    if (completedLearnSlugs.length > 0) {
+      const { data: articles, error: lookupError } = await admin
+        .from('LearningArticles')
+        .select('id, slug')
+        .in('slug', completedLearnSlugs);
+
+      if (lookupError) {
+        console.warn('[session/finalize] learning article lookup failed:', lookupError.message);
+      } else if (articles && articles.length > 0) {
+        const completedAt = new Date().toISOString();
+        const progressRows = articles.map((article) => ({
+          email: identity.email,
+          google_id: identity.googleId ?? null,
+          article_id: article.id,
+          completed_at: completedAt,
+        }));
+
+        const { error: progressError } = await admin
+          .from(PROGRESS_TABLE)
+          .upsert(progressRows, { onConflict: 'email,article_id' });
+
+        if (progressError) {
+          console.warn('[session/finalize] progress upsert failed:', progressError.message);
+        }
+      }
     }
 
     await invalidateCache(`session-plan-lock:v1:${identity.email}:${trackSlug}`);
