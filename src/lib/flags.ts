@@ -5,6 +5,7 @@ export const FeatureFlags = {
     SESSION_MODE: 'session_mode',
     USE_MICRO_V1: 'use_micro_v1',
     GENERATIVE_SESSIONS: 'generative_sessions',
+    FRICTION_INTELLIGENCE: 'friction_intelligence',
 } as const;
 
 export type FeatureFlag = (typeof FeatureFlags)[keyof typeof FeatureFlags];
@@ -29,6 +30,10 @@ export const flags: Record<FeatureFlag, FlagConfig> = {
     },
     [FeatureFlags.GENERATIVE_SESSIONS]: {
         defaultValue: true,
+        allowRoles: [UserRole.ADMIN],
+    },
+    [FeatureFlags.FRICTION_INTELLIGENCE]: {
+        defaultValue: false,
         allowRoles: [UserRole.ADMIN],
     },
 };

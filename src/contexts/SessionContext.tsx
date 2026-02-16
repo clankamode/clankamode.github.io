@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useSession as useAuthSession } from 'next-auth/react';
 import type { SessionItem, LearningDelta } from '@/lib/progress';
 import { type MicroSessionProposal, microSessionProviderV0 } from '@/lib/session-micro';
 import { deriveLearningDelta, resolveDeltaLabels, fetchConceptDictionary, updateUserConceptStats } from '@/lib/delta-derivation';
@@ -12,11 +13,16 @@ import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { getUserLearningState } from '@/lib/user-learning-state';
 import { logTelemetryEvent } from '@/lib/telemetry';
 import { createTransitionLock, type TransitionKind } from '@/lib/transition-lock';
+import { classifyFriction } from '@/lib/friction-classifier';
+import { logFrictionSnapshotAction } from '@/app/actions/friction';
+import { FRICTION_EMIT_CONFIDENCE_THRESHOLD, normalizeFrictionSnapshotPayload } from '@/lib/friction-snapshot';
+import type { FrictionSignalVector, FrictionTrigger, FrictionState } from '@/types/friction';
 
 export type SessionPhase = 'idle' | 'entry' | 'execution' | 'exit';
 type SessionTransitionStatus = 'ready' | 'advancing' | 'finalizing';
 const SESSION_STATE_STORAGE_KEY = 'session:state:v1';
 const LAST_MICRO_CONCEPT_STORAGE_KEY = 'session:last-micro-concept:v1';
+const PRACTICE_BLOCKED_EVENT_NAME = 'session:practice-blocked';
 
 export interface SessionScope {
     track: { slug: string; name: string };
@@ -114,8 +120,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const stateRef = useRef<SessionState>(initialState);
     const router = useRouter();
     const pathname = usePathname();
+    const { data: authSession } = useAuthSession();
     const isMountedRef = useRef(true);
     const transitionLockRef = useRef(createTransitionLock());
+    const stepStartedAtRef = useRef<number | null>(null);
+    const lastInteractionAtRef = useRef<number | null>(null);
+    const chunkNextCountRef = useRef(0);
+    const chunkPrevCountRef = useRef(0);
+    const drawerToggleCountRef = useRef(0);
+    const practiceBlockedCountRef = useRef(0);
+    const meaningfulActionCountRef = useRef(0);
+    const currentTrackedStepRef = useRef<number | null>(null);
+    const previousFrictionStateRef = useRef<FrictionState | null>(null);
+    const stepExitDedupeRef = useRef<string | null>(null);
 
     useEffect(() => {
         return () => { isMountedRef.current = false; };
@@ -160,12 +177,168 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }, [state]);
 
     const isInSession = state.phase === 'execution';
+    const frictionEnabled = isFeatureEnabled(FeatureFlags.FRICTION_INTELLIGENCE, authSession?.user ?? null);
+
+    const resetFrictionMonitorForStep = useCallback((stepIndex: number) => {
+        const now = Date.now();
+        stepStartedAtRef.current = now;
+        lastInteractionAtRef.current = now;
+        chunkNextCountRef.current = 0;
+        chunkPrevCountRef.current = 0;
+        drawerToggleCountRef.current = 0;
+        practiceBlockedCountRef.current = 0;
+        meaningfulActionCountRef.current = 0;
+        currentTrackedStepRef.current = stepIndex;
+        previousFrictionStateRef.current = null;
+        stepExitDedupeRef.current = null;
+    }, []);
+
+    const buildFrictionSignalVector = useCallback((snapshot: SessionState): FrictionSignalVector | null => {
+        if (snapshot.phase !== 'execution' || !snapshot.scope || !snapshot.execution) {
+            return null;
+        }
+
+        const currentItem = snapshot.scope.items[snapshot.execution.currentIndex];
+        const estimatedMinutes = Math.max(currentItem?.estMinutes ?? snapshot.scope.estimatedMinutes ?? 10, 1);
+        const now = Date.now();
+        const stepStartedAt = stepStartedAtRef.current ?? now;
+        const lastInteractionAt = lastInteractionAtRef.current ?? stepStartedAt;
+        const secondsSinceLastInteraction = Math.max(0, Math.round((now - lastInteractionAt) / 1000));
+
+        return {
+            stepIndex: snapshot.execution.currentIndex,
+            elapsedMs: Math.max(0, now - stepStartedAt),
+            estimatedMs: estimatedMinutes * 60_000,
+            chunkNextCount: chunkNextCountRef.current,
+            chunkPrevCount: chunkPrevCountRef.current,
+            drawerToggleCount: drawerToggleCountRef.current,
+            practiceBlockedCount: practiceBlockedCountRef.current,
+            meaningfulActionCount: meaningfulActionCountRef.current,
+            secondsSinceLastInteraction,
+            cadenceDrop: secondsSinceLastInteraction >= 120,
+        };
+    }, []);
+
+    const emitFrictionSnapshot = useCallback((trigger: FrictionTrigger, snapshot: SessionState = stateRef.current) => {
+        if (!frictionEnabled || snapshot.phase !== 'execution' || !snapshot.scope || !snapshot.execution) {
+            return;
+        }
+
+        const signals = buildFrictionSignalVector(snapshot);
+        if (!signals) return;
+
+        const classification = classifyFriction(signals);
+        if (classification.confidence < FRICTION_EMIT_CONFIDENCE_THRESHOLD) return;
+
+        if (trigger === 'state_change') {
+            if (previousFrictionStateRef.current === null) {
+                previousFrictionStateRef.current = classification.state;
+                return;
+            }
+            if (previousFrictionStateRef.current === classification.state) {
+                return;
+            }
+            previousFrictionStateRef.current = classification.state;
+        }
+
+        if (trigger === 'step_exit') {
+            const stepExitKey = `${snapshot.execution.sessionId}:${snapshot.execution.currentIndex}`;
+            if (stepExitDedupeRef.current === stepExitKey) {
+                return;
+            }
+            stepExitDedupeRef.current = stepExitKey;
+        }
+
+        const payload = normalizeFrictionSnapshotPayload({
+            sessionId: snapshot.execution.sessionId,
+            trackSlug: snapshot.scope.track.slug,
+            stepIndex: snapshot.execution.currentIndex,
+            frictionState: classification.state,
+            confidence: classification.confidence,
+            signals,
+            trigger,
+        });
+
+        logFrictionSnapshotAction(payload).catch((error) => {
+            console.warn('[friction] snapshot action failed:', error);
+        });
+
+        if (!snapshot.scope.userId) {
+            return;
+        }
+
+        logTelemetryEvent({
+            userId: snapshot.scope.userId,
+            trackSlug: snapshot.scope.track.slug,
+            sessionId: snapshot.execution.sessionId,
+            eventType: 'friction_state_changed',
+            mode: 'execute',
+            payload: {
+                phase: 'execution',
+                trigger,
+                frictionState: classification.state,
+                confidence: classification.confidence,
+                reasons: classification.reasons,
+                signals,
+            },
+            dedupeKey: payload.dedupeKey,
+        }).catch((error) => {
+            console.warn('[friction] telemetry emit failed:', error);
+        });
+    }, [buildFrictionSignalVector, frictionEnabled]);
+
+    const markInteraction = useCallback((params: {
+        chunkNext?: number;
+        chunkPrev?: number;
+        drawerToggle?: number;
+        meaningfulAction?: number;
+        practiceBlocked?: number;
+    }) => {
+        lastInteractionAtRef.current = Date.now();
+        chunkNextCountRef.current += params.chunkNext ?? 0;
+        chunkPrevCountRef.current += params.chunkPrev ?? 0;
+        drawerToggleCountRef.current += params.drawerToggle ?? 0;
+        meaningfulActionCountRef.current += params.meaningfulAction ?? 0;
+        practiceBlockedCountRef.current += params.practiceBlocked ?? 0;
+        emitFrictionSnapshot('state_change');
+    }, [emitFrictionSnapshot]);
 
     useEffect(() => {
         if (state.phase === 'exit' && pathname !== '/home' && pathname !== '/learn/progress') {
             router.push('/home');
         }
     }, [state.phase, pathname, router]);
+
+    useEffect(() => {
+        if (!frictionEnabled || state.phase !== 'execution' || !state.execution) {
+            return;
+        }
+
+        if (currentTrackedStepRef.current !== state.execution.currentIndex || stepStartedAtRef.current === null) {
+            resetFrictionMonitorForStep(state.execution.currentIndex);
+        }
+    }, [frictionEnabled, resetFrictionMonitorForStep, state.execution, state.phase]);
+
+    useEffect(() => {
+        const onPracticeBlocked = (event: Event) => {
+            if (!frictionEnabled) return;
+
+            const current = stateRef.current;
+            if (current.phase !== 'execution' || !current.execution) return;
+
+            const customEvent = event as CustomEvent<{ sessionId?: string }>;
+            if (customEvent.detail?.sessionId && customEvent.detail.sessionId !== current.execution.sessionId) {
+                return;
+            }
+
+            markInteraction({ practiceBlocked: 1 });
+        };
+
+        window.addEventListener(PRACTICE_BLOCKED_EVENT_NAME, onPracticeBlocked);
+        return () => {
+            window.removeEventListener(PRACTICE_BLOCKED_EVENT_NAME, onPracticeBlocked);
+        };
+    }, [frictionEnabled, markInteraction]);
 
     const commitSession = useCallback((scope: SessionScope) => {
         const sessionId = scope.sessionId || crypto.randomUUID();
@@ -194,6 +367,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             });
         }
 
+        if (frictionEnabled) {
+            resetFrictionMonitorForStep(0);
+        }
+
         setState({
             phase: 'execution',
             scope: { ...scope, sessionId },
@@ -201,7 +378,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             exit: null,
             transitionStatus: 'ready',
         });
-    }, []);
+    }, [frictionEnabled, resetFrictionMonitorForStep]);
 
     const setTransitionStatus = useCallback((kind: TransitionKind) => {
         setState((prev) => ({
@@ -257,6 +434,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         runWithTransitionLock('advancing', () => {
             const prev = stateRef.current;
             if (!prev.execution || !prev.scope) return;
+            if (frictionEnabled) {
+                markInteraction({ meaningfulAction: 1 });
+                emitFrictionSnapshot('step_exit', prev);
+            }
 
             const currentItem = prev.scope.items[prev.execution.currentIndex];
             const newCompletedItems = [...prev.execution.completedItems, currentItem?.href || ''];
@@ -421,6 +602,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 return;
             }
 
+            if (frictionEnabled) {
+                resetFrictionMonitorForStep(newIndex);
+            }
+
             setState({
                 ...prev,
                 execution: {
@@ -434,10 +619,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 transitionStatus: 'ready',
             });
         });
-    }, [runWithTransitionLock]);
+    }, [emitFrictionSnapshot, frictionEnabled, markInteraction, resetFrictionMonitorForStep, runWithTransitionLock]);
 
     const completeSession = useCallback(() => {
         runWithTransitionLock('finalizing', () => {
+            if (frictionEnabled) {
+                emitFrictionSnapshot('step_exit');
+            }
             setState((prev) => {
                 if (!prev.execution || !prev.scope) return prev;
                 if (prev.execution.transitionStatus !== 'finalizing' || prev.transitionStatus !== 'finalizing') return prev;
@@ -485,10 +673,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 };
             });
         });
-    }, [runWithTransitionLock]);
+    }, [emitFrictionSnapshot, frictionEnabled, runWithTransitionLock]);
 
     const abandonSession = useCallback(() => {
         runWithTransitionLock('finalizing', () => {
+            if (frictionEnabled) {
+                emitFrictionSnapshot('step_exit');
+            }
             setState((prev) => {
                 if (!prev.execution || !prev.scope) return prev;
                 if (prev.execution.transitionStatus !== 'finalizing' || prev.transitionStatus !== 'finalizing') return prev;
@@ -514,41 +705,49 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 };
             });
         });
-    }, [runWithTransitionLock]);
+    }, [emitFrictionSnapshot, frictionEnabled, runWithTransitionLock]);
 
     const resetToEntry = useCallback(() => {
         setState(initialState);
     }, []);
 
     const nextChunk = useCallback(() => {
-        setState((prev) => {
-            if (!prev.execution || prev.execution.currentChunk >= prev.execution.totalChunks - 1) {
-                return prev;
-            }
-            return {
-                ...prev,
-                execution: {
-                    ...prev.execution,
-                    currentChunk: prev.execution.currentChunk + 1,
-                },
-            };
+        const prev = stateRef.current;
+        if (!prev.execution || prev.execution.currentChunk >= prev.execution.totalChunks - 1) {
+            return;
+        }
+
+        setState({
+            ...prev,
+            execution: {
+                ...prev.execution,
+                currentChunk: prev.execution.currentChunk + 1,
+            },
         });
-    }, []);
+
+        if (frictionEnabled) {
+            markInteraction({ chunkNext: 1, meaningfulAction: 1 });
+        }
+    }, [frictionEnabled, markInteraction]);
 
     const prevChunk = useCallback(() => {
-        setState((prev) => {
-            if (!prev.execution || prev.execution.currentChunk <= 0) {
-                return prev;
-            }
-            return {
-                ...prev,
-                execution: {
-                    ...prev.execution,
-                    currentChunk: prev.execution.currentChunk - 1,
-                },
-            };
+        const prev = stateRef.current;
+        if (!prev.execution || prev.execution.currentChunk <= 0) {
+            return;
+        }
+
+        setState({
+            ...prev,
+            execution: {
+                ...prev.execution,
+                currentChunk: prev.execution.currentChunk - 1,
+            },
         });
-    }, []);
+
+        if (frictionEnabled) {
+            markInteraction({ chunkPrev: 1 });
+        }
+    }, [frictionEnabled, markInteraction]);
 
     const setTotalChunks = useCallback((total: number) => {
         setState((prev) => {

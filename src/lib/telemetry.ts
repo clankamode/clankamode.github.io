@@ -22,7 +22,8 @@ export async function logTelemetryEvent(params: {
       | 'coding_workspace_opened'
       | 'practice_tests_ran'
       | 'practice_completion_confirmed'
-      | 'practice_completion_blocked';
+      | 'practice_completion_blocked'
+      | 'friction_state_changed';
     mode: 'gate' | 'execute' | 'exit';
     payload?: Record<string, unknown>;
     dedupeKey?: string;

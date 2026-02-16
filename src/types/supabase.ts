@@ -457,6 +457,54 @@ export interface Database {
                 }
                 Relationships: []
             }
+            SessionFrictionSnapshots: {
+                Row: {
+                    confidence: number
+                    created_at: string
+                    dedupe_key: string | null
+                    email: string
+                    friction_state: string
+                    google_id: string | null
+                    id: string
+                    phase: string
+                    session_id: string
+                    signals: Json
+                    step_index: number
+                    track_slug: string
+                    trigger: string
+                }
+                Insert: {
+                    confidence: number
+                    created_at?: string
+                    dedupe_key?: string | null
+                    email: string
+                    friction_state: string
+                    google_id?: string | null
+                    id?: string
+                    phase: string
+                    session_id: string
+                    signals: Json
+                    step_index: number
+                    track_slug: string
+                    trigger: string
+                }
+                Update: {
+                    confidence?: number
+                    created_at?: string
+                    dedupe_key?: string | null
+                    email?: string
+                    friction_state?: string
+                    google_id?: string | null
+                    id?: string
+                    phase?: string
+                    session_id?: string
+                    signals?: Json
+                    step_index?: number
+                    track_slug?: string
+                    trigger?: string
+                }
+                Relationships: []
+            }
             TelemetryEvents: {
                 Row: {
                     created_at: string

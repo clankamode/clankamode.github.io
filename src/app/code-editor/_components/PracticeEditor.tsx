@@ -215,6 +215,12 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
     if (sessionFlowState.phase !== 'execution' || !sessionFlowState.execution || !sessionFlowState.scope) return;
 
     if (!allTestsPassed) {
+      window.dispatchEvent(new CustomEvent('session:practice-blocked', {
+        detail: {
+          sessionId: telemetrySessionId,
+          questionId: sessionQuestionId,
+        },
+      }));
       logTelemetryEvent({
         userId: telemetryUserId,
         trackSlug: telemetryTrackSlug,

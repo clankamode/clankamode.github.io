@@ -20,7 +20,8 @@ const ALLOWED_EVENTS = new Set([
     'coding_workspace_opened',
     'practice_tests_ran',
     'practice_completion_confirmed',
-    'practice_completion_blocked'
+    'practice_completion_blocked',
+    'friction_state_changed',
 ]);
 
 const MAX_PAYLOAD_SIZE = 4096; // 4KB limit
