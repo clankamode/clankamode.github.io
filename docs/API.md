@@ -65,6 +65,7 @@ if (token.role !== UserRole.ADMIN) {
 | `/api/content/article-update` | POST | Admin | Update article with AI assistance |
 | `/api/content/voice-draft` | POST | Admin | Create draft from voice notes |
 | `/api/content/pillars` | GET | Admin | Get content pillars/categories |
+| `/api/content/practice-questions` | GET | Editor | List practice questions (source: Articles) for article linking |
 
 ### Learning Platform
 

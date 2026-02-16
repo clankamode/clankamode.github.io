@@ -41,6 +41,7 @@ Located in `.agent/workflows/`:
 
 - `.cursorrules` - Project conventions and styling rules
 - `docs/DESIGN_PRINCIPLES.md` - Full design specification (if still present)
+- `.cursor/rules/data-structure-practice-questions.mdc` - Creating "Implement X From Scratch" practice questions
 
 ## Known gotchas (always update together)
 

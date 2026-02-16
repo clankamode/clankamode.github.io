@@ -24,6 +24,7 @@ Articles live in the Supabase `LearningArticles` table under a topic and pillar 
 | `order_index` | int | Sort order within the topic |
 | `concept_tags` | JSON | Array of concept slugs |
 | `primary_concept` | string or null | Main concept slug |
+| `practice_question_id` | UUID or null | Link to `InterviewQuestions` for "Practice" button on article page |
 
 ## Block Syntax
 
@@ -124,3 +125,4 @@ WHERE id = '<uuid>';
 - [ ] `reading_time_minutes` is set (word count / 200, rounded up)
 - [ ] `order_index` places the article in the right position
 - [ ] `is_published` is set to `true`
+- [ ] For data structure articles: link practice question via `practice_question_id` (see `docs/DATA_STRUCTURE_PRACTICE_QUESTIONS.md`)

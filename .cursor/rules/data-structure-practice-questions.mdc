@@ -1,0 +1,197 @@
+---
+description: Guide for creating "Implement X From Scratch" practice questions that pair with LearningArticles. Use when adding new data-structure practice problems or linking them to articles.
+globs: scripts/**/*.ts, src/app/api/content/**/*.ts
+---
+
+# How to Create Data Structure Practice Questions
+
+Data structure practice questions let readers implement a structure from scratch after reading its article. Each question lives in `InterviewQuestions` and can be linked to a `LearningArticle` via `practice_question_id`. The **Heaps** article + **Implement Min-Heap From Scratch** is the reference implementation.
+
+---
+
+## Overview
+
+1. **Create** the practice question in `InterviewQuestions` (source: `["Articles"]`).
+2. **Validate** with `npm run validate_interview_questions`.
+3. **Link** the article to the question in the admin content editor (Practice question dropdown).
+4. **Result**: A "Practice" link appears on the article page, sending users to the code editor.
+
+---
+
+## Naming Convention
+
+| Article Type | Practice Question Name Pattern | Example |
+|--------------|-------------------------------|---------|
+| Data structure | `Implement [Structure] From Scratch` | Implement Min-Heap From Scratch |
+| Specialized structure | Include qualifier if needed | Implement Binary Indexed Tree (Fenwick) From Scratch |
+
+- Keep the name concise and scannable.
+- Match the structure name used in the article title (e.g., "Heaps" → "Min-Heap" or "Heap").
+
+---
+
+## InterviewQuestions Schema (Relevant Fields)
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `name` | string | Yes | Display name (see convention above) |
+| `prompt_full` | string | Yes | Full problem description |
+| `starter_code` | string | Yes | Python with docstring; must include prompt summary |
+| `test_cases` | JSON | Yes | Array of `{id, label?, fnCall, expected}` |
+| `difficulty` | string | Yes | `Easy`, `Medium`, or `Hard` |
+| `source` | string[] | Yes | Must include `"Articles"` |
+| `category` | string | No | `Data Structures` or `Advanced Data Structures` |
+| `helper_code` | string | No | Usually empty |
+
+---
+
+## Class-Based Pattern (Reference: Min-Heap)
+
+Data structure questions use a **class** with the operations the user implements. Tests instantiate the class and call methods directly.
+
+### Min-Heap Example
+
+**Starter code:** A `Heap` class with `push(x)`, `pop()`, and `peek()` — each with `pass` placeholders.
+
+**Test cases:** Each `fnCall` is a single Python expression that creates an instance, calls methods, and returns the result. Use the walrus operator to chain operations in a tuple and return the last element:
+
+```python
+((h := Heap(), h.push(3), h.push(1), h.push(2), [h.pop(), h.pop()])[-1])  # → [1, 2]
+((h := Heap(), h.push(5), [h.peek(), h.pop()])[-1])                        # → [5, 5]
+```
+
+**expected** must be a string (for validator): `"[1, 2]"`, `"[5, 5]"`, etc.
+
+### Design Rules
+
+1. **Class name** — Match the structure (e.g., `Heap`, `Stack`, `Trie`). One class with the core operations.
+2. **Methods** — Only the operations the user implements. No runner function — tests call `heap.push(x)`, `heap.pop()` directly.
+3. **fnCall** — Single expression. Use `((h := Class(), op1, op2, ..., [results])[-1])` to run ops and return the result list.
+4. **expected** — String form of the Python literal (e.g., `"[1, 2]"`) so the test runner comparison works.
+
+---
+
+## Prompt and Docstring Rules
+
+**prompt_full** must:
+- State the structure and operations clearly.
+- Say how the solution will be tested: "You will be tested by instantiating your heap and calling these methods directly."
+- Be self-contained (no external links required).
+
+**starter_code** must:
+- Include a docstring that summarizes the prompt (validator checks this).
+- Keep docstring lines ≤ 80 chars.
+- Provide a class with method stubs (`pass` placeholders). No runner function — only the class.
+
+---
+
+## Alignment with the Article (Heaps Reference)
+
+The Heaps article covers:
+1. What is a heap (min/max, complete binary tree)
+2. Array representation and index math
+3. Insert O(log n) — bubble up
+4. Extract min O(log n) — bubble down
+5. Peek O(1)
+6. Heapify O(n)
+7. No efficient search
+8. Interview cues and Python `heapq` API
+
+The practice question **Implement Min-Heap From Scratch** tests:
+- `push` (insert)
+- `pop` (extract min)
+- `peek` (read min)
+
+This matches the core operations taught in the article. For new structures, pick the 2–4 operations that best reinforce the article’s "how it works" section.
+
+---
+
+## Creating via SQL
+
+```sql
+-- 1. Insert the practice question (class-based)
+INSERT INTO "InterviewQuestions" (
+  name,
+  prompt_full,
+  starter_code,
+  test_cases,
+  difficulty,
+  source,
+  category
+) VALUES (
+  'Implement Min-Heap From Scratch',
+  'Implement a min-heap class with push(x), pop() (return and remove min), and peek() (return min without removing). You will be tested by instantiating your heap and calling these methods directly.',
+  $code$
+"""
+Implement a min-heap class with push(x), pop() (return and remove min),
+and peek() (return min without removing). Tests instantiate Heap and
+call heap.push(x), heap.pop(), heap.peek() directly.
+"""
+
+class Heap:
+    def push(self, x: int) -> None:
+        """Add x to the heap."""
+        pass
+
+    def pop(self) -> int:
+        """Remove and return the minimum element."""
+        pass
+
+    def peek(self) -> int:
+        """Return the minimum element without removing it."""
+        pass
+$code$,
+  '[{"id":0,"label":"push and pop","fnCall":"((h := Heap(), h.push(3), h.push(1), h.push(2), [h.pop(), h.pop()])[-1])","expected":"[1, 2]"},{"id":1,"label":"peek","fnCall":"((h := Heap(), h.push(5), [h.peek(), h.pop()])[-1])","expected":"[5, 5]"},{"id":2,"label":"multiple push pop","fnCall":"((h := Heap(), h.push(10), h.push(2), h.push(8), h.pop(), h.push(1), [h.pop()])[-1])","expected":"[1]"}]'::jsonb,
+  'Medium',
+  ARRAY['Articles'],
+  'Advanced Data Structures'
+) RETURNING id;
+
+-- 2. Link the article (use the returned id)
+UPDATE "LearningArticles"
+SET practice_question_id = '<returned_id>'
+WHERE slug = 'heaps';
+```
+
+---
+
+## Linking Article to Practice Question
+
+1. **Admin UI**: Edit the article in Admin → Content. Use the "Practice question" dropdown to select the question.
+2. **API**: `PATCH /api/content/[id]` accepts `practice_question_id` (string or null).
+3. **SQL**: `UPDATE "LearningArticles" SET practice_question_id = '<iq_id>' WHERE slug = 'my-slug';`
+
+The dropdown is populated by `GET /api/content/practice-questions`, which returns questions where `source` contains `"Articles"`.
+
+---
+
+## Validation Checklist
+
+Run `npm run validate_interview_questions` before committing. It checks:
+
+- [ ] `name`, `prompt_full`, `starter_code`, `difficulty` are set
+- [ ] `difficulty` is Easy, Medium, or Hard
+- [ ] Docstring in starter_code contains key content from prompt_full
+- [ ] Docstring lines ≤ 80 chars
+- [ ] No inline 2D arrays in docstring (use multi-line format)
+- [ ] Test cases exist with valid `fnCall` and `expected`
+- [ ] Trees/graphs/linked lists have ASCII diagrams (warning)
+- [ ] No duplicate question names
+
+---
+
+## Reference: Existing Data Structure Practice Questions
+
+| Article Slug | Practice Question Name | Category |
+|--------------|------------------------|----------|
+| heaps | Implement Min-Heap From Scratch | Advanced Data Structures |
+| stacks | Implement Stack From Scratch | Data Structures |
+| queues | Implement Queue From Scratch | Data Structures |
+| hash-maps-and-sets | Implement Hash Map From Scratch | Data Structures |
+| linked-lists | Implement Singly Linked List From Scratch | Data Structures |
+| trees | Implement Binary Tree From Scratch | Data Structures |
+| graphs | Implement Graph (Adjacency List) From Scratch | Data Structures |
+| tries | Implement Trie From Scratch | Advanced Data Structures |
+| binary-indexed-trees | Implement Binary Indexed Tree (Fenwick) From Scratch | Advanced Data Structures |
+| segment-trees | Implement Segment Tree From Scratch | Advanced Data Structures |
+| sparse-tables | Implement Sparse Table (RMQ) From Scratch | Advanced Data Structures |

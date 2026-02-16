@@ -59,6 +59,7 @@ For each article, the AI infers or asks:
 - **New topic**: If you say "DSA > New Topic: Bit Manipulation," the AI creates the topic first, then the article.
 - **Body content**: You can paste markdown; otherwise the AI uses a minimal scaffold. Use the rich content elements below for engaging articles.
 - **Order**: Articles use `order_index`; new ones go at the end unless you specify.
+- **Practice question** (data structure articles): Link an "Implement X From Scratch" practice problem via `practice_question_id`. See `docs/DATA_STRUCTURE_PRACTICE_QUESTIONS.md`.
 
 ---
 

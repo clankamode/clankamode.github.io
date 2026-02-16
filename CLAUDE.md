@@ -26,6 +26,7 @@ A modern personal website and learning platform built with Next.js 15, featuring
 | `docs/EXAMPLES.md` | 💻 Code examples & implementation patterns |
 | `docs/HOOKS.md` | 🎣 Custom React hooks reference |
 | `docs/SUPABASE_PATTERNS.md` | 🗄️ Database patterns, RLS, migrations |
+| `docs/DATA_STRUCTURE_PRACTICE_QUESTIONS.md` | Create/link "Implement X From Scratch" practice questions |
 | `docs/DESIGN_PRINCIPLES.md` | Full design specification |
 | `.agent/skills/` | Specialized guidance for specific tasks |
 | `CODE_REVIEW_CHECKLIST.md` | Code review standards |
@@ -270,6 +271,13 @@ npm run dev
 1. Use MCP Supabase tools for schema changes
 2. Or create migration in `supabase/migrations/`
 3. Update types: `npm run generate-types` (if configured)
+
+### Creating Data Structure Practice Questions
+1. Create `InterviewQuestions` row (class-based: class with methods, no runner function)
+2. Set `source: ["Articles"]` so it appears in admin dropdown
+3. Link via `LearningArticles.practice_question_id` (Admin → Content or PATCH)
+4. Run `npm run validate_interview_questions`
+5. See `docs/DATA_STRUCTURE_PRACTICE_QUESTIONS.md` for full guide
 
 ## Known Issues & Gotchas
 

@@ -15,9 +15,10 @@ npm run dev
 npm run build
 
 # Run tests
-npm run test:e2e          # Playwright E2E tests
-npm run test:e2e:headed   # With browser visible
-npm run test:e2e:debug    # Debug mode
+npm run test:e2e                    # Playwright E2E tests
+npm run test:e2e:headed             # With browser visible
+npm run test:e2e:debug              # Debug mode
+npm run validate_interview_questions  # Validate InterviewQuestions (practice problems)
 
 # Linting & Type Checking
 npm run lint              # ESLint
@@ -561,6 +562,7 @@ Quick access to all documentation:
 | `docs/EXAMPLES.md` | Code examples & patterns |
 | `docs/HOOKS.md` | Custom hooks reference |
 | `docs/SUPABASE_PATTERNS.md` | Database patterns & RLS |
+| `docs/DATA_STRUCTURE_PRACTICE_QUESTIONS.md` | Create/link "Implement X From Scratch" practice questions |
 | `docs/QUICK_REFERENCE.md` | This file |
 
 ## 🛠️ Troubleshooting
@@ -639,5 +641,5 @@ curl $NEXT_PUBLIC_SUPABASE_URL/rest/v1/
 
 ---
 
-**Last Updated**: 2026-02-14
+**Last Updated**: 2026-02-15
 **Print this page and keep it handy!**
