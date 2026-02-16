@@ -505,6 +505,93 @@ export interface Database {
                 }
                 Relationships: []
             }
+            SessionFrictionTriage: {
+                Row: {
+                    created_at: string
+                    id: string
+                    notes: string | null
+                    owner: string | null
+                    status: string
+                    step_index: number
+                    track_slug: string
+                    updated_at: string
+                    updated_by_email: string
+                }
+                Insert: {
+                    created_at?: string
+                    id?: string
+                    notes?: string | null
+                    owner?: string | null
+                    status?: string
+                    step_index: number
+                    track_slug: string
+                    updated_at?: string
+                    updated_by_email: string
+                }
+                Update: {
+                    created_at?: string
+                    id?: string
+                    notes?: string | null
+                    owner?: string | null
+                    status?: string
+                    step_index?: number
+                    track_slug?: string
+                    updated_at?: string
+                    updated_by_email?: string
+                }
+                Relationships: []
+            }
+            SessionFrictionTriageAudit: {
+                Row: {
+                    action_type: string
+                    actor_email: string
+                    after_notes: string | null
+                    after_owner: string | null
+                    after_status: string | null
+                    before_notes: string | null
+                    before_owner: string | null
+                    before_status: string | null
+                    created_at: string
+                    id: string
+                    metadata: Json
+                    rationale: string | null
+                    step_index: number
+                    track_slug: string
+                }
+                Insert: {
+                    action_type: string
+                    actor_email: string
+                    after_notes?: string | null
+                    after_owner?: string | null
+                    after_status?: string | null
+                    before_notes?: string | null
+                    before_owner?: string | null
+                    before_status?: string | null
+                    created_at?: string
+                    id?: string
+                    metadata?: Json
+                    rationale?: string | null
+                    step_index: number
+                    track_slug: string
+                }
+                Update: {
+                    action_type?: string
+                    actor_email?: string
+                    after_notes?: string | null
+                    after_owner?: string | null
+                    after_status?: string | null
+                    before_notes?: string | null
+                    before_owner?: string | null
+                    before_status?: string | null
+                    created_at?: string
+                    id?: string
+                    metadata?: Json
+                    rationale?: string | null
+                    step_index?: number
+                    track_slug?: string
+                }
+                Relationships: []
+            }
             TelemetryEvents: {
                 Row: {
                     created_at: string

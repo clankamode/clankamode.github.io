@@ -12,14 +12,14 @@ function pickFirst(value: string | string[] | undefined): string | null {
   return Array.isArray(value) ? value[0] ?? null : value;
 }
 
-export default async function SessionQualityPage({
+export default async function FrictionMonitorPage({
   searchParams,
 }: {
   searchParams: Promise<LegacySearchParams>;
 }) {
   const params = await searchParams;
   const query = new URLSearchParams();
-  query.set('tab', 'quality');
+  query.set('tab', 'friction');
 
   const range = pickFirst(params.range);
   const track = pickFirst(params.track);

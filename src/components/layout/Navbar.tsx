@@ -150,7 +150,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
     await signOut({ callbackUrl: '/' });
   };
 
-  const isStudioSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content', '/admin/session-quality'].some((path) => isActive(path));
+  const isStudioSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content', '/admin/session-intelligence', '/admin/session-quality', '/admin/friction'].some((path) => isActive(path));
   const isPracticeSectionActive = ['/peralta75', '/assessment'].some((path) => isActive(path));
 
   if (pathname === '/ai') {
@@ -280,7 +280,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                               <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
                               <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Learning Content</Link>
                               {isEffectiveAdmin && (
-                                <Link href="/admin/session-quality" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Session Quality</Link>
+                                <Link href="/admin/session-intelligence" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Session Intelligence</Link>
                               )}
                             </div>
                           </div>
@@ -454,7 +454,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                       <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
                       <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)}>Learning Content</Link>
                       {isEffectiveAdmin && (
-                        <Link href="/admin/session-quality" className={mobileNavLinkClass('/admin/session-quality')} onClick={() => setIsMenuOpen(false)}>Session Quality</Link>
+                        <Link href="/admin/session-intelligence" className={mobileNavLinkClass('/admin/session-intelligence')} onClick={() => setIsMenuOpen(false)}>Session Intelligence</Link>
                       )}
                     </div>
                   </>

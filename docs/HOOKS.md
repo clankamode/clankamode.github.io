@@ -640,28 +640,30 @@ function VideoGallery() {
 
 **Location**: `src/contexts/SessionContext.tsx`
 
-Manages learning session state (gate → execution → exit flow).
+Manages learning session state (entry → execution → exit flow).
 
 **Session Phases**:
 1. **`idle`** - No active session
-2. **`gate`** - Session entry point (select content)
+2. **`entry`** - Session entry point (scope selected, pre-execution)
 3. **`execution`** - Active session (timer running)
 4. **`exit`** - Session complete (review results)
 
 **Context Value**:
 ```typescript
 interface SessionState {
-  phase: 'idle' | 'gate' | 'execution' | 'exit';
-  currentArticleId: string | null;
-  sessionId: string | null;
-  startTime: number | null;
-  // ... more fields
+  phase: 'idle' | 'entry' | 'execution' | 'exit';
+  scope: SessionScope | null;
+  execution: SessionExecutionState | null;
+  exit: SessionExitState | null;
+  transitionStatus: 'ready' | 'advancing' | 'finalizing';
 }
 
 interface SessionActions {
-  startSession: (articleId: string) => void;
+  commitSession: (scope: SessionScope) => void;
+  advanceItem: () => void;
   completeSession: () => void;
-  exitSession: () => void;
+  abandonSession: () => void;
+  resetToEntry: () => void;
 }
 ```
 
@@ -670,17 +672,18 @@ interface SessionActions {
 import { useSession } from '@/contexts/SessionContext';
 
 function SessionFlow() {
-  const { state, startSession, completeSession, exitSession } = useSession();
+  const { state, commitSession, completeSession, abandonSession } = useSession();
 
-  if (state.phase === 'gate') {
-    return <ContentSelector onSelect={startSession} />;
+  if (state.phase === 'entry') {
+    return <ContentSelector onSelect={commitSession} />;
   }
 
   if (state.phase === 'execution') {
     return (
       <ExecutionMode
-        articleId={state.currentArticleId}
+        session={state.execution}
         onComplete={completeSession}
+        onAbandon={abandonSession}
       />
     );
   }

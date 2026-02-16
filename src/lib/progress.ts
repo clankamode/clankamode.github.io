@@ -896,13 +896,16 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
     const sessionPlanLockKey = `session-plan-lock:v1:${userId}:${plannerTrackSlug}`;
     const existingPlanLock = await getFromCache<SessionPlanLock>(sessionPlanLockKey);
 
-    if (
-      existingPlanLock &&
+    const isLockValid = existingPlanLock &&
       Array.isArray(existingPlanLock.items) &&
       existingPlanLock.items.length > 0 &&
       Array.isArray(existingPlanLock.itemHrefs) &&
-      existingPlanLock.itemHrefs.every((href) => plannerCandidateSet.has(href))
-    ) {
+      existingPlanLock.itemHrefs.every((href) => {
+        const normalized = normalizeSessionItemHref(href);
+        return plannerCandidateSet.has(href) && !recentExclusionHrefs.has(normalized);
+      });
+
+    if (isLockValid) {
       sessionItems = existingPlanLock.items.slice(0, 3);
     } else {
       const plannedItems = await planSessionItemsWithLLM({

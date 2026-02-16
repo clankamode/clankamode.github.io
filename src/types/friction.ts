@@ -2,6 +2,8 @@ export type FrictionState = 'flow' | 'stuck' | 'drift' | 'fatigue' | 'coast';
 
 export type FrictionTrigger = 'state_change' | 'step_exit';
 
+export type FrictionTriageStatus = 'new' | 'investigating' | 'resolved';
+
 export interface FrictionSignalVector {
   stepIndex: number;
   elapsedMs: number;
@@ -31,4 +33,12 @@ export interface FrictionSnapshotPayload {
   signals: FrictionSignalVector;
   trigger: FrictionTrigger;
   dedupeKey: string;
+}
+
+export interface FrictionTriagePayload {
+  trackSlug: string;
+  stepIndex: number;
+  status: FrictionTriageStatus;
+  owner: string | null;
+  notes: string | null;
 }
