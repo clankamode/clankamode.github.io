@@ -16,6 +16,7 @@ export default async function LearnPage() {
   const userEmail = session?.user?.email ?? undefined;
   const userGoogleId = session?.user?.id ?? undefined;
   const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
+  const sessionModeEnabled = isFeatureEnabled(FeatureFlags.SESSION_MODE, session?.user);
 
   const [library, progressSummary] = await Promise.all([
     getLearningLibrary(canViewDrafts),
@@ -42,16 +43,24 @@ export default async function LearnPage() {
           <p className="mt-6 text-lg text-text-secondary leading-relaxed">
             Four pillars. Clear progression. Everything you need to build the skills that compound.
           </p>
-          {showProgress && userEmail && (
-            <div className="mt-8">
+          <div className="mt-8 flex gap-4">
+            {sessionModeEnabled && (
+              <Link
+                href="/home"
+                className="inline-flex items-center justify-center rounded-full bg-brand-primary text-brand-primary-foreground px-6 py-2.5 text-sm font-semibold transition-all hover:opacity-90 shadow-[0_0_20px_rgba(var(--brand-primary-rgb),0.3)]"
+              >
+                Start Session
+              </Link>
+            )}
+            {showProgress && userEmail && (
               <Link
                 href="/learn/progress"
-                className="inline-flex items-center justify-center rounded-full border border-border-interactive px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:border-text-secondary"
+                className={`inline-flex items-center justify-center rounded-full border border-border-interactive px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:border-text-secondary ${!sessionModeEnabled ? 'bg-surface-interactive' : ''}`}
               >
-                View Dashboard
+                View Progress
               </Link>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">

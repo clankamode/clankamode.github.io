@@ -197,7 +197,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
             </Link>
           </div>
 
-          {pathname !== '/ai' && mode !== 'gate' && mode !== 'exit' && (
+          {pathname !== '/ai' && pathname !== '/explore' && mode !== 'gate' && mode !== 'exit' && (
             <div className="hidden md:flex items-center justify-center absolute left-1/2 -translate-x-1/2">
               <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-border-subtle backdrop-blur-md' : ''
                 }`}>
@@ -257,7 +257,10 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                     )}
                     {/* Logged-in non-editor: Explore entry only when session features enabled */}
                     {isLoggedIn && !isEditor && showSessionFeatures && (
-                      <Link href="/explore" className={navLinkClass('/explore')}>Explore</Link>
+                      <>
+                        <Link href="/home" className={navLinkClass('/home')}>Session</Link>
+                        <Link href="/explore" className={navLinkClass('/explore')}>Explore</Link>
+                      </>
                     )}
                     {/* Logged-in editor: Explore + Studio */}
                     {isLoggedIn && isEditor && (
@@ -301,9 +304,9 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
               <div className="flex items-center gap-3">
                 <div className="hidden sm:block">
                   {/* Hide proxy controls in restricted modes to reduce noise */}
-                  {mode !== 'gate' && mode !== 'exit' && <AdminProxyControls />}
+                  {mode !== 'exit' && <AdminProxyControls />}
                 </div>
-                {(mode === 'gate' || mode === 'exit') ? (
+                {mode === 'exit' || mode === 'gate' ? (
                   <div className="flex items-center gap-2">
                     {showExploreQuickLink && (
                       <Button

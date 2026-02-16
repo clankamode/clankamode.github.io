@@ -19,19 +19,19 @@ interface FlagConfig {
 export const flags: Record<FeatureFlag, FlagConfig> = {
     [FeatureFlags.PROGRESS_TRACKING]: {
         defaultValue: process.env.NEXT_PUBLIC_ENABLE_PROGRESS === 'true',
-        allowRoles: [UserRole.ADMIN],
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
     [FeatureFlags.SESSION_MODE]: {
         defaultValue: process.env.NEXT_PUBLIC_ENABLE_SESSION_MODE === 'true',
-        allowRoles: [UserRole.ADMIN],
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
     [FeatureFlags.USE_MICRO_V1]: {
         defaultValue: process.env.NEXT_PUBLIC_USE_MICRO_V1 === 'true',
-        allowRoles: [UserRole.ADMIN],
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
     [FeatureFlags.GENERATIVE_SESSIONS]: {
         defaultValue: true,
-        allowRoles: [UserRole.ADMIN],
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
     [FeatureFlags.FRICTION_INTELLIGENCE]: {
         defaultValue: false,

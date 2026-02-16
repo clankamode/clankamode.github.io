@@ -48,10 +48,10 @@ export default function ExplorePage() {
                     <input
                         type="text"
                         placeholder="Search lessons, topics, videos..."
-                        className="w-full px-5 py-4 rounded-xl border border-white/10 bg-white/[0.02] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-white/20 focus:ring-2 focus:ring-accent-primary/20"
+                        className="w-full px-5 py-4 rounded-xl border border-border-subtle bg-surface-interactive text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-interactive focus:ring-2 focus:ring-accent-primary/20"
                         autoFocus
                     />
-                    <kbd className="absolute right-4 top-1/2 -translate-y-1/2 px-2 py-1 rounded bg-white/5 font-mono text-xs text-text-muted">
+                    <kbd className="absolute right-4 top-1/2 -translate-y-1/2 px-2 py-1 rounded bg-surface-dense font-mono text-xs text-text-muted border border-border-subtle">
                         ESC
                     </kbd>
                 </div>
@@ -86,7 +86,7 @@ function CategoryTile({ href, label, description }: { href: string; label: strin
     return (
         <Link
             href={href}
-            className="p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04] transition-all"
+            className="p-5 rounded-xl border border-border-subtle bg-surface-interactive hover:border-border-interactive hover:bg-surface-dense transition-all group"
         >
             <p className="font-medium text-text-primary">{label}</p>
             <p className="text-sm text-text-muted mt-1">{description}</p>
@@ -98,7 +98,7 @@ function TrackRow({ href, name }: { href: string; name: string }) {
     return (
         <Link
             href={href}
-            className="flex items-center justify-between p-4 rounded-xl hover:bg-white/[0.02] transition-colors group"
+            className="flex items-center justify-between p-4 rounded-xl hover:bg-surface-interactive transition-colors group"
         >
             <span className="text-text-primary">{name}</span>
             <span className="text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">→</span>
