@@ -102,11 +102,16 @@ type AIDecisionRow = {
   id: string;
   created_at: string;
   decision_type: string;
+  decision_scope: string | null;
   decision_mode: string;
   track_slug: string;
-  step_index: number;
+  step_index: number | null;
+  session_id: string | null;
   actor_email: string;
   confidence: number | null;
+  fallback_used: boolean;
+  latency_ms: number | null;
+  error_code: string | null;
   source: string;
   output_json: Record<string, unknown> | null;
 };
@@ -125,9 +130,9 @@ type RangeKey = '1d' | '7d' | '14d' | '30d';
 type TrackKey = 'all' | string;
 type QueueStatusKey = 'open' | 'all' | FrictionTriageStatus;
 type QueueOwnerKey = 'all' | 'unassigned' | string;
-type AIDecisionTypeKey = 'all' | 'triage_brief' | 'triage_recommendation';
+type AIDecisionTypeKey = 'all' | 'triage_brief' | 'triage_recommendation' | 'session_plan' | 'scope_policy' | 'onboarding_path';
 type AIDecisionModeKey = 'all' | 'suggest' | 'assist' | 'auto';
-type AIDecisionSourceKey = 'all' | 'session_intelligence' | 'ai_recommendation' | 'ai_auto_batch';
+type AIDecisionSourceKey = 'all' | 'session_intelligence' | 'ai_recommendation' | 'ai_auto_batch' | 'ai_policy';
 type AIDecisionOutcomeKey = 'all' | 'confirmed' | 'overridden' | 'inconclusive' | 'unreviewed';
 
 const RANGE_DAYS: Record<RangeKey, number> = {
@@ -143,6 +148,13 @@ const AUTO_TRIAGE_MINUTES_COOLDOWN = 120;
 
 function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
+}
+
+function percentile95(values: number[]): number | null {
+  if (values.length === 0) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const index = Math.max(0, Math.ceil(sorted.length * 0.95) - 1);
+  return sorted[index] ?? null;
 }
 
 function buildUserKey(email: string, googleId: string | null): string {
@@ -234,7 +246,15 @@ function parseQueueOwner(raw: string | string[] | undefined): QueueOwnerKey {
 
 function parseAIDecisionType(raw: string | string[] | undefined): AIDecisionTypeKey {
   const value = Array.isArray(raw) ? raw[0] : raw;
-  if (value === 'triage_brief' || value === 'triage_recommendation') return value;
+  if (
+    value === 'triage_brief'
+    || value === 'triage_recommendation'
+    || value === 'session_plan'
+    || value === 'scope_policy'
+    || value === 'onboarding_path'
+  ) {
+    return value;
+  }
   return 'all';
 }
 
@@ -246,7 +266,7 @@ function parseAIDecisionMode(raw: string | string[] | undefined): AIDecisionMode
 
 function parseAIDecisionSource(raw: string | string[] | undefined): AIDecisionSourceKey {
   const value = Array.isArray(raw) ? raw[0] : raw;
-  if (value === 'session_intelligence' || value === 'ai_recommendation' || value === 'ai_auto_batch') return value;
+  if (value === 'session_intelligence' || value === 'ai_recommendation' || value === 'ai_auto_batch' || value === 'ai_policy') return value;
   return 'all';
 }
 
@@ -495,7 +515,7 @@ async function fetchAIDecisionRows(sinceIso: string, track: TrackKey): Promise<A
   const admin = getSupabaseAdminClient();
   let query = admin
     .from('SessionAIDecisions')
-    .select('id, created_at, decision_type, decision_mode, track_slug, step_index, actor_email, confidence, source, output_json')
+    .select('id, created_at, decision_type, decision_scope, decision_mode, track_slug, step_index, session_id, actor_email, confidence, fallback_used, latency_ms, error_code, source, output_json')
     .gte('created_at', sinceIso)
     .order('created_at', { ascending: false })
     .limit(1500);
@@ -788,6 +808,30 @@ export default async function SessionIntelligencePage({
   const sampleRatioMismatch = assignedEligibleTotal >= 20
     ? Math.abs(treatmentShare - 0.5) > 0.15
     : false;
+  const policyDecisionRows = aiDecisionRows.filter((row) => (
+    row.decision_type === 'session_plan'
+    || row.decision_type === 'scope_policy'
+    || row.decision_type === 'onboarding_path'
+    || row.decision_type === 'triage_recommendation'
+  ));
+  const policyCoverageCount = committedRows.filter((row) => row.payload?.aiPolicyVersion === 'policy_os_v1').length;
+  const policyCoverageRate = committedRows.length > 0 ? policyCoverageCount / committedRows.length : 0;
+  const policyFallbackRate = policyDecisionRows.length > 0
+    ? policyDecisionRows.filter((row) => row.fallback_used).length / policyDecisionRows.length
+    : 0;
+  const policyParseFailureRate = policyDecisionRows.length > 0
+    ? policyDecisionRows.filter((row) => row.error_code === 'parse_failed' || row.error_code === 'validation_failed').length / policyDecisionRows.length
+    : 0;
+  const policyLatencyByScope = ['planner', 'scope', 'onboarding', 'triage'].map((scope) => {
+    const latencies = policyDecisionRows.flatMap((row) =>
+      row.decision_scope === scope && typeof row.latency_ms === 'number' && row.latency_ms >= 0 ? [row.latency_ms] : []
+    );
+    return {
+      scope,
+      p95LatencyMs: percentile95(latencies),
+      count: latencies.length,
+    };
+  });
 
   const frictionMetrics = buildFrictionMonitorMetrics(frictionSnapshots, { alertThreshold: 0.3, hotspotMinSamples: 3 });
   const aiReplaySummary = buildAIDecisionReplaySummary(aiDecisionRows, aiAuditRows, {
@@ -1076,6 +1120,88 @@ export default async function SessionIntelligencePage({
                 </p>
               </div>
             </div>
+
+            <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-lg font-semibold text-text-primary">AI Policy Health</h2>
+                <span className="text-xs text-text-muted">Covers planner, scope, onboarding, and triage decisions.</span>
+              </div>
+              <div className="mb-5 grid gap-4 md:grid-cols-4">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Decision Coverage Rate</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{formatPercent(policyCoverageRate)}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Fallback Rate</p>
+                  <p className={`mt-1 text-xl font-semibold ${policyFallbackRate <= 0.3 ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {formatPercent(policyFallbackRate)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Parse/Validation Failures</p>
+                  <p className={`mt-1 text-xl font-semibold ${policyParseFailureRate === 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                    {formatPercent(policyParseFailureRate)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Policy Decisions Logged</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{policyDecisionRows.length}</p>
+                </div>
+              </div>
+
+              <div className="mb-5 grid gap-4 md:grid-cols-2">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">AI vs Baseline Finalize Delta</p>
+                  <p className={`mt-1 text-xl font-semibold ${finalizeRateDelta === null ? 'text-text-primary' : finalizeRateDelta >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                    {finalizeRateDelta === null ? '-' : formatPercent(finalizeRateDelta)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">AI vs Baseline Transfer Delta</p>
+                  <p className={`mt-1 text-xl font-semibold ${transferScoreDelta === null ? 'text-text-primary' : transferScoreDelta >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                    {transferScoreDelta === null ? '-' : formatPercent(transferScoreDelta)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mb-5 grid gap-4 md:grid-cols-3">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Sample Ratio</p>
+                  <p className={`mt-1 text-xl font-semibold ${sampleRatioMismatch ? 'text-red-300' : 'text-emerald-300'}`}>
+                    {assignedEligibleTotal < 20 ? 'insufficient' : sampleRatioMismatch ? 'mismatch' : 'healthy'}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Missing Attribution</p>
+                  <p className={`mt-1 text-xl font-semibold ${missingCohortAttributionRate <= 0.05 ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {formatPercent(missingCohortAttributionRate)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Eligible But Unassigned</p>
+                  <p className={`mt-1 text-xl font-semibold ${eligibleButUnassignedRate <= 0.02 ? 'text-emerald-300' : 'text-red-300'}`}>
+                    {formatPercent(eligibleButUnassignedRate)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-text-muted">
+                    <tr><th className="py-2">Decision Scope</th><th className="py-2">p95 Latency</th><th className="py-2">Samples</th></tr>
+                  </thead>
+                  <tbody>
+                    {policyLatencyByScope.map((row) => (
+                      <tr key={row.scope} className="border-t border-border-subtle">
+                        <td className="py-2 text-text-secondary">{row.scope}</td>
+                        <td className="py-2 text-text-primary">{row.p95LatencyMs === null ? '-' : `${row.p95LatencyMs} ms`}</td>
+                        <td className="py-2 text-text-primary">{row.count}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
 
             <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
@@ -1625,7 +1751,7 @@ export default async function SessionIntelligencePage({
                 </div>
               </div>
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                {(['all', 'triage_brief', 'triage_recommendation'] as AIDecisionTypeKey[]).map((option) => (
+                {(['all', 'triage_brief', 'triage_recommendation', 'session_plan', 'scope_policy', 'onboarding_path'] as AIDecisionTypeKey[]).map((option) => (
                   <Link
                     key={`aiType:${option}`}
                     href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType: option, aiMode, aiSource, aiOutcome })}
@@ -1647,7 +1773,7 @@ export default async function SessionIntelligencePage({
                 ))}
               </div>
               <div className="mb-4 flex flex-wrap items-center gap-2">
-                {(['all', 'session_intelligence', 'ai_recommendation', 'ai_auto_batch'] as AIDecisionSourceKey[]).map((option) => (
+                {(['all', 'session_intelligence', 'ai_recommendation', 'ai_auto_batch', 'ai_policy'] as AIDecisionSourceKey[]).map((option) => (
                   <Link
                     key={`aiSource:${option}`}
                     href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource: option, aiOutcome })}

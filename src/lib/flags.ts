@@ -8,6 +8,10 @@ export const FeatureFlags = {
     PERSONALIZATION_SCOPE_EXPERIMENT: 'personalization_scope_experiment',
     FRICTION_INTELLIGENCE: 'friction_intelligence',
     AI_TRIAGE_AUTOMATION: 'ai_triage_automation',
+    AI_POLICY_SESSION_PLAN: 'ai_policy_session_plan',
+    AI_POLICY_SCOPE: 'ai_policy_scope',
+    AI_POLICY_ONBOARDING: 'ai_policy_onboarding',
+    AI_POLICY_TRIAGE: 'ai_policy_triage',
 } as const;
 
 export type FeatureFlag = (typeof FeatureFlags)[keyof typeof FeatureFlags];
@@ -40,11 +44,27 @@ export const flags: Record<FeatureFlag, FlagConfig> = {
     },
     [FeatureFlags.FRICTION_INTELLIGENCE]: {
         defaultValue: false,
-        allowRoles: [UserRole.ADMIN],
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
     [FeatureFlags.AI_TRIAGE_AUTOMATION]: {
         defaultValue: false,
-        allowRoles: [UserRole.ADMIN],
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
+    },
+    [FeatureFlags.AI_POLICY_SESSION_PLAN]: {
+        defaultValue: false,
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
+    },
+    [FeatureFlags.AI_POLICY_SCOPE]: {
+        defaultValue: false,
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
+    },
+    [FeatureFlags.AI_POLICY_ONBOARDING]: {
+        defaultValue: false,
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
+    },
+    [FeatureFlags.AI_POLICY_TRIAGE]: {
+        defaultValue: false,
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
 };
 

@@ -36,6 +36,11 @@ export interface SessionScope {
     sessionId?: string;
     personalization?: SessionPersonalizationProfile | null;
     personalizationExperiment?: PersonalizationScopeExperiment | null;
+    aiPolicyVersion?: string | null;
+    planPolicyDecisionId?: string | null;
+    scopePolicyDecisionId?: string | null;
+    onboardingDecisionId?: string | null;
+    policyFallbackUsed?: boolean;
 }
 
 export interface SessionExecutionState {
@@ -375,6 +380,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                     personalizationScopeApplied: scope.personalizationExperiment?.applied ?? false,
                     personalizationScopeMaxItems: scope.personalizationExperiment?.maxItems ?? null,
                     personalizationScopeMaxMinutes: scope.personalizationExperiment?.maxMinutes ?? null,
+                    aiPolicyVersion: scope.aiPolicyVersion ?? null,
+                    planDecisionId: scope.planPolicyDecisionId ?? null,
+                    scopeDecisionId: scope.scopePolicyDecisionId ?? null,
+                    onboardingDecisionId: scope.onboardingDecisionId ?? null,
+                    policyFallbackUsed: scope.policyFallbackUsed ?? false,
                 },
                 dedupeKey: `session_started_${sessionId}`,
             });

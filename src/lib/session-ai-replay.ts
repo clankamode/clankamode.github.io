@@ -4,7 +4,7 @@ type DecisionReplayRow = {
   decision_type: string;
   decision_mode: string;
   track_slug: string;
-  step_index: number;
+  step_index: number | null;
   actor_email: string;
   confidence: number | null;
   source: string;
@@ -31,7 +31,7 @@ export type AIDecisionReplayRecentRow = {
   decisionType: string;
   decisionMode: string;
   trackSlug: string;
-  stepIndex: number;
+  stepIndex: number | null;
   actorEmail: string;
   confidence: number | null;
   source: string;
@@ -61,7 +61,7 @@ export type AIDecisionReplaySourceRow = {
 
 export type AIDecisionReplayHotspotRow = {
   trackSlug: string;
-  stepIndex: number;
+  stepIndex: number | null;
   total: number;
   overrides: number;
   overrideRate: number;
@@ -372,7 +372,8 @@ export function buildAIDecisionReplaySummary(
   const hotspots = Array.from(hotspotGrouped.entries())
     .map(([key, value]) => {
       const [trackSlug, stepIndexRaw] = key.split(':');
-      const stepIndex = Number(stepIndexRaw);
+      const parsedStepIndex = Number(stepIndexRaw);
+      const stepIndex = Number.isFinite(parsedStepIndex) ? parsedStepIndex : null;
       return {
         trackSlug,
         stepIndex,

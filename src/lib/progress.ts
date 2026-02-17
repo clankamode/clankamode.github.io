@@ -9,7 +9,7 @@ import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { getUserLearningState } from '@/lib/user-learning-state';
 import { deriveStateAwareIntent, deriveStaticIntent } from '@/lib/gate-intent';
 import { buildIdentityOrFilter, type EffectiveIdentity } from '@/lib/auth-identity';
-import { planSessionItemsWithLLM } from '@/lib/session-llm-planner';
+import { applySessionPlanPolicySelection, buildHeuristicPlan, planSessionItemsWithLLM } from '@/lib/session-llm-planner';
 import { chunkArticleByHeadings } from '@/lib/article-chunking';
 import { estimateReadingTimeMinutes } from '@/lib/reading-time';
 import { getFromCache, setInCache } from '@/lib/redis';
@@ -18,6 +18,8 @@ import {
   type PersonalizationScopeExperiment,
 } from '@/lib/session-personalization-experiment';
 import { buildSessionPersonalizationProfile, type SessionPersonalizationProfile } from '@/lib/session-personalization';
+import { decideScopePolicy, decideSessionPlanPolicy } from '@/lib/ai-policy/runtime';
+import { buildAIDecisionDedupeKey, logAIDecision } from '@/lib/ai-decision-registry';
 import type { UserLearningState } from '@/types/micro';
 import type { OnboardingGoal } from '@/types/onboarding';
 
@@ -32,6 +34,7 @@ const ITEM_COMPLETED_LOOKBACK_ROWS = 120;
 const SESSION_COMMITTED_LOOKBACK_DAYS = 7;
 const SESSION_COMMITTED_LOOKBACK_ROWS = 120;
 const ONBOARDING_BIAS_MAX_COMMITTED_SESSIONS = 5;
+const POLICY_PROMPT_VERSION = 'ai_policy_os_v1';
 
 interface OnboardingProfileRow {
   goal: OnboardingGoal;
@@ -150,10 +153,14 @@ export interface SessionState {
   track: { slug: string; name: string } | null;
   personalization: SessionPersonalizationProfile | null;
   personalizationExperiment: PersonalizationScopeExperiment | null;
+  planPolicyDecisionId?: string | null;
+  scopePolicyDecisionId?: string | null;
+  policyFallbackUsed?: boolean;
 }
 
 interface GetSessionStateOptions {
   enablePersonalizationScopeExperiment?: boolean;
+  viewer?: { role?: string } | null;
 }
 
 interface PracticeQuestionRow {
@@ -323,6 +330,31 @@ export function resolvePrimaryConceptSlug(article: LearningArticle): string {
 
 function getDayKeyUTC(): string {
   return new Date().toISOString().slice(0, 10);
+}
+
+function sumSessionItemMinutes(items: SessionItem[]): number {
+  return items.reduce((sum, item) => sum + (item.estMinutes ?? 5), 0);
+}
+
+function trimSessionItemsByScope(items: SessionItem[], limits: { maxItems: number; maxMinutes: number }): SessionItem[] {
+  const selected: SessionItem[] = [];
+  let usedMinutes = 0;
+
+  for (const item of items) {
+    if (selected.length >= limits.maxItems) break;
+    const minutes = item.estMinutes ?? 5;
+    if (selected.length > 0 && usedMinutes + minutes > limits.maxMinutes) {
+      continue;
+    }
+    selected.push(item);
+    usedMinutes += minutes;
+  }
+
+  if (selected.length === 0 && items[0]) {
+    return [items[0]];
+  }
+
+  return selected;
 }
 
 function simpleHash(input: string): number {
@@ -795,6 +827,14 @@ export async function getSessionState(
   const resolvedTrackSlug = preferredTrack?.slug || effectivePreferredTrackSlug || 'dsa';
 
   const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS);
+  const aiPolicySessionPlanEnabled = useGenerative && isFeatureEnabled(
+    FeatureFlags.AI_POLICY_SESSION_PLAN,
+    options.viewer ?? null
+  );
+  const aiPolicyScopeEnabled = useGenerative && isFeatureEnabled(
+    FeatureFlags.AI_POLICY_SCOPE,
+    options.viewer ?? null
+  );
   const userState: UserLearningState | null = useGenerative
     ? (await getUserLearningState(userId, resolvedTrackSlug, googleId)).userState
     : null;
@@ -974,6 +1014,9 @@ export async function getSessionState(
   });
 
   let sessionItems = articleCandidates.slice(0, 3);
+  let planPolicyDecisionId: string | null = null;
+  let scopePolicyDecisionId: string | null = null;
+  let policyFallbackUsed = false;
 
   if (useGenerative) {
     const learnPlannerPool = [...sectionCandidates.slice(0, 8), ...articleCandidates.slice(0, 6)];
@@ -989,6 +1032,16 @@ export async function getSessionState(
         item,
       })),
     ];
+    const requirePracticeItem = isPracticeTrack(plannerTrackSlug) && filteredPracticeCandidates.length > 0;
+    const deterministicPlan = buildHeuristicPlan({
+      candidates: plannerCandidates,
+      maxItems: 3,
+      requirePracticeItem,
+      userState,
+      personalizationProfile,
+      outcomeSignals,
+      recentActivityTitles: summary.recentActivity.map((activity) => activity.title),
+    });
     const plannerCandidateSet = new Set(plannerCandidates.map((candidate) => candidate.item.href));
     const sessionPlanLockKey = `session-plan-lock:v1:${userId}:${plannerTrackSlug}`;
     const existingPlanLock = await getFromCache<SessionPlanLock>(sessionPlanLockKey);
@@ -1004,36 +1057,165 @@ export async function getSessionState(
 
     if (isLockValid) {
       sessionItems = existingPlanLock.items.slice(0, 3);
+      if (aiPolicySessionPlanEnabled) {
+        const selectedIds = sessionItems
+          .map((item) => plannerCandidates.find((candidate) => candidate.item.href === item.href)?.id)
+          .filter((id): id is string => Boolean(id));
+        const lockedPlanDecision = await logAIDecision({
+          decisionType: 'session_plan',
+          decisionMode: 'auto',
+          trackSlug: plannerTrackSlug,
+          stepIndex: null,
+          actorEmail: userId,
+          model: 'locked-plan',
+          promptVersion: POLICY_PROMPT_VERSION,
+          confidence: 1,
+          rationale: 'Reused valid session plan lock.',
+          inputJson: {
+            source: 'session_plan_lock',
+            candidateCount: plannerCandidates.length,
+            requirePracticeItem,
+          },
+          outputJson: {
+            selectedIds,
+            selectedHrefs: sessionItems.map((item) => item.href),
+          },
+          applied: true,
+          source: 'ai_policy',
+          decisionScope: 'planner',
+          decisionTarget: `home_gate:${userId}`,
+          fallbackUsed: false,
+          latencyMs: 0,
+          errorCode: null,
+          dedupeKey: buildAIDecisionDedupeKey({
+            decisionType: 'session_plan',
+            decisionMode: 'auto',
+            decisionScope: 'planner',
+            trackSlug: plannerTrackSlug,
+            stepIndex: null,
+            source: 'ai_policy',
+            decisionTarget: `home_gate:${userId}`,
+          }),
+        });
+        planPolicyDecisionId = lockedPlanDecision.id;
+      }
     } else {
-      const plannedItems = await planSessionItemsWithLLM({
-        cacheKey: `${userId}:${plannerTrackSlug}:${dayKey}:${plannerCandidates.map((c) => c.id).join('|')}`,
-        budgetKey: `${userId}:${dayKey}`,
-        trackSlug: plannerTrackSlug,
-        trackName: plannerTrackName,
-        userState,
-        personalizationProfile,
-        recentActivityTitles: summary.recentActivity.map((activity) => activity.title),
-        outcomeSignals,
-        practiceTargetDifficulty: practicePerformance?.targetDifficulty || null,
-        requirePracticeItem: isPracticeTrack(plannerTrackSlug) && filteredPracticeCandidates.length > 0,
-        candidates: plannerCandidates,
-        maxItems: 3,
-      });
+      if (aiPolicySessionPlanEnabled && plannerCandidates.length > 0) {
+        const baseLearnCandidate = sectionCandidates[0] || articleCandidates[0] || null;
+        const deterministicFallbackItems = deterministicPlan.length > 0
+          ? deterministicPlan
+          : (filteredPracticeCandidates[0]
+              ? (baseLearnCandidate
+                  ? [baseLearnCandidate, filteredPracticeCandidates[0]]
+                  : [filteredPracticeCandidates[0]])
+              : []);
+        const fallbackSelectedIds = deterministicFallbackItems
+          .map((item) => plannerCandidates.find((candidate) => candidate.item.href === item.href)?.id)
+          .filter((id): id is string => !!id);
 
-      if (plannedItems && plannedItems.length > 0) {
-        sessionItems = plannedItems;
-        console.log('[AI Session Planner] Selected Items:', sessionItems.map(item => ({
-          id: item.slug || item.practiceQuestionId,
-          estMinutes: item.estMinutes,
-          articleId: item.articleId,
-          concepts: item.primaryConceptSlug ? [item.primaryConceptSlug] : [],
-          intent: item.intent.text
-        })));
-      } else if (filteredPracticeCandidates.length > 0) {
-        const baseLearn = sectionCandidates[0] || articleCandidates[0] || null;
-        sessionItems = baseLearn
-          ? [baseLearn, filteredPracticeCandidates[0]]
-          : [filteredPracticeCandidates[0]];
+        const planPolicy = await decideSessionPlanPolicy({
+          trackSlug: plannerTrackSlug,
+          trackName: plannerTrackName,
+          maxItems: 3,
+          requirePracticeItem,
+          recentActivityTitles: summary.recentActivity.map((activity) => activity.title),
+          candidates: plannerCandidates.slice(0, 12).map((candidate) => ({
+            id: candidate.id,
+            type: candidate.item.type,
+            title: candidate.item.title,
+            estMinutes: candidate.item.estMinutes ?? 5,
+            targetConcept: candidate.item.targetConcept ?? null,
+          })),
+          fallbackOutput: {
+            selectedIds: fallbackSelectedIds.length > 0
+              ? fallbackSelectedIds
+              : plannerCandidates.slice(0, 3).map((candidate) => candidate.id),
+            reasonSummary: 'Deterministic fallback session plan.',
+          },
+        });
+
+        const selectedByPolicy = applySessionPlanPolicySelection({
+          selectedIds: planPolicy.output.selectedIds,
+          candidates: plannerCandidates,
+          maxItems: 3,
+          requirePracticeItem,
+        });
+        sessionItems = selectedByPolicy.length > 0 ? selectedByPolicy : deterministicFallbackItems;
+        if (selectedByPolicy.length === 0) {
+          policyFallbackUsed = true;
+        }
+        policyFallbackUsed = policyFallbackUsed || planPolicy.fallbackUsed;
+
+        const planDecision = await logAIDecision({
+          decisionType: 'session_plan',
+          decisionMode: 'auto',
+          trackSlug: plannerTrackSlug,
+          stepIndex: null,
+          actorEmail: userId,
+          model: planPolicy.model,
+          promptVersion: POLICY_PROMPT_VERSION,
+          confidence: planPolicy.confidence,
+          rationale: planPolicy.output.reasonSummary,
+          inputJson: {
+            candidateCount: plannerCandidates.length,
+            requirePracticeItem,
+            recentActivityTitles: summary.recentActivity.map((activity) => activity.title).slice(0, 6),
+          },
+          outputJson: {
+            selectedIds: planPolicy.output.selectedIds,
+            selectedHrefs: sessionItems.map((item) => item.href),
+          },
+          applied: true,
+          source: 'ai_policy',
+          decisionScope: 'planner',
+          decisionTarget: `home_gate:${userId}`,
+          fallbackUsed: planPolicy.fallbackUsed,
+          latencyMs: planPolicy.latencyMs,
+          errorCode: planPolicy.errorCode === 'none' ? null : planPolicy.errorCode,
+          dedupeKey: buildAIDecisionDedupeKey({
+            decisionType: 'session_plan',
+            decisionMode: 'auto',
+            decisionScope: 'planner',
+            trackSlug: plannerTrackSlug,
+            stepIndex: null,
+            source: 'ai_policy',
+            decisionTarget: `home_gate:${userId}`,
+          }),
+        });
+        planPolicyDecisionId = planDecision.id;
+      } else {
+        const plannedItems = await planSessionItemsWithLLM({
+          cacheKey: `${userId}:${plannerTrackSlug}:${dayKey}:${plannerCandidates.map((c) => c.id).join('|')}`,
+          budgetKey: `${userId}:${dayKey}`,
+          trackSlug: plannerTrackSlug,
+          trackName: plannerTrackName,
+          userState,
+          personalizationProfile,
+          recentActivityTitles: summary.recentActivity.map((activity) => activity.title),
+          outcomeSignals,
+          practiceTargetDifficulty: practicePerformance?.targetDifficulty || null,
+          requirePracticeItem,
+          candidates: plannerCandidates,
+          maxItems: 3,
+        });
+
+        if (plannedItems && plannedItems.length > 0) {
+          sessionItems = plannedItems;
+          console.log('[AI Session Planner] Selected Items:', sessionItems.map(item => ({
+            id: item.slug || item.practiceQuestionId,
+            estMinutes: item.estMinutes,
+            articleId: item.articleId,
+            concepts: item.primaryConceptSlug ? [item.primaryConceptSlug] : [],
+            intent: item.intent.text
+          })));
+        } else if (filteredPracticeCandidates.length > 0) {
+          const baseLearn = sectionCandidates[0] || articleCandidates[0] || null;
+          sessionItems = baseLearn
+            ? [baseLearn, filteredPracticeCandidates[0]]
+            : [filteredPracticeCandidates[0]];
+        } else if (deterministicPlan.length > 0) {
+          sessionItems = deterministicPlan;
+        }
       }
 
       if (sessionItems.length > 0) {
@@ -1052,13 +1234,88 @@ export async function getSessionState(
 
   let personalizationExperiment: PersonalizationScopeExperiment | null = null;
   if (useGenerative && options.enablePersonalizationScopeExperiment && sessionItems.length > 0) {
+    const baselineItems = sessionItems.slice(0, 3);
     const scopeResult = applyPersonalizationScopeExperiment({
       userId,
-      items: sessionItems,
+      items: baselineItems,
       profile: personalizationProfile,
     });
     sessionItems = scopeResult.items as SessionItem[];
     personalizationExperiment = scopeResult.experiment;
+  }
+
+  if (useGenerative && aiPolicyScopeEnabled && sessionItems.length > 0) {
+    const baselineItems = sessionItems.slice(0, 3);
+    const fallbackScope = {
+      maxItems: personalizationExperiment?.maxItems ?? 3,
+      maxMinutes: personalizationExperiment?.maxMinutes ?? 22,
+      reasonSummary: 'Deterministic scope fallback.',
+    };
+    const scopePolicy = await decideScopePolicy({
+      trackSlug: plannerTrackSlug,
+      goal: onboardingProfile?.goal ?? null,
+      profileSegment: personalizationProfile.segment,
+      baselineItemCount: baselineItems.length,
+      baselineMinutes: sumSessionItemMinutes(baselineItems),
+      candidateMinutes: baselineItems.map((item) => item.estMinutes ?? 5),
+      fallbackOutput: fallbackScope,
+    });
+
+    sessionItems = trimSessionItemsByScope(baselineItems, {
+      maxItems: scopePolicy.output.maxItems,
+      maxMinutes: scopePolicy.output.maxMinutes,
+    });
+    if (personalizationExperiment) {
+      personalizationExperiment = {
+        ...personalizationExperiment,
+        maxItems: scopePolicy.output.maxItems,
+        maxMinutes: scopePolicy.output.maxMinutes,
+        finalItemCount: sessionItems.length,
+        finalMinutes: sumSessionItemMinutes(sessionItems),
+      };
+    }
+    policyFallbackUsed = policyFallbackUsed || scopePolicy.fallbackUsed;
+
+    const scopeDecision = await logAIDecision({
+      decisionType: 'scope_policy',
+      decisionMode: 'auto',
+      trackSlug: plannerTrackSlug,
+      stepIndex: null,
+      actorEmail: userId,
+      model: scopePolicy.model,
+      promptVersion: POLICY_PROMPT_VERSION,
+      confidence: scopePolicy.confidence,
+      rationale: scopePolicy.output.reasonSummary,
+      inputJson: {
+        baselineItemCount: baselineItems.length,
+        baselineMinutes: sumSessionItemMinutes(baselineItems),
+        profileSegment: personalizationProfile.segment,
+        onboardingGoal: onboardingProfile?.goal ?? null,
+      },
+      outputJson: {
+        maxItems: scopePolicy.output.maxItems,
+        maxMinutes: scopePolicy.output.maxMinutes,
+        finalItemCount: sessionItems.length,
+        finalMinutes: sumSessionItemMinutes(sessionItems),
+      },
+      applied: true,
+      source: 'ai_policy',
+      decisionScope: 'scope',
+      decisionTarget: `home_gate:${userId}`,
+      fallbackUsed: scopePolicy.fallbackUsed,
+      latencyMs: scopePolicy.latencyMs,
+      errorCode: scopePolicy.errorCode === 'none' ? null : scopePolicy.errorCode,
+      dedupeKey: buildAIDecisionDedupeKey({
+        decisionType: 'scope_policy',
+        decisionMode: 'auto',
+        decisionScope: 'scope',
+        trackSlug: plannerTrackSlug,
+        stepIndex: null,
+        source: 'ai_policy',
+        decisionTarget: `home_gate:${userId}`,
+      }),
+    });
+    scopePolicyDecisionId = scopeDecision.id;
   }
 
   const now = sessionItems[0] || null;
@@ -1115,6 +1372,9 @@ export async function getSessionState(
     track,
     personalization: personalizationProfile,
     personalizationExperiment,
+    planPolicyDecisionId,
+    scopePolicyDecisionId,
+    policyFallbackUsed,
   };
 }
 

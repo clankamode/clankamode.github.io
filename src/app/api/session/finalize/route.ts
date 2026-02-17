@@ -46,6 +46,11 @@ export async function POST(req: NextRequest) {
       personalizationScopeCohort,
       personalizationScopeEligible,
       personalizationScopeApplied,
+      aiPolicyVersion,
+      planDecisionId,
+      scopeDecisionId,
+      onboardingDecisionId,
+      policyFallbackUsed,
     } = await req.json();
 
     if (!sessionId || typeof sessionId !== 'string') {
@@ -69,6 +74,11 @@ export async function POST(req: NextRequest) {
       personalizationScopeCohort: typeof personalizationScopeCohort === 'string' ? personalizationScopeCohort : 'not_eligible',
       personalizationScopeEligible: Boolean(personalizationScopeEligible),
       personalizationScopeApplied: Boolean(personalizationScopeApplied),
+      aiPolicyVersion: typeof aiPolicyVersion === 'string' ? aiPolicyVersion : null,
+      planDecisionId: typeof planDecisionId === 'string' ? planDecisionId : null,
+      scopeDecisionId: typeof scopeDecisionId === 'string' ? scopeDecisionId : null,
+      onboardingDecisionId: typeof onboardingDecisionId === 'string' ? onboardingDecisionId : null,
+      policyFallbackUsed: Boolean(policyFallbackUsed),
     };
 
     const { error } = await admin

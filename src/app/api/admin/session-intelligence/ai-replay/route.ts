@@ -10,7 +10,7 @@ type DecisionRow = {
   decision_type: string;
   decision_mode: string;
   track_slug: string;
-  step_index: number;
+  step_index: number | null;
   actor_email: string;
   confidence: number | null;
   source: string;
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
   const days = Number.isFinite(daysParam) && daysParam > 0 && daysParam <= 90 ? Math.floor(daysParam) : 14;
   const decisionType = parseEnumParam(
     req.nextUrl.searchParams.get('decisionType'),
-    ['triage_brief', 'triage_recommendation']
+    ['triage_brief', 'triage_recommendation', 'session_plan', 'scope_policy', 'onboarding_path']
   );
   const decisionMode = parseEnumParam(req.nextUrl.searchParams.get('decisionMode'), ['suggest', 'assist', 'auto']);
   const reviewOutcome = parseOutcomeParam(req.nextUrl.searchParams.get('reviewOutcome'));

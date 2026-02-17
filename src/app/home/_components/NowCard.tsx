@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { SessionItem, SessionState } from '@/lib/progress';
 import { useSession as useSessionContext, type SessionScope } from '@/contexts/SessionContext';
 import { logTelemetryEvent } from '@/lib/telemetry';
+import { AI_POLICY_VERSION } from '@/lib/ai-policy/types';
 
 
 interface NowCardProps {
@@ -16,6 +17,24 @@ interface NowCardProps {
         label: string;
         relativeTime: string;
     } | null;
+}
+
+const ONBOARDING_POLICY_CONTEXT_KEY = 'onboarding:policy-context:v1';
+
+function consumeOnboardingPolicyContext(): { decisionId: string | null; fallbackUsed: boolean } | null {
+    if (typeof window === 'undefined') return null;
+    try {
+        const raw = window.sessionStorage.getItem(ONBOARDING_POLICY_CONTEXT_KEY);
+        if (!raw) return null;
+        window.sessionStorage.removeItem(ONBOARDING_POLICY_CONTEXT_KEY);
+        const parsed = JSON.parse(raw) as { decisionId?: unknown; fallbackUsed?: unknown };
+        return {
+            decisionId: typeof parsed.decisionId === 'string' ? parsed.decisionId : null,
+            fallbackUsed: Boolean(parsed.fallbackUsed),
+        };
+    } catch {
+        return null;
+    }
 }
 
 export default function NowCard({ session, userId, googleId, primer }: NowCardProps) {
@@ -35,6 +54,14 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
         itemCount: 1,
         trackName: 'Foundations',
         action: () => {
+            const onboardingPolicy = consumeOnboardingPolicyContext();
+            const aiPolicyVersion =
+                session.planPolicyDecisionId
+                || session.scopePolicyDecisionId
+                || onboardingPolicy?.decisionId
+                || session.policyFallbackUsed
+                    ? AI_POLICY_VERSION
+                    : null;
             const sessionId = crypto.randomUUID();
             const scope: SessionScope = {
                 track: { slug: 'dsa', name: 'Data Structures' },
@@ -58,6 +85,11 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                 googleId: googleId ?? undefined,
                 personalization: null,
                 personalizationExperiment: null,
+                aiPolicyVersion,
+                planPolicyDecisionId: session.planPolicyDecisionId ?? null,
+                scopePolicyDecisionId: session.scopePolicyDecisionId ?? null,
+                onboardingDecisionId: onboardingPolicy?.decisionId ?? null,
+                policyFallbackUsed: Boolean(session.policyFallbackUsed || onboardingPolicy?.fallbackUsed),
             };
 
             logTelemetryEvent({
@@ -73,6 +105,11 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     itemHref: '/learn/dsa/arrays',
                     personalizationScopeCohort: 'not_eligible',
                     personalizationScopeApplied: false,
+                    aiPolicyVersion: scope.aiPolicyVersion,
+                    planDecisionId: scope.planPolicyDecisionId,
+                    scopeDecisionId: scope.scopePolicyDecisionId,
+                    onboardingDecisionId: scope.onboardingDecisionId,
+                    policyFallbackUsed: scope.policyFallbackUsed,
                 },
                 dedupeKey: `committed_${sessionId}`
             });
@@ -90,6 +127,14 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
         trackName: track?.name,
         action: () => {
             if (!now || !track) return;
+            const onboardingPolicy = consumeOnboardingPolicyContext();
+            const aiPolicyVersion =
+                session.planPolicyDecisionId
+                || session.scopePolicyDecisionId
+                || onboardingPolicy?.decisionId
+                || session.policyFallbackUsed
+                    ? AI_POLICY_VERSION
+                    : null;
             const sessionId = crypto.randomUUID();
             const scope: SessionScope = {
                 track,
@@ -100,6 +145,11 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                 googleId: googleId ?? undefined,
                 personalization: session.personalization,
                 personalizationExperiment: session.personalizationExperiment,
+                aiPolicyVersion,
+                planPolicyDecisionId: session.planPolicyDecisionId ?? null,
+                scopePolicyDecisionId: session.scopePolicyDecisionId ?? null,
+                onboardingDecisionId: onboardingPolicy?.decisionId ?? null,
+                policyFallbackUsed: Boolean(session.policyFallbackUsed || onboardingPolicy?.fallbackUsed),
             };
 
             logTelemetryEvent({
@@ -121,6 +171,11 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     personalizationScopeApplied: session.personalizationExperiment?.applied ?? false,
                     personalizationScopeMaxItems: session.personalizationExperiment?.maxItems ?? null,
                     personalizationScopeMaxMinutes: session.personalizationExperiment?.maxMinutes ?? null,
+                    aiPolicyVersion: scope.aiPolicyVersion,
+                    planDecisionId: scope.planPolicyDecisionId,
+                    scopeDecisionId: scope.scopePolicyDecisionId,
+                    onboardingDecisionId: scope.onboardingDecisionId,
+                    policyFallbackUsed: scope.policyFallbackUsed,
                 },
                 dedupeKey: `committed_${sessionId}`
             });

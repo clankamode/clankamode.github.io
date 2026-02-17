@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import OpenAI from 'openai';
 import { authOptions } from '../api/auth/[...nextauth]/auth';
 import { FeatureFlags, isFeatureEnabled } from '@/lib/flags';
+import { decideFrictionTriagePolicy } from '@/lib/ai-policy/runtime';
 import { buildAIDecisionDedupeKey, logAIDecision } from '@/lib/ai-decision-registry';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { UserRole, hasRole } from '@/types/roles';
@@ -441,11 +442,17 @@ export async function generateFrictionTriageBriefAction(payload: {
       outputJson: { brief: generatedBrief, appliedStatus: after.status, appliedOwner: after.owner },
       applied: true,
       source: 'session_intelligence',
+      sessionId: snapshots[0]?.session_id ?? null,
+      decisionScope: 'triage',
+      decisionTarget: `${payload.trackSlug}:${payload.stepIndex}`,
       dedupeKey: buildAIDecisionDedupeKey({
         decisionType: 'triage_brief',
         decisionMode: 'assist',
+        decisionScope: 'triage',
         trackSlug: payload.trackSlug,
         stepIndex: payload.stepIndex,
+        sessionId: snapshots[0]?.session_id ?? null,
+        decisionTarget: `${payload.trackSlug}:${payload.stepIndex}`,
         source: 'session_intelligence',
         status: after.status,
         owner: after.owner,
@@ -585,10 +592,55 @@ export async function recommendAndApplyFrictionTriageAction(payload: {
     let rationale =
       `Risk signal ${stuckRate.toFixed(2)} stuck rate over ${snapshots.length} samples; recommended ${fallbackStatus}.`;
     let recommendationModel = 'deterministic-fallback';
+    let fallbackUsed = true;
+    let latencyMs: number | null = null;
+    let errorCode: string | null = null;
+    const aiPolicyTriageEnabled = isFeatureEnabled(FeatureFlags.AI_POLICY_TRIAGE, session?.user ?? null);
 
-    if (process.env.OPENAI_API_KEY) {
+    if (aiPolicyTriageEnabled) {
+      const stateCounts = snapshots.reduce<Record<FrictionState, number>>((acc, row) => {
+        acc[row.friction_state] = (acc[row.friction_state] || 0) + 1;
+        return acc;
+      }, {
+        flow: 0,
+        stuck: 0,
+        drift: 0,
+        fatigue: 0,
+        coast: 0,
+      });
+      const dominantState = (Object.entries(stateCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'none') as FrictionState | 'none';
+      const policyDecision = await decideFrictionTriagePolicy({
+        trackSlug: payload.trackSlug,
+        stepIndex: payload.stepIndex,
+        lookbackDays,
+        sampleSize: snapshots.length,
+        stuckRate,
+        avgConfidence: confidenceAvg,
+        avgElapsedRatio: elapsedRatioAvg,
+        ownerCandidates,
+        existingStatus,
+        existingOwner,
+        dominantState,
+        fallbackOutput: {
+          status: fallbackStatus,
+          owner: fallbackOwner,
+          rationale,
+        },
+      });
+
+      recommendedStatus = policyDecision.output.status;
+      recommendedOwner = policyDecision.output.owner ?? fallbackOwner;
+      rationale = policyDecision.output.rationale;
+      recommendationModel = policyDecision.model;
+      fallbackUsed = policyDecision.fallbackUsed;
+      latencyMs = policyDecision.latencyMs;
+      errorCode = policyDecision.errorCode === 'none' ? null : policyDecision.errorCode;
+    }
+
+    if (!aiPolicyTriageEnabled && process.env.OPENAI_API_KEY) {
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       recommendationModel = 'gpt-5-nano';
+      fallbackUsed = false;
       const prompt = [
         'Recommend triage assignment for a hotspot.',
         'Return JSON only with keys: status, owner, rationale.',
@@ -637,6 +689,9 @@ export async function recommendAndApplyFrictionTriageAction(payload: {
         if (parsed.rationale?.trim()) {
           rationale = parsed.rationale.trim().slice(0, 240);
         }
+      } else {
+        fallbackUsed = true;
+        errorCode = 'parse_failed';
       }
     }
 
@@ -703,11 +758,20 @@ export async function recommendAndApplyFrictionTriageAction(payload: {
       },
       applied: true,
       source: payload.source ?? 'ai_recommendation',
+      sessionId: snapshots[0]?.session_id ?? null,
+      decisionScope: 'triage',
+      decisionTarget: `${payload.trackSlug}:${payload.stepIndex}`,
+      fallbackUsed,
+      latencyMs,
+      errorCode,
       dedupeKey: buildAIDecisionDedupeKey({
         decisionType: 'triage_recommendation',
         decisionMode: payload.source === 'ai_auto_batch' ? 'auto' : 'assist',
+        decisionScope: 'triage',
         trackSlug: payload.trackSlug,
         stepIndex: payload.stepIndex,
+        sessionId: snapshots[0]?.session_id ?? null,
+        decisionTarget: `${payload.trackSlug}:${payload.stepIndex}`,
         source: payload.source ?? 'ai_recommendation',
         status: after.status,
         owner: after.owner,

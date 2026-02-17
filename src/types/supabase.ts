@@ -511,17 +511,23 @@ export interface Database {
                     applied: boolean
                     confidence: number | null
                     created_at: string
+                    decision_scope: string | null
+                    decision_target: string | null
                     decision_mode: string
                     decision_type: string
                     dedupe_key: string | null
+                    error_code: string | null
+                    fallback_used: boolean
                     id: string
                     input_json: Json
+                    latency_ms: number | null
                     model: string
                     output_json: Json
                     prompt_version: string
                     rationale: string | null
+                    session_id: string | null
                     source: string
-                    step_index: number
+                    step_index: number | null
                     track_slug: string
                 }
                 Insert: {
@@ -529,17 +535,23 @@ export interface Database {
                     applied?: boolean
                     confidence?: number | null
                     created_at?: string
+                    decision_scope?: string | null
+                    decision_target?: string | null
                     decision_mode: string
                     decision_type: string
                     dedupe_key?: string | null
+                    error_code?: string | null
+                    fallback_used?: boolean
                     id?: string
                     input_json?: Json
+                    latency_ms?: number | null
                     model: string
                     output_json?: Json
                     prompt_version: string
                     rationale?: string | null
+                    session_id?: string | null
                     source?: string
-                    step_index: number
+                    step_index?: number | null
                     track_slug: string
                 }
                 Update: {
@@ -547,17 +559,23 @@ export interface Database {
                     applied?: boolean
                     confidence?: number | null
                     created_at?: string
+                    decision_scope?: string | null
+                    decision_target?: string | null
                     decision_mode?: string
                     decision_type?: string
                     dedupe_key?: string | null
+                    error_code?: string | null
+                    fallback_used?: boolean
                     id?: string
                     input_json?: Json
+                    latency_ms?: number | null
                     model?: string
                     output_json?: Json
                     prompt_version?: string
                     rationale?: string | null
+                    session_id?: string | null
                     source?: string
-                    step_index?: number
+                    step_index?: number | null
                     track_slug?: string
                 }
                 Relationships: []

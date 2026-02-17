@@ -37,6 +37,11 @@ export default function SessionExitView() {
             personalizationScopeCohort: state.scope?.personalizationExperiment?.cohort ?? 'not_eligible',
             personalizationScopeEligible: state.scope?.personalizationExperiment?.eligible ?? false,
             personalizationScopeApplied: state.scope?.personalizationExperiment?.applied ?? false,
+            aiPolicyVersion: state.scope?.aiPolicyVersion ?? null,
+            planDecisionId: state.scope?.planPolicyDecisionId ?? null,
+            scopeDecisionId: state.scope?.scopePolicyDecisionId ?? null,
+            onboardingDecisionId: state.scope?.onboardingDecisionId ?? null,
+            policyFallbackUsed: state.scope?.policyFallbackUsed ?? false,
         };
     }, [state.scope, state.exit?.completedCount, ritualStatus]);
 
@@ -49,6 +54,11 @@ export default function SessionExitView() {
         personalizationScopeCohort: string;
         personalizationScopeEligible: boolean;
         personalizationScopeApplied: boolean;
+        aiPolicyVersion: string | null;
+        planDecisionId: string | null;
+        scopeDecisionId: string | null;
+        onboardingDecisionId: string | null;
+        policyFallbackUsed: boolean;
     }): boolean => {
         const body = JSON.stringify(payload);
         if (navigator.sendBeacon) {

@@ -41,7 +41,10 @@ export default async function HomePage({
         authSession.user.email,
         trackParam,
         authSession.user.id ?? undefined,
-        { enablePersonalizationScopeExperiment: personalizationScopeExperimentEnabled }
+        {
+            enablePersonalizationScopeExperiment: personalizationScopeExperimentEnabled,
+            viewer: { role: authSession.user.role },
+        }
     );
 
     const { getLastInternalization } = await import('@/app/actions/fingerprint');

@@ -633,6 +633,26 @@ function validatePlannerResponse(
   };
 }
 
+export function applySessionPlanPolicySelection(input: {
+  selectedIds: string[];
+  candidates: SessionPlannerCandidate[];
+  maxItems: number;
+  requirePracticeItem: boolean;
+}): SessionItem[] {
+  const boundedMaxItems = Math.min(Math.max(input.maxItems, 1), 4);
+  const parsed: SessionPlannerResponse = {
+    selected: input.selectedIds.map((id) => ({ id })),
+  };
+  const candidateById = new Map(input.candidates.map((candidate) => [candidate.id, candidate.item]));
+  return finalizeSelectedItems(
+    parsed,
+    candidateById,
+    input.candidates,
+    boundedMaxItems,
+    input.requirePracticeItem
+  );
+}
+
 function finalizeSelectedItems(
   parsed: SessionPlannerResponse,
   candidateById: Map<string, SessionItem>,

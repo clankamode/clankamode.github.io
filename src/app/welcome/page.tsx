@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { FeatureFlags, isFeatureEnabled } from '@/lib/flags';
 import { logTelemetryEvent } from '@/lib/telemetry';
 import { upsertOnboardingProfileAction } from '@/app/actions/onboarding-profile';
+import { decideOnboardingPathAction } from '@/app/actions/onboarding-path';
 import type { OnboardingGoal } from '@/types/onboarding';
 
 function sanitizeReturnTo(value: string | null): string | null {
@@ -84,7 +85,7 @@ function buildPlan(params: {
   returnTo: string | null;
   sessionStartPath: string;
 }): Plan {
-  const { goal, returnTo, sessionStartPath } = params;
+  const { goal, returnTo } = params;
 
   if (returnTo) {
     return {
@@ -102,8 +103,8 @@ function buildPlan(params: {
     return {
       label: 'First interview rep',
       duration: '8-10 minutes',
-      path: '/assessment',
-      firstMove: 'Solve one interview-style coding problem with immediate feedback.',
+      path: '/home',
+      firstMove: 'Start a focused interview-prep session with a clear first step.',
       artifact: 'Baseline interview readiness with your next drill queued.',
       nextSteps: ['Complete one timed problem', 'Review feedback', 'Start next rep'],
       cta: 'Start my first interview rep',
@@ -111,7 +112,7 @@ function buildPlan(params: {
   }
 
   if (goal === 'work') {
-    const path = sessionStartPath === '/home' ? '/home' : '/learn';
+    const path = '/home';
     return {
       label: 'Guided work-focused session',
       duration: '10 minutes',
@@ -126,7 +127,7 @@ function buildPlan(params: {
   return {
     label: 'Fundamentals reset session',
     duration: '6-8 minutes',
-    path: '/learn',
+    path: '/home',
     firstMove: 'Start with a high-signal fundamentals lesson and rebuild confidence quickly.',
     artifact: 'Structured fundamentals baseline and concept sequence.',
     nextSteps: ['Finish one lesson', 'Validate understanding', 'Open next concept'],
@@ -149,6 +150,15 @@ export default function WelcomePage() {
   const [goal, setGoal] = useState<Goal>('interview');
   const [stage, setStage] = useState<1 | 2 | 3>(1);
   const [showAlternatives, setShowAlternatives] = useState(false);
+  const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
+  const [onboardingDecision, setOnboardingDecision] = useState<{
+    targetPath: string;
+    trackSlug: 'dsa' | 'system-design' | 'job-hunt' | null;
+    reasonSummary: string;
+    decisionId: string | null;
+    fallbackUsed: boolean;
+    aiPolicyVersion: string;
+  } | null>(null);
   const onboardingViewIdRef = useRef(`welcome_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`);
 
   const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user ?? null);
@@ -170,6 +180,7 @@ export default function WelcomePage() {
 
   const hasResumeConfidence = Boolean(returnTo);
   const telemetrySessionId = onboardingViewIdRef.current;
+  const recommendedPlanPath = onboardingDecision?.targetPath ?? plan.path;
 
   useEffect(() => {
     if (!session?.user?.email) return;
@@ -214,19 +225,70 @@ export default function WelcomePage() {
       payload: {
         goal,
         planLabel: plan.label,
-        planPath: plan.path,
+        planPath: recommendedPlanPath,
         duration: plan.duration,
+        onboardingDecisionId: onboardingDecision?.decisionId ?? null,
+        policyFallbackUsed: onboardingDecision?.fallbackUsed ?? false,
+        aiPolicyVersion: onboardingDecision?.aiPolicyVersion ?? null,
       },
       dedupeKey: `${telemetrySessionId}:plan:${goal}`,
     });
-  }, [session?.user?.email, telemetrySessionId, hasResumeConfidence, stage, goal, plan.label, plan.path, plan.duration]);
+  }, [
+    session?.user?.email,
+    telemetrySessionId,
+    hasResumeConfidence,
+    stage,
+    goal,
+    plan.label,
+    recommendedPlanPath,
+    plan.duration,
+    onboardingDecision?.decisionId,
+    onboardingDecision?.fallbackUsed,
+    onboardingDecision?.aiPolicyVersion,
+  ]);
+
+  const handleGeneratePlan = async () => {
+    if (isGeneratingPlan || hasResumeConfidence) {
+      setStage(2);
+      return;
+    }
+
+    setIsGeneratingPlan(true);
+    try {
+      const result = await decideOnboardingPathAction({
+        goal,
+        returnTo,
+        sessionStartPath,
+      });
+
+      if (result.success) {
+        setOnboardingDecision({
+          targetPath: result.targetPath,
+          trackSlug: result.trackSlug,
+          reasonSummary: result.reasonSummary,
+          decisionId: result.decisionId,
+          fallbackUsed: result.fallbackUsed,
+          aiPolicyVersion: result.aiPolicyVersion,
+        });
+      } else {
+        setOnboardingDecision(null);
+      }
+    } catch {
+      setOnboardingDecision(null);
+    } finally {
+      setIsGeneratingPlan(false);
+      setStage(2);
+    }
+  };
 
   const handleStart = async (targetPath: string) => {
     if (pendingPath) return;
     setPendingPath(targetPath);
     try {
-      const launchTrackSlug =
-        resolveTrackSlugFromPath(targetPath);
+      const isPolicyPrimaryPath = targetPath === recommendedPlanPath;
+      const launchTrackSlug = isPolicyPrimaryPath
+        ? onboardingDecision?.trackSlug ?? resolveTrackSlugFromPath(targetPath)
+        : resolveTrackSlugFromPath(targetPath);
 
       await upsertOnboardingProfileAction({
         goal,
@@ -246,11 +308,24 @@ export default function WelcomePage() {
             stage,
             targetPath,
             hasResumeConfidence,
-            usedAlternatives: showAlternatives && targetPath !== plan.path,
+            usedAlternatives: showAlternatives && targetPath !== recommendedPlanPath,
+            onboardingDecisionId: onboardingDecision?.decisionId ?? null,
+            policyFallbackUsed: onboardingDecision?.fallbackUsed ?? false,
+            aiPolicyVersion: onboardingDecision?.aiPolicyVersion ?? null,
           },
           dedupeKey: `${telemetrySessionId}:launch:${targetPath}`,
         });
       }
+
+      window.sessionStorage.setItem(
+        'onboarding:policy-context:v1',
+        JSON.stringify({
+          decisionId: onboardingDecision?.decisionId ?? null,
+          fallbackUsed: onboardingDecision?.fallbackUsed ?? false,
+          aiPolicyVersion: onboardingDecision?.aiPolicyVersion ?? null,
+        })
+      );
+
       await update({ completeFirstLogin: true });
       router.push(targetPath);
       router.refresh();
@@ -261,7 +336,7 @@ export default function WelcomePage() {
   };
 
   const isBusy = pendingPath !== null;
-  const isPrimaryPending = pendingPath === plan.path;
+  const isPrimaryPending = pendingPath === recommendedPlanPath;
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-surface-ambient px-4 py-8 text-foreground sm:px-8 sm:py-12">
@@ -318,7 +393,7 @@ export default function WelcomePage() {
               <h2 className="mt-2 text-3xl font-semibold leading-tight tracking-[-0.01em] text-text-primary">{plan.label}</h2>
               <p className="mt-2 text-sm text-text-secondary">{plan.firstMove}</p>
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <Button variant="primary" size="lg" onClick={() => handleStart(plan.path)} disabled={isBusy}>
+                <Button variant="primary" size="lg" onClick={() => handleStart(recommendedPlanPath)} disabled={isBusy}>
                   {isPrimaryPending ? 'Preparing...' : plan.cta}
                 </Button>
                 <p className="text-sm text-text-secondary">Estimated time: {plan.duration}</p>
@@ -338,7 +413,10 @@ export default function WelcomePage() {
                     <button
                       key={goalKey}
                       type="button"
-                      onClick={() => setGoal(goalKey)}
+                      onClick={() => {
+                        setGoal(goalKey);
+                        setOnboardingDecision(null);
+                      }}
                       className={`rounded-2xl border px-4 py-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${
                         selected
                           ? 'border-primary/55 bg-surface shadow-[0_0_0_1px_rgba(44,187,93,0.35),0_0_32px_-14px_rgba(44,187,93,0.78)]'
@@ -360,8 +438,8 @@ export default function WelcomePage() {
                 })}
               </div>
               <div className="mt-4 flex flex-wrap items-center gap-3">
-                <Button variant="primary" size="md" onClick={() => setStage(2)}>
-                  Generate my first plan
+                <Button variant="primary" size="md" onClick={handleGeneratePlan} disabled={isGeneratingPlan}>
+                  {isGeneratingPlan ? 'Generating plan...' : 'Generate my first plan'}
                 </Button>
                 <button
                   type="button"
@@ -380,6 +458,9 @@ export default function WelcomePage() {
               <h2 className="mt-2 text-3xl font-semibold leading-tight tracking-[-0.01em] text-text-primary">Your first-win plan</h2>
               <p className="mt-2 text-lg font-medium text-text-primary">{plan.label}</p>
               <p className="mt-1 text-sm text-text-secondary">{plan.firstMove}</p>
+              {onboardingDecision?.reasonSummary && (
+                <p className="mt-2 text-xs text-text-muted">Policy note: {onboardingDecision.reasonSummary}</p>
+              )}
 
               <div className="mt-5 flex flex-wrap gap-2">
                 {plan.nextSteps.map((nextStep) => (
@@ -396,7 +477,10 @@ export default function WelcomePage() {
                 <button
                   type="button"
                   className="text-sm text-text-secondary underline-offset-4 hover:text-text-primary hover:underline"
-                  onClick={() => setStage(1)}
+                  onClick={() => {
+                    setOnboardingDecision(null);
+                    setStage(1);
+                  }}
                 >
                   Change goal
                 </button>
@@ -410,7 +494,7 @@ export default function WelcomePage() {
               <h2 className="mt-2 text-3xl font-semibold leading-tight tracking-[-0.01em] text-text-primary">Launch your first win</h2>
               <p className="mt-2 text-sm text-text-secondary">{plan.artifact}</p>
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <Button variant="primary" size="lg" onClick={() => handleStart(plan.path)} disabled={isBusy}>
+                <Button variant="primary" size="lg" onClick={() => handleStart(recommendedPlanPath)} disabled={isBusy}>
                   {isPrimaryPending ? 'Preparing...' : plan.cta}
                 </Button>
                 <p className="text-sm text-text-secondary">Estimated time: {plan.duration}</p>
