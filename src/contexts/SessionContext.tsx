@@ -18,7 +18,7 @@ import { logFrictionSnapshotAction } from '@/app/actions/friction';
 import { FRICTION_EMIT_CONFIDENCE_THRESHOLD, normalizeFrictionSnapshotPayload } from '@/lib/friction-snapshot';
 import type { FrictionSignalVector, FrictionTrigger, FrictionState } from '@/types/friction';
 
-export type SessionPhase = 'idle' | 'entry' | 'execution' | 'exit';
+export type SessionPhase = 'idle' | 'entry' | 'execution' | 'exit' | 'generating';
 type SessionTransitionStatus = 'ready' | 'advancing' | 'finalizing';
 const SESSION_STATE_STORAGE_KEY = 'session:state:v1';
 const LAST_MICRO_CONCEPT_STORAGE_KEY = 'session:last-micro-concept:v1';
@@ -73,6 +73,7 @@ interface SessionContextValue {
     nextChunk: () => void;
     prevChunk: () => void;
     setTotalChunks: (total: number) => void;
+    setGenerating: () => void;
 }
 
 const initialState: SessionState = {
@@ -762,6 +763,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         });
     }, []);
 
+    const setGenerating = useCallback(() => {
+        setState((prev) => ({
+            ...prev,
+            phase: 'generating',
+        }));
+    }, []);
+
     return (
         <SessionContext.Provider
             value={{
@@ -775,6 +783,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 nextChunk,
                 prevChunk,
                 setTotalChunks,
+                setGenerating,
             }}
         >
             {children}

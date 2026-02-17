@@ -6,11 +6,12 @@ import { UserRole } from "@/types/roles";
 interface UserIdentity {
   role: UserRole;
   googleId: string | null;
+  isNewUser: boolean;
 }
 
 const getUserIdentity = async (email: string, googleId?: string): Promise<UserIdentity> => {
   if (process.env.NODE_ENV !== 'production' && email === 'e2e-admin@example.com') {
-    return { role: UserRole.ADMIN, googleId: googleId ?? null };
+    return { role: UserRole.ADMIN, googleId: googleId ?? null, isNewUser: false };
   }
 
   const supabase = getSupabaseAdminClient();
@@ -31,9 +32,9 @@ const getUserIdentity = async (email: string, googleId?: string): Promise<UserId
       if (updateError) {
         console.error('Error updating google_id:', updateError);
       }
-      return { role: user.role as UserRole, googleId };
+      return { role: user.role as UserRole, googleId, isNewUser: false };
     }
-    return { role: user.role as UserRole, googleId: user.google_id as string | null };
+    return { role: user.role as UserRole, googleId: user.google_id as string | null, isNewUser: false };
   }
 
   const { data: newUser, error: upsertError } = await supabase
@@ -54,10 +55,10 @@ const getUserIdentity = async (email: string, googleId?: string): Promise<UserId
 
   if (upsertError) {
     console.error('Error upserting user:', upsertError);
-    return { role: UserRole.USER, googleId: googleId ?? null };
+    return { role: UserRole.USER, googleId: googleId ?? null, isNewUser: false };
   }
 
-  return { role: (newUser?.role as UserRole) || UserRole.USER, googleId: googleId ?? null };
+  return { role: (newUser?.role as UserRole) || UserRole.USER, googleId: googleId ?? null, isNewUser: true };
 };
 
 export const authOptions: NextAuthOptions = {
@@ -88,7 +89,8 @@ export const authOptions: NextAuthOptions = {
           role: effectiveRole,
           email: effectiveEmail,
           name: effectiveName,
-          image: effectiveImage
+          image: effectiveImage,
+          firstLoginPending: !!token.firstLoginPending,
         },
         proxy: token.proxyEmail
           ? {
@@ -123,6 +125,9 @@ export const authOptions: NextAuthOptions = {
         const identity = await getUserIdentity(token.email as string, token.id as string | undefined);
         token.role = identity.role;
         token.originalRole = token.originalRole || token.role;
+        if (user) {
+          token.firstLoginPending = identity.isNewUser;
+        }
       }
 
       if (trigger === 'update' && session && 'proxyEmail' in session) {
@@ -142,6 +147,10 @@ export const authOptions: NextAuthOptions = {
           (token as { proxyName?: string }).proxyName = (session as { proxyName?: string }).proxyName || requestedProxyEmail;
           (token as { proxyImage?: string | null }).proxyImage = (session as { proxyImage?: string | null }).proxyImage || null;
         }
+      }
+
+      if (trigger === 'update' && session && 'completeFirstLogin' in session && session.completeFirstLogin) {
+        delete (token as { firstLoginPending?: boolean }).firstLoginPending;
       }
       return token;
     },

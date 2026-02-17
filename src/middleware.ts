@@ -4,6 +4,24 @@ import { getToken } from 'next-auth/jwt';
 import { UserRole, hasRole } from '@/types/roles';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 
+function buildWelcomeRedirect(req: NextRequest): NextResponse {
+    const welcomeUrl = new URL('/welcome', req.url);
+    const path = req.nextUrl.pathname;
+    const fullPath = `${req.nextUrl.pathname}${req.nextUrl.search}`;
+
+    const isSafeReturnTo =
+        path !== '/' &&
+        path !== '/welcome' &&
+        !path.startsWith('/api/') &&
+        fullPath.startsWith('/');
+
+    if (isSafeReturnTo) {
+        welcomeUrl.searchParams.set('returnTo', fullPath);
+    }
+
+    return NextResponse.redirect(welcomeUrl);
+}
+
 export async function middleware(req: NextRequest) {
     try {
         const token = await getToken({
@@ -11,15 +29,38 @@ export async function middleware(req: NextRequest) {
         });
 
         const effectiveRole = (token?.proxyRole as UserRole) || (token?.role as UserRole);
+        const firstLoginPending = !!token?.firstLoginPending;
         const progressEnabled = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, { role: effectiveRole });
         const sessionModeEnabled = isFeatureEnabled(FeatureFlags.SESSION_MODE, { role: effectiveRole });
         const sessionFeaturesEnabled = progressEnabled && sessionModeEnabled;
+        const postLoginDefaultPath = sessionFeaturesEnabled ? '/home' : '/learn';
 
         if (req.nextUrl.pathname === '/') {
             if (token) {
-                return NextResponse.redirect(new URL(sessionFeaturesEnabled ? '/home' : '/learn', req.url));
+                return firstLoginPending
+                    ? buildWelcomeRedirect(req)
+                    : NextResponse.redirect(new URL(postLoginDefaultPath, req.url));
             }
             return NextResponse.next();
+        }
+
+        if (req.nextUrl.pathname === '/welcome') {
+            if (!token) {
+                return NextResponse.redirect(new URL('/', req.url));
+            }
+            const isAdminWelcomePreview =
+                process.env.NODE_ENV !== 'production' &&
+                hasRole(effectiveRole, UserRole.ADMIN) &&
+                req.nextUrl.searchParams.get('preview') === '1';
+
+            if (!firstLoginPending && !isAdminWelcomePreview) {
+                return NextResponse.redirect(new URL(postLoginDefaultPath, req.url));
+            }
+            return NextResponse.next();
+        }
+
+        if (token && firstLoginPending && !req.nextUrl.pathname.startsWith('/api/')) {
+            return buildWelcomeRedirect(req);
         }
 
         if (req.nextUrl.pathname === '/home') {
@@ -127,6 +168,7 @@ export const config = {
     matcher: [
         '/',
         '/home',
+        '/welcome',
         '/explore',
         '/session/:path*',
         '/admin/:path*',

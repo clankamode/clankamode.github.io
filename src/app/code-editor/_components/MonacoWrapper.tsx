@@ -3,27 +3,53 @@
 import { useRef, useCallback } from 'react';
 import Editor, { type OnMount } from '@monaco-editor/react';
 
-const THEME_NAME = 'cinematic-dark';
+const DARK_THEME = 'cinematic-dark';
+const LIGHT_THEME = 'cinematic-light';
 
 const THEME_RULES = [
   { token: 'comment', foreground: '6b6b6b', fontStyle: 'italic' },
   { token: 'keyword', foreground: 'c084fc' },
-  { token: 'keyword.control', foreground: 'C586C0' },
-  { token: 'string', foreground: '34d399' },
-  { token: 'string.escape', foreground: 'D7BA7D' },
-  { token: 'number', foreground: 'facc15' },
-  { token: 'type', foreground: '4EC9B0' },
-  { token: 'class', foreground: '4EC9B0' },
-  { token: 'function', foreground: 'DCDCAA' },
-  { token: 'variable', foreground: '9CDCFE' },
-  { token: 'constant', foreground: '4FC1FF' },
-  { token: 'parameter', foreground: '9CDCFE' },
-  { token: 'decorator', foreground: 'DCDCAA' },
-  { token: 'operator', foreground: 'D4D4D4' },
-  { token: 'delimiter', foreground: 'D4D4D4' },
+  { token: 'keyword.control', foreground: '8b5cf6' },
+  { token: 'string', foreground: '10b981' },
+  { token: 'string.escape', foreground: 'd97706' },
+  { token: 'number', foreground: 'f59e0b' },
+  { token: 'type', foreground: '0d9488' },
+  { token: 'class', foreground: '0d9488' },
+  { token: 'function', foreground: '4f46e5' },
+  { token: 'variable', foreground: '2563eb' },
+  { token: 'constant', foreground: '2563eb' },
+  { token: 'parameter', foreground: '2563eb' },
+  { token: 'decorator', foreground: '4f46e5' },
+  { token: 'operator', foreground: '3f3f46' },
+  { token: 'delimiter', foreground: '3f3f46' },
 ];
 
-const THEME_COLORS: Record<string, string> = {
+const LIGHT_THEME_COLORS: Record<string, string> = {
+  'editor.background': '#ffffff',
+  'editor.foreground': '#09090b',
+  'editorLineNumber.foreground': '#d1d1d6',
+  'editorLineNumber.activeForeground': '#71717a',
+  'editor.selectionBackground': '#2cbb5d20',
+  'editor.inactiveSelectionBackground': '#f4f4f5',
+  'editorIndentGuide.background': '#f4f4f5',
+  'editorIndentGuide.activeBackground': '#e4e4e7',
+  'editor.lineHighlightBackground': '#f6f6f7',
+  'editor.lineHighlightBorder': '#f6f6f700',
+  'editorCursor.foreground': '#09090b',
+  'editorWhitespace.foreground': '#e4e4e7',
+  'editorWidget.background': '#ffffff',
+  'editorWidget.border': '#e4e4e7',
+  'editorSuggestWidget.background': '#ffffff',
+  'editorSuggestWidget.border': '#e4e4e7',
+  'editorSuggestWidget.selectedBackground': '#f4f4f5',
+  'minimap.background': '#ffffff',
+  'scrollbar.shadow': '#00000000',
+  'scrollbarSlider.background': '#00000010',
+  'scrollbarSlider.hoverBackground': '#00000020',
+  'scrollbarSlider.activeBackground': '#00000030',
+};
+
+const DARK_THEME_COLORS: Record<string, string> = {
   'editor.background': '#0d0d0d',
   'editor.foreground': '#D4D4D4',
   'editorLineNumber.foreground': '#3f3f3f',
@@ -95,14 +121,29 @@ export function MonacoWrapper({ value, onChange, onRun }: MonacoWrapperProps) {
   const handleMount: OnMount = useCallback((editor, monaco) => {
     editorRef.current = editor;
 
-    monaco.editor.defineTheme(THEME_NAME, {
+    monaco.editor.defineTheme(DARK_THEME, {
       base: 'vs-dark',
       inherit: true,
       rules: THEME_RULES,
-      colors: THEME_COLORS,
+      colors: DARK_THEME_COLORS,
     });
 
-    monaco.editor.setTheme(THEME_NAME);
+    monaco.editor.defineTheme(LIGHT_THEME, {
+      base: 'vs',
+      inherit: true,
+      rules: THEME_RULES,
+      colors: LIGHT_THEME_COLORS,
+    });
+
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    monaco.editor.setTheme(isDarkMode ? DARK_THEME : LIGHT_THEME);
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleThemeChange = (e: MediaQueryListEvent) => {
+      monaco.editor.setTheme(e.matches ? DARK_THEME : LIGHT_THEME);
+    };
+
+    mediaQuery.addEventListener('change', handleThemeChange);
 
     editor.addAction({
       id: 'run-python',
@@ -112,6 +153,10 @@ export function MonacoWrapper({ value, onChange, onRun }: MonacoWrapperProps) {
     });
 
     editor.focus();
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
   }, []);
 
   return (
@@ -119,7 +164,7 @@ export function MonacoWrapper({ value, onChange, onRun }: MonacoWrapperProps) {
       height="100%"
       language="python"
       value={value}
-      theme={THEME_NAME}
+      theme={DARK_THEME}
       onChange={(val) => onChange?.(val || '')}
       onMount={handleMount}
       loading={

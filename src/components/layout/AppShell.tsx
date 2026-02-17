@@ -12,7 +12,7 @@ interface AppShellProps {
 }
 
 export default function AppShell({ children }: AppShellProps) {
-    const { mode, showNavbar, showFooter } = useChromeVisibility();
+    const { mode, showNavbar, showFooter, showFeedbackWidget } = useChromeVisibility();
     const { state } = useSession();
 
     return (
@@ -25,7 +25,7 @@ export default function AppShell({ children }: AppShellProps) {
                 </main>
                 {showFooter && <Footer />}
             </div>
-            {mode !== 'execute' && mode !== 'exit' && <FeedbackWidget />}
+            {showFeedbackWidget && <FeedbackWidget />}
         </div>
     );
 }

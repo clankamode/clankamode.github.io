@@ -42,8 +42,8 @@ export function OutputPanel({
   }, [output, activeTab]);
 
   return (
-    <div className="flex h-full flex-col bg-[#08090b]">
-      <div className="flex items-center justify-between border-b border-white/10 bg-[#0d0f12] px-4">
+    <div className="flex h-full flex-col bg-surface-workbench">
+      <div className="flex items-center justify-between border-b border-border-subtle bg-surface-interactive/50 px-4">
         <div className="flex items-center gap-1">
           <TabButton
             label="Output"
@@ -62,7 +62,7 @@ export function OutputPanel({
             }
             badgeVariant={
               testResults.length === testCases.length &&
-              testResults.every((r) => r.passed)
+                testResults.every((r) => r.passed)
                 ? 'success'
                 : 'error'
             }
@@ -70,7 +70,7 @@ export function OutputPanel({
         </div>
         <button
           onClick={onReset}
-          className="rounded-md border border-white/10 px-3 py-1 font-mono text-xs text-text-secondary transition-colors hover:bg-white/5 hover:text-foreground"
+          className="rounded-md border border-border-subtle px-3 py-1 font-mono text-xs text-text-secondary transition-colors hover:bg-surface-interactive hover:text-foreground"
         >
           Reset
         </button>
@@ -84,7 +84,7 @@ export function OutputPanel({
           hasRun={hasRun}
         />
       ) : (
-        <div ref={scrollRef} className="flex-1 overflow-auto bg-[#07080a] p-4 font-mono text-sm leading-relaxed">
+        <div ref={scrollRef} className="flex-1 overflow-auto bg-surface-ambient p-4 font-mono text-sm leading-relaxed text-text-primary">
           {isRunning ? (
             <div className="flex h-full flex-col items-center justify-center gap-3">
               <Loader2 className="h-6 w-6 animate-spin text-brand-green" />
@@ -127,11 +127,10 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`relative flex items-center gap-2 px-3 py-2.5 font-mono text-sm transition-colors ${
-        isActive
+      className={`relative flex items-center gap-2 px-3 py-2.5 font-mono text-sm transition-colors ${isActive
           ? 'text-foreground'
           : 'text-text-secondary hover:text-foreground'
-      }`}
+        }`}
     >
       {label}
 
@@ -144,11 +143,10 @@ function TabButton({
 
       {badge && (
         <span
-          className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
-            badgeVariant === 'success'
+          className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${badgeVariant === 'success'
               ? 'bg-brand-green/15 text-brand-green'
               : 'bg-red-500/15 text-red-400'
-          }`}
+            }`}
         >
           {badge}
         </span>

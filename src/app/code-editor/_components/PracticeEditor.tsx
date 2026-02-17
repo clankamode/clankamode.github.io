@@ -355,7 +355,7 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
                 onClick={handleSessionComplete}
                 disabled={completingSessionItem || !currentSessionItem || isRunning}
                 className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-surface-dense disabled:text-text-muted ${canAdvanceSession
-                  ? 'bg-brand-green text-black hover:bg-brand-green/90'
+                  ? 'bg-brand-green text-white hover:bg-brand-green/90'
                   : 'border border-border-interactive bg-surface-workbench text-text-secondary hover:text-text-primary'}`}
               >
                 {completionLabel}

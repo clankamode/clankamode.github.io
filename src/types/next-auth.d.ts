@@ -9,6 +9,7 @@ declare module "next-auth" {
       email?: string | null
       image?: string | null
       role: string
+      firstLoginPending?: boolean
     }
 
     proxy?: {
@@ -51,5 +52,6 @@ declare module "next-auth/jwt" {
     originalName?: string | null
     originalImage?: string | null
     originalRole?: string | null
+    firstLoginPending?: boolean
   }
 }

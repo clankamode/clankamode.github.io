@@ -22,6 +22,10 @@ const ALLOWED_EVENTS = new Set([
     'practice_completion_confirmed',
     'practice_completion_blocked',
     'friction_state_changed',
+    'first_win_run_shown',
+    'first_win_goal_selected',
+    'first_win_plan_generated',
+    'first_win_launched',
 ]);
 
 const MAX_PAYLOAD_SIZE = 4096; // 4KB limit

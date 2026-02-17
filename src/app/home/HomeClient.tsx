@@ -18,8 +18,14 @@ interface HomeClientProps {
 
 export default function HomeClient({ sessionState, primer }: HomeClientProps) {
     const { data: authData, status } = useSession();
-    const { state: sessionPhaseState } = useSessionContext();
+    const { state: sessionPhaseState, resetToEntry } = useSessionContext();
     const nextItemId = sessionState?.now?.practiceQuestionId || sessionState?.now?.articleId || sessionState?.now?.href || 'pick_track';
+
+    useEffect(() => {
+        if (sessionPhaseState.phase === 'generating' && sessionState) {
+            resetToEntry();
+        }
+    }, [sessionState, sessionPhaseState.phase, resetToEntry]);
 
     useEffect(() => {
         if (!authData?.user?.email) return;
@@ -54,6 +60,21 @@ export default function HomeClient({ sessionState, primer }: HomeClientProps) {
 
     if (sessionPhaseState.phase === 'exit') {
         return <SessionExitView />;
+    }
+
+    if (sessionPhaseState.phase === 'generating') {
+        return (
+            <main className="bg-background">
+                <div className="min-h-[calc(100vh-var(--nav-height,113px)-96px)] flex items-center justify-center py-16">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-primary"></div>
+                        <p className="text-text-secondary text-sm font-medium animate-pulse">
+                            Generating your next session...
+                        </p>
+                    </div>
+                </div>
+            </main>
+        );
     }
 
     if (!sessionState) {

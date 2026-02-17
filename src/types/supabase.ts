@@ -993,6 +993,45 @@ export interface Database {
                 }
                 Relationships: []
             }
+            UserOnboardingProfiles: {
+                Row: {
+                    created_at: string
+                    email: string
+                    first_completed_at: string | null
+                    first_launch_path: string
+                    first_launch_track_slug: string | null
+                    goal: string
+                    google_id: string | null
+                    id: string
+                    launch_count: number
+                    updated_at: string
+                }
+                Insert: {
+                    created_at?: string
+                    email: string
+                    first_completed_at?: string | null
+                    first_launch_path: string
+                    first_launch_track_slug?: string | null
+                    goal: string
+                    google_id?: string | null
+                    id?: string
+                    launch_count?: number
+                    updated_at?: string
+                }
+                Update: {
+                    created_at?: string
+                    email?: string
+                    first_completed_at?: string | null
+                    first_launch_path?: string
+                    first_launch_track_slug?: string | null
+                    goal?: string
+                    google_id?: string | null
+                    id?: string
+                    launch_count?: number
+                    updated_at?: string
+                }
+                Relationships: []
+            }
             Users: {
                 Row: {
                     created_at: string

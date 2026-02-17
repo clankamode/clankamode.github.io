@@ -10,7 +10,7 @@ import { proposeRitualChoices, type IntentType } from '@/lib/ritual_prompts';
 import Link from 'next/link';
 
 export default function SessionExitView() {
-    const { state, resetToEntry, commitSession } = useSessionContext();
+    const { state, commitSession, setGenerating } = useSessionContext();
     const router = useRouter();
     const [isFinalizing, setIsFinalizing] = useState(false);
     const [hasFinalized, setHasFinalized] = useState(false);
@@ -60,7 +60,7 @@ export default function SessionExitView() {
 
     const finalizeAndReturn = async (skipped = false) => {
         if (hasFinalizedRef.current || isFinalizing) {
-            resetToEntry();
+            setGenerating();
             router.replace('/home');
             router.refresh();
             return;
@@ -83,7 +83,7 @@ export default function SessionExitView() {
             hasFinalizedRef.current = true;
         } finally {
             setIsFinalizing(false);
-            resetToEntry();
+            setGenerating();
             router.replace('/home');
             router.refresh();
         }
@@ -251,7 +251,7 @@ export default function SessionExitView() {
                                             </h3>
                                             <div className="flex flex-wrap gap-2">
                                                 {supportConcepts.slice(0, 2).map(item => (
-                                                    <span key={item} className="px-2 py-1 rounded bg-white/5 border border-white/5 text-[11px] text-text-secondary">
+                                                    <span key={item} className="px-2 py-1 rounded bg-surface-dense border border-border-subtle text-[11px] text-text-secondary">
                                                         {item}
                                                     </span>
                                                 ))}
@@ -381,7 +381,7 @@ export default function SessionExitView() {
                                     <button
                                         onClick={returnToDashboard}
                                         disabled={isFinalizing}
-                                        className="w-full py-4 rounded-full bg-white text-black font-bold text-sm uppercase tracking-widest hover:bg-white/90 transition-all shadow-lg"
+                                        className="w-full py-4 rounded-full bg-foreground text-background font-bold text-sm uppercase tracking-widest hover:opacity-90 transition-all shadow-lg"
                                     >
                                         {isFinalizing ? 'Saving...' : 'Return to dashboard'}
                                     </button>
@@ -549,7 +549,7 @@ function InternalizationRitual({
                                                     ? 'bg-accent-primary/5 border-accent-primary/40 text-text-primary ring-1 ring-accent-primary/20 scale-[1.02] shadow-lg'
                                                     : isOtherSelected
                                                         ? 'bg-transparent border-border-subtle text-text-muted opacity-50 hover:opacity-100 grayscale hover:grayscale-0'
-                                                        : 'bg-surface-interactive border-border-subtle text-text-secondary hover:border-border-interactive hover:bg-white/[0.04] hover:-translate-y-0.5'
+                                                        : 'bg-surface-interactive border-border-subtle text-text-secondary hover:border-border-interactive hover:bg-surface-dense hover:-translate-y-0.5'
                                                 }
                                             `}
                                         >
@@ -560,7 +560,7 @@ function InternalizationRitual({
                                                         ? 'border-accent-primary bg-accent-primary scale-110'
                                                         : isOtherSelected
                                                             ? 'border-border-subtle opacity-50'
-                                                            : 'border-white/20 group-hover:border-white/40'
+                                                            : 'border-border-interactive group-hover:border-text-muted'
                                                     }
                                                 `}>
                                                     {isSelected && (
@@ -602,7 +602,7 @@ function InternalizationRitual({
                                     className={`
                                         w-full bg-surface-interactive border rounded-xl p-5 text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-accent-primary/30 transition-all min-h-[120px] resize-none text-sm leading-relaxed
                                         ${choiceType === 'FREEFORM'
-                                            ? 'border-accent-primary/40 bg-white/[0.04]'
+                                            ? 'border-accent-primary/40 bg-surface-dense'
                                             : 'border-border-subtle focus:border-accent-primary/30'
                                         }
                                     `}
@@ -629,7 +629,7 @@ function InternalizationRitual({
                                         w-full py-4 rounded-full font-bold text-xs uppercase tracking-[0.2em] transition-all duration-500 relative overflow-hidden
                                         ${showSuccess
                                             ? 'bg-accent-primary text-black'
-                                            : 'bg-white text-black hover:bg-white/90 shadow-[0_8px_30px_rgba(255,255,255,0.1)] hover:shadow-[0_12px_40px_rgba(255,255,255,0.15)] hover:-translate-y-0.5'
+                                            : 'bg-foreground text-background hover:opacity-90 shadow-[0_8px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)] hover:-translate-y-0.5'
                                         }
                                         disabled:opacity-70 disabled:hover:translate-y-0
                                     `}

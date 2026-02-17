@@ -89,7 +89,7 @@ export function BlockRenderer({ blocks, mode = 'default' }: BlockRendererProps) 
                           {...props}
                           className={cn(
                             isExecution
-                              ? 'mt-4 text-base leading-8 sm:text-[17px]'
+                              ? 'mt-4 text-base leading-relaxed sm:text-[17px]'
                               : 'mt-4 text-lg leading-relaxed text-text-secondary',
                             isExecution ? 'text-text-primary/90' : ''
                           )}

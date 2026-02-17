@@ -1,15 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/' });
+      const callbackUrl = searchParams.get('callbackUrl') || '/';
+      await signIn('google', { callbackUrl });
     } catch (error) {
       console.error('Authentication error:', error);
     } finally {
@@ -23,7 +26,7 @@ export default function LoginPage() {
         <div className="text-center">
           <h2 className="mt-6 text-4xl font-bold text-foreground">Sign in to your account</h2>
           <p className="mt-2 text-base text-muted-foreground">
-            Please sign in to access your account
+            Sign in with Google to save your progress and pick up right where you left off.
           </p>
         </div>
         
@@ -48,4 +51,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-} 
+}

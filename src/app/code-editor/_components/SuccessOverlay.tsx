@@ -161,8 +161,9 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
       <div
         className="relative flex flex-col items-center gap-4 rounded-2xl border border-brand-green/20 px-8 py-6 pointer-events-auto transition-all duration-400 ease-out"
         style={{
-          background:
-            'linear-gradient(145deg, rgba(44, 187, 93, 0.06) 0%, rgba(13, 13, 13, 0.96) 35%, rgba(13, 13, 13, 0.98) 100%)',
+          background: isVisible
+            ? 'var(--surface-overlay, linear-gradient(145deg, rgba(44, 187, 93, 0.08) 0%, var(--surface-ambient) 35%, var(--surface-ambient) 100%))'
+            : 'var(--surface-ambient)',
           backdropFilter: 'blur(24px)',
           boxShadow: isVisible
             ? '0 0 80px rgba(44, 187, 93, 0.1), 0 24px 48px rgba(0, 0, 0, 0.6)'
@@ -176,9 +177,8 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
           <div
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-green/30"
             style={{
-              background:
-                'radial-gradient(circle at 30% 30%, rgba(44, 187, 93, 0.2), rgba(44, 187, 93, 0.05))',
-              boxShadow: '0 0 20px rgba(44, 187, 93, 0.15)',
+              background: 'var(--accent-glow)',
+              boxShadow: 'var(--shadow-glow-interactive)',
             }}
           >
             <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
@@ -217,7 +217,7 @@ export function SuccessOverlay({ show, onDismiss, passedCount, totalCount }: Suc
             e.stopPropagation();
             handleDismiss();
           }}
-          className="absolute right-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-white/5 hover:text-foreground"
+          className="absolute right-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-interactive hover:text-foreground"
         >
           <X className="h-3.5 w-3.5" />
         </button>

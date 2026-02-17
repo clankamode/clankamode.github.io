@@ -72,11 +72,13 @@ export function useChromeVisibility() {
     const mode = useChromeMode();
     const pathname = usePathname();
     const isImmersive = IMMERSIVE_ROUTES.some(route => pathname.startsWith(route));
+    const isOnboarding = pathname === '/welcome';
 
     return {
         mode,
-        showNavbar: mode !== 'execute' && !isImmersive,
-        showFooter: mode === 'marketing' && !isImmersive,
+        showNavbar: mode !== 'execute' && !isImmersive && !isOnboarding,
+        showFooter: mode === 'marketing' && !isImmersive && !isOnboarding,
         showSessionHUD: mode === 'execute',
+        showFeedbackWidget: mode !== 'execute' && mode !== 'exit' && !isOnboarding,
     };
 }

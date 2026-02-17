@@ -476,7 +476,19 @@ export default async function SessionIntelligencePage({
   const now = Date.now();
   const sinceIso = new Date(now - RANGE_DAYS[range] * 24 * 60 * 60 * 1000).toISOString();
 
-  const [committedRows, completedRows, finalizedRows, frictionSnapshots, frictionTriageRows, aiDecisionRows, aiAuditRows] = await Promise.all([
+  const [
+    committedRows,
+    completedRows,
+    finalizedRows,
+    frictionSnapshots,
+    frictionTriageRows,
+    aiDecisionRows,
+    aiAuditRows,
+    firstWinShownRows,
+    firstWinGoalRows,
+    firstWinPlanRows,
+    firstWinLaunchRows,
+  ] = await Promise.all([
     fetchTelemetryRows('session_committed', sinceIso, track),
     fetchTelemetryRows('item_completed', sinceIso, track),
     fetchTelemetryRows('session_finalized', sinceIso, track),
@@ -484,6 +496,10 @@ export default async function SessionIntelligencePage({
     fetchFrictionTriageRows(track),
     fetchAIDecisionRows(sinceIso, track),
     fetchAIDecisionAuditRows(sinceIso, track),
+    fetchTelemetryRows('first_win_run_shown', sinceIso, 'onboarding'),
+    fetchTelemetryRows('first_win_goal_selected', sinceIso, 'onboarding'),
+    fetchTelemetryRows('first_win_plan_generated', sinceIso, 'onboarding'),
+    fetchTelemetryRows('first_win_launched', sinceIso, 'onboarding'),
   ]);
 
   const committedEvents: CommittedEventInput[] = committedRows
@@ -523,6 +539,54 @@ export default async function SessionIntelligencePage({
   const repeatAnalysis = buildRepeatAnalysis(committedEvents, { lookbackDays: 7, alertThreshold: 0.2 });
   const funnel = buildFunnelByFirstItem(committedEvents, completedEvents, finalizedEvents).slice(0, 12);
   const repeatedItems = repeatAnalysis.itemRepeats.filter((item) => item.repeatedCount > 0).slice(0, 12);
+  const onboardingShownSessions = new Set(firstWinShownRows.map((row) => row.session_id));
+  const onboardingGoalSessions = new Set(firstWinGoalRows.map((row) => row.session_id));
+  const onboardingPlanSessions = new Set(firstWinPlanRows.map((row) => row.session_id));
+  const onboardingLaunchSessions = new Set(firstWinLaunchRows.map((row) => row.session_id));
+  const onboardingShownCount = onboardingShownSessions.size;
+  const onboardingGoalCount = onboardingGoalSessions.size;
+  const onboardingPlanCount = onboardingPlanSessions.size;
+  const onboardingLaunchCount = onboardingLaunchSessions.size;
+  const onboardingGoalConversion = onboardingShownCount > 0 ? onboardingGoalCount / onboardingShownCount : 0;
+  const onboardingPlanConversion = onboardingShownCount > 0 ? onboardingPlanCount / onboardingShownCount : 0;
+  const onboardingLaunchConversion = onboardingShownCount > 0 ? onboardingLaunchCount / onboardingShownCount : 0;
+  const onboardingDropAfterShown = Math.max(0, onboardingShownCount - onboardingGoalCount);
+  const onboardingDropAfterGoal = Math.max(0, onboardingGoalCount - onboardingPlanCount);
+  const onboardingDropAfterPlan = Math.max(0, onboardingPlanCount - onboardingLaunchCount);
+
+  const goalBreakdown = Array.from(
+    firstWinGoalRows.reduce((acc, row) => {
+      const goal = typeof row.payload?.goal === 'string' ? row.payload.goal : 'unknown';
+      const entry = acc.get(goal) ?? { goal, sessions: new Set<string>() };
+      entry.sessions.add(row.session_id);
+      acc.set(goal, entry);
+      return acc;
+    }, new Map<string, { goal: string; sessions: Set<string> }>())
+      .values()
+  )
+    .map((row) => ({
+      goal: row.goal,
+      sessions: row.sessions.size,
+      share: onboardingGoalCount > 0 ? row.sessions.size / onboardingGoalCount : 0,
+    }))
+    .sort((a, b) => b.sessions - a.sessions);
+
+  const launchPathBreakdown = Array.from(
+    firstWinLaunchRows.reduce((acc, row) => {
+      const targetPath = typeof row.payload?.targetPath === 'string' ? row.payload.targetPath : 'unknown';
+      const entry = acc.get(targetPath) ?? { targetPath, sessions: new Set<string>() };
+      entry.sessions.add(row.session_id);
+      acc.set(targetPath, entry);
+      return acc;
+    }, new Map<string, { targetPath: string; sessions: Set<string> }>())
+      .values()
+  )
+    .map((row) => ({
+      targetPath: row.targetPath,
+      sessions: row.sessions.size,
+      share: onboardingLaunchCount > 0 ? row.sessions.size / onboardingLaunchCount : 0,
+    }))
+    .sort((a, b) => b.sessions - a.sessions);
 
   const frictionMetrics = buildFrictionMonitorMetrics(frictionSnapshots, { alertThreshold: 0.3, hotspotMinSamples: 3 });
   const aiReplaySummary = buildAIDecisionReplaySummary(aiDecisionRows, aiAuditRows, {
@@ -589,6 +653,7 @@ export default async function SessionIntelligencePage({
     new Set([
       ...committedRows.map((row) => row.track_slug),
       ...frictionSnapshots.map((row) => row.trackSlug),
+      ...firstWinShownRows.map((row) => row.track_slug),
     ].filter((value) => typeof value === 'string' && value.length > 0))
   ).sort();
   const trackOptions = Array.from(new Set<string>([...DEFAULT_TRACKS, ...dynamicTracks]));
@@ -846,6 +911,129 @@ export default async function SessionIntelligencePage({
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </section>
+
+            <section className="mt-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-lg font-semibold text-text-primary">Onboarding First-Win Funnel</h2>
+                <span className="text-xs text-text-muted">Telemetry track: onboarding</span>
+              </div>
+
+              <div className="mb-5 grid gap-4 md:grid-cols-4">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Shown</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{onboardingShownCount}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Goal Selected</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {onboardingGoalCount} <span className="text-sm text-text-secondary">({formatPercent(onboardingGoalConversion)})</span>
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Plan Generated</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {onboardingPlanCount} <span className="text-sm text-text-secondary">({formatPercent(onboardingPlanConversion)})</span>
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Launched</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {onboardingLaunchCount} <span className="text-sm text-text-secondary">({formatPercent(onboardingLaunchConversion)})</span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="mb-6 overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-text-muted">
+                    <tr>
+                      <th className="py-2">Stage</th>
+                      <th className="py-2">Unique Sessions</th>
+                      <th className="py-2">Conv. from Shown</th>
+                      <th className="py-2">Drop-off from Previous</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-t border-border-subtle">
+                      <td className="py-2 text-text-secondary">Shown</td>
+                      <td className="py-2 text-text-primary">{onboardingShownCount}</td>
+                      <td className="py-2 text-text-primary">100.0%</td>
+                      <td className="py-2 text-text-secondary">-</td>
+                    </tr>
+                    <tr className="border-t border-border-subtle">
+                      <td className="py-2 text-text-secondary">Goal selected</td>
+                      <td className="py-2 text-text-primary">{onboardingGoalCount}</td>
+                      <td className="py-2 text-text-primary">{formatPercent(onboardingGoalConversion)}</td>
+                      <td className="py-2 text-text-secondary">{onboardingDropAfterShown}</td>
+                    </tr>
+                    <tr className="border-t border-border-subtle">
+                      <td className="py-2 text-text-secondary">Plan generated</td>
+                      <td className="py-2 text-text-primary">{onboardingPlanCount}</td>
+                      <td className="py-2 text-text-primary">{formatPercent(onboardingPlanConversion)}</td>
+                      <td className="py-2 text-text-secondary">{onboardingDropAfterGoal}</td>
+                    </tr>
+                    <tr className="border-t border-border-subtle">
+                      <td className="py-2 text-text-secondary">Launched</td>
+                      <td className="py-2 text-text-primary">{onboardingLaunchCount}</td>
+                      <td className="py-2 text-text-primary">{formatPercent(onboardingLaunchConversion)}</td>
+                      <td className="py-2 text-text-secondary">{onboardingDropAfterPlan}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <section>
+                  <h3 className="mb-2 text-sm font-semibold text-text-primary">Goal Selection Mix</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-left text-text-muted">
+                        <tr><th className="py-2">Goal</th><th className="py-2">Sessions</th><th className="py-2">Share</th></tr>
+                      </thead>
+                      <tbody>
+                        {goalBreakdown.map((row) => (
+                          <tr key={row.goal} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-secondary">{row.goal}</td>
+                            <td className="py-2 text-text-primary">{row.sessions}</td>
+                            <td className="py-2 text-text-primary">{formatPercent(row.share)}</td>
+                          </tr>
+                        ))}
+                        {goalBreakdown.length === 0 && (
+                          <tr className="border-t border-border-subtle">
+                            <td className="py-3 text-text-muted" colSpan={3}>No goal selection events in this window.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="mb-2 text-sm font-semibold text-text-primary">Launch Target Paths</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-left text-text-muted">
+                        <tr><th className="py-2">Path</th><th className="py-2">Sessions</th><th className="py-2">Share</th></tr>
+                      </thead>
+                      <tbody>
+                        {launchPathBreakdown.map((row) => (
+                          <tr key={row.targetPath} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-secondary">{row.targetPath}</td>
+                            <td className="py-2 text-text-primary">{row.sessions}</td>
+                            <td className="py-2 text-text-primary">{formatPercent(row.share)}</td>
+                          </tr>
+                        ))}
+                        {launchPathBreakdown.length === 0 && (
+                          <tr className="border-t border-border-subtle">
+                            <td className="py-3 text-text-muted" colSpan={3}>No launch events in this window.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
               </div>
             </section>
           </>

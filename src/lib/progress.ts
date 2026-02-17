@@ -14,6 +14,7 @@ import { chunkArticleByHeadings } from '@/lib/article-chunking';
 import { estimateReadingTimeMinutes } from '@/lib/reading-time';
 import { getFromCache, setInCache } from '@/lib/redis';
 import type { UserLearningState } from '@/types/micro';
+import type { OnboardingGoal } from '@/types/onboarding';
 
 const PROGRESS_TABLE = 'UserArticleProgress';
 const BOOKMARKS_TABLE = 'UserBookmarks';
@@ -25,6 +26,13 @@ const ITEM_COMPLETED_LOOKBACK_DAYS = 7;
 const ITEM_COMPLETED_LOOKBACK_ROWS = 120;
 const SESSION_COMMITTED_LOOKBACK_DAYS = 7;
 const SESSION_COMMITTED_LOOKBACK_ROWS = 120;
+const ONBOARDING_BIAS_MAX_COMMITTED_SESSIONS = 5;
+
+interface OnboardingProfileRow {
+  goal: OnboardingGoal;
+  first_launch_track_slug: string | null;
+  first_launch_path: string;
+}
 
 interface SessionPlanLock {
   createdAt: number;
@@ -233,6 +241,50 @@ function normalizeTrackSlug(value?: string): string | undefined {
     system_design: 'system-design',
   };
   return aliases[normalized] || normalized;
+}
+
+function mapOnboardingGoalToTrackSlug(goal: OnboardingGoal): string {
+  if (goal === 'work') return 'system-design';
+  return 'dsa';
+}
+
+async function getOnboardingProfile(userId: string, googleId?: string): Promise<OnboardingProfileRow | null> {
+  const { data, error } = await supabase
+    .from('UserOnboardingProfiles')
+    .select('goal, first_launch_track_slug, first_launch_path')
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) {
+    return null;
+  }
+
+  const goal = data.goal;
+  if (goal !== 'interview' && goal !== 'work' && goal !== 'fundamentals') {
+    return null;
+  }
+
+  return {
+    goal,
+    first_launch_track_slug: data.first_launch_track_slug ?? null,
+    first_launch_path: data.first_launch_path,
+  };
+}
+
+async function getCommittedSessionCount(userId: string, googleId?: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('TelemetryEvents')
+    .select('*', { count: 'exact', head: true })
+    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
+    .eq('event_type', 'session_committed');
+
+  if (error || typeof count !== 'number') {
+    return 0;
+  }
+
+  return count;
 }
 
 function formatConceptLabel(conceptSlug: string | null | undefined): string | null {
@@ -707,10 +759,27 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
   const summary = await getProgressSummary(userId, googleId);
   const library = await getLearningLibrary(false);
   const normalizedPreferredTrack = normalizeTrackSlug(preferredTrackSlug);
+  let onboardingBiasedTrackSlug: string | undefined;
+
+  if (!normalizedPreferredTrack) {
+    const [profile, committedCount] = await Promise.all([
+      getOnboardingProfile(userId, googleId),
+      getCommittedSessionCount(userId, googleId),
+    ]);
+
+    if (profile && committedCount < ONBOARDING_BIAS_MAX_COMMITTED_SESSIONS) {
+      onboardingBiasedTrackSlug = normalizeTrackSlug(profile.first_launch_track_slug || undefined)
+        || mapOnboardingGoalToTrackSlug(profile.goal);
+    }
+  }
+
+  const effectivePreferredTrackSlug = normalizedPreferredTrack || onboardingBiasedTrackSlug;
   const preferredTrack = normalizedPreferredTrack
     ? library.find((pillar) => pillar.slug === normalizedPreferredTrack)
+    : effectivePreferredTrackSlug
+      ? library.find((pillar) => pillar.slug === effectivePreferredTrackSlug)
     : null;
-  const resolvedTrackSlug = preferredTrack?.slug || normalizedPreferredTrack || 'dsa';
+  const resolvedTrackSlug = preferredTrack?.slug || effectivePreferredTrackSlug || 'dsa';
 
   const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS);
   const userState: UserLearningState | null = useGenerative

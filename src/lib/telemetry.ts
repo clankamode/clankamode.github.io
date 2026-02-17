@@ -23,7 +23,11 @@ export async function logTelemetryEvent(params: {
       | 'practice_tests_ran'
       | 'practice_completion_confirmed'
       | 'practice_completion_blocked'
-      | 'friction_state_changed';
+      | 'friction_state_changed'
+      | 'first_win_run_shown'
+      | 'first_win_goal_selected'
+      | 'first_win_plan_generated'
+      | 'first_win_launched';
     mode: 'gate' | 'execute' | 'exit';
     payload?: Record<string, unknown>;
     dedupeKey?: string;

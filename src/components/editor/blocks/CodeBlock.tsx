@@ -156,7 +156,7 @@ function CodeBlockComponent({ block, editable = false, mode = 'default', onChang
         <textarea
           value={block.content || ''}
           placeholder="// code..."
-          className="w-full min-h-[80px] resize-none bg-transparent px-0 py-2 font-mono text-base leading-relaxed text-white/90 placeholder:text-white/50 focus:outline-none overflow-hidden"
+          className="w-full min-h-[80px] resize-none bg-transparent px-0 py-2 font-mono text-base leading-relaxed text-text-primary placeholder:text-text-muted/50 focus:outline-none overflow-hidden"
           onChange={(event) => {
             const raw = event.target.value;
             const next = raw.replace(/^\n+/, '');
