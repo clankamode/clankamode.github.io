@@ -1,10 +1,11 @@
-import { UserRole, hasRole } from '@/types/roles';
+import { UserRole } from '@/types/roles';
 
 export const FeatureFlags = {
     PROGRESS_TRACKING: 'progress_tracking',
     SESSION_MODE: 'session_mode',
     USE_MICRO_V1: 'use_micro_v1',
     GENERATIVE_SESSIONS: 'generative_sessions',
+    PERSONALIZATION_SCOPE_EXPERIMENT: 'personalization_scope_experiment',
     FRICTION_INTELLIGENCE: 'friction_intelligence',
     AI_TRIAGE_AUTOMATION: 'ai_triage_automation',
 } as const;
@@ -33,6 +34,10 @@ export const flags: Record<FeatureFlag, FlagConfig> = {
         defaultValue: true,
         allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
+    [FeatureFlags.PERSONALIZATION_SCOPE_EXPERIMENT]: {
+        defaultValue: false,
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
+    },
     [FeatureFlags.FRICTION_INTELLIGENCE]: {
         defaultValue: false,
         allowRoles: [UserRole.ADMIN],
@@ -49,7 +54,7 @@ export function isFeatureEnabled(flag: FeatureFlag, user?: { role?: string } | n
 
     if (user?.role && config.allowRoles) {
         const userRole = user.role as UserRole;
-        if (config.allowRoles.some((role) => hasRole(userRole, role))) {
+        if (config.allowRoles.includes(userRole)) {
             return true;
         }
     }

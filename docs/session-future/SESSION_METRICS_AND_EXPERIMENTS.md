@@ -1,8 +1,8 @@
 # Session Metrics and Experiment Plan
 
 Created: February 15, 2026
-Last Updated: February 16, 2026
-Status: Active, with operations-first v1 metrics
+Last Updated: February 17, 2026
+Status: Active, with operations-first v1 metrics and Transfer Score v0 readout
 
 ## Measurement Philosophy
 
@@ -28,6 +28,21 @@ Composite score from:
 
 Purpose:
 - Main optimizer target for adaptive roadmap.
+
+Current implementation status:
+- **Transfer Score v0 is active in admin readout** (`/admin/session-intelligence`, quality tab).
+- Current v0 formula:
+  1. `0.40 * next_day_continuation_quality`
+  2. `0.35 * (1 - repeat_failure_loop_rate)`
+  3. `0.25 * proof_coverage`
+- Current v0 promotion gate:
+  1. transfer score >= 0.60
+  2. proof coverage >= 0.55
+  3. repeat failure loop rate <= 0.30
+- Current v0 rollback trigger:
+  1. transfer score < 0.45
+  2. proof coverage < 0.30
+  3. repeat failure loop rate > 0.45
 
 ### 2. Repeat Failure Loop Rate
 

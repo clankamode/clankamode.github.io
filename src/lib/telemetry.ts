@@ -27,7 +27,8 @@ export async function logTelemetryEvent(params: {
       | 'first_win_run_shown'
       | 'first_win_goal_selected'
       | 'first_win_plan_generated'
-      | 'first_win_launched';
+      | 'first_win_launched'
+      | 'personalization_profile_scored';
     mode: 'gate' | 'execute' | 'exit';
     payload?: Record<string, unknown>;
     dedupeKey?: string;

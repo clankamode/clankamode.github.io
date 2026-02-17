@@ -56,6 +56,8 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                 exitCondition: 'Complete item',
                 userId,
                 googleId: googleId ?? undefined,
+                personalization: null,
+                personalizationExperiment: null,
             };
 
             logTelemetryEvent({
@@ -69,6 +71,8 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     estMinutes: 5,
                     primaryConcept: 'array.random-access-o1',
                     itemHref: '/learn/dsa/arrays',
+                    personalizationScopeCohort: 'not_eligible',
+                    personalizationScopeApplied: false,
                 },
                 dedupeKey: `committed_${sessionId}`
             });
@@ -94,6 +98,8 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                 exitCondition: 'Complete all items',
                 userId,
                 googleId: googleId ?? undefined,
+                personalization: session.personalization,
+                personalizationExperiment: session.personalizationExperiment,
             };
 
             logTelemetryEvent({
@@ -107,6 +113,14 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     estMinutes: scope.estimatedMinutes,
                     primaryConcept: getCanonicalConceptSlug(now),
                     itemHref: now.href,
+                    personalizationScore: session.personalization?.score ?? null,
+                    personalizationSegment: session.personalization?.segment ?? null,
+                    personalizationRecommendation: session.personalization?.recommendation ?? null,
+                    personalizationScopeCohort: session.personalizationExperiment?.cohort ?? 'not_eligible',
+                    personalizationScopeEligible: session.personalizationExperiment?.eligible ?? false,
+                    personalizationScopeApplied: session.personalizationExperiment?.applied ?? false,
+                    personalizationScopeMaxItems: session.personalizationExperiment?.maxItems ?? null,
+                    personalizationScopeMaxMinutes: session.personalizationExperiment?.maxMinutes ?? null,
                 },
                 dedupeKey: `committed_${sessionId}`
             });

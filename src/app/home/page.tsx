@@ -25,6 +25,10 @@ export default async function HomePage({
 
     const progressEnabled = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, authSession.user);
     const sessionModeEnabled = isFeatureEnabled(FeatureFlags.SESSION_MODE, authSession.user);
+    const personalizationScopeExperimentEnabled = isFeatureEnabled(
+        FeatureFlags.PERSONALIZATION_SCOPE_EXPERIMENT,
+        authSession.user
+    );
     if (!progressEnabled || !sessionModeEnabled) {
         redirect('/learn');
     }
@@ -33,7 +37,12 @@ export default async function HomePage({
     const trackParam = Array.isArray(resolvedSearchParams?.track)
         ? resolvedSearchParams?.track[0]
         : resolvedSearchParams?.track;
-    const sessionState = await getSessionState(authSession.user.email, trackParam, authSession.user.id ?? undefined);
+    const sessionState = await getSessionState(
+        authSession.user.email,
+        trackParam,
+        authSession.user.id ?? undefined,
+        { enablePersonalizationScopeExperiment: personalizationScopeExperimentEnabled }
+    );
 
     const { getLastInternalization } = await import('@/app/actions/fingerprint');
     const primer = await getLastInternalization(authSession.user.email, authSession.user.id ?? undefined);

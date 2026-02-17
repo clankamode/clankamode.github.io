@@ -4,6 +4,8 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, ty
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession as useAuthSession } from 'next-auth/react';
 import type { SessionItem, LearningDelta } from '@/lib/progress';
+import type { SessionPersonalizationProfile } from '@/lib/session-personalization';
+import type { PersonalizationScopeExperiment } from '@/lib/session-personalization-experiment';
 import { type MicroSessionProposal, microSessionProviderV0 } from '@/lib/session-micro';
 import { deriveLearningDelta, resolveDeltaLabels, fetchConceptDictionary, updateUserConceptStats } from '@/lib/delta-derivation';
 import { proposeMicroSession } from '@/lib/micro-proposer';
@@ -32,6 +34,8 @@ export interface SessionScope {
     userId?: string;
     googleId?: string;
     sessionId?: string;
+    personalization?: SessionPersonalizationProfile | null;
+    personalizationExperiment?: PersonalizationScopeExperiment | null;
 }
 
 export interface SessionExecutionState {
@@ -363,6 +367,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 payload: {
                     itemCount: scope.items.length,
                     estimatedMinutes: scope.estimatedMinutes,
+                    personalizationScore: scope.personalization?.score ?? null,
+                    personalizationSegment: scope.personalization?.segment ?? null,
+                    personalizationRecommendation: scope.personalization?.recommendation ?? null,
+                    personalizationScopeCohort: scope.personalizationExperiment?.cohort ?? 'not_eligible',
+                    personalizationScopeEligible: scope.personalizationExperiment?.eligible ?? false,
+                    personalizationScopeApplied: scope.personalizationExperiment?.applied ?? false,
+                    personalizationScopeMaxItems: scope.personalizationExperiment?.maxItems ?? null,
+                    personalizationScopeMaxMinutes: scope.personalizationExperiment?.maxMinutes ?? null,
                 },
                 dedupeKey: `session_started_${sessionId}`,
             });

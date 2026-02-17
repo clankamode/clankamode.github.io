@@ -3,6 +3,7 @@ import type { SessionIntent, SessionItem } from '@/lib/progress';
 import type { UserLearningState } from '@/types/micro';
 import { getFromCache, setInCache } from '@/lib/redis';
 import { sanitizeIntentText } from '@/lib/intent-display';
+import type { SessionPersonalizationProfile } from '@/lib/session-personalization';
 
 export interface SessionPlannerCandidate {
   id: string;
@@ -15,6 +16,7 @@ interface SessionPlannerInput {
   trackSlug: string;
   trackName: string;
   userState: UserLearningState | null;
+  personalizationProfile?: SessionPersonalizationProfile | null;
   recentActivityTitles: string[];
   outcomeSignals?: PlannerOutcomeSignals;
   practiceTargetDifficulty?: 'Easy' | 'Medium' | 'Hard' | null;
@@ -114,6 +116,7 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
     maxItems,
     requirePracticeItem: requiresPractice,
     userState: input.userState,
+    personalizationProfile: input.personalizationProfile,
     outcomeSignals: input.outcomeSignals,
     recentActivityTitles: input.recentActivityTitles,
   });
@@ -173,6 +176,7 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
     trackSlug: input.trackSlug,
     candidates: effectiveCandidates,
     userState: input.userState,
+    personalizationProfile: input.personalizationProfile,
     outcomeSignals: input.outcomeSignals,
     recentActivityTitles: input.recentActivityTitles,
     practiceTargetDifficulty: input.practiceTargetDifficulty || null,
@@ -208,6 +212,7 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
     hasPracticeCandidate,
     recentActivityTitles: input.recentActivityTitles,
     userState: input.userState,
+    personalizationProfile: input.personalizationProfile,
     outcomeSignals: input.outcomeSignals,
     practiceTargetDifficulty: input.practiceTargetDifficulty || null,
     compactCandidates,
@@ -288,7 +293,13 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
           maxItems,
           22
         );
-        const finalScore = scorePlan(balancedItems, rankedCandidates, input.outcomeSignals, input.userState);
+        const finalScore = scorePlan(
+          balancedItems,
+          rankedCandidates,
+          input.outcomeSignals,
+          input.userState,
+          input.personalizationProfile
+        );
         if (finalScore > bestScore) {
           bestPlan = balancedItems;
           bestScore = finalScore;
@@ -366,6 +377,7 @@ async function rankCandidatesStageA(input: {
   trackName: string;
   candidates: SessionPlannerCandidate[];
   userState: UserLearningState | null;
+  personalizationProfile?: SessionPersonalizationProfile | null;
   outcomeSignals?: PlannerOutcomeSignals;
   recentActivityTitles: string[];
   practiceTargetDifficulty: 'Easy' | 'Medium' | 'Hard' | null;
@@ -374,7 +386,8 @@ async function rankCandidatesStageA(input: {
     input.candidates,
     input.userState,
     input.outcomeSignals,
-    input.recentActivityTitles
+    input.recentActivityTitles,
+    input.personalizationProfile
   );
   if (!plannerClient || input.candidates.length <= 3) {
     return heuristicRanked;
@@ -407,6 +420,7 @@ async function rankCandidatesStageA(input: {
     `Stubborn concepts: ${input.userState?.stubbornConcepts.join(', ') || 'none'}`,
     `Recent concepts: ${input.userState?.recentConcepts.join(', ') || 'none'}`,
     `Outcome signals: ${formatOutcomeSignals(input.outcomeSignals)}`,
+    `Personalization profile: ${formatPersonalizationProfile(input.personalizationProfile)}`,
     `Practice target difficulty: ${input.practiceTargetDifficulty || 'none'}`,
     `Candidates: ${JSON.stringify(compactCandidates)}`,
   ].join('\n');
@@ -810,11 +824,24 @@ export function rankCandidatesHeuristically(
   candidates: SessionPlannerCandidate[],
   userState: UserLearningState | null,
   outcomeSignals?: PlannerOutcomeSignals,
-  recentActivityTitles: string[] = []
+  recentActivityTitles: string[] = [],
+  personalizationProfile?: SessionPersonalizationProfile | null
 ): SessionPlannerCandidate[] {
   return [...candidates].sort((a, b) => {
-    const scoreA = heuristicCandidateScore(a.item, userState, outcomeSignals, recentActivityTitles);
-    const scoreB = heuristicCandidateScore(b.item, userState, outcomeSignals, recentActivityTitles);
+    const scoreA = heuristicCandidateScore(
+      a.item,
+      userState,
+      outcomeSignals,
+      recentActivityTitles,
+      personalizationProfile
+    );
+    const scoreB = heuristicCandidateScore(
+      b.item,
+      userState,
+      outcomeSignals,
+      recentActivityTitles,
+      personalizationProfile
+    );
     if (scoreA !== scoreB) return scoreB - scoreA;
     return (a.item.estMinutes ?? 5) - (b.item.estMinutes ?? 5);
   });
@@ -824,7 +851,8 @@ function heuristicCandidateScore(
   item: SessionItem,
   userState: UserLearningState | null,
   outcomeSignals?: PlannerOutcomeSignals,
-  recentActivityTitles: string[] = []
+  recentActivityTitles: string[] = [],
+  personalizationProfile?: SessionPersonalizationProfile | null
 ): number {
   const completionRate = clamp01(outcomeSignals?.completionRate ?? 0.65);
   const timeAdherence = clamp01(outcomeSignals?.timeAdherence ?? 0.65);
@@ -852,6 +880,16 @@ function heuristicCandidateScore(
   else if (activitySimilarity >= 0.65) score -= 2;
   else if (activitySimilarity >= 0.5) score -= 0.8;
 
+  if (personalizationProfile) {
+    if (personalizationProfile.signals.trackAlignment < 0.5 && item.pillarSlug !== personalizationProfile.selectedTrackSlug) {
+      score -= 2;
+    }
+    if (personalizationProfile.segment === 'at_risk' || personalizationProfile.segment === 'fragile') {
+      score += minutes <= 12 ? 1.2 : -1.4;
+      score += confidence >= 0.7 ? 0.8 : -0.6;
+    }
+  }
+
   return score;
 }
 
@@ -860,6 +898,7 @@ export function buildHeuristicPlan(input: {
   maxItems: number;
   requirePracticeItem: boolean;
   userState: UserLearningState | null;
+  personalizationProfile?: SessionPersonalizationProfile | null;
   outcomeSignals?: PlannerOutcomeSignals;
   recentActivityTitles?: string[];
 }): SessionItem[] {
@@ -867,7 +906,8 @@ export function buildHeuristicPlan(input: {
     input.candidates,
     input.userState,
     input.outcomeSignals,
-    input.recentActivityTitles || []
+    input.recentActivityTitles || [],
+    input.personalizationProfile
   );
   const selected: SessionItem[] = [];
   const usedHrefs = new Set<string>();
@@ -1016,6 +1056,23 @@ function formatOutcomeSignals(outcomeSignals?: PlannerOutcomeSignals): string {
   });
 }
 
+function formatPersonalizationProfile(profile?: SessionPersonalizationProfile | null): string {
+  if (!profile) return 'none';
+  return JSON.stringify({
+    score: clamp01(profile.score),
+    segment: profile.segment,
+    recommendation: profile.recommendation,
+    expectedTrackSlug: profile.expectedTrackSlug,
+    selectedTrackSlug: profile.selectedTrackSlug,
+    signals: {
+      trackAlignment: clamp01(profile.signals.trackAlignment),
+      continuation: clamp01(profile.signals.continuation),
+      ritual: clamp01(profile.signals.ritual),
+      focusStability: clamp01(profile.signals.focusStability),
+    },
+  });
+}
+
 function clamp01(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.max(0, Math.min(1, value));
@@ -1118,7 +1175,8 @@ function scorePlan(
   items: SessionItem[],
   candidates: SessionPlannerCandidate[],
   outcomeSignals?: PlannerOutcomeSignals,
-  userState?: UserLearningState | null
+  userState?: UserLearningState | null,
+  personalizationProfile?: SessionPersonalizationProfile | null
 ): number {
   const candidateCount = candidates.length;
   if (items.length === 0) return -100;
@@ -1159,6 +1217,15 @@ function scorePlan(
   score += exploreCount > 0 ? 1.5 : -1;
   if (completionRate < 0.45 && items.length > 2) score -= 2;
   if (timeAdherence < 0.45 && totalMinutes > 18) score -= 2;
+  if (personalizationProfile) {
+    if (personalizationProfile.segment === 'at_risk' || personalizationProfile.segment === 'fragile') {
+      score += totalMinutes <= 16 ? 2 : -2;
+    }
+    if (personalizationProfile.signals.trackAlignment < 0.5) {
+      const alignedCount = items.filter((item) => item.pillarSlug === personalizationProfile.selectedTrackSlug).length;
+      score += alignedCount >= Math.max(1, Math.ceil(items.length / 2)) ? 1.8 : -1.5;
+    }
+  }
 
   const averageConfidence = items.reduce((sum, item) => sum + clampConfidence(item.confidence), 0) / items.length;
   score += averageConfidence * 5;
@@ -1192,6 +1259,7 @@ interface PromptInput {
   hasPracticeCandidate: boolean;
   recentActivityTitles: string[];
   userState: UserLearningState | null;
+  personalizationProfile?: SessionPersonalizationProfile | null;
   outcomeSignals?: PlannerOutcomeSignals;
   practiceTargetDifficulty: string | null;
   compactCandidates: CompactCandidate[];
@@ -1228,6 +1296,7 @@ export function buildPlannerPrompt(input: PromptInput): string {
     `User aggregate history: ${input.userState?.aggregateHistory.join(' | ') || 'none'}`,
     `Last internalization: ${formatLastInternalization(input.userState)}`,
     `Outcome signals: ${formatOutcomeSignals(input.outcomeSignals)}`,
+    `Personalization profile: ${formatPersonalizationProfile(input.personalizationProfile)}`,
     `Practice target difficulty: ${input.practiceTargetDifficulty || 'none'}`,
     `Policy: target ${Math.round(EXPLOITATION_RATIO * 100)}% exploit (weak/recent/struggling concepts) and ${Math.round((1 - EXPLOITATION_RATIO) * 100)}% explore (new concepts) when feasible.`,
     '',

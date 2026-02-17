@@ -152,6 +152,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
 
   const isStudioSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content', '/admin/session-intelligence', '/admin/session-quality', '/admin/friction'].some((path) => isActive(path));
   const isPracticeSectionActive = ['/peralta75', '/assessment'].some((path) => isActive(path));
+  const adminDashboardHref = '/admin';
 
   if (pathname === '/ai') {
     return null;
@@ -268,26 +269,25 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                         {showSessionFeatures && (
                           <Link href="/explore" className={navLinkClass('/explore')}>Explore</Link>
                         )}
-                        <div className="relative group">
-                          <button type="button" className={navButtonClass(isStudioSectionActive)}>
-                            Studio
-                            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                              <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
-                            </svg>
-                          </button>
-                          <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
-                            <div className="py-2">
-                              <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
-                              <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
-                              <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
-                              <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
-                              <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Learning Content</Link>
-                              {isEffectiveAdmin && (
-                                <Link href="/admin/session-intelligence" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Session Intelligence</Link>
-                              )}
+                        {!isEffectiveAdmin && (
+                          <div className="relative group">
+                            <button type="button" className={navButtonClass(isStudioSectionActive)}>
+                              Studio
+                              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
+                              </svg>
+                            </button>
+                            <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+                              <div className="py-2">
+                                <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
+                                <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
+                                <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
+                                <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
+                                <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Learning Content</Link>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                       </>
                     )}
                   </>
@@ -308,6 +308,17 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 </div>
                 {mode === 'exit' || mode === 'gate' ? (
                   <div className="flex items-center gap-2">
+                    {isEffectiveAdmin && (
+                      <Button
+                        variant="ghost"
+                        size="md"
+                        onClick={() => router.push(adminDashboardHref)}
+                        className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
+                        aria-label="Admin dashboard"
+                      >
+                        Admin
+                      </Button>
+                    )}
                     {showExploreQuickLink && (
                       <Button
                         variant="ghost"
@@ -362,15 +373,28 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                     </div>
                   </div>
                 ) : (
-                  <Button
-                    variant="ghost"
-                    size="md"
-                    onClick={handleSignOut}
-                    className="min-h-[44px] text-text-secondary hover:text-red-300 hover:bg-red-400/10 transition-colors"
-                    aria-label="Sign out"
-                  >
-                    Sign out
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {isEffectiveAdmin && (
+                      <Button
+                        variant="ghost"
+                        size="md"
+                        onClick={() => router.push(adminDashboardHref)}
+                        className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
+                        aria-label="Admin dashboard"
+                      >
+                        Admin
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="md"
+                      onClick={handleSignOut}
+                      className="min-h-[44px] text-text-secondary hover:text-red-300 hover:bg-red-400/10 transition-colors"
+                      aria-label="Sign out"
+                    >
+                      Sign out
+                    </Button>
+                  </div>
                 )}
               </div>
             ) : (
@@ -446,20 +470,24 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 {/* Logged-in editor mobile: Explore + Studio */}
                 {isLoggedIn && isEditor && (
                   <>
+                    {isEffectiveAdmin && (
+                      <Link href={adminDashboardHref} className={mobileNavLinkClass(adminDashboardHref)} onClick={() => setIsMenuOpen(false)}>
+                        Admin Dashboard
+                      </Link>
+                    )}
                     {showSessionFeatures && (
                       <Link href="/explore" className={mobileNavLinkClass('/explore')} onClick={() => setIsMenuOpen(false)}>Explore</Link>
                     )}
-                    <div className="space-y-1 pt-3">
-                      <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Studio</span>
-                      <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
-                      <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
-                      <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
-                      <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
-                      <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)}>Learning Content</Link>
-                      {isEffectiveAdmin && (
-                        <Link href="/admin/session-intelligence" className={mobileNavLinkClass('/admin/session-intelligence')} onClick={() => setIsMenuOpen(false)}>Session Intelligence</Link>
-                      )}
-                    </div>
+                    {!isEffectiveAdmin && (
+                      <div className="space-y-1 pt-3">
+                        <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Studio</span>
+                        <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
+                        <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
+                        <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
+                        <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
+                        <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)}>Learning Content</Link>
+                      </div>
+                    )}
                   </>
                 )}
               </>

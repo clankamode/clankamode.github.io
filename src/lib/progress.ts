@@ -13,6 +13,11 @@ import { planSessionItemsWithLLM } from '@/lib/session-llm-planner';
 import { chunkArticleByHeadings } from '@/lib/article-chunking';
 import { estimateReadingTimeMinutes } from '@/lib/reading-time';
 import { getFromCache, setInCache } from '@/lib/redis';
+import {
+  applyPersonalizationScopeExperiment,
+  type PersonalizationScopeExperiment,
+} from '@/lib/session-personalization-experiment';
+import { buildSessionPersonalizationProfile, type SessionPersonalizationProfile } from '@/lib/session-personalization';
 import type { UserLearningState } from '@/types/micro';
 import type { OnboardingGoal } from '@/types/onboarding';
 
@@ -143,6 +148,12 @@ export interface SessionState {
   upNext: SessionItem[];
   proof: SessionProof;
   track: { slug: string; name: string } | null;
+  personalization: SessionPersonalizationProfile | null;
+  personalizationExperiment: PersonalizationScopeExperiment | null;
+}
+
+interface GetSessionStateOptions {
+  enablePersonalizationScopeExperiment?: boolean;
 }
 
 interface PracticeQuestionRow {
@@ -755,22 +766,24 @@ interface LearnCandidateCollection {
   chunkItems: SessionItem[];
 }
 
-export async function getSessionState(userId: string, preferredTrackSlug?: string, googleId?: string): Promise<SessionState> {
+export async function getSessionState(
+  userId: string,
+  preferredTrackSlug?: string,
+  googleId?: string,
+  options: GetSessionStateOptions = {}
+): Promise<SessionState> {
   const summary = await getProgressSummary(userId, googleId);
   const library = await getLearningLibrary(false);
   const normalizedPreferredTrack = normalizeTrackSlug(preferredTrackSlug);
+  const [onboardingProfile, committedSessionCount] = await Promise.all([
+    getOnboardingProfile(userId, googleId),
+    getCommittedSessionCount(userId, googleId),
+  ]);
   let onboardingBiasedTrackSlug: string | undefined;
 
-  if (!normalizedPreferredTrack) {
-    const [profile, committedCount] = await Promise.all([
-      getOnboardingProfile(userId, googleId),
-      getCommittedSessionCount(userId, googleId),
-    ]);
-
-    if (profile && committedCount < ONBOARDING_BIAS_MAX_COMMITTED_SESSIONS) {
-      onboardingBiasedTrackSlug = normalizeTrackSlug(profile.first_launch_track_slug || undefined)
-        || mapOnboardingGoalToTrackSlug(profile.goal);
-    }
+  if (!normalizedPreferredTrack && onboardingProfile && committedSessionCount < ONBOARDING_BIAS_MAX_COMMITTED_SESSIONS) {
+    onboardingBiasedTrackSlug = normalizeTrackSlug(onboardingProfile.first_launch_track_slug || undefined)
+      || mapOnboardingGoalToTrackSlug(onboardingProfile.goal);
   }
 
   const effectivePreferredTrackSlug = normalizedPreferredTrack || onboardingBiasedTrackSlug;
@@ -944,6 +957,21 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
       ? (userState.lastInternalization.picked === 'learned' ? 0.9 : 0.65)
       : 0.45,
   } : undefined;
+  const personalizationProfile = buildSessionPersonalizationProfile({
+    selectedTrackSlug: plannerTrackSlug,
+    onboardingGoal: onboardingProfile?.goal ?? null,
+    onboardingTrackSlug: normalizeTrackSlug(onboardingProfile?.first_launch_track_slug || undefined) ?? null,
+    onboardingBiasActive: Boolean(onboardingBiasedTrackSlug && !normalizedPreferredTrack),
+    committedSessionCount,
+    stubbornConceptCount: userState?.stubbornConcepts.length ?? 0,
+    failureModeCount: userState?.failureModes.length ?? 0,
+    outcomeSignals: outcomeSignals ?? {
+      completionRate: summary.totalArticles > 0 ? summary.completedArticles / summary.totalArticles : 0.6,
+      timeAdherence: Math.min(1, weeklyCompletions / 6),
+      nextDayReturnRate: summary.streakDays >= 2 ? 1 : summary.streakDays === 1 ? 0.6 : 0.2,
+      ritualQuality: userState?.lastInternalization ? 0.65 : 0.45,
+    },
+  });
 
   let sessionItems = articleCandidates.slice(0, 3);
 
@@ -983,6 +1011,7 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
         trackSlug: plannerTrackSlug,
         trackName: plannerTrackName,
         userState,
+        personalizationProfile,
         recentActivityTitles: summary.recentActivity.map((activity) => activity.title),
         outcomeSignals,
         practiceTargetDifficulty: practicePerformance?.targetDifficulty || null,
@@ -1019,6 +1048,17 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
         );
       }
     }
+  }
+
+  let personalizationExperiment: PersonalizationScopeExperiment | null = null;
+  if (useGenerative && options.enablePersonalizationScopeExperiment && sessionItems.length > 0) {
+    const scopeResult = applyPersonalizationScopeExperiment({
+      userId,
+      items: sessionItems,
+      profile: personalizationProfile,
+    });
+    sessionItems = scopeResult.items as SessionItem[];
+    personalizationExperiment = scopeResult.experiment;
   }
 
   const now = sessionItems[0] || null;
@@ -1073,6 +1113,8 @@ export async function getSessionState(userId: string, preferredTrackSlug?: strin
       last7,
     },
     track,
+    personalization: personalizationProfile,
+    personalizationExperiment,
   };
 }
 

@@ -24,6 +24,12 @@ import {
   type FrictionSnapshotInput,
 } from '@/lib/friction-monitor';
 import { buildAIDecisionReplaySummary } from '@/lib/session-ai-replay';
+import { buildTransferScoreV0 } from '@/lib/transfer-score';
+import {
+  buildPersonalizationInsights,
+  type PersonalizationSnapshot,
+} from '@/lib/session-personalization';
+import { buildSessionOperatorActions } from '@/lib/session-operator-actions';
 import type { FrictionState, FrictionTrigger, FrictionTriageStatus } from '@/types/friction';
 
 export const dynamic = 'force-dynamic';
@@ -157,6 +163,12 @@ function triageBadgeClass(status: FrictionTriageStatus): string {
   return 'text-red-300';
 }
 
+function transferStatusClass(status: 'promote' | 'hold' | 'rollback'): string {
+  if (status === 'promote') return 'text-emerald-300';
+  if (status === 'rollback') return 'text-red-300';
+  return 'text-amber-300';
+}
+
 function triageKey(trackSlug: string, stepIndex: number): string {
   return `${trackSlug}:${stepIndex}`;
 }
@@ -275,6 +287,90 @@ function buildLink(params: {
 function displayTrackLabel(track: TrackKey): string {
   if (track === 'all') return 'all';
   return track.replace(/-/g, ' ');
+}
+
+function parsePersonalizationSnapshot(row: TelemetryRow): PersonalizationSnapshot | null {
+  const payload = row.payload;
+  if (!payload) return null;
+
+  const scoreRaw = payload.score;
+  const segmentRaw = payload.segment;
+  const recommendationRaw = payload.recommendation;
+  const signalsRaw = payload.signals;
+
+  if (typeof scoreRaw !== 'number' || scoreRaw < 0 || scoreRaw > 1) return null;
+  if (
+    segmentRaw !== 'momentum'
+    && segmentRaw !== 'steady'
+    && segmentRaw !== 'fragile'
+    && segmentRaw !== 'at_risk'
+  ) {
+    return null;
+  }
+  if (
+    recommendationRaw !== 'maintain_momentum'
+    && recommendationRaw !== 'reduce_scope'
+    && recommendationRaw !== 'realign_track'
+    && recommendationRaw !== 'reinforce_ritual'
+    && recommendationRaw !== 'stabilize_execution'
+  ) {
+    return null;
+  }
+  if (!signalsRaw || typeof signalsRaw !== 'object') return null;
+
+  const trackAlignment = Number((signalsRaw as Record<string, unknown>).trackAlignment);
+  const continuation = Number((signalsRaw as Record<string, unknown>).continuation);
+  const ritual = Number((signalsRaw as Record<string, unknown>).ritual);
+  const focusStability = Number((signalsRaw as Record<string, unknown>).focusStability);
+  if (![trackAlignment, continuation, ritual, focusStability].every((value) => Number.isFinite(value) && value >= 0 && value <= 1)) {
+    return null;
+  }
+
+  return {
+    createdAt: row.created_at,
+    sessionId: row.session_id,
+    trackSlug: row.track_slug,
+    score: scoreRaw,
+    segment: segmentRaw,
+    recommendation: recommendationRaw,
+    trackAlignment,
+    continuation,
+    ritual,
+    focusStability,
+  };
+}
+
+type ScopeCohort = 'control' | 'treatment' | 'not_eligible' | 'unknown';
+
+function parseScopeCohort(payload: Record<string, unknown> | null | undefined): ScopeCohort {
+  if (!payload) return 'unknown';
+  const value = payload.personalizationScopeCohort;
+  if (value === 'control' || value === 'treatment' || value === 'not_eligible') {
+    return value;
+  }
+  const nested = payload.scopeExperiment;
+  if (nested && typeof nested === 'object') {
+    const nestedCohort = (nested as Record<string, unknown>).cohort;
+    if (nestedCohort === 'control' || nestedCohort === 'treatment' || nestedCohort === 'not_eligible') {
+      return nestedCohort;
+    }
+  }
+  return 'unknown';
+}
+
+function parseScopeEligible(payload: Record<string, unknown> | null | undefined): boolean {
+  if (!payload) return false;
+  if (typeof payload.personalizationScopeEligible === 'boolean') {
+    return payload.personalizationScopeEligible;
+  }
+  const nested = payload.scopeExperiment;
+  if (nested && typeof nested === 'object') {
+    const eligible = (nested as Record<string, unknown>).eligible;
+    if (typeof eligible === 'boolean') {
+      return eligible;
+    }
+  }
+  return false;
 }
 
 async function fetchTelemetryRows(eventType: string, sinceIso: string, track: TrackKey): Promise<TelemetryRow[]> {
@@ -488,6 +584,9 @@ export default async function SessionIntelligencePage({
     firstWinGoalRows,
     firstWinPlanRows,
     firstWinLaunchRows,
+    personalizationRows,
+    ritualRows,
+    blockedRows,
   ] = await Promise.all([
     fetchTelemetryRows('session_committed', sinceIso, track),
     fetchTelemetryRows('item_completed', sinceIso, track),
@@ -500,6 +599,9 @@ export default async function SessionIntelligencePage({
     fetchTelemetryRows('first_win_goal_selected', sinceIso, 'onboarding'),
     fetchTelemetryRows('first_win_plan_generated', sinceIso, 'onboarding'),
     fetchTelemetryRows('first_win_launched', sinceIso, 'onboarding'),
+    fetchTelemetryRows('personalization_profile_scored', sinceIso, track),
+    fetchTelemetryRows('ritual_completed', sinceIso, track),
+    fetchTelemetryRows('practice_completion_blocked', sinceIso, track),
   ]);
 
   const committedEvents: CommittedEventInput[] = committedRows
@@ -587,6 +689,105 @@ export default async function SessionIntelligencePage({
       share: onboardingLaunchCount > 0 ? row.sessions.size / onboardingLaunchCount : 0,
     }))
     .sort((a, b) => b.sessions - a.sessions);
+  const personalizationSnapshots = personalizationRows
+    .map((row) => parsePersonalizationSnapshot(row))
+    .filter((row): row is PersonalizationSnapshot => !!row);
+  const personalizationInsights = buildPersonalizationInsights(personalizationSnapshots);
+  const committedCoverageKeys = new Set(
+    committedRows.map((row) => `${row.email}:${row.track_slug}:${row.created_at.slice(0, 10)}`)
+  );
+  const personalizationCoverageKeys = new Set(
+    personalizationRows.map((row) => `${row.email}:${row.track_slug}:${row.created_at.slice(0, 10)}`)
+  );
+  const matchedCoverageCount = Array.from(committedCoverageKeys).filter((key) => personalizationCoverageKeys.has(key)).length;
+  const personalizationCoverage = committedCoverageKeys.size > 0
+    ? matchedCoverageCount / committedCoverageKeys.size
+    : personalizationCoverageKeys.size > 0 ? 1 : 0;
+  const transferScoreV0 = buildTransferScoreV0({
+    committedRows,
+    finalizedRows,
+    ritualRows,
+    blockedRows,
+  });
+  const cohortBySession = new Map<string, ScopeCohort>();
+  for (const row of committedRows) {
+    const cohort = parseScopeCohort(row.payload);
+    if (!cohortBySession.has(row.session_id) || cohort !== 'unknown') {
+      cohortBySession.set(row.session_id, cohort);
+    }
+  }
+  for (const row of finalizedRows) {
+    if (cohortBySession.has(row.session_id)) continue;
+    cohortBySession.set(row.session_id, parseScopeCohort(row.payload));
+  }
+  const cohortSessionSets = new Map<ScopeCohort, Set<string>>();
+  for (const [sessionId, cohort] of cohortBySession.entries()) {
+    const set = cohortSessionSets.get(cohort) ?? new Set<string>();
+    set.add(sessionId);
+    cohortSessionSets.set(cohort, set);
+  }
+  const allCohorts: ScopeCohort[] = ['control', 'treatment', 'not_eligible', 'unknown'];
+  const cohortFunnelRows = allCohorts
+    .map((cohort) => {
+      const sessions = cohortSessionSets.get(cohort) ?? new Set<string>();
+      const committedCount = sessions.size;
+      const finalizedCount = new Set(
+        finalizedRows
+          .map((row) => row.session_id)
+          .filter((sessionId) => sessions.has(sessionId))
+      ).size;
+      const finalizedRate = committedCount > 0 ? finalizedCount / committedCount : 0;
+      return {
+        cohort,
+        committedCount,
+        finalizedCount,
+        finalizedRate,
+      };
+    })
+    .filter((row) => row.committedCount > 0);
+  const cohortTransferRows = (['control', 'treatment'] as const).map((cohort) => {
+    const sessions = cohortSessionSets.get(cohort) ?? new Set<string>();
+    const transfer = buildTransferScoreV0({
+      committedRows: committedRows.filter((row) => sessions.has(row.session_id)),
+      finalizedRows: finalizedRows.filter((row) => sessions.has(row.session_id)),
+      ritualRows: ritualRows.filter((row) => sessions.has(row.session_id)),
+      blockedRows: blockedRows.filter((row) => sessions.has(row.session_id)),
+    });
+    return {
+      cohort,
+      committedCount: sessions.size,
+      transfer,
+    };
+  }).filter((row) => row.committedCount > 0);
+  const controlCohort = cohortFunnelRows.find((row) => row.cohort === 'control');
+  const treatmentCohort = cohortFunnelRows.find((row) => row.cohort === 'treatment');
+  const finalizeRateDelta = controlCohort && treatmentCohort
+    ? treatmentCohort.finalizedRate - controlCohort.finalizedRate
+    : null;
+  const controlTransfer = cohortTransferRows.find((row) => row.cohort === 'control');
+  const treatmentTransfer = cohortTransferRows.find((row) => row.cohort === 'treatment');
+  const transferScoreDelta = controlTransfer && treatmentTransfer
+    ? treatmentTransfer.transfer.transferScore - controlTransfer.transfer.transferScore
+    : null;
+  const committedWithKnownCohort = committedRows.filter((row) => parseScopeCohort(row.payload) !== 'unknown').length;
+  const missingCohortAttributionRate = committedRows.length > 0
+    ? 1 - (committedWithKnownCohort / committedRows.length)
+    : 0;
+  const eligibleCommittedRows = committedRows.filter((row) => parseScopeEligible(row.payload));
+  const eligibleAssignedRows = eligibleCommittedRows.filter((row) => {
+    const cohort = parseScopeCohort(row.payload);
+    return cohort === 'control' || cohort === 'treatment';
+  });
+  const eligibleButUnassignedRate = eligibleCommittedRows.length > 0
+    ? 1 - (eligibleAssignedRows.length / eligibleCommittedRows.length)
+    : 0;
+  const eligibleControlCount = eligibleAssignedRows.filter((row) => parseScopeCohort(row.payload) === 'control').length;
+  const eligibleTreatmentCount = eligibleAssignedRows.filter((row) => parseScopeCohort(row.payload) === 'treatment').length;
+  const assignedEligibleTotal = eligibleControlCount + eligibleTreatmentCount;
+  const treatmentShare = assignedEligibleTotal > 0 ? eligibleTreatmentCount / assignedEligibleTotal : 0;
+  const sampleRatioMismatch = assignedEligibleTotal >= 20
+    ? Math.abs(treatmentShare - 0.5) > 0.15
+    : false;
 
   const frictionMetrics = buildFrictionMonitorMetrics(frictionSnapshots, { alertThreshold: 0.3, hotspotMinSamples: 3 });
   const aiReplaySummary = buildAIDecisionReplaySummary(aiDecisionRows, aiAuditRows, {
@@ -654,9 +855,21 @@ export default async function SessionIntelligencePage({
       ...committedRows.map((row) => row.track_slug),
       ...frictionSnapshots.map((row) => row.trackSlug),
       ...firstWinShownRows.map((row) => row.track_slug),
+      ...personalizationRows.map((row) => row.track_slug),
     ].filter((value) => typeof value === 'string' && value.length > 0))
   ).sort();
   const trackOptions = Array.from(new Set<string>([...DEFAULT_TRACKS, ...dynamicTracks]));
+  const operatorActions = buildSessionOperatorActions({
+    onboardingLaunchConversion,
+    onboardingDropAfterShown,
+    transferStatus: transferScoreV0.status,
+    openFrictionHotspots: hotspotsWithTriage.filter((row) => row.status !== 'resolved').length,
+    aiAssistOverrideRate: aiAssistGroup?.overrideRate ?? 0,
+    aiAutoOverrideRate: aiAutoGroup?.overrideRate ?? 0,
+    personalizationAtRiskShare: personalizationInsights.atRiskShare,
+    personalizationLowAlignmentShare: personalizationInsights.lowAlignmentShare,
+    personalizationCoverage,
+  });
 
   const shouldLoadFrictionDrilldown = tab === 'friction' && !!focusTrack && typeof focusStep === 'number';
   const [frictionDrilldown, frictionTriageAuditRows] = shouldLoadFrictionDrilldown
@@ -840,7 +1053,7 @@ export default async function SessionIntelligencePage({
 
         {tab === 'quality' ? (
           <>
-            <div className="grid gap-4 md:grid-cols-3 mb-8">
+            <div className="grid gap-4 md:grid-cols-4 mb-8">
               <div className="rounded-xl border border-border-subtle bg-surface-interactive p-4">
                 <p className="text-xs uppercase tracking-wider text-text-muted">Latest Daily Repeat Rate</p>
                 <p className="mt-2 text-2xl font-semibold text-text-primary">
@@ -855,7 +1068,338 @@ export default async function SessionIntelligencePage({
                 <p className="text-xs uppercase tracking-wider text-text-muted">Tracked Commits ({range})</p>
                 <p className="mt-2 text-2xl font-semibold text-text-primary">{committedEvents.length}</p>
               </div>
+              <div className="rounded-xl border border-border-subtle bg-surface-interactive p-4">
+                <p className="text-xs uppercase tracking-wider text-text-muted">Transfer Score v0</p>
+                <p className="mt-2 text-2xl font-semibold text-text-primary">{formatPercent(transferScoreV0.transferScore)}</p>
+                <p className={`mt-1 text-xs font-medium uppercase tracking-[0.1em] ${transferStatusClass(transferScoreV0.status)}`}>
+                  {transferScoreV0.status}
+                </p>
+              </div>
             </div>
+
+            <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-lg font-semibold text-text-primary">Operator Next Actions</h2>
+                <span className="text-xs text-text-muted">Prioritized across onboarding, personalization, transfer, friction, and AI override quality.</span>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                {operatorActions.slice(0, 6).map((action) => (
+                  <Link
+                    key={action.id}
+                    href={action.href}
+                    className="rounded-lg border border-border-subtle bg-surface p-3 hover:border-border-interactive"
+                  >
+                    <div className="mb-1 flex items-center justify-between gap-2">
+                      <p className="text-sm font-semibold text-text-primary">{action.title}</p>
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] uppercase tracking-wider ${action.priority === 'high' ? 'bg-red-900/40 text-red-300' : action.priority === 'medium' ? 'bg-amber-900/40 text-amber-300' : 'bg-blue-900/40 text-blue-300'}`}>
+                        {action.priority}
+                      </span>
+                    </div>
+                    <p className="text-xs text-text-secondary">{action.rationale}</p>
+                    <p className="mt-2 text-xs text-text-muted">{action.recommendation}</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-lg font-semibold text-text-primary">Personalization Scope A/B</h2>
+                <span className="text-xs text-text-muted">Comparing launch→finalize and transfer quality by cohort.</span>
+              </div>
+              <p className="mb-4 text-xs text-text-muted">
+                Rollback path: disable <code className="rounded bg-surface px-1 py-0.5">personalization_scope_experiment</code> to return all users to baseline scope immediately.
+              </p>
+
+              <div className="mb-5 grid gap-4 md:grid-cols-2">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Finalize Rate Delta (treatment - control)</p>
+                  <p className={`mt-1 text-xl font-semibold ${finalizeRateDelta === null ? 'text-text-primary' : finalizeRateDelta >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                    {finalizeRateDelta === null ? '-' : formatPercent(finalizeRateDelta)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Transfer Score Delta (treatment - control)</p>
+                  <p className={`mt-1 text-xl font-semibold ${transferScoreDelta === null ? 'text-text-primary' : transferScoreDelta >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                    {transferScoreDelta === null ? '-' : formatPercent(transferScoreDelta)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mb-5 grid gap-4 md:grid-cols-3">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Missing Cohort Attribution</p>
+                  <p className={`mt-1 text-xl font-semibold ${missingCohortAttributionRate <= 0.05 ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {formatPercent(missingCohortAttributionRate)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Eligible But Unassigned</p>
+                  <p className={`mt-1 text-xl font-semibold ${eligibleButUnassignedRate <= 0.02 ? 'text-emerald-300' : 'text-red-300'}`}>
+                    {formatPercent(eligibleButUnassignedRate)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Sample Ratio Check</p>
+                  <p className={`mt-1 text-xl font-semibold ${sampleRatioMismatch ? 'text-red-300' : 'text-emerald-300'}`}>
+                    {assignedEligibleTotal < 20 ? 'insufficient' : sampleRatioMismatch ? 'mismatch' : 'healthy'}
+                  </p>
+                  <p className="mt-1 text-xs text-text-muted">
+                    treatment share {assignedEligibleTotal > 0 ? formatPercent(treatmentShare) : '-'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <section>
+                  <h3 className="mb-2 text-sm font-semibold text-text-primary">Launch → Finalize Funnel by Cohort</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-left text-text-muted">
+                        <tr><th className="py-2">Cohort</th><th className="py-2">Committed</th><th className="py-2">Finalized</th><th className="py-2">Finalize Rate</th></tr>
+                      </thead>
+                      <tbody>
+                        {cohortFunnelRows.map((row) => (
+                          <tr key={row.cohort} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-secondary">{row.cohort}</td>
+                            <td className="py-2 text-text-primary">{row.committedCount}</td>
+                            <td className="py-2 text-text-primary">{row.finalizedCount}</td>
+                            <td className="py-2 text-text-primary">{formatPercent(row.finalizedRate)}</td>
+                          </tr>
+                        ))}
+                        {cohortFunnelRows.length === 0 && (
+                          <tr className="border-t border-border-subtle">
+                            <td className="py-3 text-text-muted" colSpan={4}>No cohort-attributed sessions in this window yet.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="mb-2 text-sm font-semibold text-text-primary">Transfer Score by Cohort</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-left text-text-muted">
+                        <tr><th className="py-2">Cohort</th><th className="py-2">Committed</th><th className="py-2">Transfer Score</th><th className="py-2">Status</th></tr>
+                      </thead>
+                      <tbody>
+                        {cohortTransferRows.map((row) => (
+                          <tr key={row.cohort} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-secondary">{row.cohort}</td>
+                            <td className="py-2 text-text-primary">{row.committedCount}</td>
+                            <td className="py-2 text-text-primary">{formatPercent(row.transfer.transferScore)}</td>
+                            <td className={`py-2 font-medium uppercase tracking-[0.08em] ${transferStatusClass(row.transfer.status)}`}>
+                              {row.transfer.status}
+                            </td>
+                          </tr>
+                        ))}
+                        {cohortTransferRows.length === 0 && (
+                          <tr className="border-t border-border-subtle">
+                            <td className="py-3 text-text-muted" colSpan={4}>Not enough cohort data for transfer comparison yet.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-lg font-semibold text-text-primary">Personalization Loop (Silent)</h2>
+                <span className="text-xs text-text-muted">Telemetry event: personalization_profile_scored</span>
+              </div>
+
+              <div className="mb-5 grid gap-4 md:grid-cols-4">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Profile Snapshots</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{personalizationInsights.total}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Average Score</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {personalizationInsights.averageScore === null ? '-' : personalizationInsights.averageScore.toFixed(2)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Fragile + At-Risk Share</p>
+                  <p className="mt-1 text-xl font-semibold text-amber-300">{formatPercent(personalizationInsights.atRiskShare)}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Coverage vs committed user-days</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{formatPercent(personalizationCoverage)}</p>
+                </div>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <section>
+                  <h3 className="mb-2 text-sm font-semibold text-text-primary">Segment Distribution</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-left text-text-muted">
+                        <tr><th className="py-2">Segment</th><th className="py-2">Count</th><th className="py-2">Share</th></tr>
+                      </thead>
+                      <tbody>
+                        {personalizationInsights.segmentDistribution.map((row) => (
+                          <tr key={row.segment} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-secondary">{row.segment}</td>
+                            <td className="py-2 text-text-primary">{row.count}</td>
+                            <td className="py-2 text-text-primary">{formatPercent(row.share)}</td>
+                          </tr>
+                        ))}
+                        {personalizationInsights.segmentDistribution.length === 0 && (
+                          <tr className="border-t border-border-subtle">
+                            <td className="py-3 text-text-muted" colSpan={3}>No personalization snapshots in this window yet.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="mb-2 text-sm font-semibold text-text-primary">Recommendation Mix</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-left text-text-muted">
+                        <tr><th className="py-2">Recommendation</th><th className="py-2">Count</th><th className="py-2">Share</th></tr>
+                      </thead>
+                      <tbody>
+                        {personalizationInsights.recommendationDistribution.map((row) => (
+                          <tr key={row.recommendation} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-secondary">{row.recommendation}</td>
+                            <td className="py-2 text-text-primary">{row.count}</td>
+                            <td className="py-2 text-text-primary">{formatPercent(row.share)}</td>
+                          </tr>
+                        ))}
+                        {personalizationInsights.recommendationDistribution.length === 0 && (
+                          <tr className="border-t border-border-subtle">
+                            <td className="py-3 text-text-muted" colSpan={3}>No recommendation mix available yet.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-lg font-semibold text-text-primary">Transfer Score v0</h2>
+                <span className={`text-xs font-medium uppercase tracking-[0.12em] ${transferStatusClass(transferScoreV0.status)}`}>
+                  Decision: {transferScoreV0.status}
+                </span>
+              </div>
+              <p className="mb-4 text-sm text-text-secondary">
+                Composite of next-day continuation quality, proof coverage, and repeat failure loop control.
+              </p>
+
+              <div className="mb-5 grid gap-4 md:grid-cols-3">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Quality-Adjusted Completion</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{formatPercent(transferScoreV0.qualityAdjustedCompletion)}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Next-Day Continuation</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{formatPercent(transferScoreV0.nextDayContinuationQuality)}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Proof Coverage</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{formatPercent(transferScoreV0.proofCoverage)}</p>
+                </div>
+              </div>
+
+              <div className="mb-5 grid gap-4 md:grid-cols-3">
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Repeat Failure Loop Rate</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">{formatPercent(transferScoreV0.repeatFailureLoopRate)}</p>
+                  <p className="mt-1 text-xs text-text-muted">Blocked events: {transferScoreV0.blockedEventCount}</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Finalized / Committed</p>
+                  <p className="mt-1 text-xl font-semibold text-text-primary">
+                    {transferScoreV0.finalizedSessions}/{transferScoreV0.committedSessions}
+                  </p>
+                  <p className="mt-1 text-xs text-text-muted">{formatPercent(transferScoreV0.finalizedRate)} finalized rate</p>
+                </div>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-muted">Current Decision Rationale</p>
+                  <ul className="mt-1 space-y-1 text-xs text-text-secondary">
+                    {transferScoreV0.reasons.map((reason) => (
+                      <li key={reason}>{reason}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <section>
+                  <h3 className="mb-2 text-sm font-semibold text-text-primary">Promotion / Rollback Thresholds</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-left text-text-muted">
+                        <tr><th className="py-2">Rule</th><th className="py-2">Threshold</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-t border-border-subtle">
+                          <td className="py-2 text-text-secondary">Promote min transfer score</td>
+                          <td className="py-2 text-text-primary">{formatPercent(transferScoreV0.thresholds.promoteMinScore)}</td>
+                        </tr>
+                        <tr className="border-t border-border-subtle">
+                          <td className="py-2 text-text-secondary">Promote min proof coverage</td>
+                          <td className="py-2 text-text-primary">{formatPercent(transferScoreV0.thresholds.promoteMinProofCoverage)}</td>
+                        </tr>
+                        <tr className="border-t border-border-subtle">
+                          <td className="py-2 text-text-secondary">Promote max repeat loop rate</td>
+                          <td className="py-2 text-text-primary">{formatPercent(transferScoreV0.thresholds.promoteMaxRepeatFailureLoopRate)}</td>
+                        </tr>
+                        <tr className="border-t border-border-subtle">
+                          <td className="py-2 text-text-secondary">Rollback max transfer score</td>
+                          <td className="py-2 text-text-primary">{formatPercent(transferScoreV0.thresholds.rollbackMaxScore)}</td>
+                        </tr>
+                        <tr className="border-t border-border-subtle">
+                          <td className="py-2 text-text-secondary">Rollback min proof coverage</td>
+                          <td className="py-2 text-text-primary">{formatPercent(transferScoreV0.thresholds.rollbackMinProofCoverage)}</td>
+                        </tr>
+                        <tr className="border-t border-border-subtle">
+                          <td className="py-2 text-text-secondary">Rollback min repeat loop rate</td>
+                          <td className="py-2 text-text-primary">{formatPercent(transferScoreV0.thresholds.rollbackMinRepeatFailureLoopRate)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="mb-2 text-sm font-semibold text-text-primary">Top Repeated Failure Questions</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-left text-text-muted">
+                        <tr><th className="py-2">Question</th><th className="py-2">Repeated Users</th><th className="py-2">Repeat Rate</th></tr>
+                      </thead>
+                      <tbody>
+                        {transferScoreV0.topRepeatedFailureQuestions.map((row) => (
+                          <tr key={row.questionId} className="border-t border-border-subtle">
+                            <td className="py-2 text-text-secondary">{row.questionId}</td>
+                            <td className="py-2 text-text-primary">{row.repeatedUsers}/{row.totalUsers}</td>
+                            <td className="py-2 text-text-primary">{formatPercent(row.repeatRate)}</td>
+                          </tr>
+                        ))}
+                        {transferScoreV0.topRepeatedFailureQuestions.length === 0 && (
+                          <tr className="border-t border-border-subtle">
+                            <td className="py-3 text-text-muted" colSpan={3}>No repeated blocked-practice loops in this window.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              </div>
+            </section>
 
             <div className="grid gap-8 lg:grid-cols-2">
               <section className="rounded-xl border border-border-subtle bg-surface-interactive p-4">

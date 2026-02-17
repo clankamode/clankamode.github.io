@@ -34,6 +34,9 @@ export default function SessionExitView() {
             completedItems,
             reflectionCompletedAt: skipped ? null : new Date().toISOString(),
             skipped,
+            personalizationScopeCohort: state.scope?.personalizationExperiment?.cohort ?? 'not_eligible',
+            personalizationScopeEligible: state.scope?.personalizationExperiment?.eligible ?? false,
+            personalizationScopeApplied: state.scope?.personalizationExperiment?.applied ?? false,
         };
     }, [state.scope, state.exit?.completedCount, ritualStatus]);
 
@@ -43,6 +46,9 @@ export default function SessionExitView() {
         completedItems: string[];
         reflectionCompletedAt: string | null;
         skipped: boolean;
+        personalizationScopeCohort: string;
+        personalizationScopeEligible: boolean;
+        personalizationScopeApplied: boolean;
     }): boolean => {
         const body = JSON.stringify(payload);
         if (navigator.sendBeacon) {

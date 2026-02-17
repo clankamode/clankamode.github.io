@@ -12,12 +12,39 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "isPrimary": true
         }
     ],
+    "array.dynamic-resizing": [
+        {
+            "href": "/learn/dsa/efficient-string-building",
+            "title": "Efficient String Building",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        }
+    ],
     "array.random-access-o1": [
         {
             "href": "/learn/dsa/arrays",
             "title": "Arrays",
             "type": "learn",
             "estMinutes": 5,
+            "isPrimary": false
+        }
+    ],
+    "backtracking.search": [
+        {
+            "href": "/learn/dsa/backtracking",
+            "title": "Backtracking",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "big-o.amortized-analysis": [
+        {
+            "href": "/learn/dsa/efficient-string-building",
+            "title": "Efficient String Building",
+            "type": "learn",
+            "estMinutes": 3,
             "isPrimary": false
         }
     ],
@@ -28,23 +55,207 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "type": "learn",
             "estMinutes": 7,
             "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/stacks",
+            "title": "Stacks",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": false
+        },
+        {
+            "href": "/learn/dsa/queues",
+            "title": "Queues",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
         }
     ],
-    "graph.traversal-bfs": [
+    "binary-search.technique": [
         {
-            "href": "/learn/dsa/graphs",
-            "title": "Graphs",
+            "href": "/learn/dsa/binary-search",
+            "title": "Binary Search",
+            "type": "learn",
+            "estMinutes": 7,
+            "isPrimary": true
+        }
+    ],
+    "career.behavioral": [
+        {
+            "href": "/learn/dsa/how-to-prepare-for-behavioural-interviews",
+            "title": "How to Prepare for Behavioural Interviews",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        }
+    ],
+    "career.learning": [
+        {
+            "href": "/learn/dsa/ive-uploaded-everything-i-know",
+            "title": "I've Uploaded Everything I Know",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        }
+    ],
+    "career.resume": [
+        {
+            "href": "/learn/dsa/how-to-write-a-resume-for-software-engineering-roles",
+            "title": "How to Write a Resume for Software Engineering Roles",
             "type": "learn",
             "estMinutes": 5,
             "isPrimary": true
         }
     ],
-    "graph.traversal-dfs": [
+    "career.strategy": [
+        {
+            "href": "/learn/dsa/how-to-get-good-at-leetcode",
+            "title": "How to Get Good at LeetCode",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/what-30-days-of-competitive-programming-taught-me",
+            "title": "What 30 Days of Competitive Programming Taught Me",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "dp.memoization": [
+        {
+            "href": "/learn/dsa/dynamic-programming-top-down",
+            "title": "Dynamic Programming (Top-Down Memo)",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "fast-slow-pointers.cycle-detection": [
+        {
+            "href": "/learn/dsa/fast-and-slow-pointer",
+            "title": "Fast and Slow Pointer",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "graph.representation": [
         {
             "href": "/learn/dsa/graphs",
             "title": "Graphs",
             "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "graph.shortest-path-dijkstra": [
+        {
+            "href": "/learn/dsa/dijkstra",
+            "title": "Dijkstra's Algorithm",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "graph.terminology": [
+        {
+            "href": "/learn/dsa/graphs",
+            "title": "Graphs",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": true
+        }
+    ],
+    "graph.traversal-bfs": [
+        {
+            "href": "/learn/dsa/bfs",
+            "title": "BFS (Breadth-First Search)",
+            "type": "learn",
             "estMinutes": 5,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/graphs",
+            "title": "Graphs",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "graph.traversal-dfs": [
+        {
+            "href": "/learn/dsa/dfs",
+            "title": "DFS (Depth-First Search)",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/graphs",
+            "title": "Graphs",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "hash.collision-handling": [
+        {
+            "href": "/learn/dsa/hash-maps-and-sets",
+            "title": "Hash Maps and Sets",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "hash.o1-average-lookup": [
+        {
+            "href": "/learn/dsa/hash-maps-and-sets",
+            "title": "Hash Maps and Sets",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/subarrays-with-exact-k",
+            "title": "Subarrays with Exact K",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": false
+        }
+    ],
+    "hash.space-time-tradeoff": [
+        {
+            "href": "/learn/dsa/hash-maps-and-sets",
+            "title": "Hash Maps and Sets",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "heap.priority-queue": [
+        {
+            "href": "/learn/dsa/top-k-heap",
+            "title": "Top K with Heap",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/heaps",
+            "title": "Heaps",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": true
+        }
+    ],
+    "list.insertion-o1-known": [
+        {
+            "href": "/learn/dsa/linked-lists",
+            "title": "Linked Lists",
+            "type": "learn",
+            "estMinutes": 6,
             "isPrimary": false
         }
     ],
@@ -53,8 +264,17 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "href": "/learn/dsa/linked-lists",
             "title": "Linked Lists",
             "type": "learn",
-            "estMinutes": 5,
+            "estMinutes": 6,
             "isPrimary": true
+        }
+    ],
+    "list.singly-vs-doubly": [
+        {
+            "href": "/learn/dsa/linked-lists",
+            "title": "Linked Lists",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
         }
     ],
     "list.traversal-cost": [
@@ -62,16 +282,334 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "href": "/learn/dsa/linked-lists",
             "title": "Linked Lists",
             "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "math.prefix-sum": [
+        {
+            "href": "/learn/dsa/prefix-sum",
+            "title": "Prefix Sum",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/subarrays-with-exact-k",
+            "title": "Subarrays with Exact K",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "matrix.sparse": [
+        {
+            "href": "/learn/dsa/sparse-tables",
+            "title": "Sparse Tables",
+            "type": "learn",
+            "estMinutes": 7,
+            "isPrimary": true
+        }
+    ],
+    "queue.bfs-relationship": [
+        {
+            "href": "/learn/dsa/bfs",
+            "title": "BFS (Breadth-First Search)",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": false
+        },
+        {
+            "href": "/learn/dsa/queues",
+            "title": "Queues",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "queue.fifo-model": [
+        {
+            "href": "/learn/dsa/queues",
+            "title": "Queues",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": true
+        }
+    ],
+    "recursion.base-case": [
+        {
+            "href": "/learn/dsa/dfs",
+            "title": "DFS (Depth-First Search)",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "segment-tree.range-query": [
+        {
+            "href": "/learn/dsa/binary-indexed-trees",
+            "title": "Binary Indexed Trees",
+            "type": "learn",
+            "estMinutes": 7,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/segment-trees",
+            "title": "Segment Trees",
+            "type": "learn",
+            "estMinutes": 7,
+            "isPrimary": true
+        }
+    ],
+    "sliding-window.technique": [
+        {
+            "href": "/learn/dsa/sliding-window",
+            "title": "Sliding Window",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "stack.call-stack-relationship": [
+        {
+            "href": "/learn/dsa/stacks",
+            "title": "Stacks",
+            "type": "learn",
             "estMinutes": 5,
             "isPrimary": false
         }
     ],
-    "tree.traversal-inorder": [
+    "stack.lifo-model": [
+        {
+            "href": "/learn/dsa/stacks",
+            "title": "Stacks",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "stack.monotonic": [
+        {
+            "href": "/learn/dsa/monotonic-stack",
+            "title": "Monotonic Stack",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "system.caching": [
+        {
+            "href": "/learn/dsa/caching",
+            "title": "Caching",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "system.cap-theorem": [
+        {
+            "href": "/learn/dsa/cap-theorem",
+            "title": "CAP Theorem",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "system.communication": [
+        {
+            "href": "/learn/dsa/apis",
+            "title": "APIs",
+            "type": "learn",
+            "estMinutes": 2,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/simple-client-server-architecture",
+            "title": "Simple Client-Server Architecture",
+            "type": "learn",
+            "estMinutes": 2,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/batch-vs-stream-processing",
+            "title": "Batch vs Stream Processing",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/message-queues",
+            "title": "Message Queues",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "system.consistency": [
+        {
+            "href": "/learn/dsa/acid-and-base",
+            "title": "ACID and BASE",
+            "type": "learn",
+            "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "system.load-balancing": [
+        {
+            "href": "/learn/dsa/load-balancer",
+            "title": "Load Balancer",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        }
+    ],
+    "system.observability": [
+        {
+            "href": "/learn/dsa/observability-and-developer-experience",
+            "title": "Observability and Developer Experience",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "system.partitioning": [
+        {
+            "href": "/learn/dsa/data-partitioning",
+            "title": "Data Partitioning",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "system.replication": [
+        {
+            "href": "/learn/dsa/database-replication",
+            "title": "Database Replication",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "system.requirements": [
+        {
+            "href": "/learn/dsa/requirements-gathering",
+            "title": "Requirements Gathering",
+            "type": "learn",
+            "estMinutes": 1,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/establishing-a-baseline",
+            "title": "Establishing a Baseline",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        }
+    ],
+    "system.scalability": [
+        {
+            "href": "/learn/dsa/system-characteristics",
+            "title": "System Characteristics",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/vertical-scaling-versus-horizontal-scaling",
+            "title": "Vertical Scaling versus Horizontal Scaling",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/stateless-vs-stateful-servers",
+            "title": "Stateless vs Stateful Web Servers",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/establishing-a-baseline",
+            "title": "Establishing a Baseline",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": false
+        },
+        {
+            "href": "/learn/dsa/data-centers-and-regions",
+            "title": "Data Centers and Regions",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": false
+        }
+    ],
+    "system.storage": [
+        {
+            "href": "/learn/dsa/databases",
+            "title": "Databases",
+            "type": "learn",
+            "estMinutes": 3,
+            "isPrimary": true
+        },
+        {
+            "href": "/learn/dsa/data-centers-and-regions",
+            "title": "Data Centers and Regions",
+            "type": "learn",
+            "estMinutes": 5,
+            "isPrimary": true
+        }
+    ],
+    "tree.parent-child-model": [
         {
             "href": "/learn/dsa/trees",
             "title": "Trees",
             "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": true
+        }
+    ],
+    "tree.properties": [
+        {
+            "href": "/learn/dsa/trees",
+            "title": "Trees",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "tree.traversal-orders": [
+        {
+            "href": "/learn/dsa/trees",
+            "title": "Trees",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": false
+        }
+    ],
+    "trie.prefix-tree": [
+        {
+            "href": "/learn/dsa/tries",
+            "title": "Tries",
+            "type": "learn",
+            "estMinutes": 6,
+            "isPrimary": true
+        }
+    ],
+    "two-pointers.technique": [
+        {
+            "href": "/learn/dsa/two-pointers",
+            "title": "Two Pointers",
+            "type": "learn",
             "estMinutes": 4,
+            "isPrimary": true
+        }
+    ],
+    "union-find.disjoint-set": [
+        {
+            "href": "/learn/dsa/union-find",
+            "title": "Union Find",
+            "type": "learn",
+            "estMinutes": 5,
             "isPrimary": true
         }
     ]

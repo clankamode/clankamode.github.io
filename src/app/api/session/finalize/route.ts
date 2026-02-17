@@ -43,6 +43,9 @@ export async function POST(req: NextRequest) {
       completedItems,
       reflectionCompletedAt,
       skipped,
+      personalizationScopeCohort,
+      personalizationScopeEligible,
+      personalizationScopeApplied,
     } = await req.json();
 
     if (!sessionId || typeof sessionId !== 'string') {
@@ -63,6 +66,9 @@ export async function POST(req: NextRequest) {
       completedItems: normalizedCompletedItems,
       reflection_completed_at: reflectionCompletedAt ?? null,
       skipped: Boolean(skipped),
+      personalizationScopeCohort: typeof personalizationScopeCohort === 'string' ? personalizationScopeCohort : 'not_eligible',
+      personalizationScopeEligible: Boolean(personalizationScopeEligible),
+      personalizationScopeApplied: Boolean(personalizationScopeApplied),
     };
 
     const { error } = await admin

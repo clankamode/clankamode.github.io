@@ -26,6 +26,7 @@ const ALLOWED_EVENTS = new Set([
     'first_win_goal_selected',
     'first_win_plan_generated',
     'first_win_launched',
+    'personalization_profile_scored',
 ]);
 
 const MAX_PAYLOAD_SIZE = 4096; // 4KB limit
