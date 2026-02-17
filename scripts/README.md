@@ -10,6 +10,20 @@ This directory contains utility scripts and one-off tasks for the project.
 
 ## Available Scripts
 
+### Database backup to S3
+
+**Script:** `bin/backup-db-to-s3.sh`
+
+Creates a logical dump of the Supabase database (pg_dump), gzips it, and uploads to AWS S3. Does not require Supabase Pro.
+
+**Usage:** `./scripts/bin/backup-db-to-s3.sh` (after setting env vars; see **Setup:** below).
+
+**Setup:** See [BACKUP-S3-SETUP.md](./BACKUP-S3-SETUP.md) for S3 bucket creation, IAM user, and `DATABASE_URL` / `S3_BACKUP_BUCKET` configuration.
+
+**Test cron env:** Run `./scripts/bin/test-backup-as-cron.sh` to run the backup with the same minimal `PATH` cron uses; if it succeeds, your crontab will work.
+
+---
+
 ### Practice Test Data Migration
 
 #### 1. `grade_all_sessions.ts` - Grade TestAnswer Records
