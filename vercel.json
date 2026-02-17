@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/admin/daily-brief",
-      "schedule": "0 9 * * *"
+      "schedule": "59 19 * * *"
     }
   ]
 }
