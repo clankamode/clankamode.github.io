@@ -40,7 +40,7 @@ A modern personal website showcasing videos, blog posts, and portfolio items. Bu
    ```
 
 3. Set up environment variables:
-   - Copy the `.env.local.example` file to `.env.local` and fill in your YouTube API key, channel ID, and OAuth credentials.
+   - Copy `.env.local.example` to `.env.local` and fill in your credentials (see sections below).
 
 4. Run the development server:
    ```bash
@@ -50,6 +50,55 @@ A modern personal website showcasing videos, blog posts, and portfolio items. Bu
    ```
 
 5. Open [http://localhost:3000](http://localhost:3000) to view your site.
+
+## Local Supabase Development
+
+This project uses Supabase for the database. You can run a full local instance with Docker.
+
+### Prerequisites
+- [Docker](https://www.docker.com/products/docker-desktop/) running
+- [Supabase CLI](https://supabase.com/docs/guides/cli): `brew install supabase/tap/supabase`
+
+### Start the local instance
+
+```bash
+supabase start   # first run pulls Docker images (~2 min)
+```
+
+This runs migrations and seeds the database automatically. On success it prints your local keys.
+
+### Point the app at your local instance
+
+In `.env.local`, replace the Supabase vars with the values from `supabase start`:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<Publishable key from output>
+SUPABASE_SERVICE_ROLE_KEY=<Secret key from output>
+```
+
+Then run `npm run dev` as normal — it will hit your local database.
+
+### Useful commands
+
+```bash
+supabase db reset      # wipe and re-run all migrations + seed
+supabase stop          # stop containers
+supabase studio        # open Supabase Studio at http://127.0.0.1:54323
+```
+
+### Schema & seed data
+
+- **Migrations**: `supabase/migrations/` — versioned SQL files run in order
+- **Seed**: `supabase/seed.sql` — reference data (pillars, topics, concepts) loaded after migrations
+- **Baseline**: `20260101000000_baseline_schema.sql` creates all tables that pre-existed the migrations folder
+
+> **Articles are not seeded locally.** If you need article content, dump it from production:
+> ```bash
+> supabase db dump --data-only -t LearningArticles >> supabase/seed.sql
+> ```
+
+---
 
 ## Setting Up YouTube Data API
 
@@ -132,34 +181,9 @@ To enable AI image generation in the chat interface:
 - **Topics**: Update the topics section in `src/app/page.tsx` to highlight your areas of expertise.
 - **Links**: Update social media links in the community section.
 
-## Supabase tables for Live Q&A
+## Database Schema
 
-The live question feature expects two tables in Supabase:
-
-- **LiveQuestions**
-  - `id`: uuid, primary key, default `uuid_generate_v4()`
-  - `content`: text, required
-  - `user_email`: text, required
-  - `user_name`: text, nullable
-  - `created_at`: timestamp with time zone, default `now()`
-  - `is_archived`: boolean, default `false` - marks questions as answered/archived
-  - `video_url`: text, nullable - URL to the video where the question was answered
-
-- **LiveQuestionVotes**
-  - `id`: uuid, primary key, default `uuid_generate_v4()`
-  - `question_id`: uuid, foreign key to `LiveQuestions.id`, `on delete cascade`
-  - `user_email`: text, required
-  - `created_at`: timestamp with time zone, default `now()`
-  - Unique constraint on (`question_id`, `user_email`) to prevent duplicate votes
-
-## Supabase tables for Gallery
-
-The gallery feature expects one table in Supabase:
-
-- **HeadShots**
-  - `id`: uuid, primary key, default `uuid_generate_v4()`
-  - `url`: text, required - The public URL of the uploaded headshot image
-  - `created_at`: timestamp with time zone, default `now()`
+All table definitions live in `supabase/migrations/`. See those files for the authoritative schema — the README no longer duplicates them.
 
 ## Deployment
 
