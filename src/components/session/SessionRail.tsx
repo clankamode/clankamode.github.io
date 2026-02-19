@@ -41,7 +41,7 @@ export default function SessionRail({ onToggleDetails }: SessionRailProps) {
         </div>
 
         <div className={cn(
-          "relative h-2 overflow-hidden rounded-full bg-white/5 transition-all duration-300",
+          "relative h-2 overflow-hidden rounded-full bg-border-subtle transition-all duration-300",
           progressPercentage > 75 && "shadow-lg shadow-emerald-500/20"
         )}>
           <div
@@ -63,7 +63,7 @@ export default function SessionRail({ onToggleDetails }: SessionRailProps) {
         <button
           type="button"
           onClick={onToggleDetails}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs uppercase tracking-wider text-text-secondary backdrop-blur-sm transition-all hover:border-emerald-500/30 hover:bg-white/10 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border-interactive bg-surface-interactive px-3 py-1.5 text-xs uppercase tracking-wider text-text-secondary backdrop-blur-sm transition-all hover:border-emerald-500/30 hover:bg-surface-workbench hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Details <span className="font-mono text-text-muted">[T]</span>
         </button>

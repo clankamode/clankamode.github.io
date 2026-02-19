@@ -41,7 +41,7 @@ export default function PillarSidebar({
         <p className="text-xs uppercase tracking-[0.2em] text-text-muted">Pillar</p>
         <Link
           href={`/learn/${pillarSlug}`}
-          className="mt-2 inline-flex text-lg font-semibold tracking-tight text-text-primary hover:text-white"
+          className="mt-2 inline-flex text-lg font-semibold tracking-tight text-text-primary hover:text-text-secondary"
         >
           {pillarName}
         </Link>

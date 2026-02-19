@@ -23,7 +23,7 @@ export default function SessionChecklist() {
                 </p>
             </div>
 
-            <ol className="relative border-l border-white/10 ml-3 space-y-6">
+            <ol className="relative border-l border-border-interactive ml-3 space-y-6">
                 {items.map((item, i) => {
                     const isCompleted = i < currentIndex;
                     const isCurrent = i === currentIndex;
@@ -35,7 +35,7 @@ export default function SessionChecklist() {
                                 "absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full border-2 transition-colors",
                                 isCompleted && "bg-brand-green border-brand-green",
                                 isCurrent && "bg-background border-accent-primary animate-pulse",
-                                isFuture && "bg-background border-white/20"
+                                isFuture && "bg-background border-border-interactive"
                             )} />
 
                             <div className={cn(

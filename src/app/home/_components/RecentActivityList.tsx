@@ -22,7 +22,7 @@ function formatRelativeTime(dateString: string): string {
 
 export default function RecentActivityList({ recentActivity }: RecentActivityListProps) {
     return (
-        <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
+        <section className="rounded-2xl border border-border-subtle bg-surface-1 p-6 md:p-8">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-text-muted mb-6">
                 Recent
             </h2>

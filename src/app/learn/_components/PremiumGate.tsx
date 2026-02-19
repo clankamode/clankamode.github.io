@@ -11,7 +11,7 @@ export default function PremiumGate() {
           Create an account or sign in to access the full article and templates.
         </p>
         <Link href="/login">
-          <Button size="lg" className="bg-brand-green text-black hover:bg-brand-green/90">
+          <Button size="lg" className="bg-brand-green text-surface-ambient hover:bg-brand-green/90">
             Sign in to continue
           </Button>
         </Link>

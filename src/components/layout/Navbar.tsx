@@ -112,19 +112,19 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
   const navLinkClass = (path: string) =>
     `px-4 py-2 rounded-full text-base font-medium transition-all duration-300 border border-transparent ${isActive(path)
       ? 'text-foreground border-b-2 border-brand-green'
-      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+      : 'text-muted-foreground hover:text-foreground hover:bg-surface-interactive'
     }`;
 
   const navButtonClass = (active: boolean) =>
     `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 border border-transparent ${active
       ? 'text-foreground border-b-2 border-brand-green'
-      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+      : 'text-muted-foreground hover:text-foreground hover:bg-surface-interactive'
     }`;
 
   const mobileNavLinkClass = (path: string) =>
     `block px-4 py-3 rounded-lg text-lg font-medium transition-colors border-l-2 border-transparent ${isActive(path)
       ? 'text-foreground border-brand-green'
-      : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+      : 'text-muted-foreground hover:text-foreground hover:bg-surface-interactive'
     }`;
 
   const isLoggedIn = !!session;
@@ -200,10 +200,10 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
 
           {pathname !== '/ai' && pathname !== '/explore' && mode !== 'gate' && mode !== 'exit' && (
             <div className="hidden md:flex items-center justify-center absolute left-1/2 -translate-x-1/2">
-              <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/5 border border-border-subtle backdrop-blur-md' : ''
+              <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-300 ${scrolled ? 'bg-surface-interactive border border-border-subtle backdrop-blur-md' : ''
                 }`}>
                 {isAuthLoading ? (
-                  <div className="h-8 w-72 rounded-full bg-white/5 animate-pulse" />
+                  <div className="h-8 w-72 rounded-full bg-surface-interactive animate-pulse" />
                 ) : isLoggedIn && isEditor && !isEffectiveAdmin ? (
                   <>
                     <Link href="/admin/content" className={navLinkClass('/admin/content')}>
@@ -242,11 +242,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                           </button>
                           <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                             <div className="py-2">
-                              <Link href="/peralta75" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">
+                              <Link href="/peralta75" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">
                                 <span className="block text-foreground font-medium">Peralta 75</span>
                                 <span className="block text-xs text-muted-foreground">75 curated LeetCode problems</span>
                               </Link>
-                              <Link href="/assessment" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">
+                              <Link href="/assessment" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">
                                 <span className="block text-foreground font-medium">Assessment</span>
                                 <span className="block text-xs text-muted-foreground">Test your skills on demand</span>
                               </Link>
@@ -279,11 +279,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                             </button>
                             <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                               <div className="py-2">
-                                <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">AI Tools</Link>
-                                <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Thumbnails</Link>
-                                <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Gallery</Link>
-                                <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Clips</Link>
-                                <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5">Learning Content</Link>
+                                <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">AI Tools</Link>
+                                <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">Thumbnails</Link>
+                                <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">Gallery</Link>
+                                <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">Clips</Link>
+                                <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">Learning Content</Link>
                               </div>
                             </div>
                           </div>

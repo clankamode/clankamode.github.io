@@ -45,7 +45,7 @@ export default function MobileSidebarToggle({ title, children }: MobileSidebarTo
           <button
             type="button"
             aria-label="Close navigation"
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-foreground/30 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
           <div

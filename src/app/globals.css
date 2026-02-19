@@ -19,7 +19,7 @@
   /* Expert */
 
   /* Semantic Tokens (Light Mode Defaults) */
-  --surface-ambient: #ffffff;
+  --surface-ambient: #fafafa;
   --surface-interactive: #f6f6f7;
   --surface-dense: #ececef;
   --surface-workbench: #f1f1f2;
@@ -66,7 +66,7 @@
   --shadow-glow-focus: 0 0 0 4px rgba(44, 187, 93, 0.25);
 
   /* Base Colors - Light Mode Defaults */
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #09090b;
   /* Zinc 950 */
   --card: #ffffff;
@@ -269,23 +269,23 @@ h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--border-subtle);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--border-interactive);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--text-muted);
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+  scrollbar-color: var(--border-interactive) var(--border-subtle);
 }
 
 /* Frame signature */

@@ -105,28 +105,23 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
 
     return (
         <div>
-            {/* Enhanced Section Header */}
             <div
                 data-reading-boundary="section-header"
                 className="mb-5 border-t border-border-interactive/35 pt-2 before:absolute before:left-[-2.5rem] before:top-[9px] before:h-px before:w-[2.5rem] before:bg-border-interactive/32 after:absolute after:left-[-2.5rem] after:top-[9px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/45"
             >
-                {/* Section title with better hierarchy */}
                 <h2 className="text-2xl font-semibold tracking-tight text-text-primary">
                     {currentChunk.title}
                 </h2>
             </div>
 
-            {/* Content */}
             <div>
                 <ArticleRenderer content={currentChunk.content} mode="execution" />
             </div>
 
-            {/* Enhanced Navigation */}
             <div
                 data-reading-boundary="step-control"
                 className="mt-10 border-t border-border-interactive/35 pt-4 before:absolute before:left-[-2.5rem] before:top-[7px] before:h-px before:w-[2.5rem] before:bg-border-interactive/32 after:absolute after:left-[-2.5rem] after:top-[7px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/45"
             >
-                {/* Visual Progress Indicator - Enhanced */}
                 <div className="mb-4 space-y-2 lg:hidden">
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-text-muted">
@@ -150,17 +145,15 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                                     i < currentChunkIndex
                                         ? 'bg-emerald-500/70'
                                         : i === currentChunkIndex
-                                        ? 'bg-gradient-to-r from-emerald-500 to-blue-500 shadow-lg shadow-emerald-500/20'
-                                        : 'bg-white/10'
+                                            ? 'bg-gradient-to-r from-emerald-500 to-blue-500 shadow-lg shadow-emerald-500/20'
+                                            : 'bg-border-subtle'
                                 )}
                             />
                         ))}
                     </div>
                 </div>
 
-                {/* Navigation Buttons */}
                 <div className="flex items-center justify-between gap-4">
-                    {/* Left: Previous Button */}
                     {isFirstChunk ? (
                         <div className="flex items-center gap-2 py-2 text-xs text-text-muted">
                             <span className="inline-block h-4 w-4 rounded border border-text-muted/20" />
@@ -179,7 +172,6 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                         </button>
                     )}
 
-                    {/* Right: Next/Complete Button - Enhanced */}
                     <button
                         onClick={() => {
                             if (isLastChunk) {
@@ -193,7 +185,7 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                             'group relative flex items-center gap-2.5 rounded-lg px-5 py-3 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-70',
                             isLastChunk
                                 ? 'bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 text-white shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 hover:brightness-110'
-                                : 'border border-white/10 bg-white/5 text-text-primary backdrop-blur-sm hover:border-emerald-500/30 hover:bg-white/10'
+                                : 'border border-border-interactive bg-surface-interactive text-text-primary backdrop-blur-sm hover:border-emerald-500/30 hover:bg-surface-workbench'
                         )}
                     >
                         {isLastChunk && !isCompletingArticle && (
@@ -206,8 +198,8 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                                 ? isCompletingArticle
                                     ? 'Completing...'
                                     : isFocusedMode
-                                    ? 'Complete Section'
-                                    : 'Complete Article'
+                                        ? 'Complete Section'
+                                        : 'Complete Article'
                                 : 'Next Section'}
                         </span>
                         <div className="flex items-center gap-1.5">

@@ -178,7 +178,7 @@ export function BlockRenderer({ blocks, mode = 'default' }: BlockRendererProps) 
                         <a
                           {...props}
                           href={href}
-                          className="group inline-flex items-baseline gap-1 font-medium text-text-primary underline decoration-text-muted/70 decoration-2 underline-offset-4 transition-colors duration-200 hover:text-white hover:decoration-brand-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                          className="group inline-flex items-baseline gap-1 font-medium text-text-primary underline decoration-text-muted/70 decoration-2 underline-offset-4 transition-colors duration-200 hover:text-accent-primary hover:decoration-brand-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                           target={isExternal ? '_blank' : undefined}
                           rel={isExternal ? 'noreferrer noopener' : undefined}
                         >
@@ -221,7 +221,7 @@ export function BlockRenderer({ blocks, mode = 'default' }: BlockRendererProps) 
                       </tbody>
                     ),
                     tr: ({ children, ...props }) => (
-                      <tr {...props} className="transition-colors hover:bg-white/5">
+                      <tr {...props} className="transition-colors hover:bg-surface-interactive">
                         {children}
                       </tr>
                     ),

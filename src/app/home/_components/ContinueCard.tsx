@@ -66,7 +66,7 @@ export default function ContinueCard({ summary }: ContinueCardProps) {
 
     if (state === 'start') {
         return (
-            <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
+            <section className="rounded-2xl border border-border-subtle bg-surface-1 p-8 md:p-10">
                 <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Start</p>
                 <h2 className="mt-4 text-3xl md:text-4xl font-bold text-text-primary">
                     Pick your first track
@@ -93,7 +93,7 @@ export default function ContinueCard({ summary }: ContinueCardProps) {
     if (state === 'nice-work') {
         const lastCompleted = recentActivity[0];
         return (
-            <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
+            <section className="rounded-2xl border border-border-subtle bg-surface-1 p-8 md:p-10">
                 <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Nice work</p>
                 <h2 className="mt-4 text-3xl md:text-4xl font-bold text-text-primary">
                     Ready for the next step?
@@ -102,7 +102,7 @@ export default function ContinueCard({ summary }: ContinueCardProps) {
                     You completed <span className="text-text-primary font-medium">{lastCompleted?.title}</span> {formatRelativeTime(lastCompleted?.completedAt || '')}.
                 </p>
                 {nextArticle && (
-                    <div className="mt-6 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                    <div className="mt-6 p-4 rounded-xl bg-surface-workbench border border-border-subtle">
                         <p className="text-sm text-text-muted">Up next</p>
                         <p className="mt-1 text-lg font-medium text-text-primary">{nextArticle.title}</p>
                         <p className="mt-1 text-sm text-text-secondary">
@@ -122,7 +122,7 @@ export default function ContinueCard({ summary }: ContinueCardProps) {
     }
 
     return (
-        <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
+        <section className="rounded-2xl border border-border-subtle bg-surface-1 p-8 md:p-10">
             <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Continue</p>
             {nextArticle && (
                 <>
@@ -141,7 +141,7 @@ export default function ContinueCard({ summary }: ContinueCardProps) {
                                 <span className="text-text-muted">Overall progress</span>
                                 <span className="text-text-secondary">{summary.percent}%</span>
                             </div>
-                            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                            <div className="h-1.5 bg-border-subtle rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-accent-primary rounded-full transition-all"
                                     style={{ width: `${summary.percent}%` }}
@@ -166,7 +166,7 @@ function PillarPill({ href, label }: { href: string; label: string }) {
     return (
         <Link
             href={href}
-            className="rounded-full border border-white/10 bg-white/[0.02] px-5 py-2 text-sm font-medium text-text-primary transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+            className="rounded-full border border-border-subtle bg-surface-workbench px-5 py-2 text-sm font-medium text-text-primary transition-colors hover:border-border-interactive hover:bg-surface-interactive"
         >
             {label}
         </Link>

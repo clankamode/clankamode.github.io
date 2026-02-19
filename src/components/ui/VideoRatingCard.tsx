@@ -15,12 +15,12 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
   const [selectedRating, setSelectedRating] = useState<string | null>(currentRating || null);
   const [countdown, setCountdown] = useState<number>(TIMER_LENGTH);
   const [timerComplete, setTimerComplete] = useState<boolean>(false);
-  
+
   // Start countdown immediately when component loads
   useEffect(() => {
     // Only start the timer if it hasn't completed yet
     if (timerComplete) return;
-    
+
     // Start the timer
     const timer = setInterval(() => {
       setCountdown(prev => {
@@ -32,11 +32,11 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
         return prev - 1;
       });
     }, 1000);
-    
+
     // Cleanup function to clear interval when component unmounts
     return () => clearInterval(timer);
   }, [timerComplete]);
-  
+
   const handleRatingClick = (ratingId: string) => {
     // Don't do anything if clicking the same rating
     if (ratingId === selectedRating) return;
@@ -49,11 +49,11 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
       onRate(video.id, ratingLabel);
     }
   };
-  
+
   const ratings = [
-    { 
-      id: 'strong-no-hire', 
-      label: 'Strong No Hire', 
+    {
+      id: 'strong-no-hire',
+      label: 'Strong No Hire',
       color: 'from-red-700 to-red-500',
       hoverColor: 'from-red-800 to-red-600',
       selectedColor: 'from-red-800 to-red-600',
@@ -63,9 +63,9 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
         </svg>
       )
     },
-    { 
-      id: 'no-hire', 
-      label: 'No Hire', 
+    {
+      id: 'no-hire',
+      label: 'No Hire',
       color: 'from-orange-600 to-orange-400',
       hoverColor: 'from-orange-700 to-orange-500',
       selectedColor: 'from-orange-700 to-orange-500',
@@ -75,9 +75,9 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
         </svg>
       )
     },
-    { 
-      id: 'hire', 
-      label: 'Hire', 
+    {
+      id: 'hire',
+      label: 'Hire',
       color: 'from-blue-600 to-blue-400',
       hoverColor: 'from-blue-700 to-blue-500',
       selectedColor: 'from-blue-700 to-blue-500',
@@ -87,9 +87,9 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
         </svg>
       )
     },
-    { 
-      id: 'strong-hire', 
-      label: 'Strong Hire', 
+    {
+      id: 'strong-hire',
+      label: 'Strong Hire',
       color: 'from-green-600 to-green-400',
       hoverColor: 'from-green-700 to-green-500',
       selectedColor: 'from-green-700 to-green-500',
@@ -115,12 +115,12 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
       <div className="p-6">
         <h3 className="text-2xl font-bold text-foreground mb-2">{video.title}</h3>
         <p className="text-muted-foreground mb-6 line-clamp-3">{video.description}</p>
-        
+
         <div className="space-y-4">
           <h4 className="text-xl font-semibold text-foreground">
-            {'Rate this candidate:' }
+            {'Rate this candidate:'}
           </h4>
-          
+
           <div className="flex flex-wrap md:flex-nowrap gap-2 mb-4">
             {ratings.map((rating) => (
               <button
@@ -130,10 +130,9 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
                   px-3 py-3 rounded-lg font-medium transition-all duration-200 
                   flex items-center justify-center flex-1
                   bg-gradient-to-r shadow-md transform hover:scale-105
-                  ${ 
-                    selectedRating === rating.id 
-                      ? `${rating.selectedColor} text-white ring-2 ring-white ring-opacity-70 scale-105`
-                      : `from-surface-interactive to-surface-dense text-muted-foreground hover:${rating.hoverColor} hover:text-white`
+                  ${selectedRating === rating.id
+                    ? `${rating.selectedColor} text-white ring-2 ring-white ring-opacity-70 scale-105`
+                    : `from-surface-interactive to-surface-dense text-muted-foreground hover:${rating.hoverColor} hover:text-text-primary`
                   }
                 `}
               >
@@ -142,7 +141,7 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
               </button>
             ))}
           </div>
-          
+
           <button
             onClick={handleSubmit}
             disabled={!selectedRating || !timerComplete}
@@ -161,7 +160,7 @@ export default function VideoRatingCard({ video, onRate, currentRating }: VideoR
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
                 </svg>
-                Please wait {countdown}s before rating this candidate.. 
+                Please wait {countdown}s before rating this candidate..
               </>
             ) : !selectedRating ? (
               'Select a Rating'

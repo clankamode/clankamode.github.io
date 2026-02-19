@@ -23,7 +23,7 @@ export default function TodaysPlan({ summary, bookmarks }: TodaysPlanProps) {
     }
 
     return (
-        <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
+        <section className="rounded-2xl border border-border-subtle bg-surface-1 p-6 md:p-8">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-text-muted mb-6">
                 Today
             </h2>
@@ -31,10 +31,10 @@ export default function TodaysPlan({ summary, bookmarks }: TodaysPlanProps) {
                 {rows.map((row) => (
                     <div
                         key={row.type}
-                        className="flex items-center justify-between gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors"
+                        className="flex items-center justify-between gap-4 p-4 rounded-xl bg-surface-workbench border border-border-subtle hover:border-border-interactive transition-colors"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/[0.05] flex items-center justify-center text-text-muted">
+                            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-surface-interactive flex items-center justify-center text-text-muted">
                                 {row.icon}
                             </div>
                             <div>
@@ -44,7 +44,7 @@ export default function TodaysPlan({ summary, bookmarks }: TodaysPlanProps) {
                         </div>
                         <Link
                             href={row.href}
-                            className="flex-shrink-0 rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                            className="flex-shrink-0 rounded-full border border-border-subtle px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:border-border-interactive hover:bg-surface-interactive"
                         >
                             {row.cta}
                         </Link>

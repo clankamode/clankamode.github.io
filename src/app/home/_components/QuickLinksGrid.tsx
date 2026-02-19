@@ -47,9 +47,9 @@ export default function QuickLinksGrid() {
                     <Link
                         key={link.label}
                         href={link.href}
-                        className="group p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04] transition-all"
+                        className="group p-5 rounded-xl border border-border-subtle bg-surface-workbench hover:border-border-interactive hover:bg-surface-interactive transition-all"
                     >
-                        <div className="w-10 h-10 rounded-lg bg-white/[0.05] flex items-center justify-center text-text-muted group-hover:text-text-secondary transition-colors">
+                        <div className="w-10 h-10 rounded-lg bg-surface-interactive flex items-center justify-center text-text-muted group-hover:text-text-secondary transition-colors">
                             {link.icon}
                         </div>
                         <p className="mt-4 font-medium text-text-primary">{link.label}</p>

@@ -156,7 +156,7 @@ export default function Component() {
           <div className={`mb-4 transition-all duration-1000 transform
             ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
           >
-            <div className="bg-card/20 backdrop-blur-md rounded-xl border border-white/5 p-6 shadow-lg">
+            <div className="bg-surface-1 backdrop-blur-md rounded-xl border border-border-subtle p-6 shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <span className="text-xl font-bold text-foreground tracking-tight">Progress</span>
@@ -168,7 +168,7 @@ export default function Component() {
                   {Math.round((solvedQuestions.size / PERALTA_75_LIST.length) * 100)}%
                 </span>
               </div>
-              <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
+              <div className="h-2 bg-border-subtle rounded-full overflow-hidden">
                 <div
                   className="h-full bg-brand-green rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(44,187,93,0.5)]"
                   style={{
@@ -182,17 +182,17 @@ export default function Component() {
           {/* Questions List */}
           <div className="space-y-4">
             {sortedCategories.map((category) => (
-              <div key={category} className="bg-card/30 backdrop-blur-md rounded-xl border border-white/5 shadow-md overflow-hidden transition-all duration-300 hover:border-white/10">
+              <div key={category} className="bg-surface-1 backdrop-blur-md rounded-xl border border-border-subtle shadow-sm overflow-hidden transition-all duration-300 hover:border-border-interactive">
                 {/* Category Header */}
                 <button
                   onClick={() => toggleCategory(category)}
-                  className="w-full p-6 hover:bg-white/5 transition-colors group"
+                  className="w-full p-6 hover:bg-surface-interactive transition-colors group"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       {/* Animated Chevron */}
                       <div
-                        className={`w-8 h-8 flex items-center justify-center rounded-full bg-white/5 transition-all duration-300 group-hover:bg-brand-green/20 group-hover:text-brand-green
+                        className={`w-8 h-8 flex items-center justify-center rounded-full bg-surface-interactive transition-all duration-300 group-hover:bg-brand-green/20 group-hover:text-brand-green
                           ${expandedCategories.has(category) ? 'rotate-180 bg-brand-green/20 text-brand-green' : 'rotate-0 text-muted-foreground'}`}
                       >
                         <svg
@@ -211,7 +211,7 @@ export default function Component() {
                       </div>
                       <h3 className="text-2xl font-bold text-foreground font-display tracking-tight group-hover:text-brand-green transition-colors">{category}</h3>
                       <span className={`px-2.5 py-0.5 text-sm font-mono font-medium rounded-full transition-colors
-                        ${expandedCategories.has(category) ? 'bg-brand-green/20 text-brand-green' : 'bg-white/5 text-muted-foreground'}`}>
+                        ${expandedCategories.has(category) ? 'bg-brand-green/20 text-brand-green' : 'bg-surface-interactive text-muted-foreground'}`}>
                         {groupedQuestions[category].length}
                       </span>
                     </div>
@@ -234,7 +234,7 @@ export default function Component() {
 
                 {/* Category Content */}
                 {expandedCategories.has(category) && (
-                  <div className="px-6 pb-6 bg-black/20">
+                  <div className="px-6 pb-6 bg-surface-workbench">
                     <div className="space-y-3 pt-4">
                       {groupedQuestions[category].map((question) => (
                         <div
@@ -242,7 +242,7 @@ export default function Component() {
                           className={`rounded-lg border transition-all duration-300 group
                             ${solvedQuestions.has(question.id)
                               ? 'bg-brand-green/5 border-brand-green/20 opacity-70 hover:opacity-100'
-                              : 'bg-white/5 border-transparent hover:border-brand-green/30 hover:bg-white/10 hover:shadow-[0_0_15px_-5px_rgba(44,187,93,0.1)]'}`}
+                              : 'bg-surface-1 border-border-subtle hover:border-brand-green/30 hover:bg-surface-interactive hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]'}`}
                         >
                           <div className="p-4">
                             <div className="flex items-center justify-between gap-4">
@@ -291,7 +291,7 @@ export default function Component() {
                                   href={question.leetcodeUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex-shrink-0 text-muted-foreground hover:text-white transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
+                                  className="flex-shrink-0 text-muted-foreground hover:text-text-primary transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
                                   title="View on LeetCode"
                                 >
                                   <svg

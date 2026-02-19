@@ -57,9 +57,9 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
             const onboardingPolicy = consumeOnboardingPolicyContext();
             const aiPolicyVersion =
                 session.planPolicyDecisionId
-                || session.scopePolicyDecisionId
-                || onboardingPolicy?.decisionId
-                || session.policyFallbackUsed
+                    || session.scopePolicyDecisionId
+                    || onboardingPolicy?.decisionId
+                    || session.policyFallbackUsed
                     ? AI_POLICY_VERSION
                     : null;
             const sessionId = crypto.randomUUID();
@@ -130,9 +130,9 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
             const onboardingPolicy = consumeOnboardingPolicyContext();
             const aiPolicyVersion =
                 session.planPolicyDecisionId
-                || session.scopePolicyDecisionId
-                || onboardingPolicy?.decisionId
-                || session.policyFallbackUsed
+                    || session.scopePolicyDecisionId
+                    || onboardingPolicy?.decisionId
+                    || session.policyFallbackUsed
                     ? AI_POLICY_VERSION
                     : null;
             const sessionId = crypto.randomUUID();
@@ -261,7 +261,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                                 setIsPicking(false);
                                 router.push(`/home?track=${encodeURIComponent(t.slug)}`);
                             }}
-                            className="w-full text-left p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all group"
+                            className="w-full text-left p-5 rounded-xl border border-border-subtle bg-surface-workbench hover:bg-surface-interactive hover:border-border-interactive transition-all group"
                         >
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-semibold text-text-primary group-hover:text-accent-primary transition-colors">{t.label}</span>
