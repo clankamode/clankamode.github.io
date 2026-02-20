@@ -222,6 +222,11 @@
           document.getElementById('presence-block').style.display = 'block';
         }
         document.getElementById('status-text').textContent = data.status.toUpperCase();
+        if (data.status === 'thinking') {
+          document.querySelector('.dot').style.background = '#f5d442'; // Yellow for thinking
+        } else {
+          document.querySelector('.dot').style.background = 'var(--accent)';
+        }
       } catch (e) {
         console.log('Presence fetch failed');
       }
