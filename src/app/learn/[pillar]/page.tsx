@@ -43,7 +43,7 @@ export default async function PillarPage({ params }: PillarPageProps) {
   return (
     <div className="min-h-screen bg-background pt-20 pb-24">
       <section className="mx-auto w-full max-w-[1680px] px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-16 lg:grid-cols-[240px_minmax(0,1fr)_240px]">
+        <div className="grid gap-16 lg:grid-cols-[240px_1fr_240px]">
           <aside className="hidden lg:block">
             <div className="sticky top-28">
               <PillarSidebar
@@ -90,7 +90,7 @@ export default async function PillarPage({ params }: PillarPageProps) {
             </div>
           </div>
 
-          <aside className="hidden lg:block" aria-hidden="true" />
+          <aside className="hidden lg:block w-[240px] shrink-0" aria-hidden="true" />
         </div>
       </section>
     </div>
