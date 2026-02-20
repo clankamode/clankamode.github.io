@@ -73,7 +73,7 @@ export class ClankaPresence extends LitElement {
       this.current = data.current;
       this.status = data.status;
       this.history = data.history || [];
-      this.dispatchEvent(new CustomEvent('history-updated', { detail: this.history }));
+      this.dispatchEvent(new CustomEvent('sync-updated', { detail: data }));
     } catch (e) {
       console.error('Presence fetch failed');
     }

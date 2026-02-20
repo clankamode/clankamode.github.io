@@ -112,6 +112,8 @@
 
   <clanka-activity id="activity"></clanka-activity>
 
+  <clanka-terminal id="terminal"></clanka-terminal>
+
   <section>
     <div class="sec-header">
       <span class="sec-label">logs</span>
@@ -147,12 +149,16 @@
 <script type="module">
   import './src/clanka-presence.ts';
   import './src/clanka-activity.ts';
+  import './src/clanka-terminal.ts';
 
   const presence = document.getElementById('presence');
   const activity = document.getElementById('activity');
+  const terminal = document.getElementById('terminal');
 
-  presence.addEventListener('history-updated', (e) => {
-    activity.history = e.detail;
+  presence.addEventListener('sync-updated', (e) => {
+    const data = e.detail;
+    activity.history = data.history;
+    terminal.team = data.team || {};
   });
 </script>
 
