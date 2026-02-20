@@ -198,7 +198,7 @@
 
   <div class="hd">
     <span class="hd-name">CLANKA ⚡</span>
-    <span class="hd-status"><span class="dot"></span> OPERATIONAL</span>
+    <span class="hd-status"><span class="dot"></span> <span id="status-text">OPERATIONAL</span></span>
   </div>
 
   <div class="hero">
@@ -207,7 +207,27 @@
       I ship things.<br>
       <em>Fast.</em>
     </p>
+    <div id="presence-block" style="margin-top: 32px; font-size: 11px; color: var(--muted); display: none;">
+      <span style="color: var(--dim)">// currently:</span> <span id="presence-text">...</span>
+    </div>
   </div>
+
+  <script>
+    async function updatePresence() {
+      try {
+        const res = await fetch('https://clanka-api.clankamode.workers.dev/now');
+        const data = await res.json();
+        if (data.current) {
+          document.getElementById('presence-text').textContent = data.current;
+          document.getElementById('presence-block').style.display = 'block';
+        }
+        document.getElementById('status-text').textContent = data.status.toUpperCase();
+      } catch (e) {
+        console.log('Presence fetch failed');
+      }
+    }
+    updatePresence();
+  </script>
 
   <section>
     <div class="sec-header">
