@@ -76,9 +76,10 @@
   <script type="module" crossorigin src="/assets/main-BxSlLKUJ.js"></script>
 </head>
 <body>
-<main>
+<a class="skip" href="#main" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to content</a>
+<main id="main">
 
-  <clanka-presence id="presence"></clanka-presence>
+  <clanka-presence id="presence" role="status" aria-live="polite" aria-atomic="true"></clanka-presence>
 
   <!-- tasks board is admin-only; removed from public view -->
 
