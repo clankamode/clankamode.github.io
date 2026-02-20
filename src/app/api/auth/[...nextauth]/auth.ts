@@ -7,18 +7,19 @@ interface UserIdentity {
   role: UserRole;
   googleId: string | null;
   isNewUser: boolean;
+  username: string;
 }
 
 const getUserIdentity = async (email: string, googleId?: string): Promise<UserIdentity> => {
   if (process.env.NODE_ENV !== 'production' && email === 'e2e-admin@example.com') {
-    return { role: UserRole.ADMIN, googleId: googleId ?? null, isNewUser: false };
+    return { role: UserRole.ADMIN, googleId: googleId ?? null, isNewUser: false, username: 'e2e-admin' };
   }
 
   const supabase = getSupabaseAdminClient();
 
   const { data: user, error } = await supabase
     .from('Users')
-    .select('role, google_id')
+    .select('role, google_id, username')
     .eq('email', email)
     .single();
 
@@ -32,33 +33,42 @@ const getUserIdentity = async (email: string, googleId?: string): Promise<UserId
       if (updateError) {
         console.error('Error updating google_id:', updateError);
       }
-      return { role: user.role as UserRole, googleId, isNewUser: false };
+      return { role: user.role as UserRole, googleId, isNewUser: false, username: user.username as string };
     }
-    return { role: user.role as UserRole, googleId: user.google_id as string | null, isNewUser: false };
+    return { role: user.role as UserRole, googleId: user.google_id as string | null, isNewUser: false, username: user.username as string };
   }
 
-  const { data: newUser, error: upsertError } = await supabase
+  const prefix = email.split('@')[0]?.toLowerCase() || 'user';
+
+  let upsertResult = await supabase
     .from('Users')
     .upsert(
-      {
-        email,
-        google_id: googleId,
-        role: UserRole.USER
-      },
-      {
-        onConflict: 'email',
-        ignoreDuplicates: false
-      }
+      { email, google_id: googleId, role: UserRole.USER, username: prefix },
+      { onConflict: 'email', ignoreDuplicates: false }
     )
-    .select('role')
+    .select('role, username')
     .single();
 
-  if (upsertError) {
-    console.error('Error upserting user:', upsertError);
-    return { role: UserRole.USER, googleId: googleId ?? null, isNewUser: false };
+  // If username already taken, retry with a unique fallback
+  if (upsertResult.error?.code === '23505') {
+    upsertResult = await supabase
+      .from('Users')
+      .upsert(
+        { email, google_id: googleId, role: UserRole.USER, username: `${prefix}_${Date.now()}` },
+        { onConflict: 'email', ignoreDuplicates: false }
+      )
+      .select('role, username')
+      .single();
   }
 
-  return { role: (newUser?.role as UserRole) || UserRole.USER, googleId: googleId ?? null, isNewUser: true };
+  const { data: newUser, error: upsertError } = upsertResult;
+
+  if (upsertError || !newUser) {
+    console.error('Error upserting user:', upsertError);
+    return { role: UserRole.USER, googleId: googleId ?? null, isNewUser: false, username: prefix };
+  }
+
+  return { role: (newUser.role as UserRole) || UserRole.USER, googleId: googleId ?? null, isNewUser: true, username: newUser.username as string };
 };
 
 export const authOptions: NextAuthOptions = {
@@ -91,6 +101,7 @@ export const authOptions: NextAuthOptions = {
           name: effectiveName,
           image: effectiveImage,
           firstLoginPending: !!token.firstLoginPending,
+          username: token.username as string,
         },
         proxy: token.proxyEmail
           ? {
@@ -125,6 +136,7 @@ export const authOptions: NextAuthOptions = {
         const identity = await getUserIdentity(token.email as string, token.id as string | undefined);
         token.role = identity.role;
         token.originalRole = token.originalRole || token.role;
+        token.username = identity.username;
         if (user) {
           token.firstLoginPending = identity.isNewUser;
         }

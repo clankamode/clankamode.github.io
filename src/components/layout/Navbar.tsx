@@ -168,7 +168,10 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
       >
         <div className="max-w-screen-xl mx-auto px-6 flex justify-between items-center">
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link
+              href={isLoggedIn && session.user?.username ? `/profile/${session.user.username}` : '/'}
+              className="flex items-center gap-3 group"
+            >
               {isAuthLoading ? (
                 <div className="w-8 h-8 rounded-full bg-surface-interactive border border-border-subtle animate-pulse" />
               ) : isLoggedIn && session.user?.image ? (

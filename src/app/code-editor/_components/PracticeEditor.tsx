@@ -98,7 +98,22 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
   const backHref = context?.returnTo || (isSessionContext ? fallbackSessionReturn : '/peralta75');
   const backLabel = isSessionContext ? 'Session' : 'Back';
   const [code, setCode] = useState(question.starter_code);
+  const savedCodeLoadedRef = useRef(false);
   const { isReady, isRunning, isLoading, output, run, reset } = usePythonRunner();
+
+  // Load saved submission code when user has previously passed this question
+  useEffect(() => {
+    if (savedCodeLoadedRef.current) return;
+    savedCodeLoadedRef.current = true;
+    fetch(`/api/questions/solved?question_id=${encodeURIComponent(question.id)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((submission: { source_code?: string | null } | null) => {
+        if (submission?.source_code) {
+          setCode(submission.source_code);
+        }
+      })
+      .catch(() => {});
+  }, [question.id]);
   const [testResults, setTestResults] = useState<TestCaseResult[]>([]);
   const [hasRun, setHasRun] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -190,8 +205,14 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
     if (allPassed && !prevAllPassedRef.current) {
       prevAllPassedRef.current = true;
       setShowSuccess(true);
+      // Record solve and source code in DB when all test cases pass in code execution
+      fetch('/api/questions/solved', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question_id: question.id, solved: true, source_code: code }),
+      }).catch(() => {});
     }
-  }, [testResults, isRunning, testCases.length]);
+  }, [testResults, isRunning, testCases.length, question.id, code]);
 
   const visibleOutput = output.filter((line) => !line.text.startsWith(TEST_MARKER));
 

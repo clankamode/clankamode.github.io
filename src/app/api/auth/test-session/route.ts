@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
       role,
       id: email,
       name,
+      username: email.split('@')[0] ?? 'test-user',
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
     },

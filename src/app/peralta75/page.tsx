@@ -2,9 +2,16 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 import { PERALTA_75_LIST, QuestionCategory } from "./consts"
 
 import type { LeetCodeQuestion } from './consts';
+
+type SolvedSubmission = {
+  question_id: string;
+  solved: boolean;
+  InterviewQuestions?: { leetcode_number: number | null } | { leetcode_number: number | null }[] | null;
+};
 
 // Add custom keyframes for the gradient animation
 const gradientAnimation = `
@@ -19,17 +26,35 @@ export default function Component() {
   const [isVisible, setIsVisible] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [solvedQuestions, setSolvedQuestions] = useState<Set<number>>(new Set())
+  const { data: session } = useSession();
 
-  // Load solved questions from localStorage on mount
+  // Load solved from localStorage on mount, then merge in DB-solved when logged in
   useEffect(() => {
     setIsVisible(true);
     const savedSolved = localStorage.getItem('solvedQuestions');
-    if (savedSolved) {
-      setSolvedQuestions(new Set(JSON.parse(savedSolved)));
-    }
+    const localSet = savedSolved ? new Set(JSON.parse(savedSolved) as number[]) : new Set<number>();
+    setSolvedQuestions(localSet);
   }, []);
 
-  // Save solved questions to localStorage whenever they change
+  // When logged in, fetch DB-solved and merge with localStorage (either = show as solved)
+  useEffect(() => {
+    if (!session) return;
+    fetch('/api/questions/solved')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((list: SolvedSubmission[]) => {
+        const fromApi = (list ?? [])
+          .filter((s) => s.solved)
+          .map((s) => {
+            const q = Array.isArray(s.InterviewQuestions) ? s.InterviewQuestions[0] : s.InterviewQuestions;
+            return q?.leetcode_number;
+          })
+          .filter((n): n is number => n != null);
+        setSolvedQuestions((prev) => new Set([...prev, ...fromApi]));
+      })
+      .catch(() => {});
+  }, [session]);
+
+  // Save solved questions to localStorage whenever they change (local-only; DB is updated only when passing all tests in code execution)
   useEffect(() => {
     localStorage.setItem('solvedQuestions', JSON.stringify([...solvedQuestions]));
   }, [solvedQuestions]);

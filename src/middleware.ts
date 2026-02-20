@@ -97,6 +97,14 @@ export async function middleware(req: NextRequest) {
             return NextResponse.next();
         }
 
+        if (req.nextUrl.pathname.startsWith('/profile')) {
+            return NextResponse.next();
+        }
+
+        if (req.nextUrl.pathname.startsWith('/api/profile') && req.method === 'GET') {
+            return NextResponse.next();
+        }
+
         if (req.nextUrl.pathname.startsWith('/code-editor/mock') || req.nextUrl.pathname.startsWith('/api/interview-questions')) {
             if (!token) {
                 return NextResponse.redirect(new URL('/assessment', req.url));
@@ -186,5 +194,9 @@ export const config = {
         '/code-editor/practice/:path*',
         '/api/interview-questions/:path*',
         '/api/peralta75/:path*',
+        '/profile/:path*',
+        '/api/profile',
+        '/api/profile/:path*',
+        '/api/questions/solved',
     ],
 }

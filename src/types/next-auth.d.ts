@@ -10,6 +10,7 @@ declare module "next-auth" {
       image?: string | null
       role: string
       firstLoginPending?: boolean
+      username: string
     }
 
     proxy?: {
@@ -53,5 +54,6 @@ declare module "next-auth/jwt" {
     originalImage?: string | null
     originalRole?: string | null
     firstLoginPending?: boolean
+    username: string
   }
 }
