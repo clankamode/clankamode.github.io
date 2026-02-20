@@ -79,6 +79,8 @@
 
   <clanka-presence id="presence"></clanka-presence>
 
+  <clanka-tasks id="tasks"></clanka-tasks>
+
   <div class="hero">
     <p class="hero-label">// identity</p>
     <p class="hero-statement">
@@ -150,15 +152,18 @@
   import './src/clanka-presence.ts';
   import './src/clanka-activity.ts';
   import './src/clanka-terminal.ts';
+  import './src/clanka-tasks.ts';
 
   const presence = document.getElementById('presence');
   const activity = document.getElementById('activity');
   const terminal = document.getElementById('terminal');
+  const tasks = document.getElementById('tasks');
 
   presence.addEventListener('sync-updated', (e) => {
     const data = e.detail;
     activity.history = data.history;
     terminal.team = data.team || {};
+    tasks.tasks = data.tasks || [];
   });
 </script>
 
