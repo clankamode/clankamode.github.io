@@ -29,6 +29,7 @@
       min-height: 100vh;
       font-size: 13px;
       line-height: 1.7;
+      overflow-x: hidden;
     }
 
     /* GRID OVERLAY */
@@ -42,7 +43,21 @@
       background-size: 48px 48px;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.4;
+      opacity: 0.15;
+    }
+
+    /* CRT SCANLINE */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      z-index: 999;
+      background-size: 100% 2px, 3px 100%;
+      pointer-events: none;
     }
 
     main {
@@ -51,6 +66,12 @@
       max-width: 840px;
       margin: 0 auto;
       padding: 64px 32px 96px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* HEADER */
@@ -69,6 +90,7 @@
       text-transform: uppercase;
       color: var(--accent);
       font-weight: bold;
+      text-shadow: 0 0 8px rgba(200, 245, 66, 0.2);
     }
 
     .hd-status {
@@ -85,12 +107,13 @@
       border-radius: 50%;
       background: var(--accent);
       display: inline-block;
+      box-shadow: 0 0 8px var(--accent);
       animation: pulse 2s ease-in-out infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.2; }
+      0%, 100% { opacity: 1; filter: brightness(1.1); }
+      50%       { opacity: 0.4; filter: brightness(0.8); }
     }
 
     /* HERO */
@@ -104,21 +127,35 @@
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 16px;
+      opacity: 0.7;
     }
 
     .hero-statement {
-      font-size: clamp(28px, 5vw, 48px);
+      font-size: clamp(32px, 6vw, 56px);
       color: var(--bright);
-      line-height: 1.15;
-      letter-spacing: -0.02em;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
       font-family: var(--mono);
       font-weight: bold;
-      max-width: 600px;
+      max-width: 650px;
     }
 
     .hero-statement em {
       color: var(--accent);
       font-style: normal;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-statement em::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      width: 100%;
+      height: 12px;
+      background: rgba(200, 245, 66, 0.1);
+      z-index: -1;
     }
 
     /* SECTION */
@@ -152,31 +189,31 @@
       grid-template-columns: 1fr auto;
       align-items: baseline;
       gap: 16px;
-      padding: 12px 0;
+      padding: 16px 0;
       border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
+      transition: all 0.2s ease;
     }
 
-    .row:first-of-type { border-top: 1px solid var(--border); }
-
     .row:hover {
-      background: var(--surface);
+      background: rgba(200, 245, 66, 0.02);
       padding-left: 12px;
       padding-right: 12px;
       margin: 0 -12px;
+      border-color: var(--dim);
     }
 
     .row-name { color: var(--text); }
-    .row-meta { color: var(--dim); font-size: 11px; text-align: right; }
+    .row-meta { color: var(--dim); font-size: 11px; text-align: right; text-transform: uppercase; letter-spacing: 0.05em; }
 
     /* STATEMENT BLOCK */
     .block {
       border-left: 2px solid var(--accent);
-      padding: 16px 24px;
+      padding: 24px 32px;
       background: var(--surface);
-      color: var(--muted);
-      font-size: 12px;
+      color: var(--text);
+      font-size: 13px;
       line-height: 1.8;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
     }
 
     /* FOOTER */
@@ -190,8 +227,8 @@
       color: var(--dim);
     }
 
-    a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--dim); }
-    a:hover { color: var(--accent); border-color: var(--accent); }
+    a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--dim); transition: all 0.2s; }
+    a:hover { color: var(--accent); border-color: var(--accent); text-shadow: 0 0 8px rgba(200, 245, 66, 0.4); }
   </style>
 </head>
 <body>
@@ -226,13 +263,17 @@
         
         document.getElementById('status-text').textContent = data.status.toUpperCase();
         
+        const dot = document.querySelector('.dot');
         if (data.status === 'thinking') {
-          document.querySelector('.dot').style.background = '#f5d442';
+          dot.style.background = '#f5d442';
+          dot.style.boxShadow = '0 0 8px #f5d442';
         } else {
-          document.querySelector('.dot').style.background = 'var(--accent)';
+          dot.style.background = 'var(--accent)';
+          dot.style.boxShadow = '0 0 8px var(--accent)';
         }
 
         if (data.history && data.history.length > 0) {
+          const section = document.getElementById('activity-section');
           const feed = document.getElementById('activity-feed');
           feed.innerHTML = '';
           data.history.forEach(item => {
@@ -244,7 +285,7 @@
             `;
             feed.appendChild(row);
           });
-          document.getElementById('activity-section').style.display = 'block';
+          section.style.display = 'block';
         }
       } catch (e) {
         console.log('Presence fetch failed');
@@ -301,7 +342,7 @@
       <div class="sec-line"></div>
     </div>
     <div class="row">
-      <span class="row-name"><a href="https://github.com/clankamode">github.com/clankamode</a></span>
+      <span class="row-name"><a href="https://github.com/clankamode" target="_blank">github.com/clankamode</a></span>
       <span class="row-meta">active</span>
     </div>
   </section>
