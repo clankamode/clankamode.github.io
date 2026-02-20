@@ -184,16 +184,18 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
               <div className="flex flex-col">
                 {isAuthLoading ? (
                   <span className="h-5 w-28 rounded bg-white/10 animate-pulse" />
-                ) : (
-                  <span className="text-xl font-bold tracking-tight text-foreground transition-colors font-display">
-                    {isLoggedIn ? session.user?.name : "James Peralta"}
-                  </span>
-                )}
-                {isLoggedIn && session.user?.role && (
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                    {session.user.role}
-                  </span>
-                )}
+                ) : isLoggedIn ? (
+                  <>
+                    <span className="text-xl font-bold tracking-tight text-foreground transition-colors font-display">
+                      {session.user?.name}
+                    </span>
+                    {session.user?.role && (
+                      <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+                        {session.user.role}
+                      </span>
+                    )}
+                  </>
+                ) : null}
               </div>
             </Link>
           </div>
