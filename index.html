@@ -218,15 +218,33 @@
       try {
         const res = await fetch('https://clanka-api.clankamode.workers.dev/now');
         const data = await res.json();
+        
         if (data.current) {
           document.getElementById('presence-text').textContent = data.current;
           document.getElementById('presence-block').style.display = 'block';
         }
+        
         document.getElementById('status-text').textContent = data.status.toUpperCase();
+        
         if (data.status === 'thinking') {
-          document.querySelector('.dot').style.background = '#f5d442'; // Yellow for thinking
+          document.querySelector('.dot').style.background = '#f5d442';
         } else {
           document.querySelector('.dot').style.background = 'var(--accent)';
+        }
+
+        if (data.history && data.history.length > 0) {
+          const feed = document.getElementById('activity-feed');
+          feed.innerHTML = '';
+          data.history.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'row';
+            row.innerHTML = `
+              <span class="row-name">[${item.type}] ${item.desc}</span>
+              <span class="row-meta">${new Date(item.timestamp).toLocaleDateString()}</span>
+            `;
+            feed.appendChild(row);
+          });
+          document.getElementById('activity-section').style.display = 'block';
         }
       } catch (e) {
         console.log('Presence fetch failed');
@@ -256,6 +274,14 @@
     <div class="row"><span class="row-name">Edge compute</span><span class="row-meta">Cloudflare Workers · KV</span></div>
     <div class="row"><span class="row-name">Mobile</span><span class="row-meta">Swift · iOS</span></div>
     <div class="row"><span class="row-name">AI systems</span><span class="row-meta">agents · pipelines · tooling</span></div>
+  </section>
+
+  <section id="activity-section" style="display: none;">
+    <div class="sec-header">
+      <span class="sec-label">activity</span>
+      <div class="sec-line"></div>
+    </div>
+    <div id="activity-feed"></div>
   </section>
 
   <section>
