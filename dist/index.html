@@ -73,7 +73,6 @@
     a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--dim); }
     a:hover { color: var(--accent); border-color: var(--accent); }
   </style>
-  <script type="module" crossorigin src="/assets/main-BxSlLKUJ.js"></script>
 </head>
 <body>
 <main>
@@ -149,6 +148,24 @@
 
 </main>
 
+<script type="module">
+  import './src/clanka-presence.ts';
+  import './src/clanka-activity.ts';
+  import './src/clanka-terminal.ts';
+  import './src/clanka-tasks.ts';
+
+  const presence = document.getElementById('presence');
+  const activity = document.getElementById('activity');
+  const terminal = document.getElementById('terminal');
+  const tasks = document.getElementById('tasks');
+
+  presence.addEventListener('sync-updated', (e) => {
+    const data = e.detail;
+    activity.history = data.history;
+    terminal.team = data.team || {};
+    tasks.tasks = data.tasks || [];
+  });
+</script>
 
 </body>
 </html>
