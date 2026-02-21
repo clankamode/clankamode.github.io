@@ -44,7 +44,7 @@ export default function HomeClient({ sessionState, primer }: HomeClientProps) {
             },
             dedupeKey: `home_card_${authData.user.email}_${trackSlug}_${nextItemId}`,
         });
-    }, [authData?.user?.email, sessionState?.track?.slug, sessionState?.mode, nextItemId]);
+    }, [authData?.user?.email, sessionState?.track?.slug, sessionState?.mode, nextItemId, sessionState?.personalizationExperiment?.applied, sessionState?.personalizationExperiment?.cohort]);
 
     useEffect(() => {
         if (!authData?.user?.email || !sessionState?.personalization || !sessionState?.track?.slug) return;
