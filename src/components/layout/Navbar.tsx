@@ -319,7 +319,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                         size="md"
                         onClick={() => router.push(adminDashboardHref)}
                         className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
-                        aria-label="Admin dashboard"
+                        aria-label="Admin Control Center"
                       >
                         Admin
                       </Button>
@@ -385,7 +385,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                         size="md"
                         onClick={() => router.push(adminDashboardHref)}
                         className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
-                        aria-label="Admin dashboard"
+                        aria-label="Admin Control Center"
                       >
                         Admin
                       </Button>
@@ -477,7 +477,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                   <>
                     {isEffectiveAdmin && (
                       <Link href={adminDashboardHref} className={mobileNavLinkClass(adminDashboardHref)} onClick={() => setIsMenuOpen(false)}>
-                        Admin Dashboard
+                        Control Center
                       </Link>
                     )}
                     {showSessionFeatures && (

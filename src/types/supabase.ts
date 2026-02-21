@@ -1074,6 +1074,24 @@ export interface Database {
                 }
                 Relationships: []
             }
+            UserSignIns: {
+                Row: {
+                    id: number
+                    email: string
+                    sign_in_date: string
+                }
+                Insert: {
+                    id?: number
+                    email: string
+                    sign_in_date: string
+                }
+                Update: {
+                    id?: number
+                    email?: string
+                    sign_in_date?: string
+                }
+                Relationships: []
+            }
             Videos: {
                 Row: {
                     created_at: string

@@ -8,10 +8,16 @@ type AdminDestination = {
   href: string;
   title: string;
   description: string;
-  section: 'Session Intelligence' | 'Content' | 'Operations';
+  section: 'Dashboard' | 'Session Intelligence' | 'Content' | 'Operations';
 };
 
 const ADMIN_DESTINATIONS: AdminDestination[] = [
+  {
+    href: '/admin/dashboard',
+    title: 'Dashboard',
+    description: 'User statistics, daily signups, DAU, and user list with role management.',
+    section: 'Dashboard',
+  },
   {
     href: '/admin/session-intelligence',
     title: 'Session Intelligence',
@@ -57,6 +63,7 @@ const ADMIN_DESTINATIONS: AdminDestination[] = [
 ];
 
 const SECTION_ORDER: AdminDestination['section'][] = [
+  'Dashboard',
   'Session Intelligence',
   'Content',
   'Operations',
