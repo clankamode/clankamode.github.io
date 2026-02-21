@@ -30,18 +30,32 @@ const ROLE_OPTIONS: { value: string; label: string }[] = [
   ...Object.values(UserRole).map((r) => ({ value: r, label: r })),
 ];
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 export function UsersTable() {
   const [page, setPage] = useState(1);
   const [roleFilter, setRoleFilter] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState<UsersResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [pendingRoleChange, setPendingRoleChange] = useState<PendingRoleChange | null>(null);
 
+  useEffect(() => {
+    const t = setTimeout(() => setSearchQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, roleFilter]);
+
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page), limit: String(LIMIT) });
     if (roleFilter) params.set('role', roleFilter);
+    if (searchQuery) params.set('search', searchQuery);
     const res = await fetch(`/api/admin/users?${params}`);
     if (!res.ok) {
       setData(null);
@@ -51,7 +65,7 @@ export function UsersTable() {
     const json: UsersResponse = await res.json();
     setData(json);
     setLoading(false);
-  }, [page, roleFilter]);
+  }, [page, roleFilter, searchQuery]);
 
   useEffect(() => {
     fetchUsers();
@@ -108,6 +122,14 @@ export function UsersTable() {
   return (
     <div className="rounded-2xl border border-border-subtle bg-surface-workbench/60 overflow-hidden">
       <div className="flex flex-wrap items-center gap-4 border-b border-border-subtle p-4">
+        <input
+          type="search"
+          placeholder="Search email or username…"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          className="rounded-lg border border-border-subtle bg-surface-dense px-3 py-1.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-border-interactive w-56"
+          aria-label="Search users by email or username"
+        />
         <label className="flex items-center gap-2 text-sm text-text-secondary">
           Role
           <select

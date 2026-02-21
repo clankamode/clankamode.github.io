@@ -66,6 +66,12 @@ const ADMIN_DESTINATIONS: AdminDestination[] = [
     description: 'View and manage user feedback. Open and closed status.',
     section: 'Operations',
   },
+  {
+    href: '/admin/ama',
+    title: 'AMA Questions',
+    description: 'View, answer, and manage audience questions ranked by upvotes.',
+    section: 'Operations',
+  },
 ];
 
 const SECTION_ORDER: AdminDestination['section'][] = [

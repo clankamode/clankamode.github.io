@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, Number(searchParams.get('page')) || 1);
   const limit = Math.min(MAX_LIMIT, Math.max(1, Number(searchParams.get('limit')) || DEFAULT_LIMIT));
   const role = searchParams.get('role') ?? undefined;
+  const searchRaw = searchParams.get('search')?.trim();
 
   if (role && !VALID_ROLES.has(role)) {
     return NextResponse.json({ error: 'Invalid role filter' }, { status: 400 });
@@ -36,6 +37,12 @@ export async function GET(req: NextRequest) {
 
   if (role) {
     query = query.eq('role', role);
+  }
+
+  if (searchRaw && searchRaw.length > 0) {
+    const escaped = searchRaw.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_');
+    const pattern = `*${escaped}*`;
+    query = query.or(`email.ilike.${pattern},username.ilike.${pattern}`);
   }
 
   const { data: users, error, count } = await query;
