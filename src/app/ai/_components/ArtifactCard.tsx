@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
 
 interface GeneratedImage {
@@ -46,9 +47,11 @@ export function ArtifactCard({
                 {/* Image - aligned to content, not centered */}
                 <div className="rounded-lg overflow-hidden bg-black/20">
                     {primaryImage ? (
-                        <img
+                        <Image
                             src={primaryImage.url}
                             alt="Generated image"
+                            width={800}
+                            height={600}
                             className="max-h-[60vh] max-w-full object-contain cursor-zoom-in hover:opacity-95 transition-opacity"
                             onClick={() => setZoomedImage(primaryImage.url)}
                         />
@@ -66,7 +69,7 @@ export function ArtifactCard({
                                 onClick={() => setZoomedImage(img.url)}
                                 className="h-12 w-16 flex-shrink-0 rounded overflow-hidden bg-black/20 hover:ring-1 hover:ring-white/20 transition-all"
                             >
-                                <img src={img.url} alt="" className="h-full w-full object-cover" />
+                                <Image src={img.url} alt="" width={64} height={48} className="h-full w-full object-cover" />
                             </button>
                         ))}
                     </div>
@@ -97,9 +100,11 @@ export function ArtifactCard({
                     className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center cursor-zoom-out"
                     onClick={() => setZoomedImage(null)}
                 >
-                    <img
+                    <Image
                         src={zoomedImage}
                         alt="Zoomed"
+                        width={1920}
+                        height={1080}
                         className="max-w-[90vw] max-h-[90vh] object-contain"
                     />
                     <div className="absolute top-4 right-4 text-white/50 text-sm">ESC to close</div>

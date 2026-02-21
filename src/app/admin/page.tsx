@@ -60,6 +60,12 @@ const ADMIN_DESTINATIONS: AdminDestination[] = [
     description: 'Navigate clip workflows and publishing prep.',
     section: 'Operations',
   },
+  {
+    href: '/admin/feedback',
+    title: 'Feedback',
+    description: 'View and manage user feedback. Open and closed status.',
+    section: 'Operations',
+  },
 ];
 
 const SECTION_ORDER: AdminDestination['section'][] = [
