@@ -34,12 +34,14 @@ export async function middleware(req: NextRequest) {
         const sessionModeEnabled = isFeatureEnabled(FeatureFlags.SESSION_MODE, { role: effectiveRole });
         const sessionFeaturesEnabled = progressEnabled && sessionModeEnabled;
         const postLoginDefaultPath = sessionFeaturesEnabled ? '/home' : '/learn';
+        const welcomeFlowEnabled = sessionFeaturesEnabled && firstLoginPending;
 
         if (req.nextUrl.pathname === '/') {
             if (token) {
-                return firstLoginPending
-                    ? buildWelcomeRedirect(req)
-                    : NextResponse.redirect(new URL(postLoginDefaultPath, req.url));
+                if (welcomeFlowEnabled) {
+                    return buildWelcomeRedirect(req);
+                }
+                return NextResponse.redirect(new URL(postLoginDefaultPath, req.url));
             }
             return NextResponse.next();
         }
@@ -52,14 +54,13 @@ export async function middleware(req: NextRequest) {
                 process.env.NODE_ENV !== 'production' &&
                 hasRole(effectiveRole, UserRole.ADMIN) &&
                 req.nextUrl.searchParams.get('preview') === '1';
-
-            if (!firstLoginPending && !isAdminWelcomePreview) {
+            if (!welcomeFlowEnabled && !isAdminWelcomePreview) {
                 return NextResponse.redirect(new URL(postLoginDefaultPath, req.url));
             }
             return NextResponse.next();
         }
 
-        if (token && firstLoginPending && !req.nextUrl.pathname.startsWith('/api/')) {
+        if (token && welcomeFlowEnabled && !req.nextUrl.pathname.startsWith('/api/')) {
             return buildWelcomeRedirect(req);
         }
 
