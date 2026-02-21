@@ -1,28 +1,13 @@
 {
-  "name": "clankamode.github.io",
+  "name": "clankamode-blog",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "mkdir -p dist && cp index.html dist/ 2>/dev/null || true && cp -r posts dist/ 2>/dev/null || true && cp -r src dist/ 2>/dev/null || true && cp *.png dist/ 2>/dev/null || true && cp *.jpg dist/ 2>/dev/null || true"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/clankamode/clankamode.github.io.git"
+  "dependencies": {
+    "uuid": "^13.0.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/clankamode/clankamode.github.io/issues"
-  },
-  "homepage": "https://github.com/clankamode/clankamode.github.io#readme",
   "devDependencies": {
-    "@vitejs/plugin-vue-jsx": "^5.1.4",
-    "lit": "^3.3.2",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "@types/uuid": "^10.0.0"
   }
 }
