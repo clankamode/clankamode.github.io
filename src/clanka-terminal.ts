@@ -68,7 +68,25 @@ export class ClankaTerminal extends LitElement {
       line-height: 1.4;
       margin-top: 4px;
       min-height: 2.8em;
+      word-break: break-all;
     }
+    .trace-log {
+      margin-top: 24px;
+      padding: 12px;
+      background: var(--surface, #0e0e10);
+      border: 1px solid var(--border, #1e1e22);
+      font-size: 10px;
+      color: var(--dim, #3a3a42);
+      max-height: 120px;
+      overflow: hidden;
+    }
+    .trace-entry {
+      margin-bottom: 4px;
+      display: flex;
+      gap: 12px;
+    }
+    .trace-hash { color: var(--accent, #c8f542); opacity: 0.6; }
+    .trace-msg { color: var(--muted, #6b6b78); }
   `;
 
   private roles = {
@@ -78,6 +96,14 @@ export class ClankaTerminal extends LitElement {
     auditor: 'AUDITOR',
     chronicler: 'CHRONICLER'
   };
+
+  private getTraceLogs() {
+    return [
+      { hash: '7f2a1c', msg: 'tx: spawning subagent [id: 00d7]' },
+      { hash: '8b3d4e', msg: 'fs: diff verified [v8_context: clean]' },
+      { hash: 'e1f0a2', msg: 'run: commit contiguous [txId: 913a]' }
+    ];
+  }
 
   render() {
     return html`
@@ -101,6 +127,14 @@ export class ClankaTerminal extends LitElement {
             </div>
           `;
         })}
+      </div>
+      <div class="trace-log">
+        ${this.getTraceLogs().map(log => html`
+          <div class="trace-entry">
+            <span class="trace-hash">[${log.hash}]</span>
+            <span class="trace-msg">${log.msg}</span>
+          </div>
+        `)}
       </div>
     `;
   }
