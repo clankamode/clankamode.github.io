@@ -145,6 +145,7 @@ const RANGE_DAYS: Record<RangeKey, number> = {
 const DEFAULT_TRACKS = ['all', 'dsa', 'job-hunt', 'system-design'] as const;
 const TRIAGE_STATUSES: FrictionTriageStatus[] = ['new', 'investigating', 'resolved'];
 const AUTO_TRIAGE_MINUTES_COOLDOWN = 120;
+const MIN_DIRECTIONAL_SAMPLE_SIZE = 20;
 
 function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
@@ -659,6 +660,8 @@ export default async function SessionIntelligencePage({
   }));
 
   const repeatAnalysis = buildRepeatAnalysis(committedEvents, { lookbackDays: 7, alertThreshold: 0.2 });
+  const committedSessionCount = new Set(committedRows.map((row) => row.session_id)).size;
+  const lowSampleSize = committedSessionCount < MIN_DIRECTIONAL_SAMPLE_SIZE;
   const funnel = buildFunnelByFirstItem(committedEvents, completedEvents, finalizedEvents).slice(0, 12);
   const repeatedItems = repeatAnalysis.itemRepeats.filter((item) => item.repeatedCount > 0).slice(0, 12);
   const onboardingShownSessions = new Set(firstWinShownRows.map((row) => row.session_id));
@@ -816,11 +819,15 @@ export default async function SessionIntelligencePage({
   ));
   const policyCoverageCount = committedRows.filter((row) => row.payload?.aiPolicyVersion === 'policy_os_v1').length;
   const policyCoverageRate = committedRows.length > 0 ? policyCoverageCount / committedRows.length : 0;
+  const policyFallbackCount = policyDecisionRows.filter((row) => row.fallback_used).length;
   const policyFallbackRate = policyDecisionRows.length > 0
-    ? policyDecisionRows.filter((row) => row.fallback_used).length / policyDecisionRows.length
+    ? policyFallbackCount / policyDecisionRows.length
     : 0;
+  const policyParseFailureCount = policyDecisionRows.filter(
+    (row) => row.error_code === 'parse_failed' || row.error_code === 'validation_failed'
+  ).length;
   const policyParseFailureRate = policyDecisionRows.length > 0
-    ? policyDecisionRows.filter((row) => row.error_code === 'parse_failed' || row.error_code === 'validation_failed').length / policyDecisionRows.length
+    ? policyParseFailureCount / policyDecisionRows.length
     : 0;
   const policyLatencyByScope = ['planner', 'scope', 'onboarding', 'triage'].map((scope) => {
     const latencies = policyDecisionRows.flatMap((row) =>
@@ -893,7 +900,6 @@ export default async function SessionIntelligencePage({
     const ageMinutes = (Date.now() - new Date(row.updatedAt).getTime()) / (1000 * 60);
     return Number.isFinite(ageMinutes) && ageMinutes >= AUTO_TRIAGE_MINUTES_COOLDOWN;
   });
-
   const dynamicTracks = Array.from(
     new Set([
       ...committedRows.map((row) => row.track_slug),
@@ -1037,83 +1043,97 @@ export default async function SessionIntelligencePage({
         <div className="mb-6">
           <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Admin Observability</p>
           <h1 className="mt-3 text-4xl font-bold text-text-primary">Session Intelligence</h1>
-          <p className="mt-2 text-text-secondary">Unified dashboard for recommendation quality and friction telemetry.</p>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-            <span className="rounded-full border border-border-subtle bg-surface-interactive px-3 py-1 text-text-secondary">Range: {range}</span>
-            <span className="rounded-full border border-border-subtle bg-surface-interactive px-3 py-1 text-text-secondary">Track: {displayTrackLabel(track)}</span>
+        </div>
+
+        <div className="mb-6 rounded-lg border border-border-subtle bg-surface-interactive p-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex rounded-md border border-border-subtle bg-surface p-1">
+              <Link
+                href={buildLink({ tab: 'quality', range, track, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
+                className={`rounded px-2.5 py-1.5 text-sm ${tab === 'quality' ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                Recommendation Quality
+              </Link>
+              <Link
+                href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
+                className={`rounded px-2.5 py-1.5 text-sm ${tab === 'friction' ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                Friction Monitor
+              </Link>
+            </div>
+            <div className="inline-flex rounded-md border border-border-subtle bg-surface p-1">
+              {(['1d', '7d', '14d', '30d'] as RangeKey[]).map((option) => (
+                <Link
+                  key={option}
+                  href={buildLink({ tab, range: option, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
+                  className={`rounded px-2 py-1 text-xs ${option === range ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
+                >
+                  {option}
+                </Link>
+              ))}
+            </div>
+            <div className="inline-flex flex-wrap items-center gap-1 rounded-md border border-border-subtle bg-surface p-1">
+              {trackOptions.map((option) => (
+                <Link
+                  key={option}
+                  href={buildLink({
+                    tab,
+                    range,
+                    track: option,
+                    focusTrack: option === focusTrack ? focusTrack : null,
+                    focusStep: option === focusTrack ? focusStep : null,
+                    queueStatus,
+                    queueOwner,
+                    aiType,
+                    aiMode,
+                    aiSource,
+                    aiOutcome,
+                  })}
+                  className={`rounded px-2 py-1 text-xs ${option === track ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
+                >
+                  {displayTrackLabel(option)}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-
-        <div className="mb-4 inline-flex rounded-xl border border-border-subtle bg-surface-interactive p-1">
-          <Link
-            href={buildLink({ tab: 'quality', range, track, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
-            className={`rounded-lg px-4 py-2 text-sm ${tab === 'quality' ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
-          >
-            Recommendation Quality
-          </Link>
-          <Link
-            href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
-            className={`rounded-lg px-4 py-2 text-sm ${tab === 'friction' ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
-          >
-            Friction Monitor
-          </Link>
-        </div>
-
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          {(['1d', '7d', '14d', '30d'] as RangeKey[]).map((option) => (
-            <Link
-              key={option}
-              href={buildLink({ tab, range: option, track, focusTrack, focusStep, queueStatus, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
-              className={`rounded-full border px-3 py-1 text-xs ${option === range ? 'border-border-interactive text-text-primary bg-surface-interactive' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface-interactive'}`}
-            >
-              {option}
-            </Link>
-          ))}
-        </div>
-
-        <div className="mb-8 flex flex-wrap items-center gap-2">
-          {trackOptions.map((option) => (
-            <Link
-              key={option}
-              href={buildLink({
-                tab,
-                range,
-                track: option,
-                focusTrack: option === focusTrack ? focusTrack : null,
-                focusStep: option === focusTrack ? focusStep : null,
-                queueStatus,
-                queueOwner,
-                aiType,
-                aiMode,
-                aiSource,
-                aiOutcome,
-              })}
-              className={`rounded-full border px-3 py-1 text-xs ${option === track ? 'border-border-interactive text-text-primary bg-surface-interactive' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface-interactive'}`}
-            >
-              {displayTrackLabel(option)}
-            </Link>
-          ))}
         </div>
 
         {tab === 'quality' ? (
           <>
-            <div className="grid gap-4 md:grid-cols-4 mb-8">
-              <div className="rounded-xl border border-border-subtle bg-surface-interactive p-4">
-                <p className="text-xs uppercase tracking-wider text-text-muted">Latest Daily Repeat Rate</p>
+            <section className={`mb-6 rounded-lg border px-4 py-3 ${lowSampleSize ? 'border-amber-700/40 bg-amber-950/20' : 'border-emerald-700/30 bg-emerald-950/15'}`}>
+              <p className="text-sm text-text-primary">
+                <span className={`mr-2 inline-flex rounded-full border px-2 py-0.5 text-[11px] ${lowSampleSize ? 'border-amber-700/50 text-amber-300' : 'border-emerald-700/50 text-emerald-300'}`}>
+                  {lowSampleSize ? 'Directional' : 'Stable'}
+                </span>
+                {lowSampleSize
+                  ? `Only ${committedSessionCount} committed sessions in this window. Treat these rates as directional until at least ${MIN_DIRECTIONAL_SAMPLE_SIZE} sessions.`
+                  : `${committedSessionCount} committed sessions in this window. Comparison metrics are now stable enough for operator decisions.`}
+              </p>
+            </section>
+
+            <div className="mb-8 grid gap-3 md:grid-cols-4">
+              <div className="rounded-lg border border-border-subtle bg-surface-interactive p-3">
+                <p className="text-xs uppercase tracking-wider text-text-secondary">Latest Daily Repeat Rate</p>
                 <p className="mt-2 text-2xl font-semibold text-text-primary">
                   {repeatAnalysis.daily[0] ? formatPercent(repeatAnalysis.daily[0].repeatRate) : '0.0%'}
                 </p>
+                {repeatAnalysis.daily[0] && (
+                  <p className="mt-1 text-xs text-text-secondary">
+                    {repeatAnalysis.daily[0].repeatedCommitted}/{repeatAnalysis.daily[0].totalCommitted} repeated sessions
+                  </p>
+                )}
               </div>
-              <div className="rounded-xl border border-border-subtle bg-surface-interactive p-4">
-                <p className="text-xs uppercase tracking-wider text-text-muted">User/Day Alerts (&gt;20%)</p>
+              <div className="rounded-lg border border-border-subtle bg-surface-interactive p-3">
+                <p className="text-xs uppercase tracking-wider text-text-secondary">User/Day Alerts (&gt;20%)</p>
                 <p className="mt-2 text-2xl font-semibold text-text-primary">{repeatAnalysis.userDailyAlerts.length}</p>
               </div>
-              <div className="rounded-xl border border-border-subtle bg-surface-interactive p-4">
-                <p className="text-xs uppercase tracking-wider text-text-muted">Tracked Commits ({range})</p>
+              <div className="rounded-lg border border-border-subtle bg-surface-interactive p-3">
+                <p className="text-xs uppercase tracking-wider text-text-secondary">Tracked Commits ({range})</p>
                 <p className="mt-2 text-2xl font-semibold text-text-primary">{committedEvents.length}</p>
+                <p className="mt-1 text-xs text-text-secondary">{committedSessionCount} unique sessions</p>
               </div>
-              <div className="rounded-xl border border-border-subtle bg-surface-interactive p-4">
-                <p className="text-xs uppercase tracking-wider text-text-muted">Transfer Score v0</p>
+              <div className="rounded-lg border border-border-subtle bg-surface-interactive p-3">
+                <p className="text-xs uppercase tracking-wider text-text-secondary">Transfer Score v0</p>
                 <p className="mt-2 text-2xl font-semibold text-text-primary">{formatPercent(transferScoreV0.transferScore)}</p>
                 <p className={`mt-1 text-xs font-medium uppercase tracking-[0.1em] ${transferStatusClass(transferScoreV0.status)}`}>
                   {transferScoreV0.status}
@@ -1121,67 +1141,71 @@ export default async function SessionIntelligencePage({
               </div>
             </div>
 
-            <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+            <section className="mb-8 rounded-lg border border-border-subtle bg-surface-interactive p-4">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="text-lg font-semibold text-text-primary">AI Policy Health</h2>
-                <span className="text-xs text-text-muted">Covers planner, scope, onboarding, and triage decisions.</span>
               </div>
-              <div className="mb-5 grid gap-4 md:grid-cols-4">
-                <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">Decision Coverage Rate</p>
+              <div className="mb-4 grid gap-3 md:grid-cols-4">
+                <div className="rounded-lg border border-border-subtle border-l-2 border-l-emerald-700/60 bg-surface p-3">
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">Decision Coverage Rate</p>
                   <p className="mt-1 text-xl font-semibold text-text-primary">{formatPercent(policyCoverageRate)}</p>
+                  <p className="mt-1 text-xs text-text-secondary">{policyCoverageCount}/{committedRows.length} committed events</p>
                 </div>
-                <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">Fallback Rate</p>
-                  <p className={`mt-1 text-xl font-semibold ${policyFallbackRate <= 0.3 ? 'text-emerald-300' : 'text-amber-300'}`}>
+                <div className={`rounded-lg border border-border-subtle border-l-2 bg-surface p-3 ${policyFallbackRate > 0.5 ? 'border-l-red-700/70' : policyFallbackRate > 0.3 ? 'border-l-amber-700/70' : 'border-l-emerald-700/60'}`}>
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">Fallback Rate</p>
+                  <p className={`mt-1 text-xl font-semibold ${policyFallbackRate > 0.5 ? 'text-red-300' : policyFallbackRate > 0.3 ? 'text-amber-300' : 'text-emerald-300'}`}>
                     {formatPercent(policyFallbackRate)}
                   </p>
+                  <p className="mt-1 text-xs text-text-secondary">{policyFallbackCount}/{policyDecisionRows.length} policy decisions</p>
                 </div>
-                <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">Parse/Validation Failures</p>
+                <div className={`rounded-lg border border-border-subtle border-l-2 bg-surface p-3 ${policyParseFailureRate > 0 ? 'border-l-red-700/70' : 'border-l-emerald-700/60'}`}>
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">Parse/Validation Failures</p>
                   <p className={`mt-1 text-xl font-semibold ${policyParseFailureRate === 0 ? 'text-emerald-300' : 'text-red-300'}`}>
                     {formatPercent(policyParseFailureRate)}
                   </p>
+                  <p className="mt-1 text-xs text-text-secondary">{policyParseFailureCount}/{policyDecisionRows.length} policy decisions</p>
                 </div>
-                <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">Policy Decisions Logged</p>
+                <div className="rounded-lg border border-border-subtle bg-surface p-3 border-l-2 border-l-border-subtle">
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">Policy Decisions Logged</p>
                   <p className="mt-1 text-xl font-semibold text-text-primary">{policyDecisionRows.length}</p>
                 </div>
               </div>
 
-              <div className="mb-5 grid gap-4 md:grid-cols-2">
+              <div className="mb-4 grid gap-3 md:grid-cols-2">
                 <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">AI vs Baseline Finalize Delta</p>
-                  <p className={`mt-1 text-xl font-semibold ${finalizeRateDelta === null ? 'text-text-primary' : finalizeRateDelta >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">AI vs Baseline Finalize Delta</p>
+                  <p className={`mt-1 text-xl font-semibold ${finalizeRateDelta === null ? 'text-text-muted' : finalizeRateDelta >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
                     {finalizeRateDelta === null ? '-' : formatPercent(finalizeRateDelta)}
                   </p>
                 </div>
                 <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">AI vs Baseline Transfer Delta</p>
-                  <p className={`mt-1 text-xl font-semibold ${transferScoreDelta === null ? 'text-text-primary' : transferScoreDelta >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">AI vs Baseline Transfer Delta</p>
+                  <p className={`mt-1 text-xl font-semibold ${transferScoreDelta === null ? 'text-text-muted' : transferScoreDelta >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
                     {transferScoreDelta === null ? '-' : formatPercent(transferScoreDelta)}
                   </p>
                 </div>
               </div>
 
-              <div className="mb-5 grid gap-4 md:grid-cols-3">
+              <div className="mb-4 grid gap-3 md:grid-cols-3">
                 <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">Sample Ratio</p>
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">Sample Ratio</p>
                   <p className={`mt-1 text-xl font-semibold ${sampleRatioMismatch ? 'text-red-300' : 'text-emerald-300'}`}>
                     {assignedEligibleTotal < 20 ? 'insufficient' : sampleRatioMismatch ? 'mismatch' : 'healthy'}
                   </p>
                 </div>
                 <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">Missing Attribution</p>
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">Missing Attribution</p>
                   <p className={`mt-1 text-xl font-semibold ${missingCohortAttributionRate <= 0.05 ? 'text-emerald-300' : 'text-amber-300'}`}>
                     {formatPercent(missingCohortAttributionRate)}
                   </p>
+                  <p className="mt-1 text-xs text-text-secondary">{committedRows.length - committedWithKnownCohort}/{committedRows.length} events missing cohort</p>
                 </div>
                 <div className="rounded-lg border border-border-subtle bg-surface p-3">
-                  <p className="text-xs uppercase tracking-wider text-text-muted">Eligible But Unassigned</p>
+                  <p className="text-xs uppercase tracking-wider text-text-secondary">Eligible But Unassigned</p>
                   <p className={`mt-1 text-xl font-semibold ${eligibleButUnassignedRate <= 0.02 ? 'text-emerald-300' : 'text-red-300'}`}>
                     {formatPercent(eligibleButUnassignedRate)}
                   </p>
+                  <p className="mt-1 text-xs text-text-secondary">{eligibleCommittedRows.length - eligibleAssignedRows.length}/{eligibleCommittedRows.length} eligible events</p>
                 </div>
               </div>
 
@@ -2041,13 +2065,13 @@ export default async function SessionIntelligencePage({
               </div>
             </section>
 
-            <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+            <section className="mb-8 rounded-lg border border-border-subtle bg-surface-interactive p-4">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                 <h2 className="text-lg font-semibold text-text-primary">Triage Queue</h2>
-                <p className="text-xs text-text-muted">Sorted by risk score (stuck share * sample size)</p>
+                <p className="text-xs text-text-secondary">Sorted by risk score (stuck share * sample size)</p>
               </div>
 
-              <form action={autoTriageTopQueue} className="mb-4">
+              <form action={autoTriageTopQueue} className="mb-3">
                 <input
                   type="hidden"
                   name="targets"
@@ -2060,40 +2084,38 @@ export default async function SessionIntelligencePage({
                 />
                 <button
                   type="submit"
-                  className="rounded-full border border-emerald-700/60 bg-emerald-950/30 px-4 py-1.5 text-xs text-emerald-200 hover:bg-emerald-900/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-md border border-emerald-700/60 bg-emerald-950/30 px-3 py-1.5 text-xs text-emerald-200 hover:bg-emerald-900/40 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={!autoTriageEnabled || autoTriageEligibleRows.length === 0}
                 >
                   AI Auto-triage Top 5 Eligible
                 </button>
-                <span className="text-xs text-text-muted">
+                <span className="ml-2 text-xs text-text-secondary">
                   {autoTriageEnabled
                     ? `Eligible: ${autoTriageEligibleRows.length} (cooldown ${AUTO_TRIAGE_MINUTES_COOLDOWN}m)`
                     : 'Auto-triage disabled by feature flag'}
                 </span>
               </form>
 
-              <div className="mb-3 flex flex-wrap items-center gap-2">
+              <div className="mb-4 flex flex-wrap items-center gap-2 rounded-md border border-border-subtle bg-surface p-1.5">
                 {(['open', 'all', 'new', 'investigating', 'resolved'] as QueueStatusKey[]).map((status) => (
                   <Link
                     key={status}
                     href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus: status, queueOwner, aiType, aiMode, aiSource, aiOutcome })}
-                    className={`rounded-full border px-3 py-1 text-xs ${queueStatus === status ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
+                    className={`rounded px-2.5 py-1 text-xs ${queueStatus === status ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
                   >
                     {status}
                   </Link>
                 ))}
-              </div>
-
-              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <span className="mx-1 h-4 w-px bg-border-subtle" />
                 <Link
                   href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: 'all', aiType, aiMode, aiSource, aiOutcome })}
-                  className={`rounded-full border px-3 py-1 text-xs ${queueOwner === 'all' ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
+                  className={`rounded px-2.5 py-1 text-xs ${queueOwner === 'all' ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
                 >
                   all owners
                 </Link>
                 <Link
                   href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: 'unassigned', aiType, aiMode, aiSource, aiOutcome })}
-                  className={`rounded-full border px-3 py-1 text-xs ${queueOwner === 'unassigned' ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
+                  className={`rounded px-2.5 py-1 text-xs ${queueOwner === 'unassigned' ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
                 >
                   unassigned
                 </Link>
@@ -2101,7 +2123,7 @@ export default async function SessionIntelligencePage({
                   <Link
                     key={owner}
                     href={buildLink({ tab: 'friction', range, track, focusTrack, focusStep, queueStatus, queueOwner: owner, aiType, aiMode, aiSource, aiOutcome })}
-                    className={`rounded-full border px-3 py-1 text-xs ${queueOwner === owner ? 'border-border-interactive text-text-primary bg-surface' : 'border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface'}`}
+                    className={`rounded px-2.5 py-1 text-xs ${queueOwner === owner ? 'bg-white/10 text-text-primary' : 'text-text-secondary hover:text-text-primary'}`}
                   >
                     {owner}
                   </Link>
@@ -2118,7 +2140,9 @@ export default async function SessionIntelligencePage({
                         <td className="py-2 text-text-secondary">{row.stepIndex}</td>
                         <td className={`py-2 font-medium ${triageBadgeClass(row.status)}`}>{row.status}</td>
                         <td className="py-2 text-text-secondary">{row.owner || 'unassigned'}</td>
-                        <td className="py-2 text-text-primary">{row.riskScore.toFixed(2)}</td>
+                        <td className={`py-2 font-medium ${row.riskScore >= 0.7 ? 'text-red-300' : row.riskScore >= 0.35 ? 'text-amber-300' : 'text-emerald-300'}`}>
+                          {row.riskScore.toFixed(2)}
+                        </td>
                         <td className="py-2 text-text-secondary">{formatPercent(row.stuckRate)}</td>
                         <td className="py-2 text-text-secondary">{row.total}</td>
                         <td className="py-2">
@@ -2153,8 +2177,8 @@ export default async function SessionIntelligencePage({
               </div>
             </section>
 
-            <div className="grid gap-8 lg:grid-cols-2">
-              <section className="rounded-xl border border-border-subtle bg-surface-interactive p-4">
+            <div className="grid gap-4 lg:grid-cols-2">
+              <section className="rounded-lg border border-border-subtle bg-surface-interactive p-4">
                 <h2 className="text-lg font-semibold text-text-primary mb-3">State Distribution</h2>
                 <div className="overflow-auto">
                   <table className="w-full text-sm">
@@ -2172,7 +2196,7 @@ export default async function SessionIntelligencePage({
                 </div>
               </section>
 
-              <section className="rounded-xl border border-border-subtle bg-surface-interactive p-4">
+              <section className="rounded-lg border border-border-subtle bg-surface-interactive p-4">
                 <h2 className="text-lg font-semibold text-text-primary mb-3">Trigger Split</h2>
                 <div className="overflow-auto">
                   <table className="w-full text-sm">
@@ -2191,7 +2215,7 @@ export default async function SessionIntelligencePage({
               </section>
             </div>
 
-            <section className="mt-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
+            <section className="mt-4 rounded-lg border border-border-subtle bg-surface-interactive p-4">
               <h2 className="text-lg font-semibold text-text-primary mb-3">Top Stuck Hotspots</h2>
               <div className="overflow-auto">
                 <table className="w-full text-sm">
@@ -2203,7 +2227,9 @@ export default async function SessionIntelligencePage({
                           <td className="py-2 text-text-secondary">{row.trackSlug}</td>
                           <td className="py-2 text-text-secondary">{row.stepIndex}</td>
                           <td className={`py-2 font-medium ${triageBadgeClass(row.status)}`}>{row.status}</td>
-                          <td className="py-2 text-text-primary">{formatPercent(row.stuckRate)}</td>
+                          <td className={`py-2 font-medium ${row.stuckRate >= 0.6 ? 'text-red-300' : row.stuckRate >= 0.3 ? 'text-amber-300' : 'text-emerald-300'}`}>
+                            {formatPercent(row.stuckRate)}
+                          </td>
                           <td className="py-2 text-text-secondary">{row.stuckCount}/{row.total}</td>
                           <td className="py-2">
                             <Link

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { logTelemetryEvent } from '@/lib/telemetry';
+import { useSession } from 'next-auth/react';
 
 interface CompletionButtonProps {
   articleId: string;
@@ -11,6 +13,7 @@ export default function CompletionButton({
   articleId,
   initialCompleted = false,
 }: CompletionButtonProps) {
+  const { data: authData } = useSession();
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
@@ -42,6 +45,22 @@ export default function CompletionButton({
       if (response.ok) {
         setIsCompleted(nextState);
         setStatus('success');
+
+        if (nextState && authData?.user?.email) {
+          logTelemetryEvent({
+            userId: authData.user.email,
+            trackSlug: 'standalone', // Fallback as track isn't easily available here
+            sessionId: 'standalone_completion',
+            eventType: 'item_completed',
+            mode: 'execute',
+            payload: {
+              articleId,
+              itemHref: `/learn/standalone/${articleId}`, // Heuristic
+            },
+            dedupeKey: `complete_${authData.user.email}_${articleId}`,
+          });
+        }
+
         setTimeout(() => setStatus('idle'), 1500);
       } else {
         setStatus('idle');
@@ -58,9 +77,9 @@ export default function CompletionButton({
       disabled={status !== 'idle'}
       aria-pressed={isCompleted}
       className={`
-        group relative inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300
+        group relative inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium transition-all duration-300
         ${isCompleted
-          ? 'border-accent-primary bg-accent-primary text-surface-ambient shadow-[0_0_20px_rgba(44,187,93,0.3)]'
+          ? 'border-border-interactive bg-surface-dense text-text-secondary'
           : 'border-border-subtle bg-surface-interactive text-text-primary hover:border-border-interactive hover:shadow-lift hover:-translate-y-0.5'
         }
         disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none
@@ -84,10 +103,6 @@ export default function CompletionButton({
           status === 'success' ? 'Completed' :
             isCompleted ? 'Completed' : 'Mark Complete'}
       </span>
-
-      {status === 'success' && (
-        <span className="absolute inset-0 rounded-full animate-ping bg-accent-primary opacity-20" />
-      )}
     </button>
   );
 }

@@ -7,6 +7,7 @@ import { useSession as useSessionContext } from '@/contexts/SessionContext';
 import NowCard from './_components/NowCard';
 import SessionExitView from './_components/SessionExitView';
 import { logTelemetryEvent } from '@/lib/telemetry';
+import { EXECUTION_SURFACE_MAX_WIDTH_CLASS } from '@/components/session/ExecutionSurface';
 
 interface HomeClientProps {
     sessionState: SessionState | null;
@@ -101,18 +102,7 @@ export default function HomeClient({ sessionState, primer }: HomeClientProps) {
     }
 
     if (sessionPhaseState.phase === 'generating') {
-        return (
-            <main className="bg-background">
-                <div className="min-h-[calc(100vh-var(--nav-height,113px)-96px)] flex items-center justify-center py-16">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-primary"></div>
-                        <p className="text-text-secondary text-sm font-medium animate-pulse">
-                            Generating your next session...
-                        </p>
-                    </div>
-                </div>
-            </main>
-        );
+        return null;
     }
 
     if (!sessionState) {
@@ -122,7 +112,7 @@ export default function HomeClient({ sessionState, primer }: HomeClientProps) {
                 data-chrome-mode="gate"
             >
                 <div className="min-h-[calc(100vh-var(--nav-height,113px)-96px)] flex items-center">
-                    <div className="max-w-2xl mx-auto px-6 py-16 w-full">
+                    <div className={`${EXECUTION_SURFACE_MAX_WIDTH_CLASS} mx-auto px-5 sm:px-6 py-16 w-full`}>
                         <NowCard
                             session={{
                                 mode: 'pick_track',
@@ -149,7 +139,7 @@ export default function HomeClient({ sessionState, primer }: HomeClientProps) {
             data-chrome-mode="gate"
         >
             <div className="min-h-[calc(100vh-var(--nav-height,113px)-96px)] flex items-center">
-                <div className="max-w-2xl mx-auto px-6 py-16 w-full">
+                <div className={`${EXECUTION_SURFACE_MAX_WIDTH_CLASS} mx-auto px-5 sm:px-6 py-16 w-full`}>
                     <NowCard
                         session={sessionState}
                         userId={authData?.user?.email ?? undefined}

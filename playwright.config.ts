@@ -66,8 +66,8 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run dev -- -p 3005',
+    command: 'NODE_OPTIONS="--require ./scripts/preload-fix-localstorage.cjs" npm run dev -- -H 127.0.0.1 -p 3005',
     url: 'http://localhost:3005',
     reuseExistingServer: !process.env.CI,
   },
-}); 
+});

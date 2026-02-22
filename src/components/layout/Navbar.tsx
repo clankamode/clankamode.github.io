@@ -150,7 +150,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
     await signOut({ callbackUrl: '/' });
   };
 
-  const isStudioSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content', '/admin/session-intelligence', '/admin/session-quality', '/admin/friction'].some((path) => isActive(path));
+  const isStudioSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content', '/admin/session-intelligence', '/admin/session-quality', '/admin/friction', '/admin/customer-voice'].some((path) => isActive(path));
   const isPracticeSectionActive = ['/peralta75', '/assessment'].some((path) => isActive(path));
   const adminDashboardHref = '/admin';
 
@@ -318,10 +318,13 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                         variant="ghost"
                         size="md"
                         onClick={() => router.push(adminDashboardHref)}
-                        className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
-                        aria-label="Admin Control Center"
+                        className={`min-h-[44px] transition-colors ${isActive('/admin')
+                          ? 'text-text-primary border border-border-interactive bg-surface-interactive hover:bg-surface'
+                          : 'text-text-secondary hover:text-foreground hover:bg-white/5'
+                          }`}
+                        aria-label="Admin dashboard"
                       >
-                        Admin
+                        {isActive('/admin') ? 'Admin Mode' : 'Admin'}
                       </Button>
                     )}
                     {showExploreQuickLink && (
@@ -384,10 +387,13 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                         variant="ghost"
                         size="md"
                         onClick={() => router.push(adminDashboardHref)}
-                        className="min-h-[44px] text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors"
-                        aria-label="Admin Control Center"
+                        className={`min-h-[44px] transition-colors ${isActive('/admin')
+                          ? 'text-text-primary border border-border-interactive bg-surface-interactive hover:bg-surface'
+                          : 'text-text-secondary hover:text-foreground hover:bg-white/5'
+                          }`}
+                        aria-label="Admin dashboard"
                       >
-                        Admin
+                        {isActive('/admin') ? 'Admin Mode' : 'Admin'}
                       </Button>
                     )}
                     <Button

@@ -7,6 +7,8 @@ const USER_PROJECTS = new Set(['chromium-admin']);
 const isUserProject = (projectName: string) => USER_PROJECTS.has(projectName);
 
 test.describe('Session Telemetry', () => {
+    test.use({ extraHTTPHeaders: { 'x-e2e-test': '0' } });
+
     test('gate_shown event fires on home page load', async ({ page }, testInfo) => {
         test.skip(!isUserProject(testInfo.project.name), 'Admin-only test');
 

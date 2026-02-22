@@ -90,13 +90,15 @@ supabase studio        # open Supabase Studio at http://127.0.0.1:54323
 ### Schema & seed data
 
 - **Migrations**: `supabase/migrations/` — versioned SQL files run in order
-- **Seed**: `supabase/seed.sql` — reference data (pillars, topics, concepts) loaded after migrations
+- **Seed**: `supabase/seed.sql` — reference data + minimal local content (pillars, topics, concepts, and a fallback Arrays article) loaded after migrations
 - **Baseline**: `20260101000000_baseline_schema.sql` creates all tables that pre-existed the migrations folder
 
-> **Articles are not seeded locally.** If you need article content, dump it from production:
-> ```bash
-> supabase db dump --data-only -t LearningArticles >> supabase/seed.sql
-> ```
+By default, local seed includes only a minimal set of articles needed for session flow. If you need full production-like article coverage, dump `LearningArticles` from production and append/import separately:
+
+```bash
+supabase db dump --data-only -t LearningArticles > /tmp/learning_articles.sql
+# review, then apply/import as needed
+```
 
 ---
 

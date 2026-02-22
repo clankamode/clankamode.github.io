@@ -76,7 +76,7 @@ export function useChromeVisibility() {
 
     return {
         mode,
-        showNavbar: mode !== 'execute' && !isImmersive && !isOnboarding,
+        showNavbar: mode !== 'execute' && mode !== 'exit' && !isImmersive && !isOnboarding,
         showFooter: mode === 'marketing' && !isImmersive && !isOnboarding,
         showSessionHUD: mode === 'execute',
         showFeedbackWidget: mode !== 'execute' && mode !== 'exit' && !isOnboarding,

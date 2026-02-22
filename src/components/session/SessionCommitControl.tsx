@@ -34,6 +34,7 @@ export default function SessionCommitControl({
     const isLastItem = currentIndex >= items.length - 1;
     const isOnLastChunk = totalChunks <= 1 || currentChunk >= totalChunks - 1;
     const nextItem = !isLastItem ? items[currentIndex + 1] : null;
+    const isTransitioning = state.transitionStatus !== 'ready';
 
     if (!isOnLastChunk) {
         return null;
@@ -41,6 +42,7 @@ export default function SessionCommitControl({
 
     const handleCommit = async () => {
         if (isCommitting) return;
+        if (isTransitioning) return;
 
         setIsCommitting(true);
 
@@ -76,10 +78,10 @@ export default function SessionCommitControl({
             <div className={`${EXECUTION_SURFACE_LAYOUT_CLASS} flex justify-end`}>
                 <button
                     onClick={handleCommit}
-                    disabled={isCommitting}
+                    disabled={isCommitting || isTransitioning}
                     className="inline-flex items-center gap-2 rounded-full border border-border-interactive bg-foreground px-5 py-2 text-[14px] font-semibold text-background transition-all hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-interactive focus-visible:ring-offset-0 disabled:opacity-70"
                 >
-                    <span>{isCommitting ? 'Committing...' : isLastItem ? 'Complete session' : 'Complete & continue'}</span>
+                    <span>{isCommitting || isTransitioning ? 'Saving step...' : isLastItem ? 'Complete session' : 'Complete & continue'}</span>
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>

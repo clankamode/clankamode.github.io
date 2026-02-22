@@ -13,6 +13,8 @@ describe('session finalize durability', () => {
     expect(source).toContain("window.addEventListener('pagehide'");
     expect(source).toContain("document.addEventListener('visibilitychange'");
     expect(source).toContain('keepalive: true');
+    expect(source).toContain('finalizeInFlightRef');
+    expect(source).toContain('const runFinalize = async');
+    expect(source).toContain("data-finalize-status={finalizeStatus}");
   });
 });
-

@@ -44,16 +44,7 @@ export default function ArticleLayoutSwitcher({
     }
 
     if (isExit) {
-        return (
-            <div className="flex min-h-[70vh] items-center justify-center">
-                <div className="flex items-center gap-3 text-text-secondary">
-                    <span className="h-2 w-2 animate-pulse rounded-full bg-border-interactive" />
-                    <p className="text-xs font-medium uppercase tracking-[0.16em]">
-                        Locking progress...
-                    </p>
-                </div>
-            </div>
-        );
+        return null;
     }
 
     return (

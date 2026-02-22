@@ -83,6 +83,7 @@ interface SessionContextValue {
     prevChunk: () => void;
     setTotalChunks: (total: number) => void;
     setGenerating: () => void;
+    recordDrawerToggle: () => void;
 }
 
 const initialState: SessionState = {
@@ -131,6 +132,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
     const { data: authSession } = useAuthSession();
+    const authUserRole = (authSession?.user as { role?: string } | undefined)?.role;
     const isMountedRef = useRef(true);
     const transitionLockRef = useRef(createTransitionLock());
     const stepStartedAtRef = useRef<number | null>(null);
@@ -279,6 +281,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
         logTelemetryEvent({
             userId: snapshot.scope.userId,
+            userRole: authUserRole,
             trackSlug: snapshot.scope.track.slug,
             sessionId: snapshot.execution.sessionId,
             eventType: 'friction_state_changed',
@@ -365,6 +368,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         if (scope.userId) {
             logTelemetryEvent({
                 userId: scope.userId,
+                userRole: authUserRole,
                 trackSlug: scope.track.slug,
                 sessionId,
                 eventType: 'session_started',
@@ -436,6 +440,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const runWithTransitionLock = useCallback((kind: TransitionKind, operation: () => void) => {
+        const snapshot = stateRef.current;
+        if (snapshot.phase !== 'execution' || !snapshot.execution || !snapshot.scope) {
+            return false;
+        }
+
         if (!transitionLockRef.current.acquire(kind)) {
             return false;
         }
@@ -454,7 +463,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }, [resetTransitionStatus, setTransitionStatus]);
 
     const advanceItem = useCallback(() => {
-        runWithTransitionLock('advancing', () => {
+        const acquired = runWithTransitionLock('advancing', () => {
             const prev = stateRef.current;
             if (!prev.execution || !prev.scope) return;
             if (frictionEnabled) {
@@ -469,6 +478,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             if (currentItem && prev.scope.userId) {
                 logTelemetryEvent({
                     userId: prev.scope.userId,
+                    userRole: authUserRole,
                     trackSlug: prev.scope.track.slug,
                     sessionId: prev.execution.sessionId,
                     eventType: 'item_completed',
@@ -482,6 +492,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 });
                 logTelemetryEvent({
                     userId: prev.scope.userId,
+                    userRole: authUserRole,
                     trackSlug: prev.scope.track.slug,
                     sessionId: prev.execution.sessionId,
                     eventType: 'step_completed',
@@ -569,7 +580,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                         const conceptDict = await fetchConceptDictionary(trackSlug);
                         const labeledDelta = resolveDeltaLabels(result.delta, conceptDict);
 
-                        const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS) && !!userId;
+                        const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS, authSession?.user ?? null) && !!userId;
                         let freshProposal: MicroSessionProposal | null = null;
 
                         if (useGenerative) {
@@ -642,10 +653,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 transitionStatus: 'ready',
             });
         });
+        if (acquired === false) {
+            console.warn('[SessionContext] advanceItem: lock not acquired — session not in execution phase or lock busy');
+        }
     }, [emitFrictionSnapshot, frictionEnabled, markInteraction, resetFrictionMonitorForStep, runWithTransitionLock]);
 
     const completeSession = useCallback(() => {
-        runWithTransitionLock('finalizing', () => {
+        const acquired = runWithTransitionLock('finalizing', () => {
             if (frictionEnabled) {
                 emitFrictionSnapshot('step_exit');
             }
@@ -696,10 +710,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 };
             });
         });
+        if (acquired === false) {
+            console.warn('[SessionContext] completeSession: lock not acquired — session not in execution phase or lock busy');
+        }
     }, [emitFrictionSnapshot, frictionEnabled, runWithTransitionLock]);
 
     const abandonSession = useCallback(() => {
-        runWithTransitionLock('finalizing', () => {
+        const acquired = runWithTransitionLock('finalizing', () => {
             if (frictionEnabled) {
                 emitFrictionSnapshot('step_exit');
             }
@@ -728,6 +745,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 };
             });
         });
+        if (acquired === false) {
+            console.warn('[SessionContext] abandonSession: lock not acquired — session not in execution phase or lock busy');
+        }
     }, [emitFrictionSnapshot, frictionEnabled, runWithTransitionLock]);
 
     const resetToEntry = useCallback(() => {
@@ -735,17 +755,35 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const nextChunk = useCallback(() => {
-        const prev = stateRef.current;
-        if (!prev.execution || prev.execution.currentChunk >= prev.execution.totalChunks - 1) {
+        const snapshot = stateRef.current;
+        if (snapshot.phase !== 'execution' || !snapshot.execution) {
+            return;
+        }
+        if (snapshot.transitionStatus !== 'ready' || snapshot.execution.transitionStatus !== 'ready') {
+            return;
+        }
+        if (snapshot.execution.currentChunk >= snapshot.execution.totalChunks - 1) {
             return;
         }
 
-        setState({
-            ...prev,
-            execution: {
-                ...prev.execution,
-                currentChunk: prev.execution.currentChunk + 1,
-            },
+        setState((prev) => {
+            if (prev.phase !== 'execution' || !prev.execution) {
+                return prev;
+            }
+            if (prev.transitionStatus !== 'ready' || prev.execution.transitionStatus !== 'ready') {
+                return prev;
+            }
+            if (prev.execution.currentChunk >= prev.execution.totalChunks - 1) {
+                return prev;
+            }
+
+            return {
+                ...prev,
+                execution: {
+                    ...prev.execution,
+                    currentChunk: prev.execution.currentChunk + 1,
+                },
+            };
         });
 
         if (frictionEnabled) {
@@ -754,17 +792,35 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }, [frictionEnabled, markInteraction]);
 
     const prevChunk = useCallback(() => {
-        const prev = stateRef.current;
-        if (!prev.execution || prev.execution.currentChunk <= 0) {
+        const snapshot = stateRef.current;
+        if (snapshot.phase !== 'execution' || !snapshot.execution) {
+            return;
+        }
+        if (snapshot.transitionStatus !== 'ready' || snapshot.execution.transitionStatus !== 'ready') {
+            return;
+        }
+        if (snapshot.execution.currentChunk <= 0) {
             return;
         }
 
-        setState({
-            ...prev,
-            execution: {
-                ...prev.execution,
-                currentChunk: prev.execution.currentChunk - 1,
-            },
+        setState((prev) => {
+            if (prev.phase !== 'execution' || !prev.execution) {
+                return prev;
+            }
+            if (prev.transitionStatus !== 'ready' || prev.execution.transitionStatus !== 'ready') {
+                return prev;
+            }
+            if (prev.execution.currentChunk <= 0) {
+                return prev;
+            }
+
+            return {
+                ...prev,
+                execution: {
+                    ...prev.execution,
+                    currentChunk: prev.execution.currentChunk - 1,
+                },
+            };
         });
 
         if (frictionEnabled) {
@@ -774,7 +830,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
     const setTotalChunks = useCallback((total: number) => {
         setState((prev) => {
-            if (!prev.execution) return prev;
+            if (prev.phase !== 'execution' || !prev.execution) return prev;
+            if (prev.transitionStatus !== 'ready' || prev.execution.transitionStatus !== 'ready') {
+                return prev;
+            }
             return {
                 ...prev,
                 execution: {
@@ -792,6 +851,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }));
     }, []);
 
+    const recordDrawerToggle = useCallback(() => {
+        if (frictionEnabled) {
+            markInteraction({ drawerToggle: 1 });
+        }
+    }, [frictionEnabled, markInteraction]);
+
     return (
         <SessionContext.Provider
             value={{
@@ -806,6 +871,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 prevChunk,
                 setTotalChunks,
                 setGenerating,
+                recordDrawerToggle,
             }}
         >
             {children}

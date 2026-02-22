@@ -76,6 +76,7 @@ export const authOptions: NextAuthOptions = {
   providers: (() => {
     const providers: NonNullable<NextAuthOptions['providers']> = [];
     const isProduction = process.env.NODE_ENV === 'production';
+    const isProductionBuild = process.env.NEXT_PHASE === 'phase-production-build';
     const googleEnabled = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
     const devAuthEnabled = !isProduction && process.env.DEV_AUTH !== 'false';
 
@@ -86,7 +87,7 @@ export const authOptions: NextAuthOptions = {
           clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         })
       );
-    } else if (isProduction) {
+    } else if (isProduction && !isProductionBuild) {
       throw new Error('Google OAuth is required in production. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.');
     }
 

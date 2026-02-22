@@ -210,6 +210,13 @@ test.describe('MicroSession Proposal (V1)', () => {
         'long.concept': [
             { href: '/learn/long', title: 'Long Item', type: 'learn', estMinutes: 10, isPrimary: true }
         ],
+        'long.practice': [
+            { href: '/practice/long', title: 'Long Practice', type: 'practice', estMinutes: 15, isPrimary: true }
+        ],
+        'reinforced.preference': [
+            { href: '/learn/reinforced-primary', title: 'Reinforced Learn', type: 'learn', estMinutes: 3, isPrimary: true },
+            { href: '/practice/reinforced', title: 'Reinforced Practice', type: 'practice', estMinutes: 12, isPrimary: false }
+        ],
         'multi.candidate': [
             { href: '/learn/slow', title: 'Slow', type: 'learn', estMinutes: 5, isPrimary: false },
             { href: '/learn/fast-primary', title: 'Fast Primary', type: 'learn', estMinutes: 3, isPrimary: true },
@@ -278,6 +285,19 @@ test.describe('MicroSession Proposal (V1)', () => {
         expect(result).toBeNull();
     });
 
+    test('allows longer practice candidates within practice cap', () => {
+        const delta: LearningDelta = {
+            introduced: ['long.practice'],
+            unlocked: [],
+            reinforced: []
+        };
+
+        const result = proposeMicroSession({ trackSlug: 'dsa', delta, conceptIndex: mockIndex });
+
+        expect(result?.item.type).toBe('practice');
+        expect(result?.item.estMinutes).toBe(15);
+    });
+
     test('prefers primary_concept + short time (Heuristics)', () => {
         const delta: LearningDelta = {
             introduced: ['multi.candidate'],
@@ -289,6 +309,19 @@ test.describe('MicroSession Proposal (V1)', () => {
 
         expect(result?.item.href).toBe('/learn/fast-primary');
         expect(result?.item.isPrimary).toBe(true);
+    });
+
+    test('prefers practice candidates for reinforced concepts', () => {
+        const delta: LearningDelta = {
+            introduced: [],
+            unlocked: [],
+            reinforced: ['reinforced.preference']
+        };
+
+        const result = proposeMicroSession({ trackSlug: 'dsa', delta, conceptIndex: mockIndex });
+
+        expect(result?.item.href).toBe('/practice/reinforced');
+        expect(result?.item.type).toBe('practice');
     });
 
     test('generates deterministic output for same input', () => {

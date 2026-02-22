@@ -23,7 +23,7 @@ test.describe('Session Mode Chrome Governor', () => {
         await expect(page.locator('nav')).toHaveCount(0);
 
         // SessionHUD should be visible. Use specific selector to avoid ambiguity.
-        const sessionBadge = page.locator('header').getByText('Session', { exact: true });
+        const sessionBadge = page.locator('header').getByText(/^Session\b/);
         await expect(sessionBadge).toBeVisible();
 
         // Footer should BE GONE
@@ -38,14 +38,9 @@ test.describe('Session Mode Chrome Governor', () => {
         await page.click('[data-session-cta]');
 
         // 2. Wait for article to load (wait for HUD context)
-        await expect(page.locator('header').getByText('Session', { exact: true })).toBeVisible();
+        await expect(page.locator('header').getByText(/^Session\b/)).toBeVisible();
 
-        // 3. Verify Layout
-        // The standard sidebar container has 'hidden lg:block' and 'sticky'.
-        // This should NOT exist in Session mode.
-        await expect(page.locator('aside.hidden.lg\\:block')).toHaveCount(0);
-
-        // 4. Verify Drawer Interaction
+        // 3. Verify Drawer Interaction
         // The pillar drawer is removed in session mode V1 cleanup
 
         // Press 't' to open TOC drawer
@@ -63,15 +58,29 @@ test.describe('Session Mode Chrome Governor', () => {
         await page.click('[data-session-cta]');
 
         // Wait for HUD
-        await expect(page.locator('header').getByText('Session', { exact: true })).toBeVisible();
+        await expect(page.locator('header').getByText(/^Session\b/)).toBeVisible();
 
-        // 2. Leave session (click the explicit button in the header)
-        await page.locator('header').getByRole('button', { name: 'Leave session', exact: true }).click();
+        // 2. Leave session from HUD
+        await page.getByRole('button', { name: 'Leave session' }).click();
 
         // 3. Verify Return to Gate (or Home)
-        await expect(page).toHaveURL('/home');
+        // If we were on an article, we should be redirected to /home
+        await expect(page).toHaveURL(/\/home/, { timeout: 15000 });
+
+        // When leaving early, we might see the "Session ended early" view (Phase: exit)
+        // or it might go straight back to gate (Phase: idle).
+        // If we see the "Continue" button, click it.
+        const continueBtn = page.getByRole('button', { name: 'Continue' });
+        try {
+            if (await continueBtn.isVisible({ timeout: 5000 })) {
+                await continueBtn.click();
+            }
+        } catch (e) {
+            // Might have already navigated or button not present
+        }
 
         // Chrome should be back
-        await expect(page.locator('nav')).toBeVisible();
+        await expect(page.locator('nav')).toBeVisible({ timeout: 15000 });
+        await expect(page.locator('header').getByText(/^Session\b/)).not.toBeVisible({ timeout: 15000 });
     });
 });

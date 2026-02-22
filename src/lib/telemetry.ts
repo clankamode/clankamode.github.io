@@ -6,6 +6,7 @@ const seenTelemetryKeys = new Set<string>();
 /** Logs a telemetry event to Supabase. Gated by GENERATIVE_SESSIONS; errors are swallowed. */
 export async function logTelemetryEvent(params: {
     userId: string | undefined;
+    userRole?: string;
     trackSlug: string;
     sessionId: string;
     eventType:
@@ -33,7 +34,7 @@ export async function logTelemetryEvent(params: {
     payload?: Record<string, unknown>;
     dedupeKey?: string;
 }) {
-    const { userId, trackSlug, sessionId, eventType, mode, payload = {}, dedupeKey } = params;
+    const { userId, userRole, trackSlug, sessionId, eventType, mode, payload = {}, dedupeKey } = params;
 
     const cacheKey = dedupeKey || `${sessionId}_${eventType}`;
     if (seenTelemetryKeys.has(cacheKey)) return;
@@ -45,7 +46,7 @@ export async function logTelemetryEvent(params: {
 
     if (!userId) return;
 
-    if (!isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS)) return;
+    if (!isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS, userRole ? { role: userRole } : null)) return;
 
     logTelemetryAction({
         trackSlug,

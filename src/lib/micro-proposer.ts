@@ -1,6 +1,9 @@
 import type { LearningDelta, SessionIntent } from './progress';
 import type { ConceptIndex, ConceptIndexItem, MicroProposal, IntentType, UserLearningState } from '../types/micro';
 
+const LEARN_MAX_MINUTES = 5;
+const PRACTICE_MAX_MINUTES = 20;
+
 export interface ProposerInput {
     trackSlug: string;
     delta: LearningDelta;
@@ -23,7 +26,7 @@ export function proposeMicroSession(input: ProposerInput): MicroProposal | null 
                 continue;
             }
             const candidates = conceptIndex[slug] || [];
-            const practiceItems = candidates.filter(item => item.type === 'practice' && item.estMinutes <= 5);
+            const practiceItems = candidates.filter(item => item.type === 'practice' && item.estMinutes <= PRACTICE_MAX_MINUTES);
 
             if (practiceItems.length > 0) {
                 const bestItem = selectBestCandidate(practiceItems, true);
@@ -51,8 +54,10 @@ export function proposeMicroSession(input: ProposerInput): MicroProposal | null 
     const candidates = conceptIndex[targetConcept];
     if (!candidates || candidates.length === 0) return null;
 
-    const bestItem = selectBestCandidate(candidates, false);
-    if (bestItem.estMinutes > 5) return null;
+    const forcePractice = delta.reinforced.includes(targetConcept);
+    const bestItem = selectBestCandidate(candidates, forcePractice);
+    if (bestItem.type === 'learn' && bestItem.estMinutes > LEARN_MAX_MINUTES) return null;
+    if (bestItem.type === 'practice' && bestItem.estMinutes > PRACTICE_MAX_MINUTES) return null;
 
     const intent = generateIntent(targetConcept, bestItem, delta, userState);
 
@@ -104,7 +109,8 @@ function selectBestCandidate(items: ConceptIndexItem[], forcePractice: boolean):
 function calculateScore(item: ConceptIndexItem, forcePractice: boolean): number {
     let score = 0;
     if (item.isPrimary) score += 50;
-    if (item.estMinutes <= 5) score += 20;
+    if (item.type === 'practice' && item.estMinutes <= PRACTICE_MAX_MINUTES) score += 20;
+    if (item.type === 'learn' && item.estMinutes <= LEARN_MAX_MINUTES) score += 20;
     if (item.type === 'practice') {
         score += 10;
         if (forcePractice) score += 100;

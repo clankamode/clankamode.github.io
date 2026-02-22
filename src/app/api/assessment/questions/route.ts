@@ -58,7 +58,7 @@ const fetchQuestionByIdentifier = async (questionIdentifier: string) => {
   const baseQuery = supabase
     .from('InterviewQuestions')
     .select('id, name, leetcode_number, leetcode_url, difficulty')
-    .contains('source', ['MOCK_ASSESSMENTS']);
+    .or('source.cs.{MOCK_ASSESSMENTS},source.cs.{PERALTA_75}');
 
   const numericIdentifier = Number(questionIdentifier);
   const query = Number.isFinite(numericIdentifier) && numericIdentifier > 0

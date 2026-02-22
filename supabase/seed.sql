@@ -8,11 +8,12 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Users (test accounts for local dev)
 -- ─────────────────────────────────────────────────────────────────────────────
-insert into public."Users" (email, role) values
-  ('admin@test.local',  'ADMIN'),
-  ('editor@test.local', 'EDITOR'),
-  ('user@test.local',   'USER')
-on conflict (email) do nothing;
+insert into public."Users" (email, role, username) values
+  ('admin@test.local',    'ADMIN',  'admin_local'),
+  ('editor@test.local',   'EDITOR', 'editor_local'),
+  ('user@test.local',     'USER',   'user_local'),
+  ('clankamode@gmail.com','ADMIN',  'clankamode')
+on conflict (email) do update set role = excluded.role;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- LearningPillars
@@ -38,6 +39,52 @@ insert into public."LearningTopics" (id, pillar_id, slug, name, description, ord
   ('b7dc7660-6450-498a-a7f4-1c273a1fa209', '540c34d4-a8f7-421b-88f2-3d03330feecb', 'career',                   'Career Notes',              'What I wish I knew earlier.',                                                                                 1, '2026-01-21 17:56:21.506302+00'),
   ('26ba26b7-7547-4dd7-8a4a-b0b71b1036d2', '540c34d4-a8f7-421b-88f2-3d03330feecb', 'chasing-expert',           'Chasing Expert',            null,                                                                                                          0, '2026-02-13 23:11:05.094299+00')
 on conflict (id) do nothing;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- LearningArticles (minimal local content so /home session routes don't 404)
+-- ─────────────────────────────────────────────────────────────────────────────
+insert into public."LearningArticles" (
+  id,
+  topic_id,
+  slug,
+  title,
+  excerpt,
+  body,
+  reading_time_minutes,
+  is_premium,
+  is_published,
+  order_index,
+  concept_tags,
+  primary_concept
+) values
+  (
+    '11111111-1111-4111-8111-111111111111',
+    '5e7e43b1-f337-4791-8889-a6e2de2f5ddb',
+    'arrays',
+    'Arrays',
+    'A compact primer for contiguous memory and O(1) index access.',
+    E'## Why arrays matter\n\nArrays give direct indexed access, which is the bedrock for many interview problems.\n\n## Core invariant\n\nIndexing by position is O(1) because elements are laid out contiguously in memory.\n\n## Tradeoffs\n\nInsertions and deletions in the middle are O(n) because elements shift.\n\n## Interview reflex\n\nWhen you hear "fixed order" and "random access", start with array-first reasoning.',
+    5,
+    false,
+    true,
+    0,
+    '["array.random-access-o1","array.contiguous-memory"]'::jsonb,
+    'array.random-access-o1'
+  )
+on conflict (id) do update
+set
+  topic_id = excluded.topic_id,
+  slug = excluded.slug,
+  title = excluded.title,
+  excerpt = excluded.excerpt,
+  body = excluded.body,
+  reading_time_minutes = excluded.reading_time_minutes,
+  is_premium = excluded.is_premium,
+  is_published = excluded.is_published,
+  order_index = excluded.order_index,
+  concept_tags = excluded.concept_tags,
+  primary_concept = excluded.primary_concept,
+  updated_at = now();
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Concepts

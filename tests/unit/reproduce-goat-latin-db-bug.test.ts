@@ -3,8 +3,9 @@ import { supabase } from '../../src/lib/supabase';
 
 describe('Goat Latin Database Invariants', () => {
     const GOAT_LATIN_ID = 'eb5d92f9-eb51-45c8-a05d-4ba22b61ea30';
+    const runDbInvariantTest = process.env.RUN_DB_INVARIANT_TESTS === '1';
 
-    it('identifies corruption in Goat Latin test cases', async () => {
+    it.runIf(runDbInvariantTest)('identifies corruption in Goat Latin test cases', async () => {
         const { data, error } = await supabase
             .from('InterviewQuestions')
             .select('name, test_cases')

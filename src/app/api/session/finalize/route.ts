@@ -7,6 +7,7 @@ import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { invalidateCache } from '@/lib/redis';
 
 const PROGRESS_TABLE = 'UserArticleProgress';
+const PRACTICE_PROGRESS_TABLE = 'UserPracticeProgress';
 
 function extractLearnArticleSlugsFromCompletedItems(items: string[]): string[] {
   const slugs = new Set<string>();
@@ -22,6 +23,22 @@ function extractLearnArticleSlugsFromCompletedItems(items: string[]): string[] {
   }
 
   return Array.from(slugs);
+}
+
+function extractPracticeQuestionIdentifiersFromCompletedItems(items: string[]): string[] {
+  const identifiers = new Set<string>();
+
+  for (const href of items) {
+    if (typeof href !== 'string' || !href.startsWith('/session/practice/')) continue;
+    const [pathOnly] = href.split('?');
+    const segments = pathOnly.split('/').filter(Boolean);
+    if (segments.length < 3) continue;
+    const identifier = segments[2]?.trim();
+    if (!identifier) continue;
+    identifiers.add(identifier);
+  }
+
+  return Array.from(identifiers);
 }
 
 export async function POST(req: NextRequest) {
@@ -123,6 +140,67 @@ export async function POST(req: NextRequest) {
 
         if (progressError) {
           console.warn('[session/finalize] progress upsert failed:', progressError.message);
+        }
+      }
+    }
+
+    const completedPracticeIdentifiers = extractPracticeQuestionIdentifiersFromCompletedItems(normalizedCompletedItems);
+    if (completedPracticeIdentifiers.length > 0) {
+      const numericIdentifiers = completedPracticeIdentifiers
+        .map((value) => Number(value))
+        .filter((value) => Number.isInteger(value) && value > 0);
+      const stringIdentifiers = completedPracticeIdentifiers.filter((value) => !numericIdentifiers.includes(Number(value)));
+
+      const practiceQueries = [];
+      if (numericIdentifiers.length > 0) {
+        practiceQueries.push(
+          admin
+            .from('InterviewQuestions')
+            .select('id, leetcode_number')
+            .in('leetcode_number', numericIdentifiers)
+        );
+      }
+      if (stringIdentifiers.length > 0) {
+        practiceQueries.push(
+          admin
+            .from('InterviewQuestions')
+            .select('id, leetcode_number')
+            .in('id', stringIdentifiers)
+        );
+      }
+
+      const practiceResults = await Promise.all(practiceQueries);
+      const questionRows: Array<{ id: string; leetcode_number: number | null }> = [];
+      for (const result of practiceResults) {
+        if (result.error) {
+          console.warn('[session/finalize] practice question lookup failed:', result.error.message);
+          continue;
+        }
+        questionRows.push(...(result.data || []));
+      }
+
+      if (questionRows.length > 0) {
+        const nowIso = new Date().toISOString();
+        // Mark as 'attempted' only — the dedicated /api/peralta75/progress route
+        // is responsible for marking questions as 'solved' once the user passes all
+        // test cases. Finalize only records that the question was visited in-session.
+        const upsertRows = questionRows.map((question) => ({
+          email: identity.email,
+          google_id: identity.googleId ?? null,
+          problem_id: question.id,
+          leetcode_number: question.leetcode_number,
+          status: 'attempted',
+          attempted_at: nowIso,
+          solved_at: null,
+          updated_at: nowIso,
+        }));
+
+        const { error: practiceProgressError } = await admin
+          .from(PRACTICE_PROGRESS_TABLE)
+          .upsert(upsertRows, { onConflict: 'email,problem_id' });
+
+        if (practiceProgressError) {
+          console.warn('[session/finalize] practice progress upsert failed:', practiceProgressError.message);
         }
       }
     }

@@ -49,7 +49,6 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
 
     const assertion = isFirstTime ? {
         title: 'Data Structures',
-        subtitle: 'Recommended starting point',
         estMinutes: 5,
         itemCount: 1,
         trackName: 'Foundations',
@@ -117,11 +116,9 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
             commitSession({ ...scope, sessionId });
             router.push('/learn/dsa/arrays');
         },
-        reason: 'Learn O(1) indexing first because it is the base move behind contiguous array problems.',
         targetConcept: 'Array indexing invariants',
     } : {
         title: now!.title,
-        subtitle: track?.name,
         estMinutes: now ? [now, ...upNext.slice(0, 2)].reduce((sum, item) => sum + (item.estMinutes || 5), 0) : 0,
         itemCount: now ? 1 + (upNext.length > 2 ? 2 : upNext.length) : 0,
         trackName: track?.name,
@@ -183,20 +180,9 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
             commitSession({ ...scope, sessionId });
             router.push(now.href);
         },
-        reason: now!.intent?.text || 'Next step in your learning path.',
         targetConcept: formatTargetConcept(now?.targetConcept || now?.primaryConceptSlug || null),
     };
     const displayTitle = simplifyGateTitle(assertion.title);
-    const displayReason = polishGateSubtitle(assertion.reason);
-    const upcomingItems = !isFirstTime
-        ? upNext.slice(0, 2).map((item) => ({ title: item.title, estMinutes: item.estMinutes || 5 }))
-        : [];
-    const normalizedTarget = normalizeComparisonValue(assertion.targetConcept);
-    const filteredUpcomingItems = upcomingItems.filter((item) => {
-        const normalizedTitle = normalizeComparisonValue(item.title);
-        return !normalizedTarget || normalizedTitle !== normalizedTarget;
-    });
-    const nextItem = filteredUpcomingItems[0];
 
     useEffect(() => {
         if (!userId || !track?.slug) return;
@@ -243,7 +229,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     </h1>
                     <button
                         onClick={() => setIsPicking(false)}
-                        className="inline-flex min-h-[40px] items-center rounded-full border border-border-subtle px-4 text-sm font-medium text-text-secondary transition-all hover:border-border-interactive hover:bg-surface-interactive hover:text-text-primary"
+                        className="inline-flex min-h-[40px] items-center rounded-xl border border-border-subtle px-4 text-sm font-medium text-text-secondary transition-all hover:border-border-interactive hover:bg-surface-interactive hover:text-text-primary"
                     >
                         Cancel
                     </button>
@@ -275,14 +261,12 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
     }
 
     return (
-        <section className="relative group perspective-1000">
-            <div className="relative overflow-hidden rounded-3xl bg-surface-interactive border border-border-subtle p-8 md:p-10 transition-all duration-500 hover:border-border-interactive hover:shadow-lift">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
-                <div className="relative z-10 flex flex-col items-start gap-6">
+        <section className="relative">
+            <div className="relative rounded-2xl bg-surface-interactive border border-border-subtle p-8 md:p-10 transition-all duration-500 hover:border-border-interactive hover:shadow-lift">
+                <div className="flex flex-col items-start gap-6">
                     <div>
                         <div className="flex items-center gap-3 mb-4">
-                            <span className="inline-flex items-center rounded-full bg-accent-primary/10 px-3 py-1 text-xs font-bold text-accent-primary ring-1 ring-inset ring-accent-primary/20 tracking-wider uppercase">
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
                                 {assertion.itemCount === 1 && assertion.trackName === 'Foundations' ? 'Recommended Entry' : 'Up Next'}
                             </span>
                             {primer && (
@@ -304,58 +288,45 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                             {displayTitle}
                         </h1>
 
-                        <h3 className="mt-4 text-lg md:text-xl font-medium text-text-secondary leading-relaxed max-w-lg text-balance">
-                            {displayReason}
-                        </h3>
                         {assertion.targetConcept && (
-                            <p className="mt-3 text-sm text-text-muted">
-                                <span className="font-semibold text-text-secondary">Target:</span> {assertion.targetConcept}
+                            <p className="mt-5 text-base font-medium text-text-primary/80 leading-snug">
+                                {assertion.targetConcept}
                             </p>
                         )}
-                        {nextItem && (
-                            <p className="mt-2 text-sm text-text-muted">
-                                <span className="font-semibold text-text-secondary">Next:</span>{' '}
-                                {nextItem.title}
-                                {nextItem.estMinutes > 0 ? ` (${nextItem.estMinutes} min)` : ''}
-                            </p>
-                        )}
+
+                        <div className="mt-4 flex items-center gap-3 text-xs text-text-secondary">
+                            <span>{assertion.itemCount} step{assertion.itemCount !== 1 ? 's' : ''}</span>
+                            <span className="text-border-interactive">·</span>
+                            <span>{assertion.estMinutes} min</span>
+                            {streakDays > 0 && (
+                                <>
+                                    <span className="text-border-interactive">·</span>
+                                    <span className="inline-flex items-center rounded px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold">
+                                        {streakDays}d streak
+                                    </span>
+                                </>
+                            )}
+                            <span className="text-border-interactive">·</span>
+                            <span>{assertion.trackName}</span>
+                        </div>
                     </div>
 
-                    <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium text-text-muted">
-                        <span className="flex items-center gap-2 rounded-full border border-border-subtle bg-surface-dense px-3 py-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-text-secondary" />
-                            {assertion.itemCount} steps
-                        </span>
-                        <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-dense border border-border-subtle">
-                            <span className="w-1.5 h-1.5 rounded-full bg-text-secondary" />
-                            {assertion.estMinutes} min
-                        </span>
-                        {streakDays > 0 && (
-                            <span className="flex items-center gap-2 rounded-full border border-border-subtle bg-surface-dense px-3 py-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-accent-primary" />
-                                {streakDays} day streak
-                            </span>
-                        )}
-                        <span className="px-1 text-text-secondary">{assertion.trackName}</span>
-                    </div>
-
-                    <div className="mt-8 w-full">
+                    <div className="w-full">
                         <button
                             onClick={() => handleStartRef.current()}
                             disabled={isStarting}
                             data-session-cta
                             className="
-                                relative overflow-hidden group/btn inline-flex items-center justify-center rounded-full
-                                bg-emerald-600 px-10 py-4 text-base font-bold text-white tracking-wide
-                                shadow-[0_4px_20px_rgba(16,185,129,0.15)]
+                                group/btn inline-flex items-center justify-center rounded-xl
+                                bg-emerald-600 px-6 py-3 text-sm font-medium text-white
                                 transition-all duration-300
-                                hover:bg-emerald-500 hover:shadow-[0_6px_24px_rgba(16,185,129,0.2)]
+                                hover:bg-emerald-500
                                 active:scale-[0.98]
                                 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100
-                                focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-4 focus:ring-offset-surface-interactive
+                                outline-none focus-visible:ring-1 focus-visible:ring-emerald-400
                             "
                         >
-                            <span className="relative z-10 flex items-center gap-3">
+                            <span className="flex items-center gap-3">
                                 {isStarting ? (
                                     <>
                                         <svg className="animate-spin -ml-1 mr-1 h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -378,14 +349,15 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
 
                     <button
                         onClick={() => setIsPicking(true)}
-                        className="mt-3 text-xs font-semibold text-text-muted hover:text-text-secondary transition-colors py-1 border-b border-transparent hover:border-text-secondary/40"
+                        className="text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors py-1"
                     >
                         Change track
                     </button>
                 </div>
 
-                <div className="absolute bottom-6 right-8 text-[10px] font-mono text-text-muted opacity-40">
-                    PRESS <span className="border border-border-muted px-1 rounded mx-1">↵</span> TO START
+                <div className="absolute bottom-6 right-8 flex items-center gap-1.5 text-[10px] font-mono text-text-muted">
+                    <span className="border border-border-interactive/60 px-1.5 py-0.5 rounded">↵</span>
+                    <span>to start</span>
                 </div>
             </div>
         </section>
@@ -405,40 +377,11 @@ function formatTargetConcept(value: string | null): string | null {
     return label[0].toUpperCase() + label.slice(1);
 }
 
-function normalizeComparisonValue(value: string | null | undefined): string {
-    return (value || '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, ' ')
-        .trim();
-}
 
 function simplifyGateTitle(title: string): string {
     const separator = [' · ', ' — ', ' – ', ' | '].find((token) => title.includes(token));
     const simplified = separator ? title.split(separator)[0] : title;
     return simplified.replace(/\s+\?$/, '').trim();
-}
-
-function polishGateSubtitle(reason: string): string {
-    const clean = reason.replace(/\s+/g, ' ').trim();
-    if (!clean) return 'Continue with your next concept.';
-
-    if (/aligning two indices/i.test(clean)) {
-        return 'Learn how two indices move toward a goal - the base move behind linear array problems.';
-    }
-
-    if (/^this\s+/i.test(clean)) {
-        const withoutThis = clean.replace(/^this\s+/i, '');
-        const normalizedLead = withoutThis
-            .replace(/^reinforces\b/i, 'Reinforce')
-            .replace(/^builds\b/i, 'Build')
-            .replace(/^makes\b/i, 'Make')
-            .replace(/^connects\b/i, 'Connect')
-            .replace(/^reveals\b/i, 'See')
-            .replace(/^breaks\b/i, 'Challenge');
-        return normalizedLead;
-    }
-
-    return clean;
 }
 
 function getCanonicalConceptSlug(item: SessionItem | null | undefined): string | null {

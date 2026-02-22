@@ -40,7 +40,7 @@ export function MediaLibrary({ isOpen, blocks, onClose, onInsert }: MediaLibrary
   useEffect(() => {
     const loadRecent = () => {
       try {
-        const items = JSON.parse(localStorage.getItem(RECENT_MEDIA_KEY) || '[]') as MediaItem[];
+        const items = JSON.parse(window.localStorage.getItem(RECENT_MEDIA_KEY) || '[]') as MediaItem[];
         setRecent(items);
       } catch {
         setRecent([]);
@@ -68,9 +68,9 @@ export function MediaLibrary({ isOpen, blocks, onClose, onInsert }: MediaLibrary
 
   const removeFromRecent = (url: string) => {
     try {
-      const items = JSON.parse(localStorage.getItem(RECENT_MEDIA_KEY) || '[]') as MediaItem[];
+      const items = JSON.parse(window.localStorage.getItem(RECENT_MEDIA_KEY) || '[]') as MediaItem[];
       const filtered = items.filter((item) => item.url !== url);
-      localStorage.setItem(RECENT_MEDIA_KEY, JSON.stringify(filtered));
+      window.localStorage.setItem(RECENT_MEDIA_KEY, JSON.stringify(filtered));
       setRecent(filtered);
       window.dispatchEvent(new Event('media:recent-updated'));
     } catch {

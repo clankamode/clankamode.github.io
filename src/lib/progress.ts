@@ -170,9 +170,18 @@ interface PracticeQuestionRow {
   leetcode_url: string | null;
   difficulty: string;
   prompt_full: string;
+  source: string[];
+  concept_slug: string | null;
+  concept_tags: unknown;
 }
 
 type PracticeDifficulty = 'Easy' | 'Medium' | 'Hard';
+
+interface RankedPracticeQuestion {
+  row: PracticeQuestionRow & { leetcode_number: number; leetcode_url: string };
+  difficulty: PracticeDifficulty;
+  matchedConceptSlug: string | null;
+}
 
 interface PracticePerformance {
   recentScores: number[];
@@ -365,17 +374,167 @@ function simpleHash(input: string): number {
   return hash;
 }
 
-function rankDeterministicBySeed<T>(
-  items: T[],
+function normalizeConceptSlug(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function extractPracticeConceptTags(row: PracticeQuestionRow): string[] {
+  const tags: string[] = [];
+  if (Array.isArray(row.concept_tags)) {
+    for (const value of row.concept_tags) {
+      if (typeof value !== 'string') continue;
+      const normalized = normalizeConceptSlug(value);
+      if (!normalized || tags.includes(normalized)) continue;
+      tags.push(normalized);
+    }
+  }
+
+  if (typeof row.concept_slug === 'string') {
+    const normalized = normalizeConceptSlug(row.concept_slug);
+    if (normalized && !tags.includes(normalized)) {
+      tags.push(normalized);
+    }
+  }
+
+  return tags;
+}
+
+export function buildPracticePriorityConcepts(userState?: UserLearningState | null): string[] {
+  if (!userState) return [];
+
+  const deduped = new Set<string>();
+  const ordered: string[] = [];
+  for (const slug of [...userState.stubbornConcepts, ...userState.recentConcepts]) {
+    if (typeof slug !== 'string') continue;
+    const normalized = normalizeConceptSlug(slug);
+    if (!normalized || deduped.has(normalized)) continue;
+    deduped.add(normalized);
+    ordered.push(normalized);
+  }
+
+  return ordered;
+}
+
+function rankPracticeRowsForSelection(
+  rows: PracticeQuestionRow[],
   seed: string,
-  keySelector: (item: T) => string
-): T[] {
-  return [...items].sort((a, b) => {
-    const scoreA = simpleHash(`${seed}:${keySelector(a)}`);
-    const scoreB = simpleHash(`${seed}:${keySelector(b)}`);
-    if (scoreA !== scoreB) return scoreA - scoreB;
-    return keySelector(a).localeCompare(keySelector(b));
-  });
+  priorityConcepts: string[],
+  sourceRank: number
+): RankedPracticeQuestion[] {
+  const priorityIndex = new Map<string, number>(
+    priorityConcepts.map((slug, index) => [slug, index])
+  );
+
+  const scored = rows
+    .map((row) => ({ row, difficulty: normalizePracticeDifficulty(row.difficulty) }))
+    .filter((entry): entry is { row: PracticeQuestionRow & { leetcode_number: number; leetcode_url: string }; difficulty: PracticeDifficulty } => (
+      !!entry.difficulty &&
+      entry.row.leetcode_number !== null &&
+      entry.row.leetcode_url !== null
+    ))
+    .map((entry) => {
+      const conceptTags = extractPracticeConceptTags(entry.row);
+      let bestRank = Number.MAX_SAFE_INTEGER;
+      let matchedConceptSlug: string | null = null;
+
+      for (const slug of conceptTags) {
+        const rank = priorityIndex.get(slug);
+        if (rank === undefined) continue;
+        if (rank < bestRank) {
+          bestRank = rank;
+          matchedConceptSlug = slug;
+        }
+      }
+
+      return {
+        row: entry.row,
+        difficulty: entry.difficulty,
+        matchedConceptSlug,
+        conceptRank: bestRank,
+        sourceRank,
+      };
+    });
+
+  return scored.sort((a, b) => {
+    if (a.conceptRank !== b.conceptRank) {
+      return a.conceptRank - b.conceptRank;
+    }
+
+    if (a.sourceRank !== b.sourceRank) {
+      return a.sourceRank - b.sourceRank;
+    }
+
+    const scoreA = simpleHash(`${seed}:${a.row.id}`);
+    const scoreB = simpleHash(`${seed}:${b.row.id}`);
+    if (scoreA !== scoreB) {
+      return scoreA - scoreB;
+    }
+
+    return a.row.id.localeCompare(b.row.id);
+  }).map(({ row, difficulty, matchedConceptSlug }) => ({
+    row,
+    difficulty,
+    matchedConceptSlug,
+  }));
+}
+
+export function selectPracticeRowsForSession(input: {
+  peraltaRows: PracticeQuestionRow[];
+  fallbackRows: PracticeQuestionRow[];
+  targetDifficulty: PracticeDifficulty;
+  seed: string;
+  priorityConcepts: string[];
+}): RankedPracticeQuestion[] {
+  const rankedPeralta = rankPracticeRowsForSelection(input.peraltaRows, `${input.seed}:peralta`, input.priorityConcepts, 0);
+  const rankedFallback = rankPracticeRowsForSelection(input.fallbackRows, `${input.seed}:fallback`, input.priorityConcepts, 1);
+
+  const byDifficulty = {
+    Easy: {
+      peralta: rankedPeralta.filter((entry) => entry.difficulty === 'Easy'),
+      fallback: rankedFallback.filter((entry) => entry.difficulty === 'Easy'),
+    },
+    Medium: {
+      peralta: rankedPeralta.filter((entry) => entry.difficulty === 'Medium'),
+      fallback: rankedFallback.filter((entry) => entry.difficulty === 'Medium'),
+    },
+    Hard: {
+      peralta: rankedPeralta.filter((entry) => entry.difficulty === 'Hard'),
+      fallback: rankedFallback.filter((entry) => entry.difficulty === 'Hard'),
+    },
+  } as const;
+
+  const mixByTarget: Record<PracticeDifficulty, { Easy: number; Medium: number; Hard: number }> = {
+    Easy: { Easy: 4, Medium: 2, Hard: 0 },
+    Medium: { Easy: 2, Medium: 4, Hard: 1 },
+    Hard: { Easy: 1, Medium: 3, Hard: 3 },
+  };
+
+  const selected: RankedPracticeQuestion[] = [];
+  const selectedIds = new Set<string>();
+  const mix = mixByTarget[input.targetDifficulty];
+
+  for (const difficulty of ['Easy', 'Medium', 'Hard'] as const) {
+    const queue = [...byDifficulty[difficulty].peralta, ...byDifficulty[difficulty].fallback];
+    for (const entry of queue) {
+      if (selected.length >= 7) break;
+      if (selectedIds.has(entry.row.id)) continue;
+      selected.push(entry);
+      selectedIds.add(entry.row.id);
+      if (selected.filter((item) => item.difficulty === difficulty).length >= mix[difficulty]) {
+        break;
+      }
+    }
+  }
+
+  const fallbackPool = [...rankedPeralta, ...rankedFallback];
+  for (const entry of fallbackPool) {
+    if (selected.length >= 7) break;
+    if (selectedIds.has(entry.row.id)) continue;
+    selected.push(entry);
+    selectedIds.add(entry.row.id);
+  }
+
+  return selected.slice(0, 7);
 }
 
 async function derivePracticePerformance(userId: string, googleId?: string): Promise<PracticePerformance> {
@@ -591,106 +750,124 @@ export async function getUserBookmarks(userId: string, googleId?: string): Promi
     .filter((item): item is BookmarkItem => item !== null);
 }
 
-async function getPracticeSessionCandidates(
-  trackSlug: string,
-  targetDifficulty: PracticeDifficulty,
-  rationale: string,
-  seed: string
-): Promise<SessionItem[]> {
-  if (!isPracticeTrack(trackSlug)) {
-    return [];
-  }
-
+async function fetchPracticeRowsBySource(source: 'PERALTA_75' | 'MOCK_ASSESSMENTS'): Promise<PracticeQuestionRow[]> {
   const [easyResult, mediumResult, hardResult] = await Promise.all([
     supabase
       .from(PRACTICE_QUESTIONS_TABLE)
-      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full')
+      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full, source, concept_slug, concept_tags')
       .eq('difficulty', 'Easy')
-      .contains('source', ['MOCK_ASSESSMENTS'])
+      .contains('source', [source])
       .not('leetcode_number', 'is', null)
       .not('leetcode_url', 'is', null)
-      .limit(18),
+      .limit(24),
     supabase
       .from(PRACTICE_QUESTIONS_TABLE)
-      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full')
+      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full, source, concept_slug, concept_tags')
       .eq('difficulty', 'Medium')
-      .contains('source', ['MOCK_ASSESSMENTS'])
+      .contains('source', [source])
       .not('leetcode_number', 'is', null)
       .not('leetcode_url', 'is', null)
-      .limit(18),
+      .limit(24),
     supabase
       .from(PRACTICE_QUESTIONS_TABLE)
-      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full')
+      .select('id, name, leetcode_number, leetcode_url, difficulty, prompt_full, source, concept_slug, concept_tags')
       .eq('difficulty', 'Hard')
-      .contains('source', ['MOCK_ASSESSMENTS'])
+      .contains('source', [source])
       .not('leetcode_number', 'is', null)
       .not('leetcode_url', 'is', null)
-      .limit(12),
+      .limit(16),
   ]);
 
   if (easyResult.error || mediumResult.error || hardResult.error) {
     return [];
   }
 
-  const easy = ((easyResult.data || []) as PracticeQuestionRow[])
-    .map((row) => ({ row, difficulty: normalizePracticeDifficulty(row.difficulty) }))
-    .filter((entry): entry is { row: PracticeQuestionRow & { leetcode_number: number; leetcode_url: string }; difficulty: PracticeDifficulty } => (
-      !!entry.difficulty &&
-      entry.row.leetcode_number !== null &&
-      entry.row.leetcode_url !== null
-    ));
-  const medium = ((mediumResult.data || []) as PracticeQuestionRow[])
-    .map((row) => ({ row, difficulty: normalizePracticeDifficulty(row.difficulty) }))
-    .filter((entry): entry is { row: PracticeQuestionRow & { leetcode_number: number; leetcode_url: string }; difficulty: PracticeDifficulty } => (
-      !!entry.difficulty &&
-      entry.row.leetcode_number !== null &&
-      entry.row.leetcode_url !== null
-    ));
-  const hard = ((hardResult.data || []) as PracticeQuestionRow[])
-    .map((row) => ({ row, difficulty: normalizePracticeDifficulty(row.difficulty) }))
-    .filter((entry): entry is { row: PracticeQuestionRow & { leetcode_number: number; leetcode_url: string }; difficulty: PracticeDifficulty } => (
-      !!entry.difficulty &&
-      entry.row.leetcode_number !== null &&
-      entry.row.leetcode_url !== null
-    ));
-
-  const rankedEasy = rankDeterministicBySeed(easy, `${seed}:easy`, ({ row }) => String(row.id));
-  const rankedMedium = rankDeterministicBySeed(medium, `${seed}:medium`, ({ row }) => String(row.id));
-  const rankedHard = rankDeterministicBySeed(hard, `${seed}:hard`, ({ row }) => String(row.id));
-
-  const mixByTarget: Record<PracticeDifficulty, { easy: number; medium: number; hard: number }> = {
-    Easy: { easy: 4, medium: 2, hard: 0 },
-    Medium: { easy: 2, medium: 4, hard: 1 },
-    Hard: { easy: 1, medium: 3, hard: 3 },
-  };
-
-  const mix = mixByTarget[targetDifficulty];
-  const picked = [
-    ...rankedEasy.slice(0, mix.easy),
-    ...rankedMedium.slice(0, mix.medium),
-    ...rankedHard.slice(0, mix.hard),
+  return [
+    ...((easyResult.data || []) as PracticeQuestionRow[]),
+    ...((mediumResult.data || []) as PracticeQuestionRow[]),
+    ...((hardResult.data || []) as PracticeQuestionRow[]),
   ];
-  const fallbackPool = [...rankedEasy, ...rankedMedium, ...rankedHard];
-  const selected = picked.length > 0 ? picked : fallbackPool.slice(0, 6);
+}
 
-  return selected.map(({ row, difficulty }) => ({
-    type: 'practice',
-    title: row.name,
-    subtitle: `${difficulty} coding assessment`,
-    pillarSlug: trackSlug,
-    href: `/session/practice/${row.leetcode_number}`,
-    estMinutes: estimatePracticeMinutes(difficulty),
-    intent: {
+async function fetchConceptLabelMap(trackSlug: string, conceptSlugs: string[]): Promise<Map<string, string>> {
+  if (conceptSlugs.length === 0) {
+    return new Map<string, string>();
+  }
+
+  const { data, error } = await supabase
+    .from('Concepts')
+    .select('slug, label')
+    .eq('track_slug', trackSlug)
+    .in('slug', conceptSlugs);
+
+  if (error || !data) {
+    return new Map<string, string>();
+  }
+
+  return new Map<string, string>(data.map((row) => [row.slug, row.label]));
+}
+
+async function getPracticeSessionCandidates(
+  trackSlug: string,
+  targetDifficulty: PracticeDifficulty,
+  rationale: string,
+  seed: string,
+  userState?: UserLearningState | null
+): Promise<SessionItem[]> {
+  if (!isPracticeTrack(trackSlug)) {
+    return [];
+  }
+
+  const [peraltaRows, fallbackRows] = await Promise.all([
+    fetchPracticeRowsBySource('PERALTA_75'),
+    fetchPracticeRowsBySource('MOCK_ASSESSMENTS'),
+  ]);
+
+  const priorityConcepts = buildPracticePriorityConcepts(userState);
+  const selectedRows = selectPracticeRowsForSession({
+    peraltaRows,
+    fallbackRows,
+    targetDifficulty,
+    seed,
+    priorityConcepts,
+  });
+
+  if (selectedRows.length === 0) {
+    return [];
+  }
+
+  const conceptSlugs = Array.from(new Set(
+    selectedRows.flatMap((entry) => extractPracticeConceptTags(entry.row))
+  ));
+  const conceptLabelMap = await fetchConceptLabelMap(trackSlug, conceptSlugs);
+
+  return selectedRows.map(({ row, difficulty, matchedConceptSlug }) => {
+    const fallbackConceptSlug = extractPracticeConceptTags(row)[0] || null;
+    const resolvedConceptSlug = matchedConceptSlug || fallbackConceptSlug;
+    const resolvedConceptLabel = resolvedConceptSlug
+      ? (conceptLabelMap.get(resolvedConceptSlug) || formatConceptLabel(resolvedConceptSlug))
+      : null;
+
+    return {
       type: 'practice',
-      text: `${rationale} Solve ${row.name} because live reps convert recognition into retrieval speed.`,
-    },
-    confidence: 0.86,
-    targetConcept: `${difficulty} interview problem solving`,
-    practiceQuestionId: String(row.leetcode_number),
-    practiceQuestionUrl: row.leetcode_url,
-    practiceDifficulty: difficulty,
-    practiceQuestionDescription: row.prompt_full,
-  }));
+      title: row.name,
+      subtitle: `${difficulty} coding assessment`,
+      pillarSlug: trackSlug,
+      href: `/session/practice/${row.leetcode_number}`,
+      estMinutes: estimatePracticeMinutes(difficulty),
+      intent: {
+        type: 'practice',
+        text: `${rationale} Solve ${row.name} because live reps convert recognition into retrieval speed.`,
+      },
+      confidence: 0.86,
+      targetConcept: resolvedConceptLabel || `${difficulty} interview problem solving`,
+      practiceQuestionId: String(row.leetcode_number),
+      practiceQuestionUrl: row.leetcode_url,
+      practiceDifficulty: difficulty,
+      practiceQuestionDescription: row.prompt_full,
+      primaryConceptSlug: resolvedConceptSlug,
+    };
+  });
 }
 
 async function getRecentlyFinalizedItemHrefs(
@@ -823,10 +1000,10 @@ export async function getSessionState(
     ? library.find((pillar) => pillar.slug === normalizedPreferredTrack)
     : effectivePreferredTrackSlug
       ? library.find((pillar) => pillar.slug === effectivePreferredTrackSlug)
-    : null;
+      : null;
   const resolvedTrackSlug = preferredTrack?.slug || effectivePreferredTrackSlug || 'dsa';
 
-  const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS);
+  const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS, options.viewer ?? null);
   const aiPolicySessionPlanEnabled = useGenerative && isFeatureEnabled(
     FeatureFlags.AI_POLICY_SESSION_PLAN,
     options.viewer ?? null
@@ -981,7 +1158,8 @@ export async function getSessionState(
       plannerTrackSlug,
       practicePerformance?.targetDifficulty || 'Easy',
       practicePerformance?.rationale || 'Build retrieval speed with timed interview reps.',
-      `${userId}:${plannerTrackSlug}:${dayKey}`
+      `${userId}:${plannerTrackSlug}:${dayKey}`,
+      userState
     )
     : [];
   const filteredPracticeCandidates = recentExclusionHrefs.size > 0
@@ -1032,7 +1210,7 @@ export async function getSessionState(
         item,
       })),
     ];
-    const requirePracticeItem = isPracticeTrack(plannerTrackSlug) && filteredPracticeCandidates.length > 0;
+    const requirePracticeItem = isPracticeTrack(plannerTrackSlug) && filteredPracticeCandidates.length > 0 && articleCandidates.length < 2;
     const deterministicPlan = buildHeuristicPlan({
       candidates: plannerCandidates,
       maxItems: 3,
@@ -1052,7 +1230,9 @@ export async function getSessionState(
       Array.isArray(existingPlanLock.itemHrefs) &&
       existingPlanLock.itemHrefs.every((href) => {
         const normalized = normalizeSessionItemHref(href);
-        return plannerCandidateSet.has(href) && !recentExclusionHrefs.has(normalized);
+        const itemInLock = existingPlanLock.items.find(i => i.href === href);
+        const inDbCompletions = itemInLock?.articleId ? completedIds.has(itemInLock.articleId) : false;
+        return plannerCandidateSet.has(href) && !recentExclusionHrefs.has(normalized) && !inDbCompletions;
       });
 
     if (isLockValid) {
@@ -1105,10 +1285,10 @@ export async function getSessionState(
         const deterministicFallbackItems = deterministicPlan.length > 0
           ? deterministicPlan
           : (filteredPracticeCandidates[0]
-              ? (baseLearnCandidate
-                  ? [baseLearnCandidate, filteredPracticeCandidates[0]]
-                  : [filteredPracticeCandidates[0]])
-              : []);
+            ? (baseLearnCandidate
+              ? [baseLearnCandidate, filteredPracticeCandidates[0]]
+              : [filteredPracticeCandidates[0]])
+            : []);
         const fallbackSelectedIds = deterministicFallbackItems
           .map((item) => plannerCandidates.find((candidate) => candidate.item.href === item.href)?.id)
           .filter((id): id is string => !!id);
@@ -1209,10 +1389,14 @@ export async function getSessionState(
             intent: item.intent.text
           })));
         } else if (filteredPracticeCandidates.length > 0) {
-          const baseLearn = sectionCandidates[0] || articleCandidates[0] || null;
-          sessionItems = baseLearn
-            ? [baseLearn, filteredPracticeCandidates[0]]
-            : [filteredPracticeCandidates[0]];
+          if (articleCandidates.length >= 2) {
+            sessionItems = articleCandidates.slice(0, 3);
+          } else {
+            const baseLearn = sectionCandidates[0] || articleCandidates[0] || null;
+            sessionItems = baseLearn
+              ? [baseLearn, filteredPracticeCandidates[0]]
+              : [filteredPracticeCandidates[0]];
+          }
         } else if (deterministicPlan.length > 0) {
           sessionItems = deterministicPlan;
         }

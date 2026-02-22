@@ -118,6 +118,7 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
   const [hasRun, setHasRun] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [completingSessionItem, setCompletingSessionItem] = useState(false);
+  const completionSubmitLockRef = useRef(false);
   const prevAllPassedRef = useRef(false);
   const currentSessionItem = sessionFlowState.phase === 'execution' && sessionFlowState.execution && sessionFlowState.scope
     ? sessionFlowState.scope.items[sessionFlowState.execution.currentIndex] || null
@@ -135,12 +136,51 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
   const telemetrySessionId = sessionFlowState.execution?.sessionId || sessionFlowState.scope?.sessionId || 'session_practice';
   const telemetryTrackSlug = sessionFlowState.scope?.track.slug || 'dsa';
   const telemetryUserId = sessionFlowState.scope?.userId;
+  const isPeraltaQuestion = question.source.includes('PERALTA_75');
+  const attemptedProgressSyncedRef = useRef(false);
+  const solvedProgressSyncedRef = useRef(false);
 
   const testCases = question.test_cases as TestCase[];
   const allTestsPassed =
     testResults.length === testCases.length &&
     testResults.length > 0 &&
     testResults.every((result) => result.passed);
+
+  const syncPeraltaProgress = useCallback(async (status: 'attempted' | 'solved') => {
+    if (!isPeraltaQuestion || !question.leetcode_number) {
+      return;
+    }
+
+    if (status === 'attempted' && attemptedProgressSyncedRef.current) {
+      return;
+    }
+
+    if (status === 'solved' && solvedProgressSyncedRef.current) {
+      return;
+    }
+
+    const response = await fetch('/api/peralta75/progress', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        updates: [{ leetcodeNumber: question.leetcode_number, status, origin: 'execution' }],
+      }),
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    if (status === 'attempted') {
+      attemptedProgressSyncedRef.current = true;
+      return;
+    }
+
+    solvedProgressSyncedRef.current = true;
+    attemptedProgressSyncedRef.current = true;
+  }, [isPeraltaQuestion, question.leetcode_number]);
 
   const handleRun = useCallback(() => {
     const helperCode = question.helper_code || '';
@@ -150,10 +190,7 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
     setHasRun(true);
     prevAllPassedRef.current = false;
     if (isSessionContext && sessionQuestionId) {
-      try {
-        window.sessionStorage.setItem(`session:practice:ran:${sessionQuestionId}`, '1');
-      } catch {
-      }
+      window.sessionStorage.setItem(`session:practice:ran:${sessionQuestionId}`, '1');
       logTelemetryEvent({
         userId: telemetryUserId,
         trackSlug: telemetryTrackSlug,
@@ -168,6 +205,8 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
       });
     }
     run(fullCode);
+
+    void syncPeraltaProgress('attempted');
   }, [
     code,
     question.helper_code,
@@ -179,17 +218,15 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
     telemetrySessionId,
     telemetryTrackSlug,
     telemetryUserId,
+    syncPeraltaProgress,
   ]);
 
   useEffect(() => {
     if (isRunning) return;
     for (const line of output) {
       if (line.text.startsWith(TEST_MARKER)) {
-        try {
-          const json = line.text.slice(TEST_MARKER.length);
-          setTestResults(JSON.parse(json));
-        } catch {
-        }
+        const json = line.text.slice(TEST_MARKER.length);
+        setTestResults(JSON.parse(json));
         break;
       }
     }
@@ -214,6 +251,14 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
     }
   }, [testResults, isRunning, testCases.length, question.id, code]);
 
+  useEffect(() => {
+    if (isSessionContext || !allTestsPassed) {
+      return;
+    }
+
+    void syncPeraltaProgress('solved');
+  }, [allTestsPassed, isSessionContext, syncPeraltaProgress]);
+
   const visibleOutput = output.filter((line) => !line.text.startsWith(TEST_MARKER));
 
   const statusText = isLoading
@@ -225,48 +270,44 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
     ? 'Completing...'
     : allTestsPassed
       ? 'Complete challenge & continue'
-      : hasRun
-        ? 'Pass all tests to continue'
-        : 'Run tests to unlock completion';
-  const canAdvanceSession = allTestsPassed && !completingSessionItem && !!currentSessionItem && !isRunning;
+      : 'Pass all tests to continue';
+  const completionHint = allTestsPassed
+    ? 'All tests passing. Completion unlocked.'
+    : hasRun
+      ? `${testResults.filter((result) => result.passed).length}/${testCases.length} tests passing. Pass all tests to unlock completion.`
+      : 'Run tests to unlock completion.';
+  const canAttemptSessionComplete =
+    allTestsPassed &&
+    !completingSessionItem &&
+    !!currentSessionItem &&
+    !!sessionQuestionId &&
+    !isRunning &&
+    sessionFlowState.transitionStatus === 'ready' &&
+    sessionFlowState.execution?.transitionStatus === 'ready';
+
+  useEffect(() => {
+    completionSubmitLockRef.current = false;
+    setCompletingSessionItem(false);
+  }, [sessionQuestionId]);
+
+  useEffect(() => {
+    if (!isSessionContext) {
+      completionSubmitLockRef.current = false;
+      setCompletingSessionItem(false);
+    }
+  }, [isSessionContext]);
 
   const handleSessionComplete = useCallback(() => {
     if (!isSessionContext || !sessionQuestionId) return;
-    if (completingSessionItem) return;
+    if (completingSessionItem || completionSubmitLockRef.current) return;
     if (sessionFlowState.phase !== 'execution' || !sessionFlowState.execution || !sessionFlowState.scope) return;
-
-    if (!allTestsPassed) {
-      window.dispatchEvent(new CustomEvent('session:practice-blocked', {
-        detail: {
-          sessionId: telemetrySessionId,
-          questionId: sessionQuestionId,
-        },
-      }));
-      logTelemetryEvent({
-        userId: telemetryUserId,
-        trackSlug: telemetryTrackSlug,
-        sessionId: telemetrySessionId,
-        eventType: 'practice_completion_blocked',
-        mode: 'execute',
-        payload: {
-          questionId: sessionQuestionId,
-          hasRun,
-          passedCount: testResults.filter((result) => result.passed).length,
-          totalTests: testCases.length,
-          failedDetails: testResults
-            .filter((r) => !r.passed)
-            .map((r) => ({
-              error: r.error || 'Assertion failed',
-              actual: r.actual,
-            }))
-            .slice(0, 3),
-        },
-        dedupeKey: `practice_completion_blocked_${telemetrySessionId}_${sessionQuestionId}`,
-      });
+    if (!allTestsPassed || isRunning || sessionFlowState.transitionStatus !== 'ready' || sessionFlowState.execution.transitionStatus !== 'ready') {
       return;
     }
 
+    completionSubmitLockRef.current = true;
     setCompletingSessionItem(true);
+    void syncPeraltaProgress('solved');
     logTelemetryEvent({
       userId: telemetryUserId,
       trackSlug: telemetryTrackSlug,
@@ -283,24 +324,28 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
     advanceItem();
     if (nextSessionItem) {
       router.push(nextSessionItem.href);
-      return;
+    } else {
+      router.push('/home');
     }
-    router.push('/home');
+
+    window.setTimeout(() => {
+      completionSubmitLockRef.current = false;
+      setCompletingSessionItem(false);
+    }, 2500);
   }, [
     isSessionContext,
     sessionQuestionId,
     completingSessionItem,
     sessionFlowState,
     allTestsPassed,
+    isRunning,
     telemetryUserId,
     telemetryTrackSlug,
     telemetrySessionId,
-    hasRun,
-    testResults,
-    testCases.length,
     advanceItem,
     nextSessionItem,
     router,
+    syncPeraltaProgress,
   ]);
 
   return (
@@ -360,11 +405,7 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
                   <span className="font-semibold text-text-primary">Goal:</span> pass tests, then complete challenge.
                 </p>
                 <p className="mt-1 text-xs text-text-muted">
-                  {allTestsPassed
-                    ? 'All tests passing. You can advance.'
-                    : hasRun
-                      ? `${testResults.filter((result) => result.passed).length}/${testCases.length} tests passing`
-                      : 'Run tests to unlock completion'}
+                  {completionHint}
                 </p>
                 {nextSessionItem && (
                   <p className="mt-1 text-xs text-text-muted">
@@ -374,10 +415,8 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
               </div>
               <button
                 onClick={handleSessionComplete}
-                disabled={completingSessionItem || !currentSessionItem || isRunning}
-                className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:bg-surface-dense disabled:text-text-muted ${canAdvanceSession
-                  ? 'bg-brand-green text-white hover:bg-brand-green/90'
-                  : 'border border-border-interactive bg-surface-workbench text-text-secondary hover:text-text-primary'}`}
+                disabled={!canAttemptSessionComplete}
+                className="rounded-lg px-4 py-2 text-sm font-semibold transition-colors bg-brand-green text-white hover:bg-brand-green/90 disabled:cursor-not-allowed disabled:bg-surface-dense disabled:text-text-muted"
               >
                 {completionLabel}
               </button>

@@ -6,6 +6,7 @@ import { useSession } from '@/contexts/SessionContext';
 import { chunkArticleByHeadings, getChunkByIndex } from '@/lib/article-chunking';
 import ArticleRenderer from '@/app/learn/_components/ArticleRenderer';
 import { cn } from '@/lib/utils';
+import { shouldIgnoreSessionShortcut } from '@/lib/session-shortcuts';
 
 interface ChunkedArticleRendererProps {
     content: string;
@@ -26,12 +27,14 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
     const renderedChunks = focusedChunk ? [focusedChunk] : chunks;
     const isFocusedMode = !!focusedChunk;
     const isInExecution = state.phase === 'execution' && !!state.execution && !!state.scope;
+    const isTransitioning = state.transitionStatus !== 'ready';
     const currentChunkIndex = Math.min(state.execution?.currentChunk ?? 0, Math.max(renderedChunks.length - 1, 0));
     const isLastChunk = currentChunkIndex === renderedChunks.length - 1;
 
     const handleAdvanceArticle = useCallback(() => {
         if (!isInExecution || !state.execution || !state.scope) return;
         if (advanceLockRef.current) return;
+        if (isTransitioning) return;
 
         advanceLockRef.current = true;
         setIsCompletingArticle(true);
@@ -45,7 +48,7 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
         if (nextItem) {
             router.push(nextItem.href);
         }
-    }, [isInExecution, state.execution, state.scope, advanceItem, router]);
+    }, [isInExecution, isTransitioning, state.execution, state.scope, advanceItem, router]);
 
     useEffect(() => {
         if (state.phase === 'execution') {
@@ -70,7 +73,11 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
         if (state.phase !== 'execution') return;
 
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+            if (shouldIgnoreSessionShortcut(e)) {
+                return;
+            }
+            const drawerEl = document.querySelector<HTMLElement>('[data-drawer="toc"]');
+            if (drawerEl?.dataset.state === 'open') {
                 return;
             }
 
@@ -107,7 +114,7 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
         <div>
             <div
                 data-reading-boundary="section-header"
-                className="mb-5 border-t border-border-interactive/35 pt-2 before:absolute before:left-[-2.5rem] before:top-[9px] before:h-px before:w-[2.5rem] before:bg-border-interactive/32 after:absolute after:left-[-2.5rem] after:top-[9px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/45"
+                className="mb-5 border-t border-border-interactive/35 pt-2"
             >
                 <h2 className="text-2xl font-semibold tracking-tight text-text-primary">
                     {currentChunk.title}
@@ -120,24 +127,19 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
 
             <div
                 data-reading-boundary="step-control"
-                className="mt-10 border-t border-border-interactive/35 pt-4 before:absolute before:left-[-2.5rem] before:top-[7px] before:h-px before:w-[2.5rem] before:bg-border-interactive/32 after:absolute after:left-[-2.5rem] after:top-[7px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/45"
+                className="mt-10 border-t border-border-interactive/35 pt-4"
             >
                 <div className="mb-4 space-y-2 lg:hidden">
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-text-muted">
-                            Step {currentChunkIndex + 1} of {chunks.length}
+                            Step {currentChunkIndex + 1} of {renderedChunks.length}
                         </span>
-                        <span className={cn(
-                            "text-xs font-mono transition-all duration-300",
-                            currentChunkIndex === chunks.length - 1
-                                ? "text-emerald-400"
-                                : "text-text-muted"
-                        )}>
-                            {Math.round(((currentChunkIndex + 1) / chunks.length) * 100)}%
+                        <span className="text-xs font-mono text-text-muted">
+                            {Math.round(((currentChunkIndex + 1) / renderedChunks.length) * 100)}%
                         </span>
                     </div>
                     <div className="flex gap-1">
-                        {Array.from({ length: chunks.length }).map((_, i) => (
+                        {Array.from({ length: renderedChunks.length }).map((_, i) => (
                             <div
                                 key={i}
                                 className={cn(
@@ -145,7 +147,7 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                                     i < currentChunkIndex
                                         ? 'bg-emerald-500/70'
                                         : i === currentChunkIndex
-                                            ? 'bg-gradient-to-r from-emerald-500 to-blue-500 shadow-lg shadow-emerald-500/20'
+                                            ? 'bg-emerald-600'
                                             : 'bg-border-subtle'
                                 )}
                             />
@@ -155,20 +157,19 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
 
                 <div className="flex items-center justify-between gap-4">
                     {isFirstChunk ? (
-                        <div className="flex items-center gap-2 py-2 text-xs text-text-muted">
-                            <span className="inline-block h-4 w-4 rounded border border-text-muted/20" />
+                        <div className="py-2 text-xs text-text-muted">
                             {isFocusedMode ? 'Current section' : 'Start of article'}
                         </div>
                     ) : (
                         <button
                             onClick={prevChunk}
-                            className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-surface-interactive/35 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                            className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-surface-interactive/35 hover:text-text-primary outline-none focus-visible:ring-1 focus-visible:ring-border-interactive"
                         >
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                             <span>Previous</span>
-                            <span className="text-xs text-text-muted">H</span>
+                            <span className="text-xs text-text-muted">H / ←</span>
                         </button>
                     )}
 
@@ -180,37 +181,27 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                                 nextChunk();
                             }
                         }}
-                        disabled={isLastChunk && isCompletingArticle}
-                        className={cn(
-                            'group relative flex items-center gap-2.5 rounded-lg px-5 py-3 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-70',
-                            isLastChunk
-                                ? 'bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 text-white shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 hover:brightness-110'
-                                : 'border border-border-interactive bg-surface-interactive text-text-primary backdrop-blur-sm hover:border-emerald-500/30 hover:bg-surface-workbench'
-                        )}
+                        disabled={isLastChunk && (isCompletingArticle || isTransitioning)}
+                        className="group relative flex items-center gap-2.5 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-emerald-500 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400 disabled:cursor-not-allowed disabled:opacity-70"
                     >
-                        {isLastChunk && !isCompletingArticle && (
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                        )}
                         <span>
                             {isLastChunk
-                                ? isCompletingArticle
-                                    ? 'Completing...'
+                                ? isCompletingArticle || isTransitioning
+                                    ? 'Saving progress...'
                                     : isFocusedMode
                                         ? 'Complete Section'
                                         : 'Complete Article'
                                 : 'Next Section'}
                         </span>
                         <div className="flex items-center gap-1.5">
-                            <span className="text-xs opacity-70">L</span>
+                            <span className="text-xs opacity-70">L / →</span>
                             {isCompletingArticle ? (
                                 <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" />
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                 </svg>
                             ) : (
-                                <svg className={cn("h-4 w-4 transition-transform", isLastChunk ? "group-hover:translate-x-0.5" : "group-hover:translate-x-1")} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>
                             )}

@@ -1,6 +1,6 @@
 export const AI_POLICY_VERSION = 'policy_os_v1';
 export const AI_POLICY_CONFIDENCE_THRESHOLD = 0.6;
-export const AI_POLICY_TIMEOUT_MS = 4000;
+export const AI_POLICY_TIMEOUT_MS = 15000;
 export const AI_POLICY_PRIMARY_MODEL = 'gpt-5-mini';
 export const AI_POLICY_FALLBACK_MODEL = 'gpt-5-nano';
 

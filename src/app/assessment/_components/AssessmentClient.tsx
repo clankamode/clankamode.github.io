@@ -9,9 +9,11 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { cn } from '@/lib/utils';
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
-import SessionReaderShell from '@/components/session/SessionReaderShell';
-import { sanitizeIntentText } from '@/lib/intent-display';
 import { logTelemetryEvent } from '@/lib/telemetry';
+import { ArrowRight, Code2, Terminal, Zap } from 'lucide-react';
+import { useCallback, useRef } from 'react';
+import { EXECUTION_SURFACE_LAYOUT_CLASS } from '@/components/session/ExecutionSurface';
+import SessionHUD from '@/components/session/SessionHUD';
 
 type ButtonVariant = 'novice' | 'intermediate' | 'advanced';
 
@@ -28,40 +30,27 @@ const levels: Array<{
       id: 'noob',
       title: 'Noob',
       difficulty: 'Easy',
-      description: '2 easy questions to warm up and build confidence. Perfect for beginners.',
+      description: '2 easy questions to warm up and build confidence.',
       questionInfo: '2 easy questions',
-      icon: (
-        <svg className="w-6 h-6 text-brand-green" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      ),
+      icon: <Zap className="h-5 w-5 text-brand-green" />,
       variant: 'novice' as const,
     },
     {
       id: 'intermediate',
       title: 'Intermediate',
       difficulty: 'Medium',
-      description: '1 easy + 1 medium to keep you sharp. Ideal for maintaining your skills.',
+      description: '1 easy + 1 medium to keep you sharp.',
       questionInfo: '1 easy + 1 medium',
-      icon: (
-        <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
+      icon: <Code2 className="h-5 w-5 text-orange-400" />,
       variant: 'intermediate' as const,
     },
     {
       id: 'faang',
       title: 'FAANG-level',
       difficulty: 'Hard',
-      description: '2 medium or a medium + hard for the real deal. Simulate actual interview conditions.',
+      description: '2 medium or a medium + hard for the real deal.',
       questionInfo: '2 medium / 1 medium + 1 hard',
-      icon: (
-        <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
-        </svg>
-      ),
+      icon: <Terminal className="h-5 w-5 text-red-500" />,
       variant: 'advanced' as const,
     },
   ];
@@ -100,19 +89,12 @@ function buildPracticeWorkspaceHref(
   return `/code-editor/practice/${encodeURIComponent(questionId)}?${params.toString()}`;
 }
 
-function formatTargetConcept(value: string | null | undefined): string | null {
-  if (!value) return null;
-  const trailing = value.split('.').pop() || value;
-  const label = trailing.replace(/[-_]/g, ' ').trim();
-  if (!label) return null;
-  return label[0].toUpperCase() + label.slice(1);
-}
 
 export default function AssessmentClient({ forcedQuestionId }: AssessmentClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { status } = useSession();
-  const { state: sessionState } = useSessionContext();
+  const { state: sessionState, advanceItem } = useSessionContext();
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
@@ -123,6 +105,10 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
   const [loadingSessionQuestion, setLoadingSessionQuestion] = useState(false);
   const [workspaceRunDetected, setWorkspaceRunDetected] = useState(false);
   const [workspaceOpenedDetected, setWorkspaceOpenedDetected] = useState(false);
+  const [isSkipping, setIsSkipping] = useState(false);
+  const [isOpeningWorkspace, setIsOpeningWorkspace] = useState(false);
+  const skipLockRef = useRef(false);
+  const workspaceOpenLockRef = useRef(false);
 
   const sessionQuestionId = forcedQuestionId || searchParams.get('questionId');
   const isInExecution = sessionState.phase === 'execution';
@@ -138,24 +124,19 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
     currentSessionItem?.type === 'practice' &&
     (currentSessionItem.href.startsWith('/session/practice') || currentSessionItem.href.startsWith('/assessment'))
   );
-  const nextSessionItem = useMemo(() => {
-    if (sessionState.phase !== 'execution' || !sessionState.scope || !sessionState.execution) {
-      return null;
-    }
-    return sessionState.scope.items[sessionState.execution.currentIndex + 1] || null;
-  }, [sessionState]);
 
   const selectedLevelData = levels.find((level) => level.id === selectedLevel);
   const selectedLevelLabel = selectedLevelData?.title ?? 'Assessment';
-  const sessionTarget = formatTargetConcept(
-    currentSessionItem?.targetConcept || currentSessionItem?.primaryConceptSlug
-  );
-  const sessionIntentDisplay = sanitizeIntentText(currentSessionItem?.intent?.text, {
-    title: currentSessionItem?.title || null,
-    maxChars: 160,
-    minChars: 24,
-  });
-
+  const sessionQuestionStorageKeys = useMemo(() => {
+    const keys = new Set<string>();
+    if (sessionQuestionId) {
+      keys.add(sessionQuestionId);
+    }
+    if (sessionQuestion?.id) {
+      keys.add(sessionQuestion.id);
+    }
+    return Array.from(keys);
+  }, [sessionQuestion?.id, sessionQuestionId]);
   useEffect(() => {
     const loadSessionQuestion = async () => {
       if (!sessionQuestionId) {
@@ -192,33 +173,109 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
   }, [sessionQuestionId, status]);
 
   useEffect(() => {
-    if (!sessionQuestionId) {
+    if (sessionQuestionStorageKeys.length === 0) {
       setWorkspaceRunDetected(false);
       setWorkspaceOpenedDetected(false);
       return;
     }
 
     const readPracticeState = () => {
-      try {
-        const runKey = getPracticeRunKey(sessionQuestionId);
-        const openedKey = getPracticeOpenedKey(sessionQuestionId);
-        setWorkspaceRunDetected(window.sessionStorage.getItem(runKey) === '1');
-        setWorkspaceOpenedDetected(window.sessionStorage.getItem(openedKey) === '1');
-      } catch {
-        setWorkspaceRunDetected(false);
-        setWorkspaceOpenedDetected(false);
-      }
+      const hasRun = sessionQuestionStorageKeys.some((key) => window.sessionStorage.getItem(getPracticeRunKey(key)) === '1');
+      const hasOpened = sessionQuestionStorageKeys.some((key) => window.sessionStorage.getItem(getPracticeOpenedKey(key)) === '1');
+      setWorkspaceRunDetected(hasRun);
+      setWorkspaceOpenedDetected(hasOpened);
     };
 
     readPracticeState();
     window.addEventListener('focus', readPracticeState);
     return () => window.removeEventListener('focus', readPracticeState);
-  }, [sessionQuestionId]);
+  }, [sessionQuestionStorageKeys]);
+
+  const handleSkipAssessment = useCallback(() => {
+    if (!isInExecution || !sessionState.execution || !sessionState.scope) return;
+    if (sessionState.transitionStatus !== 'ready' || sessionState.execution.transitionStatus !== 'ready') return;
+    if (skipLockRef.current) return;
+    skipLockRef.current = true;
+    setIsSkipping(true);
+
+    const questionIdentifier = sessionQuestion?.id || sessionQuestionId;
+
+    logTelemetryEvent({
+      userId: sessionState.scope.userId,
+      trackSlug: sessionState.scope.track.slug,
+      sessionId: sessionState.execution.sessionId || sessionState.scope.sessionId || 'unknown',
+      eventType: 'item_completed',
+      mode: 'execute',
+      payload: {
+        questionId: questionIdentifier,
+        index: sessionState.execution.currentIndex,
+        skipped: true,
+      },
+      dedupeKey: `practice_skipped_${sessionState.scope.sessionId}_${questionIdentifier || 'unknown_question'}`,
+    });
+
+    const nextItem = sessionState.scope.items[sessionState.execution.currentIndex + 1] ?? null;
+    if (nextItem) {
+      router.prefetch(nextItem.href);
+    }
+
+    advanceItem();
+    if (nextItem) {
+      router.push(nextItem.href);
+    } else {
+      router.replace('/home');
+    }
+  }, [isInExecution, sessionState, sessionQuestion?.id, sessionQuestionId, advanceItem, router]);
 
   const hasPracticeSignal = workspaceRunDetected || workspaceOpenedDetected;
 
   const trackSlug = sessionState.scope?.track.slug || 'dsa';
   const telemetrySessionId = sessionState.execution?.sessionId || sessionState.scope?.sessionId || 'session_practice';
+
+  const openWorkspace = useCallback((question: AssessmentQuestion, source: 'session' | 'assessment') => {
+    if (workspaceOpenLockRef.current) return;
+
+    workspaceOpenLockRef.current = true;
+    setIsOpeningWorkspace(true);
+
+    const openedKeys = new Set<string>([question.id]);
+    if (sessionQuestionId) {
+      openedKeys.add(sessionQuestionId);
+    }
+    openedKeys.forEach((key) => {
+      window.sessionStorage.setItem(getPracticeOpenedKey(key), '1');
+    });
+    setWorkspaceOpenedDetected(true);
+
+    logTelemetryEvent({
+      userId: sessionState.scope?.userId,
+      trackSlug,
+      sessionId: telemetrySessionId,
+      eventType: 'coding_workspace_opened',
+      mode: 'execute',
+      payload: {
+        questionId: question.id,
+        source,
+      },
+      dedupeKey: `coding_workspace_opened_${telemetrySessionId}_${question.id}`,
+    });
+
+    router.push(buildPracticeWorkspaceHref(
+      question.id,
+      {
+        source,
+        returnTo: source === 'session'
+          ? `/session/practice/${question.id}`
+          : `/assessment?questionId=${encodeURIComponent(question.id)}`,
+        sessionQuestionId: source === 'session' ? (sessionQuestionId || question.id) : question.id,
+      }
+    ));
+
+    window.setTimeout(() => {
+      workspaceOpenLockRef.current = false;
+      setIsOpeningWorkspace(false);
+    }, 1500);
+  }, [router, sessionQuestionId, sessionState.scope?.userId, telemetrySessionId, trackSlug]);
 
   const handleStart = async (levelId: string) => {
     if (status !== 'authenticated') {
@@ -262,134 +319,122 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
 
   if (isSessionPracticeItem) {
     return (
-      <SessionReaderShell
-        viewLabel="Details"
-        tableOfContents={
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-[0.18em] text-text-muted">Why this next</p>
-              <p className="text-sm text-text-secondary">{sessionIntentDisplay}</p>
-            </div>
-            {sessionTarget && (
-              <div className="space-y-1">
-                <p className="text-xs uppercase tracking-[0.18em] text-text-muted">Target</p>
-                <p className="text-sm text-text-primary">{sessionTarget}</p>
-              </div>
-            )}
-            <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.18em] text-text-muted">Shortcuts</p>
-              <p className="text-sm text-text-secondary">Press <span className="font-mono text-text-primary">T</span> to toggle this panel.</p>
-            </div>
-          </div>
-        }
-      >
-        <div className="space-y-4 pb-10">
-          <div className="article-spec-header relative border-b border-border-interactive/82 px-1.5 py-2.5 before:absolute before:left-[-2.5rem] before:top-[22px] before:h-px before:w-[2.5rem] before:bg-border-interactive/65 after:absolute after:left-[-2.5rem] after:top-[22px] after:h-1 after:w-1 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-border-interactive/80">
-            <p className="article-spec-kicker font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">Session practice</p>
-            <h1 className="article-spec-title mt-2 text-4xl font-semibold tracking-tight text-text-primary">Coding assessment</h1>
-            <p className="article-spec-subtitle mt-1 text-base text-text-secondary">
-              This is a session gate. Solve in the coding chamber, then complete from there to continue.
-            </p>
-          </div>
+      <div className="min-h-screen bg-background text-text-primary">
+        <SessionHUD
+          showViewToggle={false}
+          secondaryStatusLabel="Practice chamber"
+        />
 
-          <Card className="rounded-none border-0 bg-transparent shadow-none">
-            <CardContent className="space-y-3 pt-4">
+        <main className="pt-16 pb-20">
+          <div className={EXECUTION_SURFACE_LAYOUT_CLASS}>
+            <div className="max-w-md mx-auto w-full pt-12 space-y-8">
               {loadingSessionQuestion ? (
-                <p className="text-muted-foreground">Loading question...</p>
+                <div className="animate-pulse space-y-4 py-8">
+                  <div className="h-6 w-3/4 rounded bg-border-subtle" />
+                  <div className="h-4 w-1/2 rounded bg-border-subtle" />
+                </div>
               ) : sessionQuestionError ? (
-                <div className="rounded-sm border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
-                  {sessionQuestionError}
+                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-center">
+                  <p className="text-sm text-red-400">{sessionQuestionError}</p>
+                  <div className="mt-4 flex items-center justify-center gap-3">
+                    <button
+                      onClick={() => router.refresh()}
+                      className="rounded-lg border border-border-subtle px-3 py-1.5 text-xs text-text-secondary transition-colors hover:text-text-primary"
+                    >
+                      Retry
+                    </button>
+                    <button
+                      onClick={handleSkipAssessment}
+                      disabled={isSkipping}
+                      className="rounded-lg border border-border-subtle px-3 py-1.5 text-xs text-text-secondary transition-colors hover:text-text-primary disabled:opacity-60"
+                    >
+                      {isSkipping ? 'Skipping...' : 'Skip for now'}
+                    </button>
+                  </div>
                 </div>
               ) : sessionQuestion ? (
                 <>
-                  <div className="border border-border-interactive/75 bg-transparent p-4 md:p-5">
-                    <p className="text-2xl font-semibold leading-tight text-text-primary">{sessionQuestion.title}</p>
-                    <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                      <span className="inline-flex border border-border-subtle/65 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-text-muted">
-                        {sessionQuestion.difficulty}
-                      </span>
-                      {sessionTarget && (
-                        <span className="inline-flex border border-border-subtle/65 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-text-muted">
-                          Target: {sessionTarget}
-                        </span>
-                      )}
+                  <div className="rounded-2xl border border-border-subtle bg-surface-interactive p-6 space-y-4">
+                    <h2 className="text-lg font-semibold text-text-primary">
+                      {sessionQuestion.title}
+                    </h2>
+                    <Badge variant="outline" className={cn(
+                      "bg-transparent",
+                      sessionQuestion.difficulty === 'Easy' ? "border-brand-green text-brand-green" :
+                        sessionQuestion.difficulty === 'Medium' ? "border-brand-amber text-brand-amber" :
+                          "border-red-500 text-red-500"
+                    )}>
+                      {sessionQuestion.difficulty}
+                    </Badge>
+
+                    <div className="flex items-center justify-between border-t border-border-subtle pt-4 mt-4">
+                      <div className="flex items-center gap-2">
+                        <div className={cn("h-1.5 w-1.5 rounded-full", workspaceOpenedDetected ? "bg-emerald-600" : "bg-border-subtle")} />
+                        <span className="text-xs text-text-secondary">Opened</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={cn("h-1.5 w-1.5 rounded-full", workspaceRunDetected ? "bg-emerald-600" : "bg-border-subtle")} />
+                        <span className="text-xs text-text-secondary">Tests run</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="border-t border-border-subtle/55 px-4 py-1.5">
-                    <p className="text-sm text-text-secondary">
-                      {nextSessionItem
-                        ? `After completion: ${nextSessionItem.title}`
-                        : 'After completion: continue to the next session step.'}
-                    </p>
+
+                  <button
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-emerald-500 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400"
+                    onClick={() => openWorkspace(sessionQuestion, 'session')}
+                    disabled={isOpeningWorkspace}
+                  >
+                    {isOpeningWorkspace ? 'Opening workspace...' : hasPracticeSignal ? 'Resume workspace' : 'Enter workspace'}
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+
+                  {(currentSessionItem?.intent?.text || currentSessionItem?.estMinutes) && (
+                    <div className="rounded-xl border border-border-subtle bg-surface-workbench p-4 space-y-2">
+                      {currentSessionItem?.intent?.text && (
+                        <p className="text-xs text-text-secondary leading-relaxed">
+                          {currentSessionItem.intent.text}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-3 text-[11px] text-text-muted">
+                        {currentSessionItem?.estMinutes && (
+                          <span>~{currentSessionItem.estMinutes} min</span>
+                        )}
+                        {sessionState.scope?.items[sessionState.execution ? sessionState.execution.currentIndex + 1 : -1]?.title && (
+                          <>
+                            <span>·</span>
+                            <span>Then: {sessionState.scope.items[sessionState.execution!.currentIndex + 1].title}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-center">
+                    <button
+                      onClick={handleSkipAssessment}
+                      disabled={isSkipping}
+                      className="text-xs text-text-secondary hover:text-text-primary transition-colors py-2"
+                    >
+                      {isSkipping ? 'Skipping...' : 'Skip (no progress saved)'}
+                    </button>
                   </div>
                 </>
               ) : (
-                <p className="text-muted-foreground">Question not found.</p>
+                <div className="rounded-xl border border-border-subtle bg-surface-interactive p-6 text-center">
+                  <p className="text-text-secondary">Question data not found.</p>
+                  <button
+                    onClick={handleSkipAssessment}
+                    disabled={isSkipping}
+                    className="mt-4 text-xs text-text-secondary transition-colors hover:text-text-primary disabled:opacity-60"
+                  >
+                    {isSkipping ? 'Skipping...' : 'Continue to next step'}
+                  </button>
+                </div>
               )}
-            </CardContent>
-            <CardFooter className="flex flex-wrap items-center gap-2.5 px-6 pb-4 pt-0">
-              {sessionQuestion && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    try {
-                      window.sessionStorage.setItem(getPracticeOpenedKey(sessionQuestion.id), '1');
-                      setWorkspaceOpenedDetected(true);
-                    } catch {
-                    }
-                    logTelemetryEvent({
-                      userId: sessionState.scope?.userId,
-                      trackSlug,
-                      sessionId: telemetrySessionId,
-                      eventType: 'coding_workspace_opened',
-                      mode: 'execute',
-                      payload: {
-                        questionId: sessionQuestion.id,
-                        source: 'session',
-                      },
-                      dedupeKey: `coding_workspace_opened_${telemetrySessionId}_${sessionQuestion.id}`,
-                    });
-                    router.push(buildPracticeWorkspaceHref(
-                      sessionQuestion.id,
-                      {
-                        source: 'session',
-                        returnTo: `/session/practice/${sessionQuestion.id}`,
-                        sessionQuestionId: sessionQuestion.id,
-                      }
-                    ));
-                  }}
-                  className="inline-flex min-h-[36px] items-center justify-center border border-border-interactive/72 bg-transparent px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.08em] text-text-secondary transition-colors hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  {hasPracticeSignal ? 'Resume coding chamber' : 'Open coding chamber'}
-                </button>
-              )}
-            </CardFooter>
-            <div className="px-6 pb-5">
-              <p className="mt-1.5 text-xs text-text-muted">
-                Completion only happens inside the coding chamber after tests pass.
-              </p>
-              <div className="mt-2.5 flex flex-wrap gap-2">
-                <span className={cn(
-                  'border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em]',
-                  workspaceOpenedDetected
-                    ? 'border-border-subtle/80 text-text-secondary'
-                    : 'border-border-subtle/55 text-text-muted'
-                )}>
-                  {workspaceOpenedDetected ? 'Workspace opened' : 'Workspace not opened'}
-                </span>
-                <span className={cn(
-                  'border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em]',
-                  workspaceRunDetected
-                    ? 'border-border-subtle/80 text-text-secondary'
-                    : 'border-border-subtle/55 text-text-muted'
-                )}>
-                  {workspaceRunDetected ? 'Tests run detected' : 'Tests not run yet'}
-                </span>
-              </div>
             </div>
-          </Card>
-        </div>
-      </SessionReaderShell>
+          </div>
+        </main>
+      </div>
     );
   }
 
@@ -397,10 +442,10 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
     <div className="flex min-h-screen flex-col bg-background pt-24 text-foreground">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 pb-16">
         {sessionQuestionId && (
-          <Card className="frame border-border-interactive bg-surface-workbench">
-            <CardHeader>
-              <CardTitle className="text-2xl">Session coding assessment</CardTitle>
-              <CardDescription>
+          <Card className="bg-surface-interactive border border-border-subtle rounded-3xl overflow-hidden shadow-lift transition-all duration-500 hover:border-border-interactive">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-3xl font-bold tracking-tight text-text-primary">Session coding assessment</CardTitle>
+              <CardDescription className="text-lg text-text-secondary mt-1">
                 Solve this challenge, then continue the session.
               </CardDescription>
               {isSessionPracticeItem && currentSessionItem?.intent?.text && (
@@ -416,72 +461,50 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
             </CardHeader>
             <CardContent>
               {loadingSessionQuestion ? (
-                <p className="text-muted-foreground">Loading question...</p>
+                <div className="animate-pulse space-y-4 py-8">
+                  <div className="h-8 bg-surface-dense rounded w-3/4 mx-auto" />
+                  <div className="h-4 bg-surface-dense rounded w-1/4 mx-auto" />
+                </div>
               ) : sessionQuestionError ? (
-                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+                <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
                   {sessionQuestionError}
                 </div>
               ) : sessionQuestion ? (
-                <div className="rounded-lg border border-border-subtle bg-surface-interactive p-4">
-                  <p className="text-lg font-semibold">{sessionQuestion.title}</p>
+                <div className="rounded-2xl border border-border-subtle bg-surface-dense p-6 shadow-inner transition-colors group/q hover:border-accent-primary/30">
+                  <p className="text-2xl font-bold text-text-primary mb-3">{sessionQuestion.title}</p>
                   <span className={cn(
-                    'mt-2 inline-block rounded-full px-2 py-0.5 text-xs',
-                    sessionQuestion.difficulty === 'Easy' && 'bg-brand-green/10 text-brand-green',
-                    sessionQuestion.difficulty === 'Medium' && 'bg-brand-amber/10 text-brand-amber',
-                    sessionQuestion.difficulty === 'Hard' && 'bg-brand-gold/10 text-brand-gold'
+                    'inline-block px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase',
+                    sessionQuestion.difficulty === 'Easy' && 'bg-brand-green/10 text-brand-green ring-1 ring-brand-green/30',
+                    sessionQuestion.difficulty === 'Medium' && 'bg-brand-amber/10 text-brand-amber ring-1 ring-brand-amber/30',
+                    sessionQuestion.difficulty === 'Hard' && 'bg-brand-gold/10 text-brand-gold ring-1 ring-brand-gold/30'
                   )}>
                     {sessionQuestion.difficulty}
                   </span>
                 </div>
               ) : (
-                <p className="text-muted-foreground">Question not found.</p>
+                <p className="text-text-muted">Question not found.</p>
               )}
             </CardContent>
-            <CardFooter className="flex flex-wrap items-center gap-3">
+            <CardFooter className="flex flex-col items-start gap-4 px-8 pb-8">
               {sessionQuestion && (
                 <Button
-                  variant="outline"
-                  onClick={() => {
-                    try {
-                      window.sessionStorage.setItem(getPracticeOpenedKey(sessionQuestion.id), '1');
-                      setWorkspaceOpenedDetected(true);
-                    } catch {
-                    }
-                    logTelemetryEvent({
-                      userId: sessionState.scope?.userId,
-                      trackSlug,
-                      sessionId: telemetrySessionId,
-                      eventType: 'coding_workspace_opened',
-                      mode: 'execute',
-                      payload: {
-                        questionId: sessionQuestion.id,
-                        source: 'assessment',
-                      },
-                      dedupeKey: `coding_workspace_opened_${telemetrySessionId}_${sessionQuestion.id}`,
-                    });
-                    router.push(buildPracticeWorkspaceHref(
-                      sessionQuestion.id,
-                      {
-                        source: 'assessment',
-                        returnTo: `/assessment?questionId=${encodeURIComponent(sessionQuestion.id)}`,
-                        sessionQuestionId: sessionQuestion.id,
-                      }
-                    ));
-                  }}
+                  onClick={() => openWorkspace(sessionQuestion, 'assessment')}
+                  disabled={isOpeningWorkspace}
+                  className="rounded-full bg-emerald-600 hover:bg-emerald-500 text-white px-8 h-12 text-base font-bold shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  Open coding workspace
+                  {isOpeningWorkspace ? 'Opening workspace...' : 'Open coding workspace'}
                 </Button>
               )}
               {isSessionPracticeItem && (
                 <p className="text-xs text-text-muted">
-                  Completion is handled in the coding chamber after tests pass.
+                  Completion is handled in the coding chamber after all tests pass.
                 </p>
               )}
             </CardFooter>
             {isSessionPracticeItem && (
               <div className="px-6 pb-6">
                 <p className="mt-2 text-xs text-text-muted">
-                  Open coding workspace at least once, run tests, then complete from the chamber.
+                  Open the coding workspace, run tests, then use ‘Complete challenge & continue’ in the chamber.
                 </p>
               </div>
             )}
@@ -529,14 +552,14 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
                 <Card
                   key={level.id}
                   className={cn(
-                    "frame flex flex-col relative overflow-hidden transition-all duration-500 bg-surface-interactive/80 backdrop-blur-none hover:bg-surface-interactive/90 hover:translate-y-[-2px]"
+                    "flex flex-col relative overflow-hidden transition-all duration-500 bg-surface-interactive border border-border-subtle rounded-3xl shadow-lift hover:border-border-interactive hover:-translate-y-1"
                   )}
                 >
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-white/5" />
 
                   <CardHeader className="pb-4 relative z-10">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl shadow-inner transition-all duration-300 group-hover:scale-110 bg-surface-interactive text-foreground">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl shadow-inner transition-transform duration-500 group-hover:scale-110 bg-surface-dense text-text-primary border border-border-subtle">
                         {level.icon}
                       </div>
                       <Badge variant={level.variant} dot className="shadow-lg backdrop-blur-md">
@@ -549,19 +572,19 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
                     </CardDescription>
                   </CardHeader>
 
-                  <CardContent className="flex-1 pb-4 relative z-10">
-                    <div className="flex items-center gap-2 text-base text-muted-foreground bg-surface-interactive border border-border-subtle p-3 rounded-lg">
-                      <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <CardContent className="flex-1 pb-6 relative z-10">
+                    <div className="flex items-center gap-3 text-base text-text-secondary bg-surface-dense border border-border-subtle p-4 rounded-2xl">
+                      <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
-                      <span className="font-mono text-sm uppercase tracking-wide opacity-80">{level.questionInfo}</span>
+                      <span className="font-mono text-xs uppercase tracking-widest">{level.questionInfo}</span>
                     </div>
                   </CardContent>
 
-                  <CardFooter className="pt-0 relative z-10">
+                  <CardFooter className="pt-0 pb-8 relative z-10 px-6">
                     <Button
                       variant={level.variant}
-                      className="w-full h-11 shadow-lg"
+                      className="w-full h-12 rounded-full font-bold shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
                       onClick={() => handleStart(level.id)}
                       disabled={loading}
                     >
@@ -582,38 +605,38 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
       </div>
 
       {!sessionQuestionId && isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-ambient/80 backdrop-blur-sm px-4 animate-in fade-in">
-          <Card className="frame w-full max-w-lg bg-surface-workbench shadow-2xl border-border-subtle">
-            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md px-4 animate-in fade-in duration-300">
+          <Card className="w-full max-w-xl bg-surface-interactive shadow-2xl border border-border-subtle rounded-3xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <CardHeader className="flex flex-row items-center justify-between p-8 pb-4">
               <div className="space-y-1">
-                <CardTitle className="text-2xl">Your {selectedLevelLabel} assessment</CardTitle>
-                <CardDescription>Two non-premium LeetCode questions ready to go.</CardDescription>
+                <CardTitle className="text-3xl font-bold tracking-tight text-text-primary">Your {selectedLevelLabel} assessment</CardTitle>
+                <CardDescription className="text-text-secondary text-lg font-medium">Two non-premium LeetCode questions ready to go.</CardDescription>
               </div>
-              <Button variant="ghost" size="sm" onClick={handleClose} className="h-8 w-8 p-0 rounded-full">
+              <Button variant="ghost" size="sm" onClick={handleClose} className="h-10 w-10 p-0 rounded-full hover:bg-surface-dense transition-colors">
                 ✕
               </Button>
             </CardHeader>
 
-            <CardContent className="space-y-3 pt-4">
+            <CardContent className="space-y-4 p-8 pt-0">
               {questions.length === 0 ? (
-                <div className="rounded-lg border border-border-subtle bg-surface-interactive p-4 text-center text-base text-muted-foreground">
+                <div className="rounded-2xl border border-border-subtle bg-surface-dense p-8 text-center text-text-muted italic">
                   No questions returned yet. Please close and try again.
                 </div>
               ) : (
                 questions.map((question) => (
                   <div
                     key={question.id}
-                    className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface-interactive p-4 hover:border-border-interactive transition-colors"
+                    className="flex items-center justify-between rounded-2xl border border-border-subtle bg-surface-dense p-6 transition-all duration-300 hover:border-border-interactive group/item"
                   >
                     <div>
-                      <p className="font-semibold text-foreground">
+                      <p className="text-xl font-bold text-text-primary transition-colors group-hover/item:text-accent-primary">
                         {question.title}
                       </p>
                       <span className={cn(
-                        "text-sm px-2 py-0.5 rounded-full mt-1 inline-block",
-                        question.difficulty === 'Easy' && "bg-brand-green/10 text-brand-green",
-                        question.difficulty === 'Medium' && "bg-brand-amber/10 text-brand-amber",
-                        question.difficulty === 'Hard' && "bg-brand-gold/10 text-brand-gold"
+                        "text-xs px-3 py-1 rounded-full mt-2 inline-block font-bold uppercase tracking-wider",
+                        question.difficulty === 'Easy' && "bg-brand-green/10 text-brand-green ring-1 ring-brand-green/20",
+                        question.difficulty === 'Medium' && "bg-brand-amber/10 text-brand-amber ring-1 ring-brand-amber/20",
+                        question.difficulty === 'Hard' && "bg-brand-gold/10 text-brand-gold ring-1 ring-brand-gold/20"
                       )}>
                         {question.difficulty}
                       </span>
@@ -646,8 +669,12 @@ export default function AssessmentClient({ forcedQuestionId }: AssessmentClientP
               )}
             </CardContent>
 
-            <CardFooter className="justify-end pt-2">
-              <Button variant="outline" onClick={handleClose}>
+            <CardFooter className="justify-end p-8 pt-0">
+              <Button
+                variant="outline"
+                onClick={handleClose}
+                className="rounded-full px-8 py-2 font-bold hover:bg-surface-dense border-border-subtle transition-all"
+              >
                 Close
               </Button>
             </CardFooter>

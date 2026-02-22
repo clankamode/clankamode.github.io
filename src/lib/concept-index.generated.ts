@@ -10,6 +10,62 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "type": "learn",
             "estMinutes": 5,
             "isPrimary": true
+        },
+        {
+            "href": "/session/practice/415",
+            "title": "Add Strings",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/408",
+            "title": "Valid Word Abbreviation",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/1424",
+            "title": "Diagonal Traverse II",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/134",
+            "title": "Gas Station",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/325",
+            "title": "Maximum Size Subarray Sum Equals k",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/31",
+            "title": "Next Permutation",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/151",
+            "title": "Reverse Words in a String",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/54",
+            "title": "Spiral Matrix",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
         }
     ],
     "array.dynamic-resizing": [
@@ -36,6 +92,48 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "title": "Backtracking",
             "type": "learn",
             "estMinutes": 4,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/216",
+            "title": "Combination Sum III",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/77",
+            "title": "Combinations",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/17",
+            "title": "Letter Combinations of a Phone Number",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/46",
+            "title": "Permutations",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/51",
+            "title": "N-Queens",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/37",
+            "title": "Sudoku Solver",
+            "type": "practice",
+            "estMinutes": 20,
             "isPrimary": true
         }
     ],
@@ -77,6 +175,20 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "title": "Binary Search",
             "type": "learn",
             "estMinutes": 7,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/528",
+            "title": "Random Pick with Weight",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/74",
+            "title": "Search a 2D Matrix",
+            "type": "practice",
+            "estMinutes": 15,
             "isPrimary": true
         }
     ],
@@ -130,6 +242,27 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "type": "learn",
             "estMinutes": 4,
             "isPrimary": true
+        },
+        {
+            "href": "/session/practice/746",
+            "title": "Min Cost Climbing Stairs",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/1155",
+            "title": "Number of Dice Rolls With Target Sum",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/96",
+            "title": "Unique Binary Search Trees",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
         }
     ],
     "fast-slow-pointers.cycle-detection": [
@@ -139,9 +272,51 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "type": "learn",
             "estMinutes": 4,
             "isPrimary": true
+        },
+        {
+            "href": "/session/practice/876",
+            "title": "Middle of the Linked List",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/142",
+            "title": "Linked List Cycle II",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
         }
     ],
     "graph.representation": [
+        {
+            "href": "/session/practice/721",
+            "title": "Accounts Merge",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/547",
+            "title": "Number of Provinces",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/1101",
+            "title": "The Earliest Moment When Everyone Become Friends",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/1361",
+            "title": "Validate Binary Tree Nodes",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
         {
             "href": "/learn/dsa/graphs",
             "title": "Graphs",
@@ -165,6 +340,69 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "title": "Graphs",
             "type": "learn",
             "estMinutes": 6,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/2385",
+            "title": "Amount of Time for Binary Tree to Be Infected",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/787",
+            "title": "Cheapest Flights Within K Stops",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/743",
+            "title": "Network Delay Time",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/200",
+            "title": "Number of Islands",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/505",
+            "title": "The Maze II",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/286",
+            "title": "Walls and Gates",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/815",
+            "title": "Bus Routes",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/827",
+            "title": "Making A Large Island",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/317",
+            "title": "Shortest Distance from All Buildings",
+            "type": "practice",
+            "estMinutes": 20,
             "isPrimary": true
         }
     ],
@@ -193,6 +431,20 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "isPrimary": true
         },
         {
+            "href": "/session/practice/269",
+            "title": "Alien Dictionary",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/631",
+            "title": "Design Excel Sum Formula",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
             "href": "/learn/dsa/graphs",
             "title": "Graphs",
             "type": "learn",
@@ -201,6 +453,48 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
         }
     ],
     "hash.collision-handling": [
+        {
+            "href": "/session/practice/1",
+            "title": "Two Sum",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/49",
+            "title": "Group Anagrams",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/380",
+            "title": "Insert Delete GetRandom O(1)",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/2260",
+            "title": "Minimum Consecutive Cards to Pick Up",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/1010",
+            "title": "Pairs of Songs With Total Durations Divisible by 60",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/981",
+            "title": "Time Based Key-Value Store",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
         {
             "href": "/learn/dsa/hash-maps-and-sets",
             "title": "Hash Maps and Sets",
@@ -265,6 +559,41 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "title": "Linked Lists",
             "type": "learn",
             "estMinutes": 6,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/21",
+            "title": "Merge Two Sorted Lists",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/2",
+            "title": "Add Two Numbers",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/146",
+            "title": "LRU Cache",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/143",
+            "title": "Reorder List",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/432",
+            "title": "All O`one Data Structure",
+            "type": "practice",
+            "estMinutes": 20,
             "isPrimary": true
         }
     ],
@@ -368,6 +697,13 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "type": "learn",
             "estMinutes": 4,
             "isPrimary": true
+        },
+        {
+            "href": "/session/practice/904",
+            "title": "Fruit Into Baskets",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
         }
     ],
     "stack.call-stack-relationship": [
@@ -386,6 +722,34 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "type": "learn",
             "estMinutes": 5,
             "isPrimary": true
+        },
+        {
+            "href": "/session/practice/155",
+            "title": "Min Stack",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/735",
+            "title": "Asteroid Collision",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/227",
+            "title": "Basic Calculator II",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/921",
+            "title": "Minimum Add to Make Parentheses Valid",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
         }
     ],
     "stack.monotonic": [
@@ -394,6 +758,27 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "title": "Monotonic Stack",
             "type": "learn",
             "estMinutes": 4,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/739",
+            "title": "Daily Temperatures",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/84",
+            "title": "Largest Rectangle in Histogram",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/1944",
+            "title": "Number of Visible People in a Queue",
+            "type": "practice",
+            "estMinutes": 20,
             "isPrimary": true
         }
     ],
@@ -570,6 +955,90 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
     ],
     "tree.properties": [
         {
+            "href": "/session/practice/993",
+            "title": "Cousins in Binary Tree",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/543",
+            "title": "Diameter of Binary Tree",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/515",
+            "title": "Find Largest Value in Each Tree Row",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/973",
+            "title": "K Closest Points to Origin",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/236",
+            "title": "Lowest Common Ancestor of a Binary Tree",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/253",
+            "title": "Meeting Rooms II",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/129",
+            "title": "Sum Root to Leaf Numbers",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/347",
+            "title": "Top K Frequent Elements",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/98",
+            "title": "Validate Binary Search Tree",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/23",
+            "title": "Merge k Sorted Lists",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/297",
+            "title": "Serialize and Deserialize Binary Tree",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/428",
+            "title": "Serialize and Deserialize N-ary Tree",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
+        },
+        {
             "href": "/learn/dsa/trees",
             "title": "Trees",
             "type": "learn",
@@ -593,6 +1062,20 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "type": "learn",
             "estMinutes": 6,
             "isPrimary": true
+        },
+        {
+            "href": "/session/practice/1268",
+            "title": "Search Suggestions System",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/588",
+            "title": "Design In-Memory File System",
+            "type": "practice",
+            "estMinutes": 20,
+            "isPrimary": true
         }
     ],
     "two-pointers.technique": [
@@ -601,6 +1084,48 @@ export const GENERATED_CONCEPT_INDEX: ConceptIndex = {
             "title": "Two Pointers",
             "type": "learn",
             "estMinutes": 4,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/160",
+            "title": "Intersection of Two Linked Lists",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/283",
+            "title": "Move Zeroes",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/167",
+            "title": "Two Sum II - Input Array Is Sorted",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/680",
+            "title": "Valid Palindrome II",
+            "type": "practice",
+            "estMinutes": 10,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/16",
+            "title": "3Sum Closest",
+            "type": "practice",
+            "estMinutes": 15,
+            "isPrimary": true
+        },
+        {
+            "href": "/session/practice/75",
+            "title": "Sort Colors",
+            "type": "practice",
+            "estMinutes": 15,
             "isPrimary": true
         }
     ],

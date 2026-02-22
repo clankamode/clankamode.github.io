@@ -26,12 +26,12 @@ export function useMediaHandlers({
 }: UseMediaHandlersProps) {
     const storeRecentMedia = useCallback((url: string, name?: string) => {
         try {
-            const existing = JSON.parse(localStorage.getItem(RECENT_MEDIA_KEY) || '[]') as {
+            const existing = JSON.parse(window.localStorage.getItem(RECENT_MEDIA_KEY) || '[]') as {
                 url: string;
                 name?: string;
             }[];
             const next = [{ url, name }, ...existing.filter((item) => item.url !== url)].slice(0, 24);
-            localStorage.setItem(RECENT_MEDIA_KEY, JSON.stringify(next));
+            window.localStorage.setItem(RECENT_MEDIA_KEY, JSON.stringify(next));
             window.dispatchEvent(new Event('media:recent-updated'));
         } catch (error) {
             console.error('Unable to store recent media', error);

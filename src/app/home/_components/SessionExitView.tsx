@@ -8,13 +8,30 @@ import { logTelemetryEvent } from '@/lib/telemetry';
 import { AnimatePresence, motion } from 'framer-motion';
 import { proposeRitualChoices, type IntentType } from '@/lib/ritual_prompts';
 import Link from 'next/link';
+import { EXECUTION_SURFACE_LAYOUT_CLASS } from '@/components/session/ExecutionSurface';
+
+const formatConceptLabel = (slug: string | null) => {
+    if (!slug) return 'Concept';
+    if (slug.includes(' ')) return slug;
+
+    const parts = slug.split('.');
+    const distinct = parts[parts.length - 1];
+    if (!distinct) return slug;
+
+    return distinct
+        .split(/[-_]/)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+};
 
 export default function SessionExitView() {
     const { state, commitSession, setGenerating } = useSessionContext();
     const router = useRouter();
-    const [isFinalizing, setIsFinalizing] = useState(false);
+    const [finalizeStatus, setFinalizeStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [finalizeError, setFinalizeError] = useState<string | null>(null);
     const [hasFinalized, setHasFinalized] = useState(false);
     const hasFinalizedRef = useRef(false);
+    const finalizeInFlightRef = useRef<Promise<boolean> | null>(null);
 
     const [ritualStatus, setRitualStatus] = useState<'pending' | 'completed' | 'skipped'>('pending');
 
@@ -74,31 +91,62 @@ export default function SessionExitView() {
         return true;
     };
 
-    const finalizeAndReturn = async (skipped = false) => {
-        if (hasFinalizedRef.current || isFinalizing) {
-            setGenerating();
-            router.replace('/home');
-            router.refresh();
-            return;
+    const runFinalize = async (skipped = false): Promise<boolean> => {
+        if (hasFinalizedRef.current) {
+            setFinalizeStatus('success');
+            return true;
+        }
+        if (finalizeInFlightRef.current) {
+            return finalizeInFlightRef.current;
         }
 
+        setFinalizeError(null);
+        setFinalizeStatus('loading');
         const payload = {
             ...finalizePayload,
             skipped,
             reflectionCompletedAt: skipped ? null : new Date().toISOString(),
         };
 
-        setIsFinalizing(true);
-        try {
-            await fetch('/api/session/finalize', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-            setHasFinalized(true);
-            hasFinalizedRef.current = true;
-        } finally {
-            setIsFinalizing(false);
+        const pendingFinalize = (async () => {
+            try {
+                const response = await fetch('/api/session/finalize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                if (!response.ok) {
+                    setFinalizeStatus('error');
+                    setFinalizeError('Unable to save session. Try again.');
+                    return false;
+                }
+                setHasFinalized(true);
+                hasFinalizedRef.current = true;
+                setFinalizeStatus('success');
+                return true;
+            } catch {
+                setFinalizeStatus('error');
+                setFinalizeError('Unable to save session. Try again.');
+                return false;
+            } finally {
+                finalizeInFlightRef.current = null;
+            }
+        })();
+
+        finalizeInFlightRef.current = pendingFinalize;
+        return pendingFinalize;
+    };
+
+    const finalizeAndReturn = async (skipped = false) => {
+        if (hasFinalizedRef.current) {
+            setGenerating();
+            router.replace('/home');
+            router.refresh();
+            return;
+        }
+
+        const finalized = await runFinalize(skipped);
+        if (finalized) {
             setGenerating();
             router.replace('/home');
             router.refresh();
@@ -114,11 +162,14 @@ export default function SessionExitView() {
 
         const finalizeOnPageHide = () => {
             if (hasFinalizedRef.current) return;
+            if (finalizeInFlightRef.current) return;
             if (!state.scope?.sessionId) return;
 
             const sent = sendFinalizeBeacon(finalizePayload);
             if (sent) {
                 hasFinalizedRef.current = true;
+                setHasFinalized(true);
+                setFinalizeStatus('success');
             }
         };
 
@@ -172,26 +223,37 @@ export default function SessionExitView() {
 
     if (wasAbandoned) {
         return (
-            <main className="min-h-screen bg-background flex items-center justify-center">
-                <div className="max-w-md mx-auto px-6 text-center">
-                    <p className="text-sm font-medium uppercase tracking-[0.2em] text-text-muted mb-6">
-                        Session ended early
-                    </p>
-                    <h1 className="text-3xl font-bold text-text-primary mb-4">
-                        Good checkpoint.
-                    </h1>
-                    <p className="text-text-secondary mb-12">
-                        You kept the chain alive. Come back when you&apos;re ready and pick up right where you left off.
-                    </p>
+            <div 
+                className="min-h-screen bg-background text-text-primary"
+                data-chrome-mode="exit"
+                data-has-micro-proposal="false"
+            >
+                <ExitHeader trackName={trackName} />
+                <main className="pt-16 pb-20">
+                    <div className={EXECUTION_SURFACE_LAYOUT_CLASS}>
+                        <div className="max-w-md mx-auto text-center pt-24">
+                            <p className="text-sm font-medium uppercase tracking-[0.2em] text-text-muted mb-6">
+                                Session ended early
+                            </p>
+                            <h1 className="text-3xl font-bold text-text-primary mb-4">
+                                Good checkpoint.
+                            </h1>
+                            <p className="text-text-secondary mb-12">
+                                Pick up right where you left off next time.
+                            </p>
 
-                    <button
-                        onClick={returnToDashboard}
-                        className="w-full py-4 rounded-full border border-border-interactive/60 bg-surface-interactive/30 text-text-primary font-medium transition-all hover:border-border-interactive/85 hover:bg-surface-interactive/45"
-                    >
-                        Return to gate
-                    </button>
-                </div>
-            </main>
+                            <button
+                                onClick={returnToDashboard}
+                                disabled={finalizeStatus === 'loading'}
+                                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-emerald-500 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400"
+                            >
+                                {finalizeStatus === 'loading' ? 'Saving...' : finalizeStatus === 'error' ? 'Retry' : 'Continue'}
+                            </button>
+                            {finalizeError && <p className="mt-3 text-xs text-red-400">{finalizeError}</p>}
+                        </div>
+                    </div>
+                </main>
+            </div>
         );
     }
 
@@ -214,41 +276,51 @@ export default function SessionExitView() {
     };
 
     return (
-        <main
-            className="min-h-screen bg-background flex items-center justify-center py-12 relative"
+        <div
+            className="min-h-screen bg-background text-text-primary"
             data-chrome-mode="exit"
             data-has-micro-proposal={!!state.exit.microSessionProposal}
             data-ritual-status={ritualStatus}
+            data-finalize-status={finalizeStatus}
         >
-            <div className="max-w-md mx-auto px-6 w-full">
+            <ExitHeader
+                trackName={trackName}
+                rightLabel={`${completedCount} step${completedCount === 1 ? '' : 's'} · ${Math.max(1, durationMinutes)} min`}
+            />
+            <main className="pt-16 pb-20">
+                <div className={EXECUTION_SURFACE_LAYOUT_CLASS}>
+                    <div className="max-w-md mx-auto w-full pt-12">
                 <AnimatePresence mode="wait">
                     {ritualStatus === 'pending' ? (
                         <motion.div
                             key="ritual-flow"
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
+                            exit={{ opacity: 0, transition: { duration: 0.15 } }}
                             transition={{ duration: 0.3, ease: 'easeOut' }}
                         >
-                            <div className="text-center mb-10">
-                                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-accent-primary mb-4">
-                                    Session completed
-                                </p>
-                                <h1 className="text-4xl font-bold text-text-primary tracking-tight">
-                                    Lock it in.
-                                </h1>
+                            <div className="text-center mb-12">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                                >
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-text-muted mb-6">
+                                        Session completed
+                                    </p>
+                                    <h1 className="text-4xl md:text-5xl font-bold text-text-primary tracking-tight">
+                                        Session Complete
+                                    </h1>
+                                </motion.div>
                             </div>
 
-                            <div className="bg-surface-interactive border border-border-subtle rounded-2xl p-7 mb-10 relative group transition-all duration-300">
-                                <div className="space-y-6">
-                                    <div className="flex items-center justify-between text-[10px] text-text-muted uppercase tracking-widest font-sans font-bold">
-                                        <span>{trackName}</span>
-                                        <div className="flex items-center gap-2">
-                                            <span className="w-1 h-1 rounded-full bg-border-interactive" />
-                                            <span>{completedCount} steps · {durationMinutes} min</span>
-                                        </div>
-                                    </div>
-
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.97 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.4, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
+                                className="bg-surface-interactive border border-border-subtle rounded-2xl p-8 mb-12"
+                            >
+                                <div className="space-y-8">
                                     {primaryConceptLabel && (
                                         <div>
                                             <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-text-muted mb-2">
@@ -280,7 +352,7 @@ export default function SessionExitView() {
                                         </div>
                                     )}
                                 </div>
-                            </div>
+                            </motion.div>
 
                             <InternalizationRitual
                                 primaryConcept={state.exit.primaryConcept || primaryConceptSlug}
@@ -292,25 +364,38 @@ export default function SessionExitView() {
                     ) : (
                         <motion.div
                             key="proposal-flow"
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1], delay: 0.1 }}
+                            transition={{ duration: 0.25, ease: 'easeOut' }}
                             className="text-center"
                         >
                             {state.exit.microSessionProposal ? (
-                                <div className="space-y-8">
-                                    <div className="space-y-2">
-                                        <h2 className="text-2xl font-bold text-text-primary tracking-tight">
-                                            Keep the momentum?
+                                <div className="space-y-6">
+                                    <div>
+                                        <h2 className="text-xl font-semibold text-text-primary tracking-tight">
+                                            Next practice
                                         </h2>
-                                        <p className="text-sm text-text-secondary max-w-[280px] mx-auto leading-relaxed">
-                                            You&apos;re in flow. One constraint, one targeted payoff.
-                                        </p>
+                                    </div>
+
+                                    <div className="bg-surface-interactive border border-border-subtle rounded-2xl p-7">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
+                                                Practice Drill
+                                            </span>
+                                            <span className="px-2 py-0.5 rounded-full bg-surface-dense text-[9px] font-bold uppercase tracking-widest text-text-muted border border-border-subtle">
+                                                {state.exit.microSessionProposal.estimatedMinutes}m
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-semibold text-text-primary leading-tight">
+                                            {state.exit.microSessionProposal.label}
+                                        </h3>
                                     </div>
 
                                     <button
-                                        onClick={() => {
+                                        onClick={async () => {
                                             if (!state.exit?.microSessionProposal) return;
+                                            const finalized = await runFinalize(ritualStatus === 'skipped');
+                                            if (!finalized) return;
                                             const proposal = state.exit.microSessionProposal;
 
                                             const microItems: SessionItem[] = proposal.items.map(i => ({
@@ -349,65 +434,51 @@ export default function SessionExitView() {
                                                 router.push(microItems[0].href);
                                             }
                                         }}
-                                        className="w-full text-left bg-surface-interactive border border-border-subtle rounded-2xl p-7 transition-all duration-300 hover:border-border-interactive hover:-translate-y-1 hover:shadow-xl group"
+                                        disabled={finalizeStatus === 'loading'}
+                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-emerald-500 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400"
                                     >
-                                        <div className="flex justify-between items-center mb-4">
-                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent-primary">
-                                                Lock In This Concept
-                                            </span>
-                                            <span className="px-2 py-0.5 rounded-full bg-accent-primary/5 text-[9px] font-bold uppercase tracking-widest text-accent-primary/80 border border-accent-primary/10">
-                                                {state.exit.microSessionProposal.estimatedMinutes}m
-                                            </span>
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-text-primary transition-colors leading-tight">
-                                            {state.exit.microSessionProposal.label}
-                                        </h3>
-                                        <p className="text-sm text-text-muted mt-3 leading-relaxed">
-                                            Pressure-test the pattern you just learned with a targeted implementation drill.
-                                        </p>
-
-                                        <div className="mt-8 flex items-center justify-between">
-                                            <span className="text-xs font-medium text-text-secondary group-hover:text-text-primary transition-colors flex items-center gap-2">
-                                                Start Drill
-                                                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                                </svg>
-                                            </span>
-                                        </div>
+                                        {finalizeStatus === 'loading' ? 'Saving...' : finalizeStatus === 'error' ? 'Retry' : 'Begin Practice'}
+                                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
                                     </button>
 
                                     <button
                                         onClick={returnToDashboard}
-                                        disabled={isFinalizing}
-                                        className="inline-block text-[11px] font-bold uppercase tracking-[0.2em] text-text-muted hover:text-text-primary transition-colors py-4 px-8"
+                                        disabled={finalizeStatus === 'loading'}
+                                        className="inline-block text-[11px] font-bold uppercase tracking-[0.2em] text-text-muted hover:text-text-primary transition-colors py-2"
                                     >
-                                        {isFinalizing ? 'Saving...' : 'Return to dashboard'}
+                                        {finalizeStatus === 'loading' ? 'Saving...' : 'Skip'}
                                     </button>
+                                    {finalizeError && <p className="text-xs text-red-400">{finalizeError}</p>}
                                 </div>
                             ) : (
-                                <div className="space-y-8">
-                                    <div className="w-16 h-16 bg-accent-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <svg className="w-8 h-8 text-accent-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className="space-y-6">
+                                    <div className="w-12 h-12 bg-surface-dense border border-border-subtle rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <svg className="w-6 h-6 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                         </svg>
                                     </div>
-                                    <h2 className="text-2xl font-bold text-text-primary tracking-tight">
-                                        Done for now.
+                                    <h2 className="text-xl font-semibold text-text-primary tracking-tight">
+                                        Session saved
                                     </h2>
                                     <button
                                         onClick={returnToDashboard}
-                                        disabled={isFinalizing}
-                                        className="w-full py-4 rounded-full bg-foreground text-background font-bold text-sm uppercase tracking-widest hover:opacity-90 transition-all shadow-lg"
+                                        disabled={finalizeStatus === 'loading'}
+                                        className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-emerald-500 disabled:opacity-70 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400"
                                     >
-                                        {isFinalizing ? 'Saving...' : 'Return to dashboard'}
+                                        {finalizeStatus === 'loading' ? 'Saving...' : finalizeStatus === 'error' ? 'Retry' : 'Continue'}
                                     </button>
+                                    {finalizeError && <p className="text-xs text-red-400">{finalizeError}</p>}
                                 </div>
                             )}
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </div>
-        </main>
+                    </div>
+                </div>
+            </main>
+        </div>
     );
 }
 
@@ -427,6 +498,7 @@ function InternalizationRitual({
     const [text, setText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     const choices = primaryConcept ? proposeRitualChoices({
         primaryConcept,
@@ -437,42 +509,48 @@ function InternalizationRitual({
 
     const handleCommit = async () => {
         setIsSubmitting(true);
-        if (state.scope?.userId) {
-            logTelemetryEvent({
-                userId: state.scope.userId,
-                trackSlug: state.scope.track.slug,
-                sessionId: state.scope.sessionId || 'unknown',
-                eventType: 'ritual_completed',
-                mode: 'exit',
-                payload: {
-                    choiceType,
-                    textLength: text.length,
-                    conceptSlug: primaryConcept
-                },
-                dedupeKey: `ritual_${state.scope.sessionId}`
-            });
-
-            const choiceLabel = choiceType === 'A' ? choices?.a : (choiceType === 'B' ? choices?.b : null);
-            const finalNote = choiceType === 'FREEFORM' ? text : (choiceLabel || '');
-
-            const { saveInternalization } = await import('@/app/actions/internalize');
-            await saveInternalization(
-                {
+        setSubmitError(null);
+        try {
+            if (state.scope?.userId) {
+                logTelemetryEvent({
+                    userId: state.scope.userId,
+                    trackSlug: state.scope.track.slug,
                     sessionId: state.scope.sessionId || 'unknown',
-                    picked: choiceType!,
-                    concept: primaryConcept || 'unknown',
-                    note: finalNote,
-                    createdAt: new Date().toISOString(),
-                    delta: state.exit?.delta,
-                },
-                state.scope.userId,
-                state.scope.track.slug,
-                state.scope.googleId
-            );
-        }
+                    eventType: 'ritual_completed',
+                    mode: 'exit',
+                    payload: {
+                        choiceType,
+                        textLength: text.length,
+                        conceptSlug: primaryConcept
+                    },
+                    dedupeKey: `ritual_${state.scope.sessionId}`
+                });
 
-        setIsSubmitting(false);
-        setShowSuccess(true);
+                const choiceLabel = choiceType === 'A' ? choices?.a : (choiceType === 'B' ? choices?.b : null);
+                const finalNote = choiceType === 'FREEFORM' ? text : (choiceLabel || '');
+
+                const { saveInternalization } = await import('@/app/actions/internalize');
+                await saveInternalization(
+                    {
+                        sessionId: state.scope.sessionId || 'unknown',
+                        picked: choiceType!,
+                        concept: primaryConcept || 'unknown',
+                        note: finalNote,
+                        createdAt: new Date().toISOString(),
+                        delta: state.exit?.delta,
+                    },
+                    state.scope.userId,
+                    state.scope.track.slug,
+                    state.scope.googleId
+                );
+            }
+
+            setShowSuccess(true);
+        } catch {
+            setSubmitError('Could not save reflection. Try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleSkip = () => {
@@ -499,31 +577,29 @@ function InternalizationRitual({
                 {showSuccess ? (
                     <motion.div
                         key="receipt-card"
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
-                        className="bg-surface-interactive border border-accent-primary/20 rounded-2xl p-8 text-center relative overflow-hidden group"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        className="bg-surface-interactive border border-border-subtle rounded-2xl p-8 text-center"
                     >
-                        <div className="absolute inset-0 bg-accent-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-                        <div className="relative z-10 flex flex-col items-center">
-                            <div className="w-16 h-16 rounded-full bg-accent-primary/10 flex items-center justify-center mb-4 ring-1 ring-accent-primary/20">
-                                <svg className="w-8 h-8 text-accent-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="flex flex-col items-center">
+                            <div className="w-12 h-12 rounded-full bg-surface-dense border border-border-subtle flex items-center justify-center mb-4">
+                                <svg className="w-6 h-6 text-text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                     <polyline points="20 6 9 17 4 12" />
                                 </svg>
                             </div>
 
-                            <p className="text-[10px] uppercase tracking-[0.25em] text-accent-primary font-bold mb-2">
+                            <p className="text-[10px] uppercase tracking-[0.25em] text-text-muted font-bold mb-2">
                                 Internalization Confirmed
                             </p>
 
-                            <h2 className="text-2xl font-bold text-text-primary mb-6">
-                                Locked in: <span className="text-accent-primary">{primaryConcept || 'Concept'}</span>
+                            <h2 className="text-xl font-semibold text-text-primary mb-6">
+                                {formatConceptLabel(primaryConcept)}
                             </h2>
 
                             <button
                                 onClick={onReceiptContinue}
-                                className="w-full py-3 rounded-full bg-text-primary text-surface-ambient font-bold text-xs uppercase tracking-widest hover:bg-text-primary/90 transition-all mb-4"
+                                className="w-full inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-emerald-500 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400 mb-4"
                             >
                                 Continue
                             </button>
@@ -540,7 +616,7 @@ function InternalizationRitual({
                 ) : (
                     <motion.div
                         key="ritual-input"
-                        exit={{ opacity: 0, y: -20 }}
+                        exit={{ opacity: 0, y: -8 }}
                         className="space-y-3"
                     >
                         {isMapped && choices ? (
@@ -560,54 +636,45 @@ function InternalizationRitual({
                                                 setText(opt.label);
                                             }}
                                             className={`
-                                                relative w-full p-5 rounded-xl border text-left transition-all duration-300 group overflow-hidden
+                                                relative w-full p-5 rounded-xl border text-left transition-all duration-200
                                                 ${isSelected
-                                                    ? 'bg-accent-primary/5 border-accent-primary/40 text-text-primary ring-1 ring-accent-primary/20 scale-[1.02] shadow-lg'
+                                                    ? 'bg-surface-dense border-border-interactive text-text-primary'
                                                     : isOtherSelected
-                                                        ? 'bg-transparent border-border-subtle text-text-muted opacity-50 hover:opacity-100 grayscale hover:grayscale-0'
-                                                        : 'bg-surface-interactive border-border-subtle text-text-secondary hover:border-border-interactive hover:bg-surface-dense hover:-translate-y-0.5'
+                                                        ? 'bg-transparent border-border-subtle text-text-muted opacity-40 hover:opacity-70'
+                                                        : 'bg-surface-interactive border-border-subtle text-text-secondary hover:border-border-interactive hover:bg-surface-dense'
                                                 }
                                             `}
                                         >
-                                            <div className="flex items-start gap-4 relative z-10">
+                                            <div className="flex items-start gap-4">
                                                 <div className={`
-                                                    w-5 h-5 rounded-full border flex-shrink-0 flex items-center justify-center transition-all duration-300 mt-0.5
+                                                    w-5 h-5 rounded-full border flex-shrink-0 flex items-center justify-center transition-all duration-200 mt-0.5
                                                     ${isSelected
-                                                        ? 'border-accent-primary bg-accent-primary scale-110'
+                                                        ? 'border-border-interactive bg-surface-workbench'
                                                         : isOtherSelected
                                                             ? 'border-border-subtle opacity-50'
-                                                            : 'border-border-interactive group-hover:border-text-muted'
+                                                            : 'border-border-interactive'
                                                     }
                                                 `}>
                                                     {isSelected && (
                                                         <motion.svg
                                                             initial={{ scale: 0 }}
                                                             animate={{ scale: 1 }}
-                                                            className="w-3.5 h-3.5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"
+                                                            className="w-3 h-3 text-text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
                                                         >
                                                             <path d="M5 13l4 4L19 7" />
                                                         </motion.svg>
                                                     )}
                                                 </div>
-                                                <span className={`text-sm font-medium leading-relaxed pr-2 transition-colors duration-300 ${isSelected ? 'text-text-primary' : 'text-text-secondary'}`}>
+                                                <span className={`text-sm font-medium leading-relaxed pr-2 transition-colors duration-200 ${isSelected ? 'text-text-primary' : 'text-text-secondary'}`}>
                                                     {opt.label}
                                                 </span>
                                             </div>
-                                            {isSelected && (
-                                                <motion.div
-                                                    layoutId="ritual-choice-glow"
-                                                    className="absolute inset-0 bg-gradient-to-r from-accent-primary/10 via-accent-primary/5 to-transparent pointer-events-none"
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    transition={{ duration: 0.3 }}
-                                                />
-                                            )}
                                         </button>
                                     );
                                 })}
                             </div>
                         ) : (
-                            <div className="relative group">
+                            <div className="relative">
                                 <textarea
                                     value={text}
                                     onChange={(e) => {
@@ -615,16 +682,14 @@ function InternalizationRitual({
                                         setChoiceType('FREEFORM');
                                     }}
                                     placeholder="In one sentence: what clicked?"
-                                    className={`
-                                        w-full bg-surface-interactive border rounded-xl p-5 text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-accent-primary/30 transition-all min-h-[120px] resize-none text-sm leading-relaxed
-                                        ${choiceType === 'FREEFORM'
-                                            ? 'border-accent-primary/40 bg-surface-dense'
-                                            : 'border-border-subtle focus:border-accent-primary/30'
-                                        }
-                                    `}
+                                    className="w-full bg-surface-dense border border-border-subtle rounded-xl p-6 text-base font-mono text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:border-border-interactive transition-all min-h-[140px] resize-none leading-relaxed"
                                 />
-                                <div className="absolute bottom-4 right-4 text-[10px] text-text-muted uppercase tracking-widest font-bold opacity-60 group-focus-within:opacity-100 transition-opacity">
-                                    {text.length} / 12
+                                <div className={`absolute bottom-4 right-4 text-[10px] uppercase tracking-widest font-bold transition-all duration-300 ${text.length >= 12 ? 'text-text-muted opacity-100' : 'text-text-muted opacity-40'}`}>
+                                    {text.length < 12 ? (
+                                        <span>{text.length}/12</span>
+                                    ) : (
+                                        <span>Ready</span>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -642,12 +707,12 @@ function InternalizationRitual({
                                     onClick={handleCommit}
                                     disabled={isSubmitting || showSuccess}
                                     className={`
-                                        w-full py-4 rounded-full font-bold text-xs uppercase tracking-[0.2em] transition-all duration-500 relative overflow-hidden
+                                        w-full inline-flex items-center justify-center rounded-xl py-3 px-6 text-sm font-medium transition-all duration-300 relative overflow-hidden
                                         ${showSuccess
-                                            ? 'bg-accent-primary text-black'
-                                            : 'bg-foreground text-background hover:opacity-90 shadow-[0_8px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)] hover:-translate-y-0.5'
+                                            ? 'bg-surface-dense text-text-secondary'
+                                            : 'bg-emerald-600 text-white hover:bg-emerald-500'
                                         }
-                                        disabled:opacity-70 disabled:hover:translate-y-0
+                                        disabled:opacity-70 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400
                                     `}
                                 >
                                     <span className={`transition-all duration-300 ${isSubmitting || showSuccess ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}>
@@ -655,14 +720,14 @@ function InternalizationRitual({
                                     </span>
 
                                     <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isSubmitting ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
-                                        <svg className="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <svg className="animate-spin h-5 w-5 text-background" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
                                     </div>
 
                                     <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${showSuccess ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
-                                        <svg className="h-6 w-6 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <svg className="h-5 w-5 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="20 6 9 17 4 12" />
                                         </svg>
                                     </div>
@@ -676,10 +741,26 @@ function InternalizationRitual({
                             >
                                 Skip for now
                             </button>
+                            {submitError && <p className="text-center text-xs text-red-400">{submitError}</p>}
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
         </div>
+    );
+}
+
+function ExitHeader({ trackName, rightLabel }: { trackName: string; rightLabel?: string }) {
+    return (
+        <header className="fixed top-0 left-0 right-0 z-50 border-b border-border-interactive/28 bg-background/92">
+            <div className={`${EXECUTION_SURFACE_LAYOUT_CLASS} py-1.5`}>
+                <div className="flex items-center justify-between font-mono text-[11px] tracking-[0.03em] text-text-muted">
+                    <div className="flex min-w-0 items-center gap-1.5">
+                        <span className="text-[12px] uppercase text-text-primary/95">Session {trackName}</span>
+                        {rightLabel && <span className="text-text-secondary">{rightLabel}</span>}
+                    </div>
+                </div>
+            </div>
+        </header>
     );
 }

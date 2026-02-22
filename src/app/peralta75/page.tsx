@@ -1,17 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { PERALTA_75_LIST, QuestionCategory } from "./consts"
 
 import type { LeetCodeQuestion } from './consts';
-
-type SolvedSubmission = {
-  question_id: string;
-  solved: boolean;
-  InterviewQuestions?: { leetcode_number: number | null } | { leetcode_number: number | null }[] | null;
-};
 
 // Add custom keyframes for the gradient animation
 const gradientAnimation = `
@@ -22,55 +16,193 @@ const gradientAnimation = `
 }
 `;
 
+const LOCAL_SOLVED_STORAGE_KEY = 'solvedQuestions';
+const LOCAL_IMPORT_FLAG_KEY = 'peralta75:imported:v1';
+
+type ProgressStatus = 'attempted' | 'solved';
+type ProgressOrigin = 'manual' | 'execution';
+
+interface ProgressUpdate {
+  leetcodeNumber: number;
+  status: ProgressStatus;
+  origin?: ProgressOrigin;
+}
+
+interface ProgressResponse {
+  progress?: Record<string, {
+    status: ProgressStatus;
+    attemptedAt: string | null;
+    solvedAt: string | null;
+  }>;
+}
+
 export default function Component() {
+  const { status: authStatus } = useSession();
+  const isAuthenticated = authStatus === 'authenticated';
   const [isVisible, setIsVisible] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [solvedQuestions, setSolvedQuestions] = useState<Set<number>>(new Set())
-  const { data: session } = useSession();
+  const [attemptedQuestions, setAttemptedQuestions] = useState<Set<number>>(new Set())
 
-  // Load solved from localStorage on mount, then merge in DB-solved when logged in
-  useEffect(() => {
-    setIsVisible(true);
-    const savedSolved = localStorage.getItem('solvedQuestions');
-    const localSet = savedSolved ? new Set(JSON.parse(savedSolved) as number[]) : new Set<number>();
-    setSolvedQuestions(localSet);
+  const saveProgressUpdates = useCallback(async (updates: ProgressUpdate[]): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/peralta75/progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ updates }),
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
   }, []);
 
-  // When logged in, fetch DB-solved and merge with localStorage (either = show as solved)
-  useEffect(() => {
-    if (!session) return;
-    fetch('/api/questions/solved')
-      .then((res) => (res.ok ? res.json() : []))
-      .then((list: SolvedSubmission[]) => {
-        const fromApi = (list ?? [])
-          .filter((s) => s.solved)
-          .map((s) => {
-            const q = Array.isArray(s.InterviewQuestions) ? s.InterviewQuestions[0] : s.InterviewQuestions;
-            return q?.leetcode_number;
-          })
-          .filter((n): n is number => n != null);
-        setSolvedQuestions((prev) => new Set([...prev, ...fromApi]));
-      })
-      .catch(() => {});
-  }, [session]);
+  const loadUserProgress = useCallback(async () => {
+    try {
+      const response = await fetch('/api/peralta75/progress');
+      if (!response.ok) {
+        return false;
+      }
 
-  // Save solved questions to localStorage whenever they change (local-only; DB is updated only when passing all tests in code execution)
-  useEffect(() => {
-    localStorage.setItem('solvedQuestions', JSON.stringify([...solvedQuestions]));
-  }, [solvedQuestions]);
+      const payload = await response.json() as ProgressResponse;
+      const solved = new Set<number>();
+      const attempted = new Set<number>();
 
-  const toggleSolved = (questionId: number, event: React.MouseEvent) => {
+      for (const [key, entry] of Object.entries(payload.progress || {})) {
+        const leetcodeNumber = Number(key);
+        if (!Number.isInteger(leetcodeNumber) || leetcodeNumber <= 0) {
+          continue;
+        }
+
+        if (entry.status === 'solved') {
+          solved.add(leetcodeNumber);
+          continue;
+        }
+
+        attempted.add(leetcodeNumber);
+      }
+
+      for (const solvedId of solved) {
+        attempted.delete(solvedId);
+      }
+
+      setSolvedQuestions(solved);
+      setAttemptedQuestions(attempted);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  useEffect(() => {
+    if (authStatus === 'loading') {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      const savedSolved = window.localStorage.getItem(LOCAL_SOLVED_STORAGE_KEY);
+      if (savedSolved) {
+        try {
+          const parsed = JSON.parse(savedSolved) as number[];
+          setSolvedQuestions(new Set(parsed.filter((value) => Number.isInteger(value) && value > 0)));
+        } catch {
+          setSolvedQuestions(new Set());
+        }
+      } else {
+        setSolvedQuestions(new Set());
+      }
+      setAttemptedQuestions(new Set());
+      return;
+    }
+
+    const hydrate = async () => {
+      const imported = window.localStorage.getItem(LOCAL_IMPORT_FLAG_KEY);
+      const savedSolved = window.localStorage.getItem(LOCAL_SOLVED_STORAGE_KEY);
+      if (!imported && savedSolved) {
+        try {
+          const parsed = JSON.parse(savedSolved) as number[];
+          const updates = parsed
+            .filter((value) => Number.isInteger(value) && value > 0)
+            .map((leetcodeNumber) => ({ leetcodeNumber, status: 'solved' as const, origin: 'manual' as const }));
+
+          if (updates.length > 0) {
+            await saveProgressUpdates(updates);
+          }
+        } catch {
+        } finally {
+          window.localStorage.setItem(LOCAL_IMPORT_FLAG_KEY, '1');
+        }
+      }
+
+      await loadUserProgress();
+    };
+
+    void hydrate();
+  }, [authStatus, isAuthenticated, loadUserProgress, saveProgressUpdates]);
+
+  useEffect(() => {
+    if (isAuthenticated || authStatus !== 'unauthenticated') {
+      return;
+    }
+    window.localStorage.setItem(LOCAL_SOLVED_STORAGE_KEY, JSON.stringify([...solvedQuestions]));
+  }, [authStatus, isAuthenticated, solvedQuestions]);
+
+  const toggleSolved = async (questionId: number, event: React.MouseEvent) => {
     event.preventDefault(); // Prevent the category from expanding/collapsing
     event.stopPropagation(); // Prevent event bubbling
-    setSolvedQuestions(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(questionId)) {
-        newSet.delete(questionId);
+
+    if (!isAuthenticated) {
+      setSolvedQuestions(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(questionId)) {
+          newSet.delete(questionId);
+        } else {
+          newSet.add(questionId);
+        }
+        return newSet;
+      });
+      return;
+    }
+
+    const wasSolved = solvedQuestions.has(questionId);
+    const nextStatus: ProgressStatus = wasSolved ? 'attempted' : 'solved';
+    const previousSolved = new Set(solvedQuestions);
+    const previousAttempted = new Set(attemptedQuestions);
+
+    setSolvedQuestions((prev) => {
+      const next = new Set(prev);
+      if (wasSolved) {
+        next.delete(questionId);
       } else {
-        newSet.add(questionId);
+        next.add(questionId);
       }
-      return newSet;
+      return next;
     });
+
+    setAttemptedQuestions((prev) => {
+      const next = new Set(prev);
+      if (wasSolved) {
+        next.delete(questionId);
+      } else {
+        next.delete(questionId);
+      }
+      return next;
+    });
+
+    const saved = await saveProgressUpdates([{ leetcodeNumber: questionId, status: nextStatus, origin: 'manual' }]);
+    if (saved) {
+      await loadUserProgress();
+      return;
+    }
+
+    setSolvedQuestions(previousSolved);
+    setAttemptedQuestions(previousAttempted);
   };
 
   const groupedQuestions = PERALTA_75_LIST.reduce(
@@ -267,6 +399,8 @@ export default function Component() {
                           className={`rounded-lg border transition-all duration-300 group
                             ${solvedQuestions.has(question.id)
                               ? 'bg-brand-green/5 border-brand-green/20 opacity-70 hover:opacity-100'
+                              : attemptedQuestions.has(question.id)
+                                ? 'bg-brand-amber/5 border-brand-amber/30 hover:border-brand-amber/45'
                               : 'bg-surface-1 border-border-subtle hover:border-brand-green/30 hover:bg-surface-interactive hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]'}`}
                         >
                           <div className="p-4">
@@ -279,6 +413,8 @@ export default function Component() {
                                     transition-all duration-300
                                     ${solvedQuestions.has(question.id)
                                       ? 'bg-brand-green border-brand-green shadow-[0_0_10px_rgba(44,187,93,0.4)]'
+                                      : attemptedQuestions.has(question.id)
+                                        ? 'border-brand-amber/70 bg-brand-amber/10'
                                       : 'border-muted-foreground/50 hover:border-brand-green hover:shadow-[0_0_10px_-2px_rgba(44,187,93,0.3)]'}`}
                                 >
                                   {solvedQuestions.has(question.id) && (
@@ -335,6 +471,11 @@ export default function Component() {
                                 </a>
                               </div>
                               <div className="flex items-center gap-3 flex-shrink-0">
+                                {attemptedQuestions.has(question.id) && !solvedQuestions.has(question.id) && (
+                                  <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full border border-brand-amber/30 text-brand-amber bg-brand-amber/10">
+                                    Attempted
+                                  </span>
+                                )}
                                 <span
                                   className={`px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full border bg-opacity-10 ${getDifficultyColor(
                                     question.difficulty,
