@@ -26,7 +26,6 @@ interface AnswerDraft {
   currentAnswer: string | null;
 }
 
-// Web Speech API types
 interface SpeechRecognitionResult {
   isFinal: boolean;
   0: { transcript: string };
@@ -66,7 +65,6 @@ function timeAgo(iso: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-// Heights for 48 bars — repeated pattern gives a natural wave shape
 const BAR_HEIGHTS = [3,5,9,6,12,8,14,7,11,5,13,6,10,4,12,8,6,14,5,9,7,13,4,11,6,10,8,14,5,12,7,9,4,13,6,11,8,5,14,7,10,3,12,6,9,5,13,8];
 
 function Waveform({ active }: { active: boolean }) {
@@ -124,7 +122,6 @@ function AnswerModal({
     if (!SR) setSupported(false);
   }, []);
 
-  // Auto-scroll textarea as text grows
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
@@ -186,7 +183,6 @@ function AnswerModal({
     setInterim('');
   }, []);
 
-  // Stop on unmount
   useEffect(() => () => recognitionRef.current?.stop(), []);
 
   const handleSave = async () => {
@@ -220,7 +216,6 @@ function AnswerModal({
             : 'border-border-subtle shadow-[0_0_40px_rgba(0,0,0,0.6)]'
         }`}
       >
-        {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-text-primary">Answer question</h2>
           {isRecording && (
@@ -234,12 +229,10 @@ function AnswerModal({
           )}
         </div>
 
-        {/* Question */}
         <div className="mb-4 rounded-xl border border-border-subtle bg-surface-workbench/60 px-4 py-3">
           <p className="text-sm leading-relaxed text-text-secondary">{draft.question}</p>
         </div>
 
-        {/* Voice section — full width, between question and answer */}
         {supported ? (
           <div
             className={`mb-4 flex w-full items-center gap-4 rounded-xl border px-4 py-4 transition-all duration-300 ${
@@ -281,7 +274,6 @@ function AnswerModal({
           </div>
         ) : null}
 
-        {/* Answer textarea */}
         <div
           className={`relative rounded-xl border transition-all duration-300 ${
             isRecording
@@ -305,7 +297,6 @@ function AnswerModal({
           )}
         </div>
 
-        {/* Actions */}
         <div className="mt-4 flex justify-end gap-2">
           <button
             type="button"
@@ -361,7 +352,6 @@ export function AmaAdminTable() {
   return (
     <>
       <div className="space-y-4">
-        {/* Filters */}
         <div className="flex items-center justify-between">
           <p className="text-sm text-text-muted">{data ? `${data.total} total` : ''}</p>
           <div className="flex gap-1 rounded-lg border border-border-subtle bg-surface-interactive/40 p-1">
@@ -380,7 +370,6 @@ export function AmaAdminTable() {
           </div>
         </div>
 
-        {/* List */}
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
@@ -412,7 +401,7 @@ export function AmaAdminTable() {
 
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-medium text-text-secondary">{q.author_name ?? 'Anonymous'}</span>
+                      <span className="text-sm font-medium text-text-secondary sensitive">{q.author_name ?? 'Anonymous'}</span>
                       <span className="text-xs text-text-muted">{timeAgo(q.created_at)}</span>
                       {q.status === 'answered' && (
                         <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-400">

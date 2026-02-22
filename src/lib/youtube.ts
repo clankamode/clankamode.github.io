@@ -169,6 +169,10 @@ export function formatCount(count: string | number): string {
 }
 
 export async function getChannelStats(channelId: string): Promise<ChannelStats | null> {
+  if (!channelId) {
+    return null;
+  }
+
   const cacheKey = devCache.generateKey('getChannelStats', channelId);
   const cached = devCache.get<ChannelStats>(cacheKey);
   if (cached !== null) {
@@ -252,6 +256,10 @@ export async function getPopularChannelVideos(
   channelId: string,
   maxResults: number = 3
 ): Promise<YouTubeVideo[]> {
+  if (!channelId) {
+    return [];
+  }
+
   const cacheKey = devCache.generateKey('getPopularChannelVideos', channelId, maxResults);
   const cached = devCache.get<YouTubeVideo[]>(cacheKey);
   if (cached !== null) {

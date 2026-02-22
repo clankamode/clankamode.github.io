@@ -8,6 +8,7 @@ import { SignInRecorder } from "@/components/auth/SignInRecorder";
 import { Analytics } from '@vercel/analytics/next';
 import { SessionProvider } from "@/contexts/SessionContext";
 import AppShell from "@/components/layout/AppShell";
+import StreamModeBootstrap from "@/components/dev/StreamModeBootstrap";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 
 const inter = Inter({
@@ -41,6 +42,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${jakarta.variable} ${jetbrains.variable} antialiased`}>
         <AuthProvider session={authSession}>
+          <StreamModeBootstrap />
           <SignInRecorder />
           <SessionProvider>
             <VideoProvider channelId={process.env.YOUTUBE_CHANNEL_ID || ''}>

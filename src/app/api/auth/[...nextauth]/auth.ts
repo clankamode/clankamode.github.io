@@ -1,4 +1,5 @@
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { getSupabaseAdminClient } from "@/lib/supabaseAdmin";
 import { UserRole } from "@/types/roles";
@@ -72,12 +73,50 @@ const getUserIdentity = async (email: string, googleId?: string): Promise<UserId
 };
 
 export const authOptions: NextAuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    }),
-  ],
+  providers: (() => {
+    const providers: NonNullable<NextAuthOptions['providers']> = [];
+    const isProduction = process.env.NODE_ENV === 'production';
+    const googleEnabled = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+    const devAuthEnabled = !isProduction && process.env.DEV_AUTH !== 'false';
+
+    if (googleEnabled) {
+      providers.push(
+        GoogleProvider({
+          clientId: process.env.GOOGLE_CLIENT_ID!,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        })
+      );
+    } else if (isProduction) {
+      throw new Error('Google OAuth is required in production. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.');
+    }
+
+    if (devAuthEnabled) {
+      providers.push(
+        CredentialsProvider({
+          id: 'credentials',
+          name: 'Dev Login',
+          credentials: {
+            email: { label: 'Email', type: 'email' },
+          },
+          async authorize(credentials) {
+            const email = credentials?.email?.trim().toLowerCase();
+            if (!email || !email.includes('@')) {
+              return null;
+            }
+
+            return {
+              id: `dev:${email}`,
+              email,
+              name: email.split('@')[0] || 'Dev User',
+              role: UserRole.USER,
+            };
+          },
+        })
+      );
+    }
+
+    return providers;
+  })(),
   pages: {
     signIn: '/login',
   },
@@ -121,7 +160,7 @@ export const authOptions: NextAuthOptions = {
         isProxying: !!token.proxyEmail
       };
     },
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session, account }) {
       if (user) {
         token.id = user.id;
         token.email = token.email || user.email;
@@ -132,8 +171,14 @@ export const authOptions: NextAuthOptions = {
         token.originalImage = (token as { originalImage?: string | null }).originalImage || user.image;
       }
 
+      if (account?.provider) {
+        (token as { authProvider?: string }).authProvider = account.provider;
+      }
+
       if (token.email) {
-        const identity = await getUserIdentity(token.email as string, token.id as string | undefined);
+        const authProvider = (token as { authProvider?: string }).authProvider;
+        const googleId = authProvider === 'google' ? (token.id as string | undefined) : undefined;
+        const identity = await getUserIdentity(token.email as string, googleId);
         token.role = identity.role;
         token.originalRole = token.originalRole || token.role;
         token.username = identity.username;

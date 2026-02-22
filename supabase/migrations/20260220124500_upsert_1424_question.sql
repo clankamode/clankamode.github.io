@@ -3,7 +3,10 @@
 
 BEGIN;
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_interview_questions_leetcode_number ON public."InterviewQuestions"(leetcode_number);
+
 INSERT INTO public."InterviewQuestions" (id, leetcode_number, name, prompt_full, starter_code, helper_code, test_cases, difficulty, source)
+
 VALUES (
   gen_random_uuid(),
   1424,

@@ -62,7 +62,6 @@ export function QuestionCard({ question, onVoteChange }: Props) {
       }`}
     >
       <div className="flex items-start gap-4">
-        {/* Vote button */}
         <button
           type="button"
           onClick={handleVote}
@@ -90,7 +89,7 @@ export function QuestionCard({ question, onVoteChange }: Props) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <InitialAvatar name={displayName} />
-            <span className="text-sm font-medium text-text-secondary">{displayName}</span>
+            <span className="text-sm font-medium text-text-secondary sensitive">{displayName}</span>
             {question.status === 'answered' && (
               <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
                 Answered

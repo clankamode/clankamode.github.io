@@ -172,3 +172,32 @@ insert into public."ConceptDependencies" (concept_slug, depends_on_slug, track_s
   ('system.replication',               'system.storage',                   'system-design', 2),
   ('system.requirements',              'system.scalability',               'system-design', 1)
 on conflict (concept_slug, depends_on_slug) do nothing;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Fake users (additional test accounts for local dev / AMA seeding)
+-- ─────────────────────────────────────────────────────────────────────────────
+insert into public."Users" (email, role, username) values
+  ('alice@test.local', 'USER', 'alice'),
+  ('bob@test.local',   'USER', 'bob'),
+  ('carol@test.local', 'USER', 'carol'),
+  ('dave@test.local',  'USER', 'dave'),
+  ('eve@test.local',   'USER', 'eve')
+on conflict (email) do update set username = excluded.username;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- AMA questions (fake Q&A for local dev)
+-- user_id is a placeholder; in production this is the OAuth sub (e.g. Google ID).
+-- Remove previous seed questions so re-running seed does not duplicate.
+-- ─────────────────────────────────────────────────────────────────────────────
+delete from public."AmaVotes" where question_id in (select id from public."AmaQuestions" where user_id like 'seed-user-%');
+delete from public."AmaQuestions" where user_id like 'seed-user-%';
+
+insert into public."AmaQuestions" (user_id, author_name, question, status, answer, answered_at, vote_count) values
+  ('seed-user-1', 'Alice', 'What does a typical day look like for you as an engineer?', 'answered', 'I block morning for deep work and meetings in the afternoon. I also try to ship something small every day.', now() - interval '2 days', 12),
+  ('seed-user-2', null, 'How do you prepare for system design interviews?', 'answered', 'I focus on one system at a time, draw the diagram, then practice explaining tradeoffs out loud. Repeating the same 5–10 systems beats skimming many.', now() - interval '1 day', 8),
+  ('seed-user-3', 'Bob', 'What resources do you recommend for DSA?', 'answered', 'The Learn section on this site, plus LeetCode for practice. Consistency matters more than volume.', now() - interval '5 hours', 5),
+  ('seed-user-1', 'Alice', 'How long did it take you to get comfortable with dynamic programming?', 'unanswered', null, null, 3),
+  ('seed-user-4', 'Carol', 'Do you think FAANG is still worth targeting in 2025?', 'unanswered', null, null, 7),
+  ('seed-user-2', null, 'Tips for staying motivated during a long job search?', 'unanswered', null, null, 2),
+  ('seed-user-5', 'Dave', 'How do you balance learning new tech vs getting really good at one stack?', 'unanswered', null, null, 0),
+  ('seed-user-3', 'Bob', 'What would you do differently when starting to code?', 'answered', 'I would practice explaining my code out loud earlier. It translates directly to interviews and reviews.', now() - interval '3 days', 4);
