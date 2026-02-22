@@ -15,6 +15,12 @@ Located in `.agent/skills/`:
 | `modular-refactor` | Component surgery (hooks/components/utils) |
 | `void-mode-audit` | Subtractive design checklist |
 | `supabase-patterns` | Database & API route conventions |
+| `add-component` | Design-compliant component creation workflow |
+| `code-review-checklist` | Severity-first PR/code review process |
+| `create-pr` | Pull request preparation and structure |
+| `debug` | Reproducible, hypothesis-driven debugging |
+| `deslop` | AI-generated code cleanup and simplification |
+| `setup-new-feature` | Feature initialization and scaffolding |
 
 ## Workflows
 
@@ -22,20 +28,18 @@ Located in `.agent/workflows/`:
 
 | Command | Description |
 |---------|-------------|
-| `/add-component` | Create design-compliant React components |
-| `/code-review-checklist` | Comprehensive code review |
-| `/create-pr` | Well-structured pull requests |
-| `/debug` | Systematic debugging process |
-| `/deploy` | Vercel deployment with safety checks |
-| `/deslop` | Remove AI slop and redundant comments |
-| `/setup-new-feature` | Feature initialization |
-| `/test-editor` | Block Editor E2E testing |
+| `/add-component` | Wrapper for `add-component` skill |
+| `/code-review-checklist` | Wrapper for `code-review-checklist` skill |
+| `/create-pr` | Wrapper for `create-pr` skill |
+| `/debug` | Wrapper for `debug` skill |
+| `/deslop` | Wrapper for `deslop` skill |
+| `/setup-new-feature` | Wrapper for `setup-new-feature` skill |
 
 ## Quick Start
 
 1. **Ask for a component**: "Create a card component following the design system"
-2. **Debug a test**: "Follow the debug workflow for this Playwright failure"
-3. **Review code**: "Run the code-review-checklist workflow on this PR"
+2. **Debug a test**: "Use the `debug` skill on this Playwright failure"
+3. **Review code**: "Run the `code-review-checklist` skill on this PR"
 
 ## Key Files
 

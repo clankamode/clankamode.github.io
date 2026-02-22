@@ -298,7 +298,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }).catch((error) => {
             console.warn('[friction] telemetry emit failed:', error);
         });
-    }, [buildFrictionSignalVector, frictionEnabled]);
+    }, [authUserRole, buildFrictionSignalVector, frictionEnabled]);
 
     const markInteraction = useCallback((params: {
         chunkNext?: number;
@@ -405,7 +405,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             exit: null,
             transitionStatus: 'ready',
         });
-    }, [frictionEnabled, resetFrictionMonitorForStep]);
+    }, [authUserRole, frictionEnabled, resetFrictionMonitorForStep]);
 
     const setTransitionStatus = useCallback((kind: TransitionKind) => {
         setState((prev) => ({
@@ -656,7 +656,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         if (acquired === false) {
             console.warn('[SessionContext] advanceItem: lock not acquired — session not in execution phase or lock busy');
         }
-    }, [emitFrictionSnapshot, frictionEnabled, markInteraction, resetFrictionMonitorForStep, runWithTransitionLock]);
+    }, [authUserRole, emitFrictionSnapshot, frictionEnabled, markInteraction, resetFrictionMonitorForStep, runWithTransitionLock]);
 
     const completeSession = useCallback(() => {
         const acquired = runWithTransitionLock('finalizing', () => {
@@ -713,7 +713,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         if (acquired === false) {
             console.warn('[SessionContext] completeSession: lock not acquired — session not in execution phase or lock busy');
         }
-    }, [emitFrictionSnapshot, frictionEnabled, runWithTransitionLock]);
+    }, [authUserRole, emitFrictionSnapshot, frictionEnabled, runWithTransitionLock]);
 
     const abandonSession = useCallback(() => {
         const acquired = runWithTransitionLock('finalizing', () => {

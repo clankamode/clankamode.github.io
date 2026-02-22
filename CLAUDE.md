@@ -29,7 +29,7 @@ A modern personal website and learning platform built with Next.js 15, featuring
 | `docs/DATA_STRUCTURE_PRACTICE_QUESTIONS.md` | Create/link "Implement X From Scratch" practice questions |
 | `docs/DESIGN_PRINCIPLES.md` | Full design specification |
 | `.agent/skills/` | Specialized guidance for specific tasks |
-| `CODE_REVIEW_CHECKLIST.md` | Code review standards |
+| `.agent/skills/code-review-checklist/SKILL.md` | Code review standards |
 
 ## Critical Rules
 
@@ -175,14 +175,20 @@ Use these via the `.agent/` directory (see `AGENTS.md` for full details):
 - `modular-refactor` - Component surgery
 - `void-mode-audit` - Subtractive design checklist
 - `supabase-patterns` - Database conventions
+- `add-component` - Design-compliant component creation workflow
+- `code-review-checklist` - Severity-first review process
+- `create-pr` - Pull request preparation and structure
+- `debug` - Reproducible, hypothesis-driven debugging
+- `deslop` - AI-generated code cleanup and simplification
+- `setup-new-feature` - Feature initialization and scaffolding
 
-**Workflows** (step-by-step processes):
-- `/add-component` - Create design-compliant components
-- `/code-review-checklist` - Comprehensive review
-- `/create-pr` - Well-structured pull requests
-- `/debug` - Systematic debugging
-- `/deslop` - Remove AI slop and redundant comments
-- `/setup-new-feature` - Feature initialization
+**Workflows** (thin command wrappers for the skills above):
+- `/add-component`
+- `/code-review-checklist`
+- `/create-pr`
+- `/debug`
+- `/deslop`
+- `/setup-new-feature`
 
 ## Code Style
 
@@ -265,7 +271,7 @@ npm run dev
 2. Place in `src/components/[category]/ComponentName.tsx`
 3. Use TypeScript interfaces for props
 4. Export as named export
-5. Consider using `/add-component` workflow
+5. Consider using the `add-component` skill (or `/add-component` wrapper)
 
 ### Modifying Database
 1. Use MCP Supabase tools for schema changes
@@ -304,11 +310,11 @@ npm run build       # Ensure build succeeds
 npm run test:e2e    # E2E tests pass
 ```
 
-See `CODE_REVIEW_CHECKLIST.md` for full review process.
+See `.agent/skills/code-review-checklist/SKILL.md` for full review process.
 
 ## Getting Help
 
-- **Workflows**: See `AGENTS.md` for available commands
+- **Skills and wrappers**: See `AGENTS.md` for available skills and commands
 - **Design**: See `docs/DESIGN_PRINCIPLES.md`
 - **API Setup**: See `README.md` for API key configuration
 - **Testing**: See `.agent/skills/webapp-testing/SKILL.md`

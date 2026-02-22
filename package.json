@@ -17,7 +17,8 @@
     "update_sessions": "tsx scripts/src/update_test_sessions.ts",
     "update_interview_starter_code": "tsx scripts/src/update_interview_questions_starter_code.ts",
     "validate_interview_questions": "tsx scripts/src/validate_interview_questions.ts",
-    "test:daily-brief": "tsx scripts/src/test_daily_brief.ts"
+    "test:daily-brief": "tsx scripts/src/test_daily_brief.ts",
+    "prepare": "sh scripts/install-hooks.sh"
   },
   "dependencies": {
     "@google/genai": "^1.38.0",

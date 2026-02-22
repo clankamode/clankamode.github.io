@@ -1,0 +1,15 @@
+#!/bin/sh
+# Pre-push hook: runs lint and typecheck before pushing.
+# Installed via scripts/install-hooks.sh — committed so the whole team gets it.
+
+set -e
+
+echo "🔍 Running pre-push checks..."
+
+echo "  → lint"
+npm run lint --silent
+
+echo "  → typecheck"
+npm run typecheck --silent
+
+echo "✅ Pre-push checks passed."

@@ -32,7 +32,7 @@ A modern personal website showcasing videos, blog posts, and portfolio items. Bu
    cd personal-website
    ```
 
-2. Install dependencies:
+2. Install dependencies (also installs git hooks):
    ```bash
    npm install
    # or
