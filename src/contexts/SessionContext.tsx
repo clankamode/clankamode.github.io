@@ -521,7 +521,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 };
 
                 const getProposal = (currentDelta: LearningDelta): MicroSessionProposal | null => {
-                    const useV1 = isFeatureEnabled(FeatureFlags.USE_MICRO_V1);
+                    const useV1 = isFeatureEnabled(FeatureFlags.USE_MICRO_V1, authUserRole ? { role: authUserRole } : null);
                     if (useV1) {
                         const p = proposeMicroSession({
                             trackSlug: scope.track.slug,
@@ -580,7 +580,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                         const conceptDict = await fetchConceptDictionary(trackSlug);
                         const labeledDelta = resolveDeltaLabels(result.delta, conceptDict);
 
-                        const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS, authSession?.user ?? null) && !!userId;
+                        const useGenerative = isFeatureEnabled(FeatureFlags.GENERATIVE_SESSIONS, authUserRole ? { role: authUserRole } : null) && !!userId;
                         let freshProposal: MicroSessionProposal | null = null;
 
                         if (useGenerative) {
@@ -596,7 +596,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                                 setLastMicroConcept(p.targetConcept);
                             }
                             freshProposal = p ? toSessionProposal(p) : null;
-                        } else if (isFeatureEnabled(FeatureFlags.USE_MICRO_V1)) {
+                        } else if (isFeatureEnabled(FeatureFlags.USE_MICRO_V1, authUserRole ? { role: authUserRole } : null)) {
                             const p = proposeMicroSession({
                                 trackSlug,
                                 delta: result.delta,
@@ -677,7 +677,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                     unlocked: []
                 };
 
-                const microSessionProposal = isFeatureEnabled(FeatureFlags.USE_MICRO_V1)
+                const microSessionProposal = isFeatureEnabled(FeatureFlags.USE_MICRO_V1, authUserRole ? { role: authUserRole } : null)
                     ? (() => {
                         const previousMicroConcept = getLastMicroConcept();
                         const p = proposeMicroSession({

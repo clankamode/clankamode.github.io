@@ -70,14 +70,15 @@ export const flags: Record<FeatureFlag, FlagConfig> = {
 
 export function isFeatureEnabled(flag: FeatureFlag, user?: { role?: string } | null): boolean {
     const config = flags[flag];
-    if (config.defaultValue) return true;
 
-    if (user?.role && config.allowRoles) {
-        const userRole = user.role as UserRole;
-        if (config.allowRoles.includes(userRole)) {
-            return true;
-        }
+    // If the flag has role restrictions, role always wins.
+    // defaultValue acts as a kill switch only (false = nobody; true = allowed roles only).
+    if (config.allowRoles && config.allowRoles.length > 0) {
+        if (!config.defaultValue) return false;
+        if (!user?.role) return false;
+        return config.allowRoles.includes(user.role as UserRole);
     }
 
-    return false;
+    // No role restrictions — fully launched feature, defaultValue controls for everyone.
+    return config.defaultValue;
 }

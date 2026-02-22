@@ -33,6 +33,7 @@ export async function logTelemetryEvent(params: {
     mode: 'gate' | 'execute' | 'exit';
     payload?: Record<string, unknown>;
     dedupeKey?: string;
+    userRole?: string;
 }) {
     const { userId, userRole, trackSlug, sessionId, eventType, mode, payload = {}, dedupeKey } = params;
 
