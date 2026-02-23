@@ -133,19 +133,19 @@ insert into public."Concepts" (id, slug, label, short_label, description, track_
   ('b9f121ec-306a-41ba-94dc-fbe5cb7155fe', 'recursion.stack-overflow-trap',   'Stack overflow from missing base case',      'Stack overflow',    null, 'dsa', 'trap',      '2026-02-04 07:33:09.898087+00'),
   -- DSA: Graph
   ('4399e156-370c-421b-91ff-b71f3f4eab12', 'graph.traversal-bfs',             'BFS Traversal',                              null,                null, 'dsa', 'technique', '2026-02-07 20:15:59.898183+00'),
-  ('dea9e78c-a9d7-4424-bc4d-d377a5a61494', 'graph.traversal-dfs',             'DFS Traversal',                              null,                null, 'dsa', 'technique', '2026-02-07 20:15:59.898183+00'),
+  ('dea9e78c-a9d7-4424-bc4d-d377a5a61494', 'graph.traversal-dfs',             'DFS Traversal',                              'DFS',               null, 'dsa', 'technique', '2026-02-07 20:15:59.898183+00'),
   ('bacfb0e8-2665-4d02-8fb6-61cdbf8ad768', 'tree.traversal-inorder',          'Inorder Traversal',                          null,                null, 'dsa', 'technique', '2026-02-07 20:15:59.898183+00'),
   ('717655f6-a468-4dc3-8e09-8d6c72ee8a81', 'graph.representation',            'Graph Representations (Matrix vs List)',     null,                null, 'dsa', 'structure', '2026-02-17 02:52:59.357143+00'),
   ('52a0d491-8cde-44a4-89c9-8e28e0fd1dac', 'graph.terminology',               'Graph Terminology (Vertex, Edge, Weight)',   null,                null, 'dsa', 'concept',   '2026-02-17 02:52:59.357143+00'),
   ('00c7d8bc-cb31-446f-b802-890682ce742b', 'graph.shortest-path-dijkstra',    'Dijkstra''s Algorithm',                      null,                null, 'dsa', 'algorithm', '2026-02-17 02:49:22.180617+00'),
   -- DSA: Patterns
   ('d803ca34-b042-493f-ae7a-392f54b04fa5', 'two-pointers.technique',          'Two Pointers',                               null,                null, 'dsa', 'pattern',   '2026-02-17 02:49:22.180617+00'),
-  ('0b092e7c-9df3-4ab1-9b81-bcf0aacb6973', 'sliding-window.technique',        'Sliding Window',                             null,                null, 'dsa', 'pattern',   '2026-02-17 02:49:22.180617+00'),
+  ('0b092e7c-9df3-4ab1-9b81-bcf0aacb6973', 'sliding-window.technique',        'Sliding Window',                             'Sliding Window',    null, 'dsa', 'pattern',   '2026-02-17 02:49:22.180617+00'),
   ('fe541615-e9e7-4421-8005-765b1f2550b8', 'fast-slow-pointers.cycle-detection','Fast & Slow Pointers',                     null,                null, 'dsa', 'pattern',   '2026-02-17 02:49:22.180617+00'),
   ('4b953e41-49f1-4ecf-8bc0-c2418c326269', 'math.prefix-sum',                 'Prefix Sums',                                null,                null, 'dsa', 'pattern',   '2026-02-17 02:49:22.180617+00'),
-  ('81cf0afc-6e5b-4f26-a619-2775b7d0d61e', 'binary-search.technique',         'Binary Search',                              null,                null, 'dsa', 'algorithm', '2026-02-17 02:49:22.180617+00'),
+  ('81cf0afc-6e5b-4f26-a619-2775b7d0d61e', 'binary-search.technique',         'Binary Search',                              'Binary Search',     null, 'dsa', 'algorithm', '2026-02-17 02:49:22.180617+00'),
   ('46fc5be1-2591-40b3-896b-996104667857', 'backtracking.search',              'Backtracking',                               null,                null, 'dsa', 'technique', '2026-02-17 02:49:22.180617+00'),
-  ('7d3636b7-47e1-4638-bce5-7bb414ad0c5d', 'dp.memoization',                  'Dynamic Programming (Memoization)',          null,                null, 'dsa', 'technique', '2026-02-17 02:49:22.180617+00'),
+  ('7d3636b7-47e1-4638-bce5-7bb414ad0c5d', 'dp.memoization',                  'Dynamic Programming (Memoization)',          'DP Memoization',    null, 'dsa', 'technique', '2026-02-17 02:49:22.180617+00'),
   -- DSA: Advanced Structures
   ('219d8045-5816-4dc6-90ca-a462f8e7c08b', 'heap.priority-queue',             'Heaps & Priority Queues',                    null,                null, 'dsa', 'structure', '2026-02-17 02:49:22.180617+00'),
   ('89e25ce5-4bf5-4823-8d28-fccb02049a2b', 'trie.prefix-tree',                'Tries (Prefix Trees)',                       null,                null, 'dsa', 'structure', '2026-02-17 02:49:22.180617+00'),
@@ -178,18 +178,12 @@ on conflict (id) do nothing;
 insert into public."ConceptDependencies" (concept_slug, depends_on_slug, track_slug, weight) values
   -- DSA graph
   ('backtracking.search',              'recursion.base-case',              'dsa', 2),
-  ('binary-search.technique',          'array.random-access-o1',           'dsa', 2),
-  ('dp.memoization',                   'hash.o1-average-lookup',           'dsa', 1),
-  ('dp.memoization',                   'recursion.base-case',              'dsa', 3),
   ('fast-slow-pointers.cycle-detection','list.pointer-invariants',         'dsa', 2),
   ('graph.representation',             'array.random-access-o1',           'dsa', 1),
   ('graph.representation',             'list.pointer-invariants',          'dsa', 1),
   ('graph.shortest-path-dijkstra',     'heap.priority-queue',              'dsa', 2),
   ('graph.shortest-path-dijkstra',     'graph.traversal-bfs',              'dsa', 2),
   ('graph.traversal-bfs',              'queue.fifo-model',                 'dsa', 2),
-  ('graph.traversal-dfs',              'stack.lifo-model',                 'dsa', 1),
-  ('graph.traversal-dfs',              'recursion.base-case',              'dsa', 2),
-  ('hash.o1-average-lookup',           'hash.space-time-tradeoff',         'dsa', 2),
   ('hash.space-time-tradeoff',         'big-o.space-complexity',           'dsa', 2),
   ('hash.space-time-tradeoff',         'big-o.time-complexity',            'dsa', 2),
   ('heap.priority-queue',              'array.contiguous-memory',          'dsa', 1),
@@ -200,16 +194,12 @@ insert into public."ConceptDependencies" (concept_slug, depends_on_slug, track_s
   ('matrix.sparse',                    'array.random-access-o1',           'dsa', 1),
   ('queue.fifo-model',                 'list.pointer-invariants',          'dsa', 1),
   ('segment-tree.range-query',         'tree.recursive-structure',         'dsa', 2),
-  ('sliding-window.technique',         'two-pointers.technique',           'dsa', 1),
-  ('stack.lifo-model',                 'list.pointer-invariants',          'dsa', 1),
-  ('stack.monotonic',                  'stack.lifo-model',                 'dsa', 2),
   ('tree.bst-invariant',               'tree.properties',                  'dsa', 1),
   ('tree.bst-invariant',               'tree.parent-child-model',          'dsa', 2),
   ('tree.parent-child-model',          'list.pointer-invariants',          'dsa', 1),
   ('tree.properties',                  'tree.parent-child-model',          'dsa', 1),
   ('tree.recursive-structure',         'recursion.base-case',              'dsa', 2),
   ('tree.traversal-orders',            'tree.recursive-structure',         'dsa', 1),
-  ('trie.prefix-tree',                 'hash.o1-average-lookup',           'dsa', 1),
   ('trie.prefix-tree',                 'tree.parent-child-model',          'dsa', 1),
   ('two-pointers.technique',           'array.random-access-o1',           'dsa', 1),
   ('union-find.disjoint-set',          'tree.parent-child-model',          'dsa', 1),
@@ -254,3 +244,212 @@ insert into public."AmaQuestions" (user_id, author_name, question, status, answe
   ('seed-user-2', null, 'Tips for staying motivated during a long job search?', 'unanswered', null, null, 2),
   ('seed-user-5', 'Dave', 'How do you balance learning new tech vs getting really good at one stack?', 'unanswered', null, null, 0),
   ('seed-user-3', 'Bob', 'What would you do differently when starting to code?', 'answered', 'I would practice explaining my code out loud earlier. It translates directly to interviews and reviews.', now() - interval '3 days', 4);
+
+-- =============================================================================
+-- Content seed — interview questions and articles
+-- Representative set for local dev and testing.
+-- =============================================================================
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- InterviewQuestions
+-- ─────────────────────────────────────────────────────────────────────────────
+insert into public."InterviewQuestions" (id, name, leetcode_number, difficulty, prompt_full, starter_code, helper_code, test_cases, source, category, pattern, leetcode_url, order_index, concept_slug, concept_tags) values
+
+-- Two Sum
+('f6b901eb-b5de-5899-8b2d-20e88dacdd1d', 'Two Sum', 1, 'Easy',
+'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.',
+'function twoSum(nums: number[], target: number): number[] {
+
+}',
+'',
+'[{"input":{"nums":[2,7,11,15],"target":9},"expected":[0,1]},{"input":{"nums":[3,2,4],"target":6},"expected":[1,2]},{"input":{"nums":[3,3],"target":6},"expected":[0,1]}]',
+'{"leetcode"}', 'Arrays & Hashing', 'Hash Map', 'https://leetcode.com/problems/two-sum/', 1, 'hash.o1-average-lookup',
+'[{"slug":"hash.o1-average-lookup","label":"O(1) average lookup"},{"slug":"array.random-access-o1","label":"O(1) random access"}]'),
+
+-- Valid Anagram
+('46214ecc-a201-59ad-a292-da6d9798959b', 'Valid Anagram', 242, 'Easy',
+'Given two strings s and t, return true if t is an anagram of s, and false otherwise. An anagram is a word or phrase formed by rearranging the letters of a different word or phrase, using all the original letters exactly once.',
+'function isAnagram(s: string, t: string): boolean {
+
+}',
+'',
+'[{"input":{"s":"anagram","t":"nagaram"},"expected":true},{"input":{"s":"rat","t":"car"},"expected":false},{"input":{"s":"a","t":"a"},"expected":true}]',
+'{"leetcode"}', 'Arrays & Hashing', 'Hash Map', 'https://leetcode.com/problems/valid-anagram/', 2, 'hash.o1-average-lookup',
+'[{"slug":"hash.o1-average-lookup","label":"O(1) average lookup"}]'),
+
+-- Contains Duplicate
+('06133161-34cb-5b7e-ab76-dd9e9a2be5f5', 'Contains Duplicate', 217, 'Easy',
+'Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.',
+'function containsDuplicate(nums: number[]): boolean {
+
+}',
+'',
+'[{"input":{"nums":[1,2,3,1]},"expected":true},{"input":{"nums":[1,2,3,4]},"expected":false},{"input":{"nums":[1,1,1,3,3,4,3,2,4,2]},"expected":true}]',
+'{"leetcode"}', 'Arrays & Hashing', 'Hash Set', 'https://leetcode.com/problems/contains-duplicate/', 3, 'hash.o1-average-lookup',
+'[{"slug":"hash.o1-average-lookup","label":"O(1) average lookup"}]'),
+
+-- Best Time to Buy and Sell Stock
+('a5c3192f-49ca-5e70-bdf6-e5e36c04de4c', 'Best Time to Buy and Sell Stock', 121, 'Easy',
+'You are given an array prices where prices[i] is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.',
+'function maxProfit(prices: number[]): number {
+
+}',
+'',
+'[{"input":{"prices":[7,1,5,3,6,4]},"expected":5},{"input":{"prices":[7,6,4,3,1]},"expected":0},{"input":{"prices":[1,2]},"expected":1}]',
+'{"leetcode"}', 'Sliding Window', 'Sliding Window', 'https://leetcode.com/problems/best-time-to-buy-and-sell-stock/', 4, 'sliding-window.technique',
+'[{"slug":"sliding-window.technique","label":"Sliding Window"}]'),
+
+-- Valid Parentheses
+('64822c8c-b866-5494-9424-081dd1a29659', 'Valid Parentheses', 20, 'Easy',
+'Given a string s containing just the characters ''('', '')'', ''{'', ''}'', ''['' and '']'', determine if the input string is valid. An input string is valid if: open brackets must be closed by the same type of brackets, and open brackets must be closed in the correct order.',
+'function isValid(s: string): boolean {
+
+}',
+'',
+'[{"input":{"s":"()"},"expected":true},{"input":{"s":"()[]{}"},"expected":true},{"input":{"s":"(]"},"expected":false},{"input":{"s":"([)]"},"expected":false},{"input":{"s":"{[]}"},"expected":true}]',
+'{"leetcode"}', 'Stack', 'Stack', 'https://leetcode.com/problems/valid-parentheses/', 5, 'stack.lifo-model',
+'[{"slug":"stack.lifo-model","label":"Stack LIFO model"}]'),
+
+-- Binary Search
+('09fc40df-4b89-5e7b-95a1-e6ebb696bfdf', 'Binary Search', 704, 'Easy',
+'Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.',
+'function search(nums: number[], target: number): number {
+
+}',
+'',
+'[{"input":{"nums":[-1,0,3,5,9,12],"target":9},"expected":4},{"input":{"nums":[-1,0,3,5,9,12],"target":2},"expected":-1},{"input":{"nums":[5],"target":5},"expected":0}]',
+'{"leetcode"}', 'Binary Search', 'Binary Search', 'https://leetcode.com/problems/binary-search/', 6, 'binary-search.technique',
+'[{"slug":"binary-search.technique","label":"Binary Search"}]'),
+
+-- Reverse Linked List
+('6819b7b2-2c8c-5dae-91c2-381c809431e2', 'Reverse Linked List', 206, 'Easy',
+'Given the head of a singly linked list, reverse the list, and return the reversed list.',
+'class ListNode {
+  val: number;
+  next: ListNode | null;
+  constructor(val?: number, next?: ListNode | null) {
+    this.val = val === undefined ? 0 : val;
+    this.next = next === undefined ? null : next;
+  }
+}
+
+function reverseList(head: ListNode | null): ListNode | null {
+
+}',
+'function arrayToList(arr: number[]): ListNode | null {
+  if (!arr.length) return null;
+  const head = new ListNode(arr[0]);
+  let cur = head;
+  for (let i = 1; i < arr.length; i++) { cur.next = new ListNode(arr[i]); cur = cur.next; }
+  return head;
+}
+function listToArray(head: ListNode | null): number[] {
+  const res: number[] = [];
+  while (head) { res.push(head.val); head = head.next; }
+  return res;
+}',
+'[{"input":{"head":[1,2,3,4,5]},"expected":[5,4,3,2,1]},{"input":{"head":[1,2]},"expected":[2,1]},{"input":{"head":[]},"expected":[]}]',
+'{"leetcode"}', 'Linked List', 'Two Pointers', 'https://leetcode.com/problems/reverse-linked-list/', 7, null,
+'[{"slug":"two-pointer.opposite-ends","label":"Two pointers"}]'),
+
+-- Maximum Subarray (Kadane''s)
+('e7ea5536-07ea-5c47-9261-a2d9a0936aa5', 'Maximum Subarray', 53, 'Medium',
+'Given an integer array nums, find the subarray with the largest sum, and return its sum.',
+'function maxSubArray(nums: number[]): number {
+
+}',
+'',
+'[{"input":{"nums":[-2,1,-3,4,-1,2,1,-5,4]},"expected":6},{"input":{"nums":[1]},"expected":1},{"input":{"nums":[5,4,-1,7,8]},"expected":23}]',
+'{"leetcode"}', 'Dynamic Programming', 'Kadane''s Algorithm', 'https://leetcode.com/problems/maximum-subarray/', 8, 'dp.memoization',
+'[{"slug":"dp.memoization","label":"Dynamic Programming"}]'),
+
+-- Climbing Stairs
+('4f2d2679-48da-5bbb-8ea2-19fe5da3d5c1', 'Climbing Stairs', 70, 'Easy',
+'You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?',
+'function climbStairs(n: number): number {
+
+}',
+'',
+'[{"input":{"n":2},"expected":2},{"input":{"n":3},"expected":3},{"input":{"n":5},"expected":8},{"input":{"n":10},"expected":89}]',
+'{"leetcode"}', 'Dynamic Programming', '1D DP', 'https://leetcode.com/problems/climbing-stairs/', 9, 'dp.memoization',
+'[{"slug":"dp.memoization","label":"Dynamic Programming (Memoization)"}]'),
+
+-- Number of Islands
+('d5e04cbe-1a27-5aed-b1a2-6dc3cab6d2c4', 'Number of Islands', 200, 'Medium',
+'Given an m x n 2D binary grid grid which represents a map of ''1''s (land) and ''0''s (water), return the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.',
+'function numIslands(grid: string[][]): number {
+
+}',
+'',
+'[{"input":{"grid":[["1","1","1","1","0"],["1","1","0","1","0"],["1","1","0","0","0"],["0","0","0","0","0"]]},"expected":1},{"input":{"grid":[["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]]},"expected":3}]',
+'{"leetcode"}', 'Graphs', 'BFS/DFS', 'https://leetcode.com/problems/number-of-islands/', 10, 'graph.traversal-dfs',
+'[{"slug":"graph.traversal-dfs","label":"DFS Traversal"},{"slug":"graph.traversal-bfs","label":"BFS Traversal"}]')
+
+on conflict (id) do nothing;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- LearningArticles
+-- ─────────────────────────────────────────────────────────────────────────────
+insert into public."LearningArticles" (id, topic_id, slug, title, excerpt, body, reading_time_minutes, is_premium, is_published, order_index, concept_tags, primary_concept, practice_question_id) values
+
+-- Arrays article -> data-structures topic
+('cccbc9bf-657d-5781-b30e-18f0f7deabd4',
+ '5e7e43b1-f337-4791-8889-a6e2de2f5ddb',
+ 'arrays',
+ 'Arrays',
+ 'The building block of every algorithm. Learn how arrays work under the hood and why their trade-offs show up everywhere.',
+ E'# Arrays\n\nAn array is a contiguous block of memory where each element is the same size. That contiguous layout is what gives arrays their superpower: **O(1) random access**.\n\n## Memory Layout\n\nWhen you write `const arr = [1, 2, 3]` in JavaScript, the runtime allocates a block of memory and places each integer next to the last. To find element at index `i`, the CPU computes:\n\n```\naddress = base_address + (i * element_size)\n```\n\nOne arithmetic operation, regardless of array length. That''s why indexing is O(1).\n\n## The Trade-offs\n\n| Operation | Time Complexity | Why |\n|---|---|---|\n| Read by index | O(1) | Direct address calculation |\n| Insert at end | O(1) amortized | Dynamic resizing doubles capacity |\n| Insert at middle | O(n) | Must shift all elements right |\n| Delete at middle | O(n) | Must shift all elements left |\n| Search (unsorted) | O(n) | Must check every element |\n| Search (sorted) | O(log n) | Binary search possible |\n\n## Dynamic Resizing\n\nJavaScript arrays (and Python lists) are **dynamic** — they grow automatically. Under the hood, when capacity is exceeded, the runtime allocates a new block (typically 2x the old size) and copies all elements. This copy is O(n), but because it happens exponentially less often, the **amortized** cost of each push is O(1).\n\n## Common Patterns\n\n### Two Pointers\nUse two indices that move toward each other or in the same direction:\n```typescript\nfunction twoSum(nums: number[], target: number): number[] {\n  const map = new Map<number, number>();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) return [map.get(complement)!, i];\n    map.set(nums[i], i);\n  }\n  return [];\n}\n```\n\n### Sliding Window\nMaintain a window of elements and slide it across the array:\n```typescript\nfunction maxProfit(prices: number[]): number {\n  let minPrice = Infinity;\n  let maxProfit = 0;\n  for (const price of prices) {\n    minPrice = Math.min(minPrice, price);\n    maxProfit = Math.max(maxProfit, price - minPrice);\n  }\n  return maxProfit;\n}\n```\n\n## Key Insight\n\nArrays are the right default data structure when you need **fast reads by index** and your data size is known or bounded. Reach for a different structure when you need fast insertions/deletions in the middle.',
+ 8, false, true, 1,
+ '[{"slug":"array.random-access-o1","label":"O(1) random access"},{"slug":"array.insertion-cost","label":"Array insertion cost"},{"slug":"array.deletion-cost","label":"Array deletion cost"},{"slug":"array.dynamic-resizing","label":"Dynamic array resizing"}]',
+ 'array.random-access-o1',
+ 'f6b901eb-b5de-5899-8b2d-20e88dacdd1d'),
+
+-- Hash Maps article -> data-structures topic
+('ea62f78e-8b46-582b-99f1-4ac64cdfb0ae',
+ '5e7e43b1-f337-4791-8889-a6e2de2f5ddb',
+ 'hash-maps',
+ 'Hash Maps',
+ 'The most useful data structure in interview prep. Understand how hashing works and when to reach for it.',
+ E'# Hash Maps\n\nA hash map (also called a hash table or dictionary) maps keys to values in O(1) average time. It''s the single most useful data structure in interview prep.\n\n## How It Works\n\nA hash map internally uses an array. When you insert a key-value pair:\n1. Run the key through a **hash function** to get an integer\n2. Take that integer mod the array length to get an **index**\n3. Store the value at that index\n\n```\nindex = hash(key) % array.length\n```\n\nLookup follows the same path — hash the key, compute the index, read the value. One operation. O(1).\n\n## Collision Handling\n\nTwo different keys can hash to the same index — this is a **collision**. Common strategies:\n\n- **Chaining**: each slot holds a linked list of all key-value pairs that hash there\n- **Open addressing**: on collision, probe adjacent slots until an empty one is found\n\nChaining is what most language runtimes use (including V8 for JavaScript Maps).\n\n## Time Complexity\n\n| Operation | Average | Worst Case |\n|---|---|---|\n| Insert | O(1) | O(n) |\n| Lookup | O(1) | O(n) |\n| Delete | O(1) | O(n) |\n\nWorst case is a degenerate hash function that puts everything in one bucket. In practice with a good hash function and a load factor < 0.75, you get O(1) reliably.\n\n## The Space-Time Trade-off\n\nHash maps trade **space for time**. You''re using O(n) extra memory to get O(1) lookups instead of O(n) scans. This trade-off is almost always worth it in interviews.\n\n## Pattern: Frequency Count\n\n```typescript\nfunction isAnagram(s: string, t: string): boolean {\n  if (s.length !== t.length) return false;\n  const count = new Map<string, number>();\n  for (const c of s) count.set(c, (count.get(c) ?? 0) + 1);\n  for (const c of t) {\n    if (!count.has(c)) return false;\n    count.set(c, count.get(c)! - 1);\n    if (count.get(c)! < 0) return false;\n  }\n  return true;\n}\n```\n\n## When to Reach for a Hash Map\n\n- You need to look something up by a key that isn''t an array index\n- You''re counting frequencies\n- You want to avoid an O(n²) nested loop — store results from the first pass, query them in the second\n- You need to detect duplicates in O(n)',
+ 7, false, true, 2,
+ '[{"slug":"hash.o1-average-lookup","label":"O(1) average lookup"},{"slug":"hash.collision-handling","label":"Collision handling"},{"slug":"hash.space-time-tradeoff","label":"Space-time trade-off"}]',
+ null,
+ '46214ecc-a201-59ad-a292-da6d9798959b'),
+
+-- Binary Search article -> patterns topic
+('47a7ddbf-eeb6-5090-9ef6-44246e4b9e24',
+ '99b43a89-5c96-4713-8ccc-da85c099d75f',
+ 'binary-search',
+ 'Binary Search',
+ 'Cut your search space in half on every step. The pattern behind O(log n) and how to apply it without bugs.',
+ E'# Binary Search\n\nBinary search finds a target in a **sorted** array in O(log n) time by eliminating half the search space on each step.\n\n## The Core Idea\n\nStart with the full array. Check the middle element:\n- If it equals the target → done\n- If it''s too big → target must be in the left half\n- If it''s too small → target must be in the right half\n\nRepeat on the remaining half. With 1 million elements, you need at most 20 comparisons (log₂ 1,000,000 ≈ 20).\n\n## Bug-Free Template\n\nThe classic off-by-one error in binary search comes from the loop condition and how you update `left`/`right`. This template is correct:\n\n```typescript\nfunction search(nums: number[], target: number): number {\n  let left = 0;\n  let right = nums.length - 1;\n\n  while (left <= right) {\n    const mid = left + Math.floor((right - left) / 2); // avoids overflow\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n\n  return -1;\n}\n```\n\nNote `mid + 1` and `mid - 1` — you must move past the mid element you already checked.\n\n## Beyond Simple Search\n\nBinary search applies to any problem with a **monotonic decision function** — a yes/no question where all the "yes"es come before all the "no"s (or vice versa).\n\n### Find Insert Position\n```typescript\nfunction searchInsert(nums: number[], target: number): number {\n  let left = 0, right = nums.length;\n  while (left < right) {\n    const mid = left + Math.floor((right - left) / 2);\n    if (nums[mid] < target) left = mid + 1;\n    else right = mid;\n  }\n  return left;\n}\n```\n\n## Complexity\n\n| | Time | Space |\n|---|---|---|\n| Iterative | O(log n) | O(1) |\n| Recursive | O(log n) | O(log n) call stack |\n\nAlways prefer the iterative version in interviews.\n\n## Key Insight\n\nIf you''re writing an O(n) scan over sorted data, ask: "can I binary search this?" The sorted property is a free log n speedup waiting to be used.',
+ 6, false, true, 1,
+ '[{"slug":"binary-search.technique","label":"Binary Search"},{"slug":"big-o.time-complexity","label":"Time complexity"}]',
+ null,
+ '09fc40df-4b89-5e7b-95a1-e6ebb696bfdf'),
+
+-- Stacks article -> data-structures topic
+('b587b84c-eb93-5e82-8757-33507a76478f',
+ '5e7e43b1-f337-4791-8889-a6e2de2f5ddb',
+ 'stacks',
+ 'Stacks',
+ 'Last in, first out. Learn the stack model, its relationship to recursion, and the patterns it unlocks.',
+ E'# Stacks\n\nA stack is a data structure that follows **Last In, First Out (LIFO)** order. The last item pushed is the first item popped.\n\n## Operations\n\n| Operation | Time | Description |\n|---|---|---|\n| push(x) | O(1) | Add to top |\n| pop() | O(1) | Remove from top |\n| peek() | O(1) | Read top without removing |\n| isEmpty() | O(1) | Check if empty |\n\nIn JavaScript, arrays work as stacks out of the box:\n```typescript\nconst stack: number[] = [];\nstack.push(1);          // [1]\nstack.push(2);          // [1, 2]\nconst top = stack.pop(); // top = 2, stack = [1]\n```\n\n## The Matching Pattern\n\nStacks shine whenever you need to match or validate **nested structure**:\n\n```typescript\nfunction isValid(s: string): boolean {\n  const stack: string[] = [];\n  const pairs: Record<string, string> = { '')'': ''('', ''}'': ''{'', '']'': ''['' };\n  for (const c of s) {\n    if (''([{''.includes(c)) stack.push(c);\n    else if (stack.pop() !== pairs[c]) return false;\n  }\n  return stack.length === 0;\n}\n```\n\n## Stacks and Recursion\n\nEvery recursive call uses the **call stack** — the OS''s implicit stack of function frames. Understanding this makes recursion easier to reason about and helps you spot stack overflow risks (deep recursion on O(n) depth).\n\nIterative DFS uses an explicit stack to simulate this:\n```typescript\nfunction dfs(root: TreeNode | null): void {\n  if (!root) return;\n  const stack = [root];\n  while (stack.length) {\n    const node = stack.pop()!;\n    // process node\n    if (node.right) stack.push(node.right);\n    if (node.left) stack.push(node.left);\n  }\n}\n```\n\n## Monotonic Stack\n\nA monotonic stack maintains elements in sorted order. Use it for "next greater element" problems:\n```typescript\n// Next greater element for each position\nfunction nextGreater(nums: number[]): number[] {\n  const result = new Array(nums.length).fill(-1);\n  const stack: number[] = []; // stores indices\n  for (let i = 0; i < nums.length; i++) {\n    while (stack.length && nums[stack[stack.length - 1]] < nums[i]) {\n      result[stack.pop()!] = nums[i];\n    }\n    stack.push(i);\n  }\n  return result;\n}\n```',
+ 7, false, true, 3,
+ '[{"slug":"stack.lifo-model","label":"Stack LIFO model"},{"slug":"stack.call-stack-relationship","label":"Call stack relationship"},{"slug":"stack.monotonic","label":"Monotonic stack"}]',
+ null,
+ '64822c8c-b866-5494-9424-081dd1a29659'),
+
+-- Sliding Window article -> patterns topic
+('40a38b1e-54c9-5901-b77b-bf0d042daa17',
+ '99b43a89-5c96-4713-8ccc-da85c099d75f',
+ 'sliding-window',
+ 'Sliding Window',
+ 'Turn O(n²) brute force into O(n). The sliding window pattern and when to use it.',
+ E'# Sliding Window\n\nThe sliding window pattern solves problems involving **contiguous subarrays or substrings** in O(n) time by maintaining a window of elements and sliding it across the input.\n\n## The Problem It Solves\n\nBrute force over all subarrays is O(n²). Sliding window reduces that to O(n) by:\n1. Expanding the window from the right\n2. Shrinking from the left when a constraint is violated\n3. Tracking the best result as you go\n\n## Fixed Window Size\n\nWhen the window size is fixed, it''s straightforward — add one from the right, remove one from the left:\n\n```typescript\n// Maximum sum of subarray of size k\nfunction maxSumSubarray(nums: number[], k: number): number {\n  let windowSum = nums.slice(0, k).reduce((a, b) => a + b, 0);\n  let maxSum = windowSum;\n  for (let i = k; i < nums.length; i++) {\n    windowSum += nums[i] - nums[i - k];\n    maxSum = Math.max(maxSum, windowSum);\n  }\n  return maxSum;\n}\n```\n\n## Variable Window Size\n\nWhen the window can grow and shrink based on a condition:\n\n```typescript\n// Longest subarray with sum ≤ target\nfunction longestSubarray(nums: number[], target: number): number {\n  let left = 0, sum = 0, maxLen = 0;\n  for (let right = 0; right < nums.length; right++) {\n    sum += nums[right];\n    while (sum > target) sum -= nums[left++];\n    maxLen = Math.max(maxLen, right - left + 1);\n  }\n  return maxLen;\n}\n```\n\n## Classic Example: Best Time to Buy and Sell Stock\n\n```typescript\nfunction maxProfit(prices: number[]): number {\n  let minPrice = Infinity;\n  let maxProfit = 0;\n  for (const price of prices) {\n    minPrice = Math.min(minPrice, price);\n    maxProfit = Math.max(maxProfit, price - minPrice);\n  }\n  return maxProfit;\n}\n```\n\nThis is a sliding window where `minPrice` tracks the left edge (best buy day seen so far).\n\n## When to Reach for Sliding Window\n\n- Problem involves a contiguous subarray or substring\n- You''re asked for max/min/count satisfying some condition\n- Brute force would be O(n²) with nested loops over a range\n- The condition is monotonic (adding elements makes it worse, not better)',
+ 6, false, true, 2,
+ '[{"slug":"sliding-window.technique","label":"Sliding Window"},{"slug":"array.random-access-o1","label":"O(1) random access"}]',
+ null,
+ 'a5c3192f-49ca-5e70-bdf6-e5e36c04de4c')
+
+on conflict (id) do nothing;

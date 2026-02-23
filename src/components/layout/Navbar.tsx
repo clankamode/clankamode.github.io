@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -173,22 +174,20 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
               className="flex items-center gap-3 group"
             >
               {isAuthLoading ? (
-                <div className="w-8 h-8 rounded-full bg-surface-interactive border border-border-subtle animate-pulse" />
-              ) : isLoggedIn && session.user?.image ? (
-                <UserAvatar
-                  src={session.user.image}
-                  name={session.user.name || "User"}
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-surface-interactive border border-border-subtle flex items-center justify-center text-foreground font-bold text-sm">
-                  J
-                </div>
-              )}
-              <div className="flex flex-col">
-                {isAuthLoading ? (
-                  <span className="h-5 w-28 rounded bg-white/10 animate-pulse" />
-                ) : isLoggedIn ? (
-                  <>
+                <div className="h-8 w-40 rounded bg-white/10 animate-pulse" />
+              ) : isLoggedIn ? (
+                <>
+                  {session.user?.image ? (
+                    <UserAvatar
+                      src={session.user.image}
+                      name={session.user.name || "User"}
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-surface-interactive border border-border-subtle flex items-center justify-center text-foreground font-bold text-sm">
+                      {(session.user?.name || 'J').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex flex-col">
                     <span className="text-xl font-bold tracking-tight text-foreground transition-colors font-display">
                       {session.user?.name}
                     </span>
@@ -197,9 +196,18 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                         {session.user.role}
                       </span>
                     )}
-                  </>
-                ) : null}
-              </div>
+                  </div>
+                </>
+              ) : (
+                <Image
+                  src="/logo.png"
+                  alt="James Peralta"
+                  width={160}
+                  height={40}
+                  className="h-8 w-auto object-contain"
+                  priority
+                />
+              )}
             </Link>
           </div>
 
