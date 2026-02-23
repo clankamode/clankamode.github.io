@@ -1,16 +1,29 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
+type AgentState = {
+  status?: string;
+  task?: string;
+};
+
+type ActivityItem = {
+  timestamp?: string | number;
+  desc?: string;
+  type?: string;
+};
+
 @customElement('clanka-terminal')
 export class ClankaTerminal extends LitElement {
-  @property({ type: Object }) team: Record<string, any> = {};
-  @property({ type: Array }) recentActivity: any[] = [];
+  @property({ type: Object }) team: Record<string, AgentState> = {};
+  @property({ type: Array }) recentActivity: ActivityItem[] = [];
+  @property({ type: Boolean }) loading = true;
+  @property({ type: String }) error = '';
 
   static styles = css`
     :host {
       display: block;
       margin-bottom: 64px;
-      font-family: 'Courier New', Courier, monospace;
+      font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
       --bg: #070708;
       --surface: #0e0e10;
       --border: #1e1e22;
@@ -20,111 +33,129 @@ export class ClankaTerminal extends LitElement {
       --bright: #f0f0f8;
       --accent: #c8f542;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 1px;
-      background: var(--border, #1e1e22);
-      border: 1px solid var(--border, #1e1e22);
-    }
-    .node {
-      background: var(--bg, #070708);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .node-id {
-      font-size: 10px;
-      color: var(--dim, #3a3a42);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    .node-role {
-      font-size: 12px;
-      color: var(--bright, #f0f0f8);
-      font-weight: bold;
-    }
-    .node-status {
-      font-size: 9px;
+    .sec-header {
       display: flex;
       align-items: center;
-      gap: 6px;
-    }
-    .indicator {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-    }
-    .status-idle { color: var(--muted, #6b6b78); }
-    .status-idle .indicator { background: var(--muted, #6b6b78); }
-    
-    .status-active { color: var(--accent, #c8f542); }
-    .status-active .indicator { 
-      background: var(--accent, #c8f542);
-      box-shadow: 0 0 8px var(--accent, #c8f542);
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .node-task {
-      font-size: 10px;
-      color: var(--muted, #6b6b78);
-      line-height: 1.4;
-      margin-top: 4px;
-      min-height: 2.8em;
-      word-break: break-all;
-    }
-    .trace-log {
-      margin-top: 24px;
-      padding: 12px;
-      background: var(--surface, #0e0e10);
-      border: 1px solid var(--border, #1e1e22);
-      font-size: 10px;
-      color: var(--dim, #3a3a42);
-      max-height: 120px;
-      overflow: hidden;
-    }
-    .trace-entry {
-      margin-bottom: 4px;
-      display: flex;
       gap: 12px;
+      margin-bottom: 24px;
     }
-    .trace-hash { color: var(--accent, #c8f542); opacity: 0.6; }
-    .trace-msg { color: var(--muted, #6b6b78); }
+    .sec-label {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted, #6b6b78);
+    }
+    .sec-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border, #1e1e22);
+    }
+    .terminal {
+      border: 1px solid var(--border, #1e1e22);
+      background: radial-gradient(circle at top, #0f1110 0%, #070708 68%);
+      padding: 14px;
+      color: var(--accent, #c8f542);
+      font-size: 11px;
+      line-height: 1.55;
+      overflow-x: auto;
+    }
+    .line {
+      white-space: pre;
+      color: color-mix(in srgb, var(--accent, #c8f542) 92%, #111 8%);
+    }
+    .line.dim {
+      color: var(--muted, #6b6b78);
+    }
+    .line.error {
+      color: #af8f8f;
+    }
+    .line.prompt {
+      color: var(--bright, #f0f0f8);
+    }
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: var(--accent, #c8f542);
+      transform: translateY(2px);
+      margin-left: 3px;
+      animation: blink 1s steps(2, start) infinite;
+    }
+    .skeleton {
+      height: 10px;
+      border-radius: 2px;
+      width: 82%;
+      margin: 8px 0;
+      background: linear-gradient(
+        90deg,
+        color-mix(in srgb, #0f1110 90%, var(--border, #1e1e22) 10%) 0%,
+        color-mix(in srgb, #0f1110 72%, var(--accent, #c8f542) 28%) 50%,
+        color-mix(in srgb, #0f1110 90%, var(--border, #1e1e22) 10%) 100%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.7s linear infinite;
+    }
+    :host(:focus-visible) {
+      outline: 1px solid var(--accent, #c8f542);
+      outline-offset: 4px;
+    }
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to { background-position: -200% 0; }
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.2; }
+    }
   `;
 
-  private roles = {
+  private roles: Record<string, string> = {
     orchestrator: 'CLANKA',
     architect: 'ARCHITECT',
     engineer: 'ENGINEER',
     auditor: 'AUDITOR',
-    chronicler: 'CHRONICLER'
+    chronicler: 'CHRONICLER',
   };
 
-  private getTraceLogs() {
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.setAttribute('role', 'region');
+    this.setAttribute('aria-label', 'Terminal readout');
+    if (!this.hasAttribute('tabindex')) {
+      this.tabIndex = 0;
+    }
+  }
+
+  private normalizeStatus(status: string | undefined): 'active' | 'idle' | 'offline' {
+    const value = (status ?? 'idle').toLowerCase();
+    if (value === 'active') return 'active';
+    if (value === 'offline') return 'offline';
+    return 'idle';
+  }
+
+  private traceLines(): string[] {
     if (!this.recentActivity.length) {
-      return [
-        { hash: '7f2a1c', msg: 'tx: spawning subagent [id: 00d7]' },
-        { hash: '8b3d4e', msg: 'fs: diff verified [v8_context: clean]' },
-        { hash: 'e1f0a2', msg: 'run: commit contiguous [txId: 913a]' }
-      ];
+      return ['boot: no recent activity records'];
     }
 
-    return this.recentActivity.slice(0, 3).map((item, idx) => {
-      const rawTimestamp = item?.timestamp ?? item?.time ?? Date.now() + idx;
-      const normalizedTimestamp =
-        typeof rawTimestamp === 'number'
-          ? rawTimestamp
-          : Number(rawTimestamp) || Date.parse(String(rawTimestamp)) || Date.now() + idx;
-      return {
-        hash: Math.abs(normalizedTimestamp).toString(36).slice(0, 6),
-        msg: item?.desc || item?.type || 'activity'
-      };
+    return this.recentActivity.slice(0, 3).map((item) => {
+      const rawTimestamp = item?.timestamp ?? Date.now();
+      const parsed = new Date(rawTimestamp);
+      const stamp = Number.isNaN(parsed.getTime())
+        ? '--:--:--'
+        : parsed.toLocaleTimeString([], { hour12: false });
+      const message = (item.desc ?? item.type ?? 'event').toString();
+      return `${stamp} ${message}`;
+    });
+  }
+
+  private renderTeamLines() {
+    return Object.entries(this.roles).map(([id, label]) => {
+      const state = this.team[id] ?? { status: 'idle', task: 'waiting_for_directive' };
+      const normalized = this.normalizeStatus(state.status);
+      const statusText = normalized === 'active' ? '[online]' : normalized === 'offline' ? '[offline]' : '[idle]';
+      const taskText = (state.task ?? 'waiting_for_directive').toString();
+      return html`<div class="line">${statusText} ${label.padEnd(11, ' ')} :: ${taskText}</div>`;
     });
   }
 
@@ -134,30 +165,29 @@ export class ClankaTerminal extends LitElement {
         <span class="sec-label">terminal_view</span>
         <div class="sec-line"></div>
       </div>
-      <div class="grid">
-        ${Object.entries(this.roles).map(([key, label]) => {
-          const data = this.team[key] || { status: 'idle', task: 'waiting_for_directive' };
-          const isActive = data.status === 'active';
-          return html`
-            <div class="node">
-              <div class="node-id">${key}</div>
-              <div class="node-role">${label}</div>
-              <div class="node-status ${isActive ? 'status-active' : 'status-idle'}">
-                <span class="indicator"></span>
-                ${data.status.toUpperCase()}
-              </div>
-              <div class="node-task">> ${data.task}</div>
-            </div>
-          `;
-        })}
-      </div>
-      <div class="trace-log">
-        ${this.getTraceLogs().map(log => html`
-          <div class="trace-entry">
-            <span class="trace-hash">[${log.hash}]</span>
-            <span class="trace-msg">${log.msg}</span>
-          </div>
-        `)}
+
+      <div class="terminal" role="log" aria-live="polite" aria-atomic="false">
+        ${this.loading
+          ? html`
+              <div class="line">clanka@fleet:~$ <span>[ loading... ]</span></div>
+              ${Array.from({ length: 5 }).map(() => html`<div class="skeleton" aria-hidden="true"></div>`)}
+              <div class="line prompt">clanka@fleet:~$<span class="cursor" aria-hidden="true"></span></div>
+            `
+          : this.error
+            ? html`
+                <div class="line prompt">clanka@fleet:~$ status</div>
+                <div class="line error">${this.error}</div>
+                <div class="line dim">fallback mode: cached UI only</div>
+                <div class="line prompt">clanka@fleet:~$<span class="cursor" aria-hidden="true"></span></div>
+              `
+            : html`
+                <div class="line prompt">clanka@fleet:~$ agents --status</div>
+                ${this.renderTeamLines()}
+                <div class="line dim">---</div>
+                <div class="line prompt">clanka@fleet:~$ tail -n 3 /var/log/activity.log</div>
+                ${this.traceLines().map((line) => html`<div class="line dim">${line}</div>`)}
+                <div class="line prompt">clanka@fleet:~$<span class="cursor" aria-hidden="true"></span></div>
+              `}
       </div>
     `;
   }
