@@ -404,9 +404,56 @@ export default function Component() {
                               : 'bg-surface-1 border-border-subtle hover:border-brand-green/30 hover:bg-surface-interactive hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]'}`}
                         >
                           <div className="p-4">
-                            <div className="flex items-center justify-between gap-4">
+                            {/* Mobile layout: stacked */}
+                            <div className="flex flex-col gap-2 sm:hidden">
+                              {/* Row 1: checkbox + title */}
+                              <div className="flex items-start gap-3">
+                                <button
+                                  onClick={(e) => toggleSolved(question.id, e)}
+                                  className={`mt-0.5 w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0
+                                    transition-all duration-300
+                                    ${solvedQuestions.has(question.id)
+                                      ? 'bg-brand-green border-brand-green shadow-[0_0_10px_rgba(44,187,93,0.4)]'
+                                      : attemptedQuestions.has(question.id)
+                                        ? 'border-brand-amber/70 bg-brand-amber/10'
+                                      : 'border-muted-foreground/50'}`}
+                                >
+                                  {solvedQuestions.has(question.id) && (
+                                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </button>
+                                <h4 className={`font-medium font-sans text-base leading-snug transition-colors ${solvedQuestions.has(question.id)
+                                  ? 'text-muted-foreground line-through decoration-brand-green/50'
+                                  : 'text-foreground'}`}>
+                                  {question.title}
+                                </h4>
+                              </div>
+                              {/* Row 2: difficulty + action links */}
+                              <div className="flex items-center gap-2 pl-9">
+                                <span className={`px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full border bg-opacity-10 ${getDifficultyColor(question.difficulty)}`}>
+                                  {question.difficulty}
+                                </span>
+                                {attemptedQuestions.has(question.id) && !solvedQuestions.has(question.id) && (
+                                  <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full border border-brand-amber/30 text-brand-amber bg-brand-amber/10">
+                                    Attempted
+                                  </span>
+                                )}
+                                <a
+                                  href={question.leetcodeUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="ml-auto px-3 py-1 text-xs font-semibold rounded-md bg-surface-interactive text-muted-foreground border border-border-subtle active:bg-surface-workbench transition-colors"
+                                >
+                                  LeetCode ↗
+                                </a>
+                              </div>
+                            </div>
+
+                            {/* Desktop layout: single row with hover actions */}
+                            <div className="hidden sm:flex items-center justify-between gap-4">
                               <div className="flex items-center gap-4 flex-1 min-w-0">
-                                {/* Checkbox */}
                                 <button
                                   onClick={(e) => toggleSolved(question.id, e)}
                                   className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0
@@ -418,26 +465,15 @@ export default function Component() {
                                       : 'border-muted-foreground/50 hover:border-brand-green hover:shadow-[0_0_10px_-2px_rgba(44,187,93,0.3)]'}`}
                                 >
                                   {solvedQuestions.has(question.id) && (
-                                    <svg
-                                      className="w-3.5 h-3.5 text-white"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={3}
-                                        d="M5 13l4 4L19 7"
-                                      />
+                                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                     </svg>
                                   )}
                                 </button>
-                                <div className="min-w-0">
+                                <div className="min-w-0 flex-1">
                                   <h4 className={`font-medium truncate font-sans text-lg transition-colors ${solvedQuestions.has(question.id)
                                     ? 'text-muted-foreground line-through decoration-brand-green/50'
-                                    : 'text-foreground group-hover:text-brand-green'
-                                    }`}>
+                                    : 'text-foreground group-hover:text-brand-green'}`}>
                                     {question.title}
                                   </h4>
                                 </div>
@@ -455,18 +491,8 @@ export default function Component() {
                                   className="flex-shrink-0 text-muted-foreground hover:text-text-primary transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
                                   title="View on LeetCode"
                                 >
-                                  <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                    />
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                   </svg>
                                 </a>
                               </div>
@@ -476,11 +502,7 @@ export default function Component() {
                                     Attempted
                                   </span>
                                 )}
-                                <span
-                                  className={`px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full border bg-opacity-10 ${getDifficultyColor(
-                                    question.difficulty,
-                                  )}`}
-                                >
+                                <span className={`px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full border bg-opacity-10 ${getDifficultyColor(question.difficulty)}`}>
                                   {question.difficulty}
                                 </span>
                               </div>

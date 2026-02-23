@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 160" fill="none">
+  <!-- JP monogram -->
+  <text
+    x="0" y="132"
+    font-family="Montserrat, Poppins, 'Arial Black', sans-serif"
+    font-weight="800"
+    font-size="140"
+    fill="#18C462"
+    letter-spacing="-4"
+  >JP</text>
+
+  <!-- Divider -->
+  <rect x="196" y="12" width="3" height="136" rx="1.5" fill="#555555"/>
+
+  <!-- Name block -->
+  <text
+    x="212" y="70"
+    font-family="Montserrat, Poppins, Arial, sans-serif"
+    font-weight="600"
+    font-size="58"
+    fill="currentColor"
+    letter-spacing="-1"
+  >James</text>
+  <text
+    x="212" y="138"
+    font-family="Montserrat, Poppins, Arial, sans-serif"
+    font-weight="600"
+    font-size="58"
+    fill="currentColor"
+    letter-spacing="-1"
+  >Peralta</text>
+</svg>

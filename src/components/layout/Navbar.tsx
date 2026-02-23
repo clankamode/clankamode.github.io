@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -199,13 +198,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                   </div>
                 </>
               ) : (
-                <Image
-                  src="/logo.png"
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src="/logo.svg"
                   alt="James Peralta"
-                  width={180}
-                  height={59}
                   className="h-6 w-auto object-contain"
-                  priority
                 />
               )}
             </Link>
