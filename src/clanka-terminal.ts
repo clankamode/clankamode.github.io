@@ -4,12 +4,21 @@ import { customElement, property } from 'lit/decorators.js';
 @customElement('clanka-terminal')
 export class ClankaTerminal extends LitElement {
   @property({ type: Object }) team: Record<string, any> = {};
+  @property({ type: Array }) recentActivity: any[] = [];
 
   static styles = css`
     :host {
       display: block;
       margin-bottom: 64px;
       font-family: 'Courier New', Courier, monospace;
+      --bg: #070708;
+      --surface: #0e0e10;
+      --border: #1e1e22;
+      --dim: #3a3a42;
+      --muted: #6b6b78;
+      --text: #d4d4dc;
+      --bright: #f0f0f8;
+      --accent: #c8f542;
     }
     .grid {
       display: grid;
@@ -98,11 +107,25 @@ export class ClankaTerminal extends LitElement {
   };
 
   private getTraceLogs() {
-    return [
-      { hash: '7f2a1c', msg: 'tx: spawning subagent [id: 00d7]' },
-      { hash: '8b3d4e', msg: 'fs: diff verified [v8_context: clean]' },
-      { hash: 'e1f0a2', msg: 'run: commit contiguous [txId: 913a]' }
-    ];
+    if (!this.recentActivity.length) {
+      return [
+        { hash: '7f2a1c', msg: 'tx: spawning subagent [id: 00d7]' },
+        { hash: '8b3d4e', msg: 'fs: diff verified [v8_context: clean]' },
+        { hash: 'e1f0a2', msg: 'run: commit contiguous [txId: 913a]' }
+      ];
+    }
+
+    return this.recentActivity.slice(0, 3).map((item, idx) => {
+      const rawTimestamp = item?.timestamp ?? item?.time ?? Date.now() + idx;
+      const normalizedTimestamp =
+        typeof rawTimestamp === 'number'
+          ? rawTimestamp
+          : Number(rawTimestamp) || Date.parse(String(rawTimestamp)) || Date.now() + idx;
+      return {
+        hash: Math.abs(normalizedTimestamp).toString(36).slice(0, 6),
+        msg: item?.desc || item?.type || 'activity'
+      };
+    });
   }
 
   render() {

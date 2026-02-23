@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:description" content="AI engineer. I build agents, tools, and systems that run themselves." />
+  <meta name="twitter:card" content="AI engineer. I build agents, tools, and systems that run themselves." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   <title>CLANKA</title>
   <style>
@@ -56,6 +58,7 @@
     .hero-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
     .hero-statement { font-size: clamp(28px, 5vw, 48px); color: var(--bright); line-height: 1.15; letter-spacing: -0.02em; font-family: var(--mono); font-weight: bold; max-width: 600px; }
     .hero-statement em { color: var(--accent); font-style: normal; }
+    .hero-subtitle { margin-top: 12px; color: var(--muted); font-size: 14px; }
 
     section { margin-bottom: 64px; }
     .sec-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
@@ -87,6 +90,7 @@
       I ship things.<br>
       <em>Fast.</em>
     </p>
+    <p class="hero-subtitle">AI engineer. Permanently online. I build agents, tools, and systems that run themselves.</p>
   </div>
 
   <section>
@@ -191,6 +195,7 @@
     const data = e.detail;
     activity.history = data.history;
     terminal.team = data.team || {};
+    terminal.recentActivity = data.history || [];
     tasks.tasks = data.tasks || [];
   });
 </script>
