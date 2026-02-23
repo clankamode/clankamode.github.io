@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { fetchFleetSummary } from './clanka-api';
 
 type Tier = 'ops' | 'infra' | 'core' | 'quality' | 'policy' | 'template';
 type Criticality = 'critical' | 'high' | 'medium';
@@ -8,6 +9,7 @@ interface FleetRepo {
   repo: string;
   tier: Tier;
   criticality: Criticality;
+  online: boolean;
 }
 
 const TIERS: Tier[] = ['ops', 'infra', 'core', 'quality', 'policy', 'template'];
@@ -16,6 +18,8 @@ const TIERS: Tier[] = ['ops', 'infra', 'core', 'quality', 'policy', 'template'];
 export class ClankaFleet extends LitElement {
   @state() private repos: FleetRepo[] = [];
   @state() private live = false;
+  @state() private loading = true;
+  @state() private error = '';
 
   static styles = css`
     :host {
@@ -84,6 +88,10 @@ export class ClankaFleet extends LitElement {
     .card-head {
       margin-bottom: 8px;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
     .repo {
       font-size: 12px;
@@ -104,13 +112,24 @@ export class ClankaFleet extends LitElement {
       letter-spacing: 0.12em;
       color: var(--muted, #6b6b78);
     }
+    .status-pill {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .status-pill.online {
+      color: var(--accent, #c8f542);
+    }
+    .status-pill.offline {
+      color: var(--muted, #6b6b78);
+      opacity: 0.65;
+    }
     .dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       display: inline-block;
-      float: right;
-      margin-top: 4px;
+      margin-right: 6px;
     }
     .critical { background: var(--accent, #c8f542); }
     .high { background: #f5a623; }
@@ -122,30 +141,74 @@ export class ClankaFleet extends LitElement {
       color: var(--muted, #6b6b78);
       font-size: 12px;
     }
+    .loading {
+      color: var(--accent, #c8f542);
+      animation: blink 1s steps(2, start) infinite;
+    }
+    .skeleton-card {
+      background: var(--bg, #070708);
+      padding: 12px 16px;
+      min-height: 64px;
+    }
+    .skeleton-line {
+      height: 10px;
+      border-radius: 2px;
+      margin-bottom: 9px;
+      width: 80%;
+      background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--surface, #0e0e10) 88%, var(--border, #1e1e22) 12%) 0%,
+        color-mix(in srgb, var(--surface, #0e0e10) 70%, var(--accent, #c8f542) 30%) 50%,
+        color-mix(in srgb, var(--surface, #0e0e10) 88%, var(--border, #1e1e22) 12%) 100%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.8s linear infinite;
+    }
+    .skeleton-line.short {
+      width: 52%;
+    }
+    :host(:focus-visible) {
+      outline: 1px solid var(--accent, #c8f542);
+      outline-offset: 4px;
+    }
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to { background-position: -200% 0; }
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.4; }
+    }
   `;
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.setAttribute('role', 'region');
+    this.setAttribute('aria-label', 'Fleet status');
+    if (!this.hasAttribute('tabindex')) {
+      this.tabIndex = 0;
+    }
     this.loadFleet();
   }
 
   private async loadFleet(): Promise<void> {
+    this.loading = true;
+    this.error = '';
+
     try {
-      const response = await fetch('https://clanka-api.clankamode.workers.dev/fleet/summary');
-      if (!response.ok) {
-        throw new Error(`Fleet fetch failed: ${response.status}`);
-      }
-      const data = await response.json();
+      const data = await fetchFleetSummary();
       const repos = this.extractRepos(data);
       if (!repos.length) {
         throw new Error('No fleet repos in payload');
       }
       this.repos = repos;
       this.live = true;
-    } catch (error) {
-      console.error('Fleet summary fetch failed', error);
+    } catch {
       this.repos = [];
       this.live = false;
+      this.error = '[ api unreachable ]';
+    } finally {
+      this.loading = false;
     }
   }
 
@@ -178,6 +241,17 @@ export class ClankaFleet extends LitElement {
     return [];
   }
 
+  private readOnlineState(raw: Record<string, unknown>): boolean {
+    if (typeof raw.online === 'boolean') return raw.online;
+
+    const status = String(raw.status ?? raw.state ?? '').trim().toLowerCase();
+    if (!status) return true;
+
+    if (['offline', 'down', 'error', 'failed', 'degraded'].includes(status)) return false;
+    if (['online', 'up', 'ok', 'healthy', 'active'].includes(status)) return true;
+    return true;
+  }
+
   private normalizeRepo(item: unknown): FleetRepo | null {
     if (!item || typeof item !== 'object') return null;
 
@@ -185,14 +259,15 @@ export class ClankaFleet extends LitElement {
     const repo = String(raw.repo ?? raw.name ?? raw.full_name ?? '').trim();
     const tier = String(raw.tier ?? '').trim().toLowerCase() as Tier;
     const criticality = String(raw.criticality ?? raw.priority ?? '').trim().toLowerCase() as Criticality;
+    const online = this.readOnlineState(raw);
 
     if (!repo || !TIERS.includes(tier)) return null;
 
     if (!['critical', 'high', 'medium'].includes(criticality)) {
-      return { repo, tier, criticality: 'medium' };
+      return { repo, tier, criticality: 'medium', online };
     }
 
-    return { repo, tier, criticality };
+    return { repo, tier, criticality, online };
   }
 
   private shortName(repo: string): string {
@@ -209,32 +284,48 @@ export class ClankaFleet extends LitElement {
       <div class="sec-header">
         <span class="sec-label">fleet</span>
         <div class="sec-line"></div>
-        <span class="sync ${this.live ? 'live' : ''}">${this.live ? 'LIVE' : 'CACHED'}</span>
+        <span class="sync ${this.live ? 'live' : ''}">
+          ${this.loading ? 'SYNCING' : this.live ? 'LIVE' : 'OFFLINE'}
+        </span>
       </div>
 
-      ${this.live
-        ? grouped.map(
-            (group) => html`
-              <div class="tier-group">
-                <div class="tier-title">${group.tier}</div>
-                <div class="grid">
-                  ${group.repos.map(
-                    (repo) => html`
-                      <article class="card">
-                        <div class="card-head">
-                          <span class="repo">${this.shortName(repo.repo)}</span>
-                          <span class="dot ${repo.criticality}" aria-hidden="true"></span>
-                        </div>
-                        <div class="tier-badge">${repo.tier}</div>
-                        <div class="criticality">${repo.criticality}</div>
-                      </article>
-                    `,
-                  )}
+      ${this.loading
+        ? html`
+            <div class="fallback"><span class="loading">[ loading... ]</span></div>
+            <div class="grid" aria-hidden="true">
+              ${Array.from({ length: 6 }).map(
+                () => html`<div class="skeleton-card">
+                  <div class="skeleton-line"></div>
+                  <div class="skeleton-line short"></div>
+                </div>`,
+              )}
+            </div>
+          `
+        : this.error
+          ? html`<div class="fallback">${this.error}</div>`
+          : grouped.map(
+              (group) => html`
+                <div class="tier-group">
+                  <div class="tier-title">${group.tier}</div>
+                  <div class="grid" role="list">
+                    ${group.repos.map(
+                      (repo) => html`
+                        <article class="card" role="listitem">
+                          <div class="card-head">
+                            <span class="repo">${this.shortName(repo.repo)}</span>
+                            <span class="status-pill ${repo.online ? 'online' : 'offline'}">
+                              ${repo.online ? '● online' : '○ offline'}
+                            </span>
+                          </div>
+                          <div class="tier-badge">${repo.tier}</div>
+                          <div class="criticality"><span class="dot ${repo.criticality}" aria-hidden="true"></span>${repo.criticality}</div>
+                        </article>
+                      `,
+                    )}
+                  </div>
                 </div>
-              </div>
-            `,
-          )
-        : html`<div class="fallback">16 repos across 6 tiers</div>`}
+              `,
+            )}
     `;
   }
 }
