@@ -9,10 +9,16 @@
 -- Users (test accounts for local dev)
 -- ─────────────────────────────────────────────────────────────────────────────
 insert into public."Users" (email, role, username) values
-  ('admin@test.local',    'ADMIN',  'admin_local'),
-  ('editor@test.local',   'EDITOR', 'editor_local'),
-  ('user@test.local',     'USER',   'user_local'),
-  ('clankamode@gmail.com','ADMIN',  'clankamode')
+  ('admin@test.local',            'ADMIN',   'admin_local'),
+  ('editor@test.local',           'EDITOR',  'editor_local'),
+  ('user@test.local',             'USER',    'user_local'),
+  ('clankamode@gmail.com',        'ADMIN',   'clankamode'),
+  ('jamesperalta35@gmail.com',    'ADMIN',   'jamesperalta35'),
+  ('castleridge.labs@gmail.com',  'ADMIN',   'castleridge_labs'),
+  ('jamesperalta.sw@gmail.com',   'ADMIN',   'jamesperalta_sw'),
+  ('johnissack997@gmail.com',     'ADMIN',   'johnissack997'),
+  ('test@example.com',            'ADMIN',   'test_admin'),
+  ('plannerlesson34@gmail.com',   'INSIDER', 'plannerlesson34')
 on conflict (email) do update set role = excluded.role;
 
 -- ─────────────────────────────────────────────────────────────────────────────
