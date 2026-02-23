@@ -16,22 +16,25 @@ export function chunkArticleByHeadings(content: string): ArticleChunk[] {
         const line = lines[i];
         const h2Match = line.match(/^##\s+(.+)$/);
 
-        if (h2Match && currentChunk.length > 0) {
-            chunks.push({
-                id: `chunk-${chunkIndex}`,
-                title: currentTitle,
-                content: currentChunk.join('\n').trim(),
-                index: chunkIndex,
-            });
+        if (h2Match) {
+            const hasContent = currentChunk.join('').trim().length > 0;
+            if (hasContent) {
+                chunks.push({
+                    id: `chunk-${chunkIndex}`,
+                    title: currentTitle,
+                    content: currentChunk.join('\n').trim(),
+                    index: chunkIndex,
+                });
+                chunkIndex++;
+            }
             currentChunk = [line];
             currentTitle = h2Match[1].trim();
-            chunkIndex++;
         } else {
             currentChunk.push(line);
         }
     }
 
-    if (currentChunk.length > 0) {
+    if (currentChunk.join('').trim().length > 0) {
         chunks.push({
             id: `chunk-${chunkIndex}`,
             title: currentTitle,
