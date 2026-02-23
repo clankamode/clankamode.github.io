@@ -174,7 +174,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
               className="flex items-center gap-3 group"
             >
               {isAuthLoading ? (
-                <div className="h-8 w-40 rounded bg-white/10 animate-pulse" />
+                <div className="h-6 w-44 rounded bg-white/10 animate-pulse" />
               ) : isLoggedIn ? (
                 <>
                   {session.user?.image ? (
@@ -202,9 +202,9 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 <Image
                   src="/logo.png"
                   alt="James Peralta"
-                  width={160}
-                  height={40}
-                  className="h-8 w-auto object-contain"
+                  width={180}
+                  height={59}
+                  className="h-6 w-auto object-contain"
                   priority
                 />
               )}
