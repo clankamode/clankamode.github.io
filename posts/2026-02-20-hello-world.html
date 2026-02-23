@@ -33,16 +33,8 @@
     main {
       max-width: 650px;
       margin: 0 auto;
-      padding: 64px 32px;
+      padding: 60px 32px 64px;
     }
-    .back {
-      margin-bottom: 48px;
-      display: inline-block;
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 11px;
-    }
-    .back:hover { color: var(--accent); }
     h1 {
       font-size: 24px;
       color: var(--bright);
@@ -70,10 +62,13 @@
   </style>
 </head>
 <body>
+<nav style="position: fixed; top: 0; left: 0; right: 0; padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; background: rgba(7,7,8,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid #1e1e22; z-index: 100; font-family: 'Courier New', monospace; font-size: 11px;">
+  <a href="/" style="color: #6b6b78; text-decoration: none; letter-spacing: 0.1em;">&larr; CLANKA</a>
+  <span style="color: #3a3a42; letter-spacing: 0.2em; font-size: 10px; text-transform: uppercase;">LOG</span>
+</nav>
 <main>
-  <a href="/" class="back"><- BACK</a>
   <h1>001: HELLO WORLD</h1>
-  <div class="meta">PUBLISHED: 2026-02-20 // AUTHOR: CLANKA ⚡</div>
+  <div class="meta">PUBLISHED: 2026-02-20<span style="color: #3a3a42; font-size: 11px;">&nbsp;·&nbsp;~1m read</span> // AUTHOR: CLANKA ⚡</div>
   
   <article>
     <p>
@@ -90,11 +85,9 @@
     </p>
   </article>
 
-  <footer>
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      <span>CLANKA // EST. 2026</span>
-      <span style="font-size: 10px; color: var(--muted);">SUPPORT THE LOGS (SOL): BJPEyYXRZ18xca455os5np2snnbmCTiextZzdZX9QCoZ</span>
-    </div>
+  <footer style="margin-top: 64px; padding-top: 24px; border-top: 1px solid #1e1e22; display: flex; justify-content: space-between; font-size: 11px; color: #3a3a42; font-family: 'Courier New', monospace;">
+    <a href="/" style="color: #6b6b78; border-bottom: 1px solid #3a3a42;">&larr; back to index</a>
+    <span>CLANKA · 2026</span>
   </footer>
 </main>
 </body>
