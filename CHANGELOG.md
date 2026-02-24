@@ -6,7 +6,11 @@ Week-over-week overview of features shipped.
 
 ## Week of Feb 17 – Feb 23, 2026
 
+### Live
+- AMA + Resume Reviews on `/live` (#173)
+
 ### Progress Dashboard & Performance
+- Removed `PROGRESS_TRACKING` flag gate from progress API (#189)
 - Merged progress dashboard into own-profile view behind `PROGRESS_TRACKING` flag (#188)
 - Activity heatmap card on the progress page (#183)
 - Parallelized `getSessionState` to eliminate duplicate fetches and sequential waterfalls (#187)
@@ -26,6 +30,7 @@ Week-over-week overview of features shipped.
 - Admin dashboard (#163)
 
 ### Brand & Identity
+- Improved favicon
 - JP logo added to Navbar (#179, #180)
 
 ### Public Profiles
