@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { unstable_cache } from 'next/cache';
 import type {
   LearningArticle,
   LearningPillar,
@@ -25,18 +26,26 @@ export async function getLearningPillars(): Promise<LearningPillar[]> {
 }
 
 export async function getLearningPillarBySlug(slug: string): Promise<LearningPillar | null> {
-  const { data, error } = await supabase
-    .from(PILLARS_TABLE)
-    .select('*')
-    .eq('slug', slug)
-    .single();
-
-  if (error) {
-    return null;
-  }
-
-  return data as LearningPillar;
+  return getLearningPillarBySlugCached(slug);
 }
+
+const getLearningPillarBySlugCached = unstable_cache(
+  async (slug: string): Promise<LearningPillar | null> => {
+    const { data, error } = await supabase
+      .from(PILLARS_TABLE)
+      .select('*')
+      .eq('slug', slug)
+      .single();
+
+    if (error) {
+      return null;
+    }
+
+    return data as LearningPillar;
+  },
+  ['pillar-by-slug'],
+  { tags: ['content', 'pillars'], revalidate: 300 }
+);
 
 export async function getLearningTopicsByPillar(pillarId: string): Promise<LearningTopic[]> {
   const { data, error } = await supabase
@@ -113,36 +122,45 @@ export async function getLearningPillarTree(
   pillarId: string,
   includeDrafts: boolean
 ): Promise<LearningTopicWithArticles[]> {
-  const { data, error } = await supabase
-    .from(TOPICS_TABLE)
-    .select('*, LearningArticles(*)')
-    .eq('pillar_id', pillarId)
-    .order('order_index', { ascending: true });
+  const cacheKey = includeDrafts ? 'with-drafts' : 'published-only';
+  const getLearningPillarTreeCached = unstable_cache(
+    async (): Promise<LearningTopicWithArticles[]> => {
+      const { data, error } = await supabase
+        .from(TOPICS_TABLE)
+        .select('*, LearningArticles(*)')
+        .eq('pillar_id', pillarId)
+        .order('order_index', { ascending: true });
 
-  if (error) {
-    throw error;
-  }
+      if (error) {
+        throw error;
+      }
 
-  const topicsWithArticles = ((data || []) as (LearningTopic & {
-    LearningArticles: LearningArticle[] | null;
-  })[]).map((topic) => {
-    const nestedArticles = (topic.LearningArticles || [])
-      .filter((article) => includeDrafts || article.is_published)
-      .sort((a, b) => a.order_index - b.order_index);
+      const topicsWithArticles = ((data || []) as (LearningTopic & {
+        LearningArticles: LearningArticle[] | null;
+      })[]).map((topic) => {
+        const nestedArticles = (topic.LearningArticles || [])
+          .filter((article) => includeDrafts || article.is_published)
+          .sort((a, b) => a.order_index - b.order_index);
 
-    return {
-      id: topic.id,
-      pillar_id: topic.pillar_id,
-      slug: topic.slug,
-      name: topic.name,
-      description: topic.description,
-      order_index: topic.order_index,
-      created_at: topic.created_at,
-      articles: nestedArticles,
-    };
-  });
+        return {
+          id: topic.id,
+          pillar_id: topic.pillar_id,
+          slug: topic.slug,
+          name: topic.name,
+          description: topic.description,
+          order_index: topic.order_index,
+          created_at: topic.created_at,
+          articles: nestedArticles,
+        };
+      });
 
-  return topicsWithArticles;
+      return topicsWithArticles;
+    },
+    ['pillar-tree', pillarId, cacheKey],
+    { tags: ['content', 'pillar-tree', pillarId], revalidate: 300 }
+  );
+
+  return getLearningPillarTreeCached();
 }
 
 export async function getLearningLibrary(

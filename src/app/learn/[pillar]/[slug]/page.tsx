@@ -42,6 +42,7 @@ function getPreviewContent(content: string) {
   return parts.slice(0, 6).join('\n');
 }
 
+// Keep per-request rendering for session/feature/progress data; static content fetchers are cached in src/lib/content.ts.
 export const dynamic = 'force-dynamic';
 
 export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
