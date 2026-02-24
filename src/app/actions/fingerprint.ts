@@ -1,7 +1,12 @@
 'use server';
 
-import { supabase } from '@/lib/supabase';
+import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
+
+let _db: ReturnType<typeof getSupabaseAdminClient> | null = null;
+function getDB() { return (_db ??= getSupabaseAdminClient()); }
+
 import { buildIdentityOrFilter, type EffectiveIdentity } from '@/lib/auth-identity';
+
 
 const STUBBORN_THRESHOLD = 3;
 
@@ -55,7 +60,7 @@ export async function getFingerprintData(
 ): Promise<FingerprintData> {
   const identity = toIdentity(userId, googleId);
 
-  let statsQuery = supabase
+  let statsQuery = getDB()
     .from('UserConceptStats')
     .select('concept_slug, track_slug, exposures, internalized_count, last_seen_at')
     .or(buildIdentityOrFilter(identity))
@@ -73,7 +78,7 @@ export async function getFingerprintData(
   }
 
   const allConceptSlugs = [...new Set((stats || []).map(s => s.concept_slug))];
-  const { data: allConcepts } = await supabase
+  const { data: allConcepts } = await getDB()
     .from('Concepts')
     .select('slug, label, short_label, kind')
     .in('slug', allConceptSlugs);
@@ -82,7 +87,7 @@ export async function getFingerprintData(
     (allConcepts || []).map(c => [c.slug, { label: c.label, short_label: c.short_label, kind: c.kind }])
   );
 
-  let internalizationsQuery = supabase
+  let internalizationsQuery = getDB()
     .from('UserInternalizations')
     .select('id, concept_slug, track_slug, picked, note, created_at, session_id')
     .or(buildIdentityOrFilter(identity))
@@ -101,7 +106,7 @@ export async function getFingerprintData(
   }
 
   const conceptSlugs = [...new Set((internalizations || []).map(i => i.concept_slug))];
-  const { data: concepts } = await supabase
+  const { data: concepts } = await getDB()
     .from('Concepts')
     .select('slug, label, short_label')
     .in('slug', conceptSlugs);
@@ -164,7 +169,7 @@ export async function getLastInternalization(
 ): Promise<{ label: string; conceptSlug: string; relativeTime: string } | null> {
   const identity = toIdentity(userId, googleId);
 
-  const { data, error } = await supabase
+  const { data, error } = await getDB()
     .from('UserInternalizations')
     .select('concept_slug, created_at')
     .or(buildIdentityOrFilter(identity))
@@ -176,7 +181,7 @@ export async function getLastInternalization(
     return null;
   }
 
-  const { data: concept } = await supabase
+  const { data: concept } = await getDB()
     .from('Concepts')
     .select('label')
     .eq('slug', data.concept_slug)

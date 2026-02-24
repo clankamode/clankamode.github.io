@@ -12,4 +12,7 @@ npm run lint --silent
 echo "  → typecheck"
 npm run typecheck --silent
 
+echo "  → tests"
+npm run test --silent
+
 echo "✅ Pre-push checks passed."

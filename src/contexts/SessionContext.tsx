@@ -159,6 +159,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             const parsed = JSON.parse(raw) as SessionState;
             if (!parsed || !parsed.phase || parsed.phase === 'idle') return;
 
+            // Discard stale execution/exit state older than 4 hours to prevent
+            // the navbar from being permanently hidden on fresh page loads.
+            const SESSION_MAX_AGE_MS = 4 * 60 * 60 * 1000;
+            if (parsed.execution?.startedAt) {
+                const age = Date.now() - new Date(parsed.execution.startedAt).getTime();
+                if (age > SESSION_MAX_AGE_MS) {
+                    window.sessionStorage.removeItem(SESSION_STATE_STORAGE_KEY);
+                    return;
+                }
+            }
+
             setState({
                 ...parsed,
                 execution: parsed.execution

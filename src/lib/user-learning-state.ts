@@ -1,6 +1,11 @@
-import { supabase } from '@/lib/supabase';
+import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
+
 import type { UserLearningState, FailureMode } from '@/types/micro';
 import { buildIdentityOrFilter, type EffectiveIdentity } from '@/lib/auth-identity';
+
+let _db: ReturnType<typeof getSupabaseAdminClient> | null = null;
+function getDB() { return (_db ??= getSupabaseAdminClient()); }
+
 
 export interface UserLearningStateResult {
     userState: UserLearningState;
@@ -79,7 +84,7 @@ async function fetchRecentFailureTelemetry(
     googleId?: string
 ): Promise<TelemetryEventRow[]> {
     const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
-    const { data, error } = await supabase
+    const { data, error } = await getDB()
         .from('TelemetryEvents')
         .select('payload, created_at')
         .or(buildIdentityOrFilter(identity))
@@ -134,7 +139,7 @@ async function fetchUserConceptStats(
     googleId?: string
 ): Promise<ConceptStat[]> {
     const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
-    const { data, error } = await supabase
+    const { data, error } = await getDB()
         .from('UserConceptStats')
         .select('concept_slug, exposures, internalized_count, last_seen_at')
         .or(buildIdentityOrFilter(identity))
@@ -160,7 +165,7 @@ async function fetchLastInternalization(
     googleId?: string
 ): Promise<InternalizationRecord | null> {
     const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
-    const { data, error } = await supabase
+    const { data, error } = await getDB()
         .from('UserInternalizations')
         .select('concept_slug, picked, created_at')
         .or(buildIdentityOrFilter(identity))

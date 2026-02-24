@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { BookmarkItem, ProgressSummary } from '@/lib/progress';
+import ActivityHeatmap from './ActivityHeatmap';
 
 interface ProgressDashboardProps {
   summary: ProgressSummary;
@@ -49,6 +50,16 @@ export default function ProgressDashboard({ summary, bookmarks }: ProgressDashbo
             ) : (
               <p className="mt-3 text-sm text-text-secondary">You cleared the library.</p>
             )}
+          </div>
+        </section>
+
+        <section className="frame bg-surface-workbench p-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-text-muted">Activity</p>
+          <h2 className="mt-2 text-xl font-semibold tracking-tight text-text-primary">
+            Your consistency.
+          </h2>
+          <div className="mt-4">
+            <ActivityHeatmap completionDates={summary.allCompletionDates} />
           </div>
         </section>
 
