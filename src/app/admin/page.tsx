@@ -86,8 +86,8 @@ const ADMIN_DESTINATIONS: AdminDestination[] = [
   },
   {
     href: '/admin/ama',
-    title: 'AMA Questions',
-    description: 'View, answer, and manage audience questions ranked by upvotes.',
+    title: 'Live Management',
+    description: 'Manage AMA questions and resume reviews ranked by upvotes.',
     section: 'Operations',
   },
 ];

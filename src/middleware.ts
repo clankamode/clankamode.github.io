@@ -129,7 +129,7 @@ export async function middleware(req: NextRequest) {
             return NextResponse.next();
         }
 
-        if (req.nextUrl.pathname.startsWith('/ama') || req.nextUrl.pathname.startsWith('/api/ama')) {
+        if (req.nextUrl.pathname.startsWith('/live') || req.nextUrl.pathname.startsWith('/api/ama') || req.nextUrl.pathname.startsWith('/api/resume-review')) {
             if (!token) {
                 const signInUrl = new URL('/api/auth/signin', req.url);
                 signInUrl.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
@@ -216,8 +216,9 @@ export const config = {
         '/api/profile',
         '/api/profile/:path*',
         '/api/questions/solved',
-        '/ama',
-        '/ama/:path*',
+        '/live',
+        '/live/:path*',
         '/api/ama/:path*',
+        '/api/resume-review/:path*',
     ],
 }

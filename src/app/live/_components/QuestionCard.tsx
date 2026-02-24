@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { VoteButton } from './VoteButton';
+import { InitialAvatar } from './InitialAvatar';
 
 interface AmaQuestion {
   id: string;
@@ -17,23 +19,6 @@ interface AmaQuestion {
 interface Props {
   question: AmaQuestion;
   onVoteChange: (id: string, newCount: number, hasVoted: boolean) => void;
-}
-
-function InitialAvatar({ name }: { name: string }) {
-  const letter = name.charAt(0).toUpperCase();
-  const colors = [
-    'bg-emerald-500/20 text-emerald-400',
-    'bg-blue-500/20 text-blue-400',
-    'bg-purple-500/20 text-purple-400',
-    'bg-amber-500/20 text-amber-400',
-    'bg-rose-500/20 text-rose-400',
-  ];
-  const color = colors[letter.charCodeAt(0) % colors.length];
-  return (
-    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${color}`}>
-      {letter}
-    </div>
-  );
 }
 
 export function QuestionCard({ question, onVoteChange }: Props) {
@@ -62,29 +47,12 @@ export function QuestionCard({ question, onVoteChange }: Props) {
       }`}
     >
       <div className="flex items-start gap-4">
-        <button
-          type="button"
-          onClick={handleVote}
-          disabled={voting}
-          aria-label={question.hasVoted ? 'Remove vote' : 'Upvote question'}
-          className={`flex shrink-0 flex-col items-center gap-0.5 rounded-xl border px-2.5 py-2 transition-all duration-200 ${
-            question.hasVoted
-              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400'
-              : 'border-border-subtle text-text-muted hover:border-border-interactive hover:text-foreground'
-          } ${voting ? 'opacity-50' : ''}`}
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 16 16"
-            fill={question.hasVoted ? 'currentColor' : 'none'}
-            stroke="currentColor"
-            strokeWidth="1.5"
-            aria-hidden="true"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 3L2 10h3v3h6v-3h3L8 3z" />
-          </svg>
-          <span className="text-xs font-semibold tabular-nums leading-none">{question.vote_count}</span>
-        </button>
+        <VoteButton
+          count={question.vote_count}
+          hasVoted={question.hasVoted}
+          voting={voting}
+          onVote={handleVote}
+        />
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
