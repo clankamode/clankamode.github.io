@@ -113,19 +113,36 @@ export async function getLearningPillarTree(
   pillarId: string,
   includeDrafts: boolean
 ): Promise<LearningTopicWithArticles[]> {
-  const topics = await getLearningTopicsByPillar(pillarId);
+  const { data, error } = await supabase
+    .from(TOPICS_TABLE)
+    .select('*, LearningArticles(*)')
+    .eq('pillar_id', pillarId)
+    .order('order_index', { ascending: true });
 
-  const topicTrees = await Promise.all(
-    topics.map(async (topic) => {
-      const articles = await getLearningArticlesByTopic(topic.id, includeDrafts);
-      return {
-        ...topic,
-        articles,
-      };
-    })
-  );
+  if (error) {
+    throw error;
+  }
 
-  return topicTrees;
+  const topicsWithArticles = ((data || []) as (LearningTopic & {
+    LearningArticles: LearningArticle[] | null;
+  })[]).map((topic) => {
+    const nestedArticles = (topic.LearningArticles || [])
+      .filter((article) => includeDrafts || article.is_published)
+      .sort((a, b) => a.order_index - b.order_index);
+
+    return {
+      id: topic.id,
+      pillar_id: topic.pillar_id,
+      slug: topic.slug,
+      name: topic.name,
+      description: topic.description,
+      order_index: topic.order_index,
+      created_at: topic.created_at,
+      articles: nestedArticles,
+    };
+  });
+
+  return topicsWithArticles;
 }
 
 export async function getLearningLibrary(
