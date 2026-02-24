@@ -90,6 +90,11 @@ export interface ProgressSummary {
   allCompletionDates: string[];
 }
 
+interface ProgressSummaryWithLibrary {
+  summary: ProgressSummary;
+  library: LearningPillarWithTopics[];
+}
+
 export interface BookmarkItem {
   articleId: string;
   articleSlug: string;
@@ -187,6 +192,11 @@ interface PracticePerformance {
   recentScores: number[];
   targetDifficulty: PracticeDifficulty;
   rationale: string;
+}
+
+interface PracticeRowSources {
+  peraltaRows: PracticeQuestionRow[];
+  fallbackRows: PracticeQuestionRow[];
 }
 
 function buildArticleLookup(library: LearningPillarWithTopics[]) {
@@ -628,7 +638,10 @@ export async function getBookmarkStatus(userId: string, articleId: string, googl
   return { bookmarked: true };
 }
 
-export async function getProgressSummary(userId: string, googleId?: string): Promise<ProgressSummary> {
+async function getProgressSummaryWithLibrary(
+  userId: string,
+  googleId?: string
+): Promise<ProgressSummaryWithLibrary> {
   const library = await getLearningLibrary(false);
   const lookup = buildArticleLookup(library);
 
@@ -704,7 +717,7 @@ export async function getProgressSummary(userId: string, googleId?: string): Pro
     if (nextArticle) break;
   }
 
-  return {
+  const summary: ProgressSummary = {
     totalArticles,
     completedArticles,
     percent,
@@ -715,6 +728,16 @@ export async function getProgressSummary(userId: string, googleId?: string): Pro
     completedIds: Array.from(completedIds) as string[],
     allCompletionDates: filteredRecords.map((r) => r.completed_at),
   };
+
+  return {
+    summary,
+    library,
+  };
+}
+
+export async function getProgressSummary(userId: string, googleId?: string): Promise<ProgressSummary> {
+  const { summary } = await getProgressSummaryWithLibrary(userId, googleId);
+  return summary;
 }
 
 export async function getUserBookmarks(userId: string, googleId?: string): Promise<BookmarkItem[]> {
@@ -789,6 +812,15 @@ async function fetchPracticeRowsBySource(source: 'PERALTA_75' | 'MOCK_ASSESSMENT
   ];
 }
 
+async function fetchPracticeRowSources(): Promise<PracticeRowSources> {
+  const [peraltaRows, fallbackRows] = await Promise.all([
+    fetchPracticeRowsBySource('PERALTA_75'),
+    fetchPracticeRowsBySource('MOCK_ASSESSMENTS'),
+  ]);
+
+  return { peraltaRows, fallbackRows };
+}
+
 async function fetchConceptLabelMap(trackSlug: string, conceptSlugs: string[]): Promise<Map<string, string>> {
   if (conceptSlugs.length === 0) {
     return new Map<string, string>();
@@ -807,26 +839,22 @@ async function fetchConceptLabelMap(trackSlug: string, conceptSlugs: string[]): 
   return new Map<string, string>(data.map((row) => [row.slug, row.label]));
 }
 
-async function getPracticeSessionCandidates(
+async function buildPracticeSessionCandidatesFromRows(
   trackSlug: string,
   targetDifficulty: PracticeDifficulty,
   rationale: string,
   seed: string,
+  rowSources: PracticeRowSources,
   userState?: UserLearningState | null
 ): Promise<SessionItem[]> {
   if (!isPracticeTrack(trackSlug)) {
     return [];
   }
 
-  const [peraltaRows, fallbackRows] = await Promise.all([
-    fetchPracticeRowsBySource('PERALTA_75'),
-    fetchPracticeRowsBySource('MOCK_ASSESSMENTS'),
-  ]);
-
   const priorityConcepts = buildPracticePriorityConcepts(userState);
   const selectedRows = selectPracticeRowsForSession({
-    peraltaRows,
-    fallbackRows,
+    peraltaRows: rowSources.peraltaRows,
+    fallbackRows: rowSources.fallbackRows,
     targetDifficulty,
     seed,
     priorityConcepts,
@@ -870,104 +898,84 @@ async function getPracticeSessionCandidates(
   });
 }
 
-async function getRecentlyFinalizedItemHrefs(
+async function getRecentlyItemHrefSets(
   userId: string,
   trackSlug: string,
   googleId?: string
-): Promise<Set<string>> {
-  const lookbackISO = new Date(Date.now() - SESSION_FINALIZED_LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
+): Promise<{
+  finalized: Set<string>;
+  completed: Set<string>;
+  committed: Set<string>;
+}> {
+  const maxLookbackMs = Math.max(
+    SESSION_FINALIZED_LOOKBACK_HOURS * 60 * 60 * 1000,
+    ITEM_COMPLETED_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
+    SESSION_COMMITTED_LOOKBACK_DAYS * 24 * 60 * 60 * 1000
+  );
+  const lookbackISO = new Date(Date.now() - maxLookbackMs).toISOString();
   const { data, error } = await supabase
     .from('TelemetryEvents')
-    .select('payload')
+    .select('event_type, payload, created_at')
     .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
     .eq('track_slug', trackSlug)
-    .eq('event_type', 'session_finalized')
+    .in('event_type', ['session_finalized', 'item_completed', 'session_committed'])
     .gte('created_at', lookbackISO)
     .order('created_at', { ascending: false })
-    .limit(SESSION_FINALIZED_LOOKBACK_ROWS);
+    .limit(1000);
+
+  const finalized = new Set<string>();
+  const completed = new Set<string>();
+  const committed = new Set<string>();
+  const nowMs = Date.now();
+  const finalizedLookbackMs = SESSION_FINALIZED_LOOKBACK_HOURS * 60 * 60 * 1000;
+  let finalizedRows = 0;
+  let completedRows = 0;
+  let committedRows = 0;
 
   if (error || !data) {
-    return new Set<string>();
+    return { finalized, completed, committed };
   }
 
-  const hrefs = new Set<string>();
   for (const row of data) {
-    const payload = (row as { payload?: unknown }).payload;
-    if (!payload || typeof payload !== 'object') continue;
-    const completedItems = (payload as { completedItems?: unknown }).completedItems;
-    if (!Array.isArray(completedItems)) continue;
+    const eventType = (row as { event_type?: string }).event_type;
 
-    for (const item of completedItems) {
-      if (typeof item !== 'string' || item.length === 0) continue;
-      hrefs.add(normalizeSessionItemHref(item));
+    if (eventType === 'session_finalized') {
+      const createdAt = (row as { created_at?: string }).created_at;
+      const createdAtMs = createdAt ? Date.parse(createdAt) : Number.NaN;
+      if (!Number.isFinite(createdAtMs) || nowMs - createdAtMs > finalizedLookbackMs) continue;
+      if (finalizedRows >= SESSION_FINALIZED_LOOKBACK_ROWS) continue;
+      finalizedRows += 1;
+      const payload = (row as { payload?: unknown }).payload;
+      if (!payload || typeof payload !== 'object') continue;
+      const completedItems = (payload as { completedItems?: unknown }).completedItems;
+      if (!Array.isArray(completedItems)) continue;
+      for (const item of completedItems) {
+        if (typeof item !== 'string' || item.length === 0) continue;
+        finalized.add(normalizeSessionItemHref(item));
+      }
+      continue;
+    }
+
+    if (eventType === 'item_completed') {
+      if (completedRows >= ITEM_COMPLETED_LOOKBACK_ROWS) continue;
+      completedRows += 1;
+      const payload = (row as { payload?: unknown }).payload;
+      if (!payload || typeof payload !== 'object') continue;
+      const itemHref = (payload as { itemHref?: unknown }).itemHref;
+      if (typeof itemHref !== 'string' || itemHref.length === 0) continue;
+      completed.add(normalizeSessionItemHref(itemHref));
+    } else if (eventType === 'session_committed') {
+      if (committedRows >= SESSION_COMMITTED_LOOKBACK_ROWS) continue;
+      committedRows += 1;
+      const payload = (row as { payload?: unknown }).payload;
+      if (!payload || typeof payload !== 'object') continue;
+      const itemHref = (payload as { itemHref?: unknown }).itemHref;
+      if (typeof itemHref !== 'string' || itemHref.length === 0) continue;
+      committed.add(normalizeSessionItemHref(itemHref));
     }
   }
 
-  return hrefs;
-}
-
-async function getRecentlyCompletedItemHrefs(
-  userId: string,
-  trackSlug: string,
-  googleId?: string
-): Promise<Set<string>> {
-  const lookbackISO = new Date(Date.now() - ITEM_COMPLETED_LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
-  const { data, error } = await supabase
-    .from('TelemetryEvents')
-    .select('payload')
-    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
-    .eq('track_slug', trackSlug)
-    .eq('event_type', 'item_completed')
-    .gte('created_at', lookbackISO)
-    .order('created_at', { ascending: false })
-    .limit(ITEM_COMPLETED_LOOKBACK_ROWS);
-
-  if (error || !data) {
-    return new Set<string>();
-  }
-
-  const hrefs = new Set<string>();
-  for (const row of data) {
-    const payload = (row as { payload?: unknown }).payload;
-    if (!payload || typeof payload !== 'object') continue;
-    const itemHref = (payload as { itemHref?: unknown }).itemHref;
-    if (typeof itemHref !== 'string' || itemHref.length === 0) continue;
-    hrefs.add(normalizeSessionItemHref(itemHref));
-  }
-
-  return hrefs;
-}
-
-async function getRecentlyCommittedItemHrefs(
-  userId: string,
-  trackSlug: string,
-  googleId?: string
-): Promise<Set<string>> {
-  const lookbackISO = new Date(Date.now() - SESSION_COMMITTED_LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
-  const { data, error } = await supabase
-    .from('TelemetryEvents')
-    .select('payload')
-    .or(buildIdentityOrFilter(toIdentity(userId, googleId)))
-    .eq('track_slug', trackSlug)
-    .eq('event_type', 'session_committed')
-    .gte('created_at', lookbackISO)
-    .order('created_at', { ascending: false })
-    .limit(SESSION_COMMITTED_LOOKBACK_ROWS);
-
-  if (error || !data) {
-    return new Set<string>();
-  }
-
-  const hrefs = new Set<string>();
-  for (const row of data) {
-    const payload = (row as { payload?: unknown }).payload;
-    if (!payload || typeof payload !== 'object') continue;
-    const itemHref = (payload as { itemHref?: unknown }).itemHref;
-    if (typeof itemHref !== 'string' || itemHref.length === 0) continue;
-    hrefs.add(normalizeSessionItemHref(itemHref));
-  }
-
-  return hrefs;
+  return { finalized, completed, committed };
 }
 
 interface LearnCandidateCollection {
@@ -981,10 +989,9 @@ export async function getSessionState(
   googleId?: string,
   options: GetSessionStateOptions = {}
 ): Promise<SessionState> {
-  const summary = await getProgressSummary(userId, googleId);
-  const library = await getLearningLibrary(false);
   const normalizedPreferredTrack = normalizeTrackSlug(preferredTrackSlug);
-  const [onboardingProfile, committedSessionCount] = await Promise.all([
+  const [{ summary, library }, onboardingProfile, committedSessionCount] = await Promise.all([
+    getProgressSummaryWithLibrary(userId, googleId),
     getOnboardingProfile(userId, googleId),
     getCommittedSessionCount(userId, googleId),
   ]);
@@ -1131,15 +1138,13 @@ export async function getSessionState(
 
   const plannerTrackSlug = preferredTrack?.slug || articleCandidates[0]?.pillarSlug || sectionCandidates[0]?.pillarSlug || resolvedTrackSlug;
   const plannerTrackName = preferredTrack?.name || getPillarName(plannerTrackSlug, library);
-  const recentlyFinalizedItemHrefs = useGenerative
-    ? await getRecentlyFinalizedItemHrefs(userId, plannerTrackSlug, googleId)
-    : new Set<string>();
-  const recentlyCompletedItemHrefs = useGenerative
-    ? await getRecentlyCompletedItemHrefs(userId, plannerTrackSlug, googleId)
-    : new Set<string>();
-  const recentlyCommittedItemHrefs = useGenerative
-    ? await getRecentlyCommittedItemHrefs(userId, plannerTrackSlug, googleId)
-    : new Set<string>();
+  const {
+    finalized: recentlyFinalizedItemHrefs,
+    completed: recentlyCompletedItemHrefs,
+    committed: recentlyCommittedItemHrefs,
+  } = useGenerative
+    ? await getRecentlyItemHrefSets(userId, plannerTrackSlug, googleId)
+    : { finalized: new Set<string>(), completed: new Set<string>(), committed: new Set<string>() };
   const recentExclusionHrefs = new Set<string>([
     ...Array.from(recentlyFinalizedItemHrefs),
     ...Array.from(recentlyCompletedItemHrefs),
@@ -1150,18 +1155,23 @@ export async function getSessionState(
     sectionCandidates = sectionCandidates.filter((item) => !recentExclusionHrefs.has(normalizeSessionItemHref(item.href)));
   }
   const dayKey = getDayKeyUTC();
-  const practicePerformance = useGenerative
-    ? await derivePracticePerformance(userId, googleId)
-    : null;
-  const practiceCandidates = useGenerative
-    ? await getPracticeSessionCandidates(
+  let practicePerformance: PracticePerformance | null = null;
+  let practiceCandidates: SessionItem[] = [];
+  if (useGenerative) {
+    const [derivedPracticePerformance, practiceRowSources] = await Promise.all([
+      derivePracticePerformance(userId, googleId),
+      fetchPracticeRowSources(),
+    ]);
+    practicePerformance = derivedPracticePerformance;
+    practiceCandidates = await buildPracticeSessionCandidatesFromRows(
       plannerTrackSlug,
-      practicePerformance?.targetDifficulty || 'Easy',
-      practicePerformance?.rationale || 'Build retrieval speed with timed interview reps.',
+      practicePerformance.targetDifficulty,
+      practicePerformance.rationale,
       `${userId}:${plannerTrackSlug}:${dayKey}`,
+      practiceRowSources,
       userState
-    )
-    : [];
+    );
+  }
   const filteredPracticeCandidates = recentExclusionHrefs.size > 0
     ? practiceCandidates.filter((item) => !recentExclusionHrefs.has(normalizeSessionItemHref(item.href)))
     : practiceCandidates;
