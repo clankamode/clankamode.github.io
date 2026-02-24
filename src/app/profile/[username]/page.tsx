@@ -2,10 +2,13 @@ import { notFound } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { supabase } from '@/lib/supabase';
+import { getProgressSummary, getUserBookmarks } from '@/lib/progress';
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import ProfileCard from './_components/ProfileCard';
 import StatsSection from './_components/StatsSection';
 import BadgesGrid from './_components/BadgesGrid';
 import SubmissionHistory from './_components/SubmissionHistory';
+import OwnProfileProgress from './_components/OwnProfileProgress';
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -70,28 +73,89 @@ export default async function ProfilePage({ params }: PageProps) {
   if (!profile) notFound();
 
   let currentUserUsername: string | null = null;
+  let ownProgressData: {
+    summary: Awaited<ReturnType<typeof getProgressSummary>>;
+    bookmarks: Awaited<ReturnType<typeof getUserBookmarks>>;
+    fingerprint: Awaited<ReturnType<typeof import('@/app/actions/fingerprint').getFingerprintData>> | null;
+  } | null = null;
+
   if (session?.user?.email) {
     currentUserUsername = await getCurrentUserUsername(session.user.email);
+
+    const isOwnProfile = username.toLowerCase() === currentUserUsername?.toLowerCase();
+    const progressAccessGranted = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session.user);
+
+    if (isOwnProfile && progressAccessGranted) {
+      const [summary, bookmarks, fingerprint] = await Promise.all([
+        getProgressSummary(session.user.email, session.user.id ?? undefined),
+        getUserBookmarks(session.user.email, session.user.id ?? undefined),
+        isFeatureEnabled(FeatureFlags.SESSION_MODE, session.user)
+          ? import('@/app/actions/fingerprint').then((mod) =>
+              mod.getFingerprintData(session.user.email!, session.user.id ?? undefined)
+            )
+          : Promise.resolve(null),
+      ]);
+
+      ownProgressData = {
+        summary,
+        bookmarks,
+        fingerprint,
+      };
+    }
+  }
+
+  const isOwnProfile = username.toLowerCase() === currentUserUsername?.toLowerCase();
+
+  if (!isOwnProfile || !ownProgressData) {
+    return (
+      <main className="min-h-screen bg-background text-foreground">
+        <div className="max-w-screen-lg mx-auto px-4 sm:px-6 py-6 sm:py-12">
+          <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-4 sm:gap-6">
+            {/* Left column */}
+            <div className="space-y-4">
+              <ProfileCard
+                profile={profile}
+                currentUserUsername={currentUserUsername}
+              />
+              <StatsSection stats={profile.stats} />
+            </div>
+
+            {/* Right column */}
+            <div className="space-y-6">
+              <BadgesGrid badges={profile.badges} />
+              <SubmissionHistory submissions={profile.recentSubmissions} />
+            </div>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="max-w-screen-lg mx-auto px-4 sm:px-6 py-6 sm:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-4 sm:gap-6">
-          {/* Left column */}
-          <div className="space-y-4">
-            <ProfileCard
-              profile={profile}
-              currentUserUsername={currentUserUsername}
+    <main className="min-h-screen bg-background text-text-primary">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
+        <div className="space-y-6">
+          <section className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+            <div className="space-y-4">
+              <ProfileCard
+                profile={profile}
+                currentUserUsername={currentUserUsername}
+                progressStats={{
+                  streakDays: ownProgressData.summary.streakDays,
+                  overallPercent: ownProgressData.summary.percent,
+                  completedArticles: ownProgressData.summary.completedArticles,
+                  totalArticles: ownProgressData.summary.totalArticles,
+                  articlesRead: profile.stats.articlesRead,
+                }}
+              />
+              <StatsSection stats={profile.stats} />
+            </div>
+            <OwnProfileProgress
+              summary={ownProgressData.summary}
+              bookmarks={ownProgressData.bookmarks}
+              fingerprint={ownProgressData.fingerprint}
             />
-            <StatsSection stats={profile.stats} />
-          </div>
-
-          {/* Right column */}
-          <div className="space-y-6">
-            <BadgesGrid badges={profile.badges} />
-            <SubmissionHistory submissions={profile.recentSubmissions} />
-          </div>
+          </section>
         </div>
       </div>
     </main>

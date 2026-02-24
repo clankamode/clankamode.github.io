@@ -94,7 +94,14 @@ export async function middleware(req: NextRequest) {
             return NextResponse.next();
         }
 
-        if (req.nextUrl.pathname.startsWith('/learn') && !req.nextUrl.pathname.startsWith('/learn/progress')) {
+        if (req.nextUrl.pathname === '/learn/progress') {
+            if (!progressEnabled) {
+                return NextResponse.redirect(new URL('/learn', req.url));
+            }
+            return NextResponse.next();
+        }
+
+        if (req.nextUrl.pathname.startsWith('/learn')) {
             return NextResponse.next();
         }
 
@@ -168,7 +175,6 @@ export async function middleware(req: NextRequest) {
         }
 
         if (
-            req.nextUrl.pathname.startsWith('/learn/progress') ||
             req.nextUrl.pathname.startsWith('/api/progress') ||
             req.nextUrl.pathname.startsWith('/api/bookmarks')
         ) {

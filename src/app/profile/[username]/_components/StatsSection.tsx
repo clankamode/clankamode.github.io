@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface Stats {
   questionsSolved: number;
   totalQuestions: number;

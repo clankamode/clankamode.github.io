@@ -133,9 +133,8 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
   const isAdmin = hasRole(originalRole, UserRole.ADMIN);
   const isEffectiveAdmin = hasRole(effectiveRole, UserRole.ADMIN);
   const isEditor = hasRole(effectiveRole, UserRole.EDITOR);
-  const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
   const showSessionMode = isFeatureEnabled(FeatureFlags.SESSION_MODE, session?.user);
-  const showSessionFeatures = showProgress && showSessionMode;
+  const showSessionFeatures = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user) && showSessionMode;
   const showExploreQuickLink = mode === 'gate' && pathname === '/home' && showSessionFeatures;
 
   const handleLeaveSession = () => {
@@ -238,11 +237,6 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                     {!isEditor && (
                       <>
                         <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
-                        {showProgress && (
-                          <Link href="/learn/progress" className={navLinkClass('/learn/progress')}>
-                            My Progress
-                          </Link>
-                        )}
                         <div className="relative group">
                           <button type="button" className={navButtonClass(isPracticeSectionActive)}>
                             Practice
@@ -466,11 +460,6 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 {!isEditor && (
                   <>
                     <Link href="/learn" className={mobileNavLinkClass('/learn')} onClick={() => setIsMenuOpen(false)}>Learn</Link>
-                    {showProgress && (
-                      <Link href="/learn/progress" className={mobileNavLinkClass('/learn/progress')} onClick={() => setIsMenuOpen(false)}>
-                        My Progress
-                      </Link>
-                    )}
                     <div className="space-y-1 pt-3">
                       <span className="block px-4 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Practice</span>
                       <Link href="/peralta75" className={mobileNavLinkClass('/peralta75')} onClick={() => setIsMenuOpen(false)}>Peralta 75</Link>

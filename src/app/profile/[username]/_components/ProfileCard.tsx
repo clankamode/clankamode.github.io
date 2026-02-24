@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import EditProfileModal from './EditProfileModal';
@@ -16,6 +17,13 @@ interface ProfileData {
 interface ProfileCardProps {
   profile: ProfileData;
   currentUserUsername?: string | null;
+  progressStats?: {
+    streakDays: number;
+    overallPercent: number;
+    completedArticles: number;
+    totalArticles: number;
+    articlesRead: number;
+  };
 }
 
 function Avatar({ url, name }: { url: string | null; name: string }) {
@@ -41,7 +49,7 @@ function Avatar({ url, name }: { url: string | null; name: string }) {
   );
 }
 
-export default function ProfileCard({ profile, currentUserUsername }: ProfileCardProps) {
+export default function ProfileCard({ profile, currentUserUsername, progressStats }: ProfileCardProps) {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [localProfile, setLocalProfile] = useState(profile);
@@ -63,6 +71,28 @@ export default function ProfileCard({ profile, currentUserUsername }: ProfileCar
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs w-full">{localProfile.bio}</p>
           )}
         </div>
+
+        {progressStats && (
+          <div className="rounded-xl border border-border-subtle bg-surface-interactive/70 px-3 py-3">
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">Streak</p>
+                <p className="mt-1 text-lg font-semibold leading-none text-text-primary">{progressStats.streakDays}</p>
+              </div>
+              <div>
+                <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">Overall</p>
+                <p className="mt-1 text-lg font-semibold leading-none text-text-primary">{progressStats.overallPercent}%</p>
+                <p className="mt-1 font-mono text-[10px] text-text-muted">
+                  {progressStats.completedArticles}/{progressStats.totalArticles}
+                </p>
+              </div>
+              <div>
+                <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">Read</p>
+                <p className="mt-1 text-lg font-semibold leading-none text-text-primary">{progressStats.articlesRead}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {(localProfile.leetcode_url || localProfile.codeforces_url || localProfile.github_url) && (
           <div className="flex flex-col gap-1.5 sm:gap-2 pt-2 border-t border-border-subtle">
