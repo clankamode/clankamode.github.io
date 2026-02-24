@@ -19,7 +19,8 @@ export async function getLearningPillars(): Promise<LearningPillar[]> {
     .order('order_index', { ascending: true });
 
   if (error) {
-    throw error;
+    console.error('[content] getLearningPillars failed:', error.message, error.code);
+    return [];
   }
 
   return (data || []) as LearningPillar[];
@@ -55,7 +56,8 @@ export async function getLearningTopicsByPillar(pillarId: string): Promise<Learn
     .order('order_index', { ascending: true });
 
   if (error) {
-    throw error;
+    console.error('[content] getLearningTopicsByPillar failed:', error.message, error.code);
+    return [];
   }
 
   return (data || []) as LearningTopic[];
@@ -74,7 +76,8 @@ export async function getLearningArticlesByTopic(
   const { data, error } = includeDrafts ? await query : await query.eq('is_published', true);
 
   if (error) {
-    throw error;
+    console.error('[content] getLearningArticlesByTopic failed:', error.message, error.code);
+    return [];
   }
 
   return (data || []) as LearningArticle[];
@@ -132,7 +135,8 @@ export async function getLearningPillarTree(
         .order('order_index', { ascending: true });
 
       if (error) {
-        throw error;
+        console.error('[content] getLearningPillarTree failed:', error.message, error.code);
+        return [];
       }
 
       const topicsWithArticles = ((data || []) as (LearningTopic & {
