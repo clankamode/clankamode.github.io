@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { buildUserIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
-import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 
 const PROGRESS_TABLE = 'UserPracticeProgress';
 const QUESTION_TABLE = 'InterviewQuestions';
@@ -81,10 +80,6 @@ export async function GET(req: NextRequest) {
     const identity = getEffectiveIdentityFromToken(token);
     if (!identity) {
       return NextResponse.json({ error: 'Missing identity' }, { status: 400 });
-    }
-
-    if (!isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, { role: token.role as string })) {
-      return NextResponse.json({ error: 'Not enabled' }, { status: 403 });
     }
 
     const admin = getSupabaseAdminClient();
@@ -170,10 +165,6 @@ export async function POST(req: NextRequest) {
     const identity = getEffectiveIdentityFromToken(token);
     if (!identity) {
       return NextResponse.json({ error: 'Missing identity' }, { status: 400 });
-    }
-
-    if (!isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, { role: token.role as string })) {
-      return NextResponse.json({ error: 'Not enabled' }, { status: 403 });
     }
 
     const payload = await req.json();
