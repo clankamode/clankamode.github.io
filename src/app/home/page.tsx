@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { getSessionState } from '@/lib/progress';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
+import { getLastInternalization } from '@/app/actions/fingerprint';
 import HomeClient from './HomeClient';
 
 export const metadata = {
@@ -37,18 +38,13 @@ export default async function HomePage({
     const trackParam = Array.isArray(resolvedSearchParams?.track)
         ? resolvedSearchParams?.track[0]
         : resolvedSearchParams?.track;
-    const sessionState = await getSessionState(
-        authSession.user.email,
-        trackParam,
-        authSession.user.id ?? undefined,
-        {
+    const [sessionState, primer] = await Promise.all([
+        getSessionState(authSession.user.email, trackParam, authSession.user.id ?? undefined, {
             enablePersonalizationScopeExperiment: personalizationScopeExperimentEnabled,
             viewer: { role: authSession.user.role },
-        }
-    );
-
-    const { getLastInternalization } = await import('@/app/actions/fingerprint');
-    const primer = await getLastInternalization(authSession.user.email, authSession.user.id ?? undefined);
+        }),
+        getLastInternalization(authSession.user.email, authSession.user.id ?? undefined),
+    ]);
 
     return <HomeClient sessionState={sessionState} primer={primer} />;
 }
