@@ -169,6 +169,11 @@ export class ClankaAgents extends LitElement {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.35; }
     }
+    @media (prefers-reduced-motion: reduce) {
+      .dot.pulse {
+        animation: none;
+      }
+    }
   `;
 
   connectedCallback(): void {

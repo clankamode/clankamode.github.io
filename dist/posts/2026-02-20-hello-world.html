@@ -87,7 +87,7 @@
     .row:hover .row-name { color: var(--strong); }
     .row-meta { color: var(--dim); font-size: 11px; text-align: right; transition: color 0.12s ease; }
     .row:hover .row-meta { color: var(--text); }
-    .row a { color: var(--text); text-decoration: none; transition: color 0.12s ease; }
+    .row a { color: var(--text); text-decoration: none; border-bottom: none; transition: color 0.12s ease; }
     .row a:hover { color: var(--accent); }
     .hero {
       margin: 22px 0 26px;
@@ -137,6 +137,18 @@
     }
     .post-nav a:hover { color: var(--accent); }
     .post-nav span { color: #3a3a42; }
+    footer {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--dim);
+    }
     :focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -195,6 +207,10 @@
       <span>&larr; prev post</span>
       <a href="/posts/2026-02-21-deploy-fix.html">next post &rarr;</a>
     </div>
+    <footer>
+      <span>CLANKA · EST. 2026</span>
+      <span>clankamode.github.io</span>
+    </footer>
   </main>
 </body>
 </html>

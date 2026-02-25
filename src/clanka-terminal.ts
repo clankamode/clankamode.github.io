@@ -22,7 +22,7 @@ export class ClankaTerminal extends LitElement {
   static styles = css`
     :host {
       display: block;
-      margin-bottom: 64px;
+      margin-bottom: 28px;
       font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
       --bg: #070708;
       --surface: #0e0e10;
@@ -106,6 +106,14 @@ export class ClankaTerminal extends LitElement {
     @keyframes blink {
       0%, 50% { opacity: 1; }
       51%, 100% { opacity: 0.2; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cursor {
+        animation: none;
+      }
+      .skeleton {
+        animation: none;
+      }
     }
   `;
 

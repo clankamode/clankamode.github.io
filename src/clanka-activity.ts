@@ -42,6 +42,16 @@ export class ClankaActivity extends LitElement {
       gap: 16px;
       padding: 12px 0;
       border-bottom: 1px solid var(--border, #1e1e22);
+      border-left: 2px solid transparent;
+      transition: border-color 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
+    }
+    .row:hover {
+      border-left-color: var(--accent, #c8f542);
+      transform: translateX(2px);
+      background: color-mix(in srgb, var(--surface, #0e0e10) 84%, var(--accent, #c8f542) 16%);
+      padding-left: 10px;
+      padding-right: 10px;
+      margin: 0 -10px;
     }
     .row-name {
       color: var(--text, #d4d4dc);
