@@ -4,6 +4,7 @@ import './clanka-fleet';
 import './clanka-terminal';
 import './clanka-agents';
 import './clanka-tasks';
+import './clanka-cmdk';
 
 type SyncState = {
   loading: boolean;
