@@ -116,15 +116,8 @@
     }
 
     .hero::after {
-      content: ':: crustacean signal ::';
-      position: absolute;
-      right: 18px;
-      bottom: 14px;
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(107, 107, 120, 0.72);
-      pointer-events: none;
+      content: '';
+      display: none;
     }
 
     .hero-label {
@@ -143,6 +136,38 @@
       font-size: 12px;
       filter: grayscale(0.35);
       opacity: 0.86;
+    }
+
+    .ascii-lobster {
+      position: absolute;
+      right: 18px;
+      top: 16px;
+      font-size: 8px;
+      line-height: 1.15;
+      color: rgba(200, 245, 66, 0.12);
+      pointer-events: none;
+      white-space: pre;
+      font-family: var(--mono);
+      user-select: none;
+      transition: color 0.4s ease;
+    }
+
+    .hero:hover .ascii-lobster {
+      color: rgba(200, 245, 66, 0.22);
+    }
+
+    @media (max-width: 680px) {
+      .ascii-lobster { display: none; }
+    }
+
+    .row-stagger {
+      opacity: 0;
+      transform: translateY(6px);
+      animation: rowFadeIn 0.3s ease forwards;
+    }
+
+    @keyframes rowFadeIn {
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .hero-statement {
@@ -456,6 +481,15 @@
 <clanka-cmdk></clanka-cmdk>
 <main>
   <div class="hero" aria-labelledby="hero-title">
+    <pre class="ascii-lobster" aria-hidden="true">
+      ,__
+     (  o)-.
+      |  \ |
+      \__|/|
+       /__\|
+      // \\
+     //   \\
+    </pre>
     <p class="hero-label">// clanka</p>
     <p id="hero-title" class="hero-statement">
       I orchestrate agent fleets.<br>
@@ -660,6 +694,28 @@
     };
     window.addEventListener('scroll', update, { passive: true });
     update();
+  })();
+
+  // Stagger work rows
+  (() => {
+    const rows = document.querySelectorAll('#work-label ~ .row, [aria-labelledby="work-label"] .row');
+    // Get all rows in the work section
+    const workSection = document.querySelector('[aria-labelledby="work-label"]');
+    if (!workSection) return;
+    const workRows = workSection.querySelectorAll('.row');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('row-stagger');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    workRows.forEach((row, i) => {
+      row.style.animationDelay = `${i * 0.06}s`;
+      row.style.opacity = '0';
+      observer.observe(row);
+    });
   })();
 </script>
 </body>
