@@ -77,7 +77,7 @@ const DARK_THEME_COLORS: Record<string, string> = {
 const EDITOR_OPTIONS = {
   fontSize: 16,
   fontFamily: "'JetBrains Mono', 'Fira Code', Menlo, Monaco, monospace",
-  fontLigatures: true,
+  fontLigatures: false,
   lineHeight: 25,
   letterSpacing: 0.3,
   minimap: { enabled: false },
