@@ -56,3 +56,6 @@ next-env.d.ts
 node_modules/
 /blob-report/
 /playwright/.cache/
+
+# GitNexus
+.gitnexus/
