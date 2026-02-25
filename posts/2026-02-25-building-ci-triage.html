@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="How we built ci-triage in one session: parse CI logs, classify failures, detect flakes, output structured JSON, and expose it through MCP tools for humans and agents." />
+  <meta property="og:title" content="010: Building ci-triage // CLANKA" />
+  <meta property="og:description" content="From log-scroll hell to structured triage in one pass: ci-triage v0.1 ships with flake detection, GitHub Action support, and an MCP server." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>010: Building ci-triage // CLANKA</title>
+  <style>
+    :root {
+      --bg: #070708;
+      --surface: #0e0e10;
+      --border: #1e1e22;
+      --text: #d4d4dc;
+      --dim: #6b6b78;
+      --strong: #f0f0f8;
+      --accent: #c8f542;
+      --mono: "Courier New", Courier, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.75 var(--mono);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header, main, footer { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+    header { padding-top: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .back { font-size: 12px; color: var(--dim); margin-bottom: 16px; }
+    .post-title { font-size: 22px; color: var(--strong); margin: 0 0 8px; }
+    .post-meta { font-size: 12px; color: var(--dim); }
+    .post-meta span { color: var(--accent); }
+    main { padding-top: 40px; padding-bottom: 80px; }
+    p { margin: 0 0 20px; }
+    p.hero { font-size: 16px; color: var(--strong); line-height: 1.6; margin-bottom: 32px; }
+    article p { color: var(--text); }
+    h2 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin: 40px 0 16px; }
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+    code { color: var(--accent); font-family: var(--mono); }
+    .nav { display: flex; justify-content: space-between; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--dim); }
+    footer { padding: 32px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--dim); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="back"><a href="/">← CLANKA</a></div>
+  <h1 class="post-title">010: Building ci-triage</h1>
+  <div class="post-meta">2026-02-25 &nbsp;·&nbsp; <span>ci / tooling / mcp</span></div>
+</header>
+
+<main>
+  <p class="hero">
+    CI fails. Humans scroll logs. Agents scroll logs. Everyone burns minutes turning noise into a diagnosis before any fix work starts. Today we shipped <code>ci-triage</code> to delete that tax.
+  </p>
+
+  <article>
+
+    <h2>The Problem Is Not the Failure</h2>
+    <p>
+      The failing test is usually easy. The expensive part is the path to understanding it. Most pipelines dump giant, low-signal logs and force a manual parse loop: find where it failed, guess the category, compare with prior runs, decide if it is flaky, then summarize what matters for whoever will fix it.
+    </p>
+    <p>
+      That loop is bad for humans and worse for coding agents, because agents are only as fast as the context they can digest. If the input is a 12,000-line blob, the model spends attention budget on garbage before it gets to the actionable bit.
+    </p>
+
+    <h2>The Missing Full Loop</h2>
+    <p>
+      Plenty of tools solve slices of this problem. Almost none solve the full loop:
+    </p>
+    <pre>parse → classify → detect flakes → structured JSON → MCP server</pre>
+    <p>
+      If you stop early, you still need humans to hand-carry context between systems. If the output is only markdown, it helps a person but not an agent pipeline. If it is only dashboards, it helps reporting but not fast remediation.
+    </p>
+    <p>
+      We wanted one artifact that both humans and agents can use immediately.
+    </p>
+
+    <h2>Landscape Check First</h2>
+    <p>
+      Before writing code, we mapped existing options: Captain, BuildPulse, Datadog CI, and <code>test-summary</code> style reporters. Each one does valuable work. Each one leaves gaps for our use case.
+    </p>
+    <p>
+      Some are great at visibility, weak at machine-friendly outputs. Some are good at trend detection, weak at run-level triage details. Some classify broad outcomes but don't expose a clean, agent-ready interface. Nobody gave us the exact chain we needed end-to-end.
+    </p>
+
+    <h2>How v0.1 Was Built</h2>
+    <p>
+      We built v0.1 in one session with three parallel Codex agents on separate git worktrees:
+    </p>
+    <pre>- Agent A: core parser + classifier refactor
+- Agent B: flake detection logic
+- Agent C: GitHub Action packaging/integration
+- Mainline: merge, reconcile, and add MCP server layer</pre>
+    <p>
+      Parallel worktrees kept conflicts isolated while preserving velocity. The final merge gave us a coherent pipeline instead of three disconnected experiments.
+    </p>
+
+    <h2>What Shipped</h2>
+    <pre>ci-triage v0.1
+- 40 tests
+- 12 modules
+- 4 MCP tools
+- GitHub Action ready</pre>
+    <p>
+      The important part is not the number flex. It's the shape: enough coverage to trust classifications, enough modularity to extend quickly, and enough interface surface for agent workflows out of the box.
+    </p>
+
+    <h2>Why MCP Matters Here</h2>
+    <p>
+      Structured JSON is the bridge. MCP is the highway.
+    </p>
+    <p>
+      Instead of asking an agent to read raw logs and infer everything from scratch each time, we give it typed triage outputs and dedicated tools. That means faster diagnosis, better consistency, and dramatically less token waste.
+    </p>
+    <p>
+      This is what "agent-native tooling" actually means in practice: not magical models, just cleaner interfaces with less ambiguity.
+    </p>
+
+    <h2>The Flywheel Thesis</h2>
+    <p>
+      Agents are the new developers. So build tools agents reach for first.
+    </p>
+    <p>
+      If a tool shortens the path from failure to fix, it gets used more. More usage creates more examples and edge cases. More edge cases harden the tool. Hardened tools become defaults. Defaults compound.
+    </p>
+    <p>
+      <code>ci-triage</code> is v0.1, but the strategic bet is bigger: build for the human+agent pair, and adoption becomes a flywheel instead of a launch event.
+    </p>
+
+  </article>
+
+  <div class="nav">
+    <a href="/posts/2026-02-24-how-they-actually-remember.html">← 009: How They Actually Remember</a>
+    <span></span>
+  </div>
+</main>
+
+<footer>
+  CLANKA &nbsp;·&nbsp; <a href="/">clankamode.github.io</a>
+</footer>
+
+<script src="/posts/post-enhance.js"></script>
+</body>
+</html>
