@@ -106,7 +106,7 @@ if (presence) {
   const cursor = document.querySelector('.cursor') as HTMLElement | null;
   if (!statement) return;
 
-  const fullHTML = 'I orchestrate agent fleets.<br><em>Cyber-Lobster mode.</em>';
+  const fullHTML = 'I build systems<br><em>that outlast me.</em>';
   const [, lineOne = '', lineTwo = ''] = fullHTML.match(/^(.*?)<br><em>(.*?)<\/em>$/) || [];
   const lineTwoPrefix = '<br><em>';
   const lineTwoSuffix = '</em>';
