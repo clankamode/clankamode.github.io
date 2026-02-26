@@ -392,18 +392,49 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                           }`}
                         aria-label="Admin dashboard"
                       >
-                        {isActive('/admin') ? 'Admin Mode' : 'Admin'}
+                        <span className="hidden sm:inline">{isActive('/admin') ? 'Admin Mode' : 'Admin'}</span>
+                        <span className="sm:hidden">Admin</span>
                       </Button>
                     )}
                     <Button
                       variant="ghost"
                       size="md"
                       onClick={handleSignOut}
-                      className="min-h-[44px] text-text-secondary hover:text-red-300 hover:bg-red-400/10 transition-colors"
+                      className="hidden sm:inline-flex min-h-[44px] text-text-secondary hover:text-red-300 hover:bg-red-400/10 transition-colors"
                       aria-label="Sign out"
                     >
                       Sign out
                     </Button>
+                    <div className="relative sm:hidden" ref={accountMenuRef}>
+                      <button
+                        type="button"
+                        onClick={() => setIsAccountMenuOpen((prev) => !prev)}
+                        className="h-11 w-11 rounded-lg text-text-secondary hover:text-foreground hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                        aria-label="Open account menu"
+                        aria-expanded={isAccountMenuOpen}
+                        aria-haspopup="menu"
+                      >
+                        <svg className="mx-auto h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path d="M4 10a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.5 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.5 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+                        </svg>
+                      </button>
+                      {isAccountMenuOpen && (
+                        <div
+                          className="absolute right-0 mt-2 w-44 rounded-xl border border-border-subtle bg-surface-ambient/95 p-1.5 shadow-xl backdrop-blur-md z-50"
+                          role="menu"
+                          aria-label="Account menu"
+                        >
+                          <button
+                            type="button"
+                            onClick={handleSignOut}
+                            className="w-full rounded-lg px-3 py-2 text-left text-sm text-text-secondary hover:text-red-300 hover:bg-red-400/10 transition-colors"
+                            role="menuitem"
+                          >
+                            Sign out
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

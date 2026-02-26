@@ -196,7 +196,7 @@ export default async function CustomerVoicePage({
         </div>
 
         <section className="mb-8 rounded-xl border border-border-subtle bg-surface-interactive p-4">
-          <div className="mb-5 grid gap-4 md:grid-cols-5">
+          <div className="mb-5 grid grid-cols-2 gap-4 md:grid-cols-5">
             <div className="rounded-lg border border-border-subtle bg-surface p-3">
               <p className="text-xs uppercase tracking-wider text-text-muted">Submissions</p>
               <p className="mt-1 text-xl font-semibold text-text-primary">{feedbackTotalCount}</p>
