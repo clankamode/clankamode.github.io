@@ -223,16 +223,20 @@ export default async function CustomerVoicePage({
           <div className="grid gap-6 lg:grid-cols-2">
             <section>
               <h2 className="mb-2 text-sm font-semibold text-text-primary">Top Pages Mentioned</h2>
-              <div className="overflow-auto">
+              <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="text-left text-text-muted">
-                    <tr><th className="py-2">Page</th><th className="py-2">Submissions</th><th className="py-2">Share</th></tr>
+                    <tr>
+                      <th className="py-2 pr-4">Page</th>
+                      <th className="py-2 pr-4 whitespace-nowrap">Submissions</th>
+                      <th className="py-2 whitespace-nowrap">Share</th>
+                    </tr>
                   </thead>
                   <tbody>
                     {feedbackPathRows.map((row) => (
                       <tr key={row.path} className="border-t border-border-subtle">
-                        <td className="py-2 text-text-secondary">{row.path}</td>
-                        <td className="py-2 text-text-primary">{row.count}</td>
+                        <td className="py-2 pr-4 text-text-secondary max-w-[180px] truncate" title={row.path}>{row.path}</td>
+                        <td className="py-2 pr-4 text-text-primary">{row.count}</td>
                         <td className="py-2 text-text-primary">{formatPercent(row.share)}</td>
                       </tr>
                     ))}
@@ -248,27 +252,27 @@ export default async function CustomerVoicePage({
 
             <section>
               <h2 className="mb-2 text-sm font-semibold text-text-primary">Recent Submissions</h2>
-              <div className="overflow-auto">
-                <table className="w-full text-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[480px] text-sm">
                   <thead className="text-left text-text-muted">
                     <tr>
-                      <th className="py-2">Time</th>
-                      <th className="py-2">Type</th>
-                      <th className="py-2">Page</th>
-                      <th className="py-2">Message</th>
-                      <th className="py-2">Contact</th>
-                      <th className="py-2">Files</th>
+                      <th className="py-2 pr-3 whitespace-nowrap">Time</th>
+                      <th className="py-2 pr-3 whitespace-nowrap">Type</th>
+                      <th className="py-2 pr-3 whitespace-nowrap">Page</th>
+                      <th className="py-2 pr-3">Message</th>
+                      <th className="py-2 pr-3 hidden sm:table-cell whitespace-nowrap">Contact</th>
+                      <th className="py-2 hidden sm:table-cell">Files</th>
                     </tr>
                   </thead>
                   <tbody>
                     {feedbackRows.slice(0, 30).map((row) => (
                       <tr key={row.id} className="border-t border-border-subtle">
-                        <td className="py-2 text-text-secondary">{new Date(row.created_at).toLocaleString()}</td>
-                        <td className="py-2 text-text-primary">{formatFeedbackCategoryLabel(row.category)}</td>
-                        <td className="py-2 text-text-secondary">{row.page_path || '-'}</td>
-                        <td className="py-2 text-text-secondary">{truncateText(row.message, 140)}</td>
-                        <td className="py-2 text-text-secondary">{row.contact_email || row.user_email || '-'}</td>
-                        <td className="py-2 text-text-primary">{feedbackAttachmentCount(row.metadata)}</td>
+                        <td className="py-2 pr-3 text-text-secondary whitespace-nowrap text-xs">{new Date(row.created_at).toLocaleString()}</td>
+                        <td className="py-2 pr-3 text-text-primary whitespace-nowrap">{formatFeedbackCategoryLabel(row.category)}</td>
+                        <td className="py-2 pr-3 text-text-secondary max-w-[120px] truncate" title={row.page_path || '-'}>{row.page_path || '-'}</td>
+                        <td className="py-2 pr-3 text-text-secondary max-w-[200px] break-words">{truncateText(row.message, 100)}</td>
+                        <td className="py-2 pr-3 text-text-secondary hidden sm:table-cell max-w-[120px] truncate">{row.contact_email || row.user_email || '-'}</td>
+                        <td className="py-2 text-text-primary hidden sm:table-cell">{feedbackAttachmentCount(row.metadata)}</td>
                       </tr>
                     ))}
                     {feedbackRows.length === 0 && (
