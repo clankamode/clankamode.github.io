@@ -56,7 +56,7 @@ function buildTestRunnerCode(testCases: TestCase[]): string {
     lines.push('try:');
     lines.push(`    __r__ = ${tc.fnCall}`);
     if (tc.sortResult) {
-      lines.push('    __r__ = sorted(__r__) if isinstance(__r__, list) else __r__');
+      lines.push('    __r__ = sorted([sorted(x) if isinstance(x, list) else x for x in __r__]) if isinstance(__r__, list) else __r__');
     }
     lines.push(
       `    __test_results__.append({"id": ${tc.id}, "passed": __r__ == ${tc.expected}, "actual": repr(__r__)})`,
