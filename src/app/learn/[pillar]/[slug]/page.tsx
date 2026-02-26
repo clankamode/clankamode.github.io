@@ -22,6 +22,7 @@ import { getArticleCompletionStatus, getBookmarkStatus } from '@/lib/progress';
 import ArticleLayoutSwitcher from '../../_components/ArticleLayoutSwitcher';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import ChunkedArticleRenderer from '@/components/session/ChunkedArticleRenderer';
+import TutorChat from '@/app/ai/_components/TutorChat';
 
 interface ArticlePageProps {
   params: Promise<{ pillar: string; slug: string }>;
@@ -61,6 +62,7 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
   const canEdit = canViewDrafts;
   const userId = session?.user?.email;
   const showProgress = isFeatureEnabled(FeatureFlags.PROGRESS_TRACKING, session?.user);
+  const showTutor = isFeatureEnabled(FeatureFlags.AI_TUTOR, session?.user);
 
   const pillar = await getLearningPillarBySlug(pillarSlug.toLowerCase());
   if (!pillar) {
@@ -210,6 +212,11 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
             />
           </>
         }
+      />
+      <TutorChat
+        articleSlug={article.slug}
+        articleTitle={article.title}
+        enabled={showTutor}
       />
     </div>
   );

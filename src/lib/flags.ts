@@ -5,6 +5,7 @@ export const FeatureFlags = {
     SESSION_MODE: 'session_mode',
     USE_MICRO_V1: 'use_micro_v1',
     GENERATIVE_SESSIONS: 'generative_sessions',
+    AI_TUTOR: 'ai_tutor',
     PERSONALIZATION_SCOPE_EXPERIMENT: 'personalization_scope_experiment',
     FRICTION_INTELLIGENCE: 'friction_intelligence',
     AI_TRIAGE_AUTOMATION: 'ai_triage_automation',
@@ -36,6 +37,10 @@ export const flags: Record<FeatureFlag, FlagConfig> = {
     },
     [FeatureFlags.GENERATIVE_SESSIONS]: {
         defaultValue: true,
+        allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
+    },
+    [FeatureFlags.AI_TUTOR]: {
+        defaultValue: false,
         allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
     [FeatureFlags.PERSONALIZATION_SCOPE_EXPERIMENT]: {

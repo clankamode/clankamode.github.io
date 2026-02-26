@@ -121,6 +121,30 @@ export async function getLearningArticleById(id: string): Promise<LearningArticl
   return data as LearningArticle;
 }
 
+export async function getLearningArticleBySlugGlobal(
+  slug: string,
+  includeDrafts: boolean
+): Promise<LearningArticle | null> {
+  let query = supabase
+    .from(ARTICLES_TABLE)
+    .select('*')
+    .eq('slug', slug)
+    .order('updated_at', { ascending: false })
+    .limit(1);
+
+  if (!includeDrafts) {
+    query = query.eq('is_published', true);
+  }
+
+  const { data, error } = await query;
+
+  if (error || !data || data.length === 0) {
+    return null;
+  }
+
+  return data[0] as LearningArticle;
+}
+
 export async function getLearningPillarTree(
   pillarId: string,
   includeDrafts: boolean
