@@ -4,6 +4,7 @@ import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { UserRole, hasRole } from '@/types/roles';
 
 const VALID_STATUS = new Set(['open', 'closed']);
+const VALID_RESOLUTIONS = new Set(['resolved', 'wont_fix', 'duplicate', 'not_a_bug']);
 
 export async function PATCH(req: NextRequest) {
   const token = await getToken({ req });
@@ -18,7 +19,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid feedback id' }, { status: 400 });
   }
 
-  let body: { status?: string };
+  let body: { status?: string; resolution?: string | null };
   try {
     body = await req.json();
   } catch {
@@ -30,14 +31,25 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'status must be "open" or "closed"' }, { status: 400 });
   }
 
+  const resolution = body?.resolution ?? null;
+  if (status === 'closed' && resolution !== null && !VALID_RESOLUTIONS.has(resolution)) {
+    return NextResponse.json(
+      { error: 'resolution must be one of: resolved, wont_fix, duplicate, not_a_bug' },
+      { status: 400 },
+    );
+  }
+
   const dbStatus = status === 'open' ? 'new' : 'closed';
 
   const admin = getSupabaseAdminClient();
   const { data, error } = await admin
     .from('UserFeedback')
-    .update({ status: dbStatus })
+    .update({
+      status: dbStatus,
+      resolution: status === 'open' ? null : resolution,
+    })
     .eq('id', id)
-    .select('id, created_at, category, message, page_path, contact_email, user_email, status')
+    .select('id, created_at, category, message, page_path, contact_email, user_email, status, resolution')
     .single();
 
   if (error) {

@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
   const admin = getSupabaseAdminClient();
   let query = admin
     .from('UserFeedback')
-    .select('id, created_at, category, message, page_path, contact_email, user_email, status, metadata', {
+    .select('id, created_at, category, message, page_path, contact_email, user_email, status, resolution, metadata', {
       count: 'exact',
     })
     .order('created_at', { ascending: false })

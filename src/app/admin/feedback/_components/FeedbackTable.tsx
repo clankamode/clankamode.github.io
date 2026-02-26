@@ -18,6 +18,7 @@ interface FeedbackRow {
   user_email: string | null;
   status: string;
   isOpen: boolean;
+  resolution: string | null;
   metadata?: { attachments?: FeedbackAttachment[] };
 }
 
@@ -32,7 +33,24 @@ interface PendingStatusChange {
   id: string;
   messagePreview: string;
   newIsOpen: boolean;
+  resolution: string | null;
 }
+
+type ResolutionValue = 'resolved' | 'wont_fix' | 'duplicate' | 'not_a_bug';
+
+const RESOLUTION_OPTIONS = [
+  { value: 'resolved', label: 'Resolved', description: 'Fixed or implemented' },
+  { value: 'wont_fix', label: "Won't Fix", description: 'Not planning to address' },
+  { value: 'duplicate', label: 'Duplicate', description: 'Already reported' },
+  { value: 'not_a_bug', label: 'Not a Bug', description: 'Working as intended' },
+] as const;
+
+const RESOLUTION_BADGE_STYLES: Record<ResolutionValue, string> = {
+  resolved: 'bg-[#2cbb5d]/20 text-[#2cbb5d]',
+  wont_fix: 'bg-[#d4ab3b]/20 text-[#d4ab3b]',
+  duplicate: 'bg-surface-dense text-text-muted',
+  not_a_bug: 'bg-[#e05656]/20 text-[#e05656]',
+};
 
 const LIMIT = 20;
 const STATUS_OPTIONS = [
@@ -95,12 +113,12 @@ export function FeedbackTable() {
     fetchFeedback();
   }, [fetchFeedback]);
 
-  const handleStatusChange = useCallback(async (id: string, open: boolean) => {
+  const handleStatusChange = useCallback(async (id: string, open: boolean, resolution: string | null) => {
     setUpdatingId(id);
     const res = await fetch(`/api/admin/feedback/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: open ? 'open' : 'closed' }),
+      body: JSON.stringify({ status: open ? 'open' : 'closed', resolution }),
     });
     setUpdatingId(null);
     if (res.ok) {
@@ -109,7 +127,7 @@ export function FeedbackTable() {
         return {
           ...prev,
           feedback: prev.feedback.map((f) =>
-            f.id === id ? { ...f, status: open ? 'new' : 'closed', isOpen: open } : f
+            f.id === id ? { ...f, status: open ? 'new' : 'closed', isOpen: open, resolution: open ? null : resolution } : f
           ),
         };
       });
@@ -124,7 +142,34 @@ export function FeedbackTable() {
       id: row.id,
       messagePreview: truncate(row.message, 50),
       newIsOpen: !row.isOpen,
+      resolution: null,
     });
+  };
+
+  const closeAs = useCallback(
+    (id: string, resolution: ResolutionValue) => {
+      handleStatusChange(id, false, resolution);
+    },
+    [handleStatusChange]
+  );
+
+  const handleActionSelect = (row: FeedbackRow, action: string) => {
+    if (!action) return;
+
+    if (action === 'reopen') {
+      handleStatusChange(row.id, true, null);
+      return;
+    }
+
+    if (action === 'choose_modal') {
+      onToggleClick(row);
+      return;
+    }
+
+    if (action.startsWith('close_')) {
+      const resolution = action.replace('close_', '') as ResolutionValue;
+      closeAs(row.id, resolution);
+    }
   };
 
   const attachments = (row: FeedbackRow): FeedbackAttachment[] =>
@@ -134,7 +179,7 @@ export function FeedbackTable() {
 
   const confirmStatusChange = () => {
     if (!pendingStatus) return;
-    handleStatusChange(pendingStatus.id, pendingStatus.newIsOpen);
+    handleStatusChange(pendingStatus.id, pendingStatus.newIsOpen, pendingStatus.resolution);
   };
 
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
@@ -266,25 +311,60 @@ export function FeedbackTable() {
                   )}
                 </td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${
-                      row.isOpen
-                        ? 'bg-[#2cbb5d]/20 text-[#2cbb5d]'
-                        : 'bg-surface-dense text-text-muted'
-                    }`}
-                  >
-                    {row.isOpen ? 'Open' : 'Closed'}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span
+                      className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${
+                        row.isOpen
+                          ? 'bg-[#2cbb5d]/20 text-[#2cbb5d]'
+                          : 'bg-surface-dense text-text-muted'
+                      }`}
+                    >
+                      {row.isOpen ? 'Open' : 'Closed'}
+                    </span>
+                    {!row.isOpen && row.resolution && (
+                      <span
+                        className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${
+                          RESOLUTION_BADGE_STYLES[row.resolution as ResolutionValue] ?? 'bg-surface-dense text-text-muted'
+                        }`}
+                      >
+                        {RESOLUTION_OPTIONS.find((r) => r.value === row.resolution)?.label ?? row.resolution}
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-3">
-                  <button
-                    type="button"
-                    disabled={updatingId === row.id}
-                    onClick={() => onToggleClick(row)}
-                    className="rounded border border-border-subtle px-2 py-1 text-xs text-text-secondary hover:bg-surface-interactive hover:text-text-primary disabled:opacity-50"
-                  >
-                    {row.isOpen ? 'Close' : 'Reopen'}
-                  </button>
+                  <div className="flex min-w-[150px] flex-col gap-2">
+                    {row.isOpen && (
+                      <button
+                        type="button"
+                        disabled={updatingId === row.id}
+                        onClick={() => closeAs(row.id, 'resolved')}
+                        className="rounded border border-[#2cbb5d]/40 bg-[#2cbb5d]/10 px-2 py-1 text-xs font-medium text-[#2cbb5d] hover:bg-[#2cbb5d]/20 disabled:opacity-50"
+                      >
+                        Resolved
+                      </button>
+                    )}
+                    <select
+                      defaultValue=""
+                      disabled={updatingId === row.id}
+                      onChange={(e) => {
+                        handleActionSelect(row, e.target.value);
+                        e.target.value = '';
+                      }}
+                      className="w-full rounded border border-border-subtle bg-surface-dense px-2 py-1 text-xs text-text-secondary focus:outline-none focus:ring-1 focus:ring-border-interactive disabled:opacity-50"
+                    >
+                      <option value="" disabled>
+                        {row.isOpen ? 'Close as…' : 'Actions…'}
+                      </option>
+                      {!row.isOpen && <option value="reopen">Reopen</option>}
+                      {RESOLUTION_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={`close_${opt.value}`}>
+                          Close as {opt.label}
+                        </option>
+                      ))}
+                      {row.isOpen && <option value="choose_modal">Choose in modal…</option>}
+                    </select>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -354,12 +434,31 @@ export function FeedbackTable() {
             </h2>
             <p className="mt-2 text-sm text-text-secondary">
               {pendingStatus.newIsOpen ? (
-                <>This item will be marked as open.</>
+                <>This item will be reopened.</>
               ) : (
-                <>This item will be marked as closed.</>
+                <>Select a reason for closing this feedback:</>
               )}
               <span className="mt-2 block text-text-muted">&quot;{pendingStatus.messagePreview}&quot;</span>
             </p>
+            {!pendingStatus.newIsOpen && (
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {RESOLUTION_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setPendingStatus({ ...pendingStatus, resolution: opt.value })}
+                    className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                      pendingStatus.resolution === opt.value
+                        ? 'border-[#2cbb5d] bg-[#2cbb5d]/10 text-text-primary'
+                        : 'border-border-subtle text-text-secondary hover:bg-surface-interactive hover:text-text-primary'
+                    }`}
+                  >
+                    <span className="font-medium">{opt.label}</span>
+                    <span className="mt-0.5 block text-xs text-text-muted">{opt.description}</span>
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="mt-6 flex justify-end gap-3">
               <button
                 type="button"
@@ -371,7 +470,8 @@ export function FeedbackTable() {
               <button
                 type="button"
                 onClick={confirmStatusChange}
-                className="rounded-lg bg-[#2cbb5d] px-4 py-2 text-sm font-medium text-white hover:bg-[#1e8a42]"
+                disabled={!pendingStatus.newIsOpen && !pendingStatus.resolution}
+                className="rounded-lg bg-[#2cbb5d] px-4 py-2 text-sm font-medium text-white hover:bg-[#1e8a42] disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Confirm
               </button>
