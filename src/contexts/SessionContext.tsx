@@ -902,3 +902,15 @@ export function useIsInSession(): boolean {
     const context = useContext(SessionContext);
     return context?.isInSession ?? false;
 }
+
+export function useCurrentSessionItemTitle(): string | undefined {
+    const context = useContext(SessionContext);
+    if (!context) return undefined;
+
+    const { state } = context;
+    if (state.phase !== 'execution' || !state.scope || !state.execution) {
+        return undefined;
+    }
+
+    return state.scope.items[state.execution.currentIndex]?.title;
+}

@@ -4,8 +4,9 @@ import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { RichText } from '@/app/ai/_components/RichText';
+import TutorNudge from '@/app/ai/_components/TutorNudge';
+import { useCurrentSessionItemTitle, useIsInSession, useSession } from '@/contexts/SessionContext';
 import { buildTutorWelcomeMessage } from '@/lib/tutor-prompt';
-import { useIsInSession, useSession } from '@/contexts/SessionContext';
 import { cn } from '@/lib/utils';
 
 interface TutorChatProps {
@@ -20,6 +21,26 @@ interface TutorUiMessage {
   id: string;
   role: TutorRole;
   content: string;
+}
+
+export const NUDGE_DELAY_MS = 8 * 60 * 1000;
+
+interface NudgeEligibilityInput {
+  isInSession: boolean;
+  isOpen: boolean;
+  messagesLength: number;
+  currentChecklistItem?: string;
+  nudgeFiredFor?: string | null;
+}
+
+export function shouldScheduleTutorNudge(input: NudgeEligibilityInput): boolean {
+  if (!input.isInSession || input.isOpen) return false;
+  if (input.messagesLength > 1) return false;
+  return (input.nudgeFiredFor ?? null) !== (input.currentChecklistItem ?? null);
+}
+
+export function getNudgeDelayRemainingMs(stepStartedAt: number, now = Date.now()): number {
+  return Math.max(0, NUDGE_DELAY_MS - (now - stepStartedAt));
 }
 
 interface TutorSessionDerivationInput {
@@ -82,10 +103,13 @@ export function deriveTutorSessionContext(
 }
 
 export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorChatProps) {
+  const isInSession = useIsInSession();
+  const currentChecklistItem = useCurrentSessionItemTitle();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [input, setInput] = useState('');
+  const [nudgeVisible, setNudgeVisible] = useState(false);
   const [messages, setMessages] = useState<TutorUiMessage[]>(() => [
     createMessage('assistant', buildTutorWelcomeMessage(articleTitle)),
   ]);
@@ -93,7 +117,8 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
   const messageListRef = useRef<HTMLDivElement | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { state: sessionState } = useSession();
-  const isInSession = useIsInSession();
+  const nudgeFiredForRef = useRef<string | null>(null);
+  const stepStartedAtRef = useRef<number>(Date.now());
 
   useEffect(() => {
     if (!messageListRef.current) return;
@@ -107,6 +132,9 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
     setConversationId(null);
     setIsLoading(false);
     setInput('');
+    setNudgeVisible(false);
+    nudgeFiredForRef.current = null;
+    stepStartedAtRef.current = Date.now();
   }, [articleSlug, articleTitle]);
 
   useEffect(() => {
@@ -114,6 +142,33 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
       abortControllerRef.current?.abort();
     };
   }, []);
+
+  useEffect(() => {
+    stepStartedAtRef.current = Date.now();
+    setNudgeVisible(false);
+  }, [currentChecklistItem]);
+
+  useEffect(() => {
+    const shouldSchedule = shouldScheduleTutorNudge({
+      isInSession,
+      isOpen,
+      messagesLength: messages.length,
+      currentChecklistItem,
+      nudgeFiredFor: nudgeFiredForRef.current,
+    });
+    if (!shouldSchedule) {
+      setNudgeVisible(false);
+      return;
+    }
+
+    const remainingMs = getNudgeDelayRemainingMs(stepStartedAtRef.current);
+    const timer = window.setTimeout(() => {
+      setNudgeVisible(true);
+      nudgeFiredForRef.current = currentChecklistItem ?? null;
+    }, remainingMs);
+
+    return () => window.clearTimeout(timer);
+  }, [isInSession, isOpen, messages.length, currentChecklistItem]);
 
   const canSubmit = input.trim().length > 0 && !isLoading;
 
@@ -340,6 +395,17 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
             </div>
           </form>
         </Card>
+      )}
+
+      {nudgeVisible && !isOpen && (
+        <TutorNudge
+          onOpen={() => {
+            setIsOpen(true);
+            setNudgeVisible(false);
+            setInput(currentChecklistItem ? `I'm stuck on: ${currentChecklistItem}` : 'I need a hint');
+          }}
+          checklistItemTitle={currentChecklistItem}
+        />
       )}
 
       <Button
