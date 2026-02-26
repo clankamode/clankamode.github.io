@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { RichText } from '@/app/ai/_components/RichText';
 import { buildTutorWelcomeMessage } from '@/lib/tutor-prompt';
+import { useIsInSession, useSession } from '@/contexts/SessionContext';
 import { cn } from '@/lib/utils';
 
 interface TutorChatProps {
@@ -21,11 +22,62 @@ interface TutorUiMessage {
   content: string;
 }
 
+interface TutorSessionDerivationInput {
+  execution?: {
+    sessionId: string;
+    completedItems: string[];
+    startedAt: Date | string;
+    currentIndex: number;
+  } | null;
+  scope?: {
+    items?: Array<{ title: string }>;
+  } | null;
+}
+
+interface TutorSessionContextPayload {
+  sessionId: string | null;
+  checklistProgress: number;
+  sessionElapsedMs: number;
+  currentChecklistItem: string | undefined;
+}
+
 function createMessage(role: TutorRole, content: string): TutorUiMessage {
   return {
     id: crypto.randomUUID(),
     role,
     content,
+  };
+}
+
+export function deriveTutorSessionContext(
+  sessionState: TutorSessionDerivationInput,
+  isInSession: boolean,
+  now = Date.now()
+): TutorSessionContextPayload {
+  const sessionId = sessionState.execution?.sessionId ?? null;
+  const totalItems = Math.max(sessionState.scope?.items?.length ?? 1, 1);
+  const completedItems = sessionState.execution?.completedItems.length ?? 0;
+  const checklistProgress = isInSession && sessionState.execution
+    ? Math.round((completedItems / totalItems) * 100)
+    : 0;
+
+  let sessionElapsedMs = 0;
+  if (isInSession && sessionState.execution) {
+    const startedAtMs = new Date(sessionState.execution.startedAt).getTime();
+    if (Number.isFinite(startedAtMs)) {
+      sessionElapsedMs = Math.max(0, now - startedAtMs);
+    }
+  }
+
+  const currentChecklistItem = isInSession && sessionState.scope && sessionState.execution
+    ? sessionState.scope.items?.[sessionState.execution.currentIndex]?.title ?? undefined
+    : undefined;
+
+  return {
+    sessionId,
+    checklistProgress,
+    sessionElapsedMs,
+    currentChecklistItem,
   };
 }
 
@@ -40,6 +92,8 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
 
   const messageListRef = useRef<HTMLDivElement | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const { state: sessionState } = useSession();
+  const isInSession = useIsInSession();
 
   useEffect(() => {
     if (!messageListRef.current) return;
@@ -80,6 +134,13 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
 
     try {
+      const {
+        sessionId,
+        checklistProgress,
+        sessionElapsedMs,
+        currentChecklistItem,
+      } = deriveTutorSessionContext(sessionState, isInSession);
+
       const response = await fetch('/api/tutor', {
         method: 'POST',
         signal: abortController.signal,
@@ -90,6 +151,10 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
           articleSlug,
           message: trimmed,
           conversationId: conversationId ?? undefined,
+          checklistProgress,
+          sessionElapsedMs,
+          sessionId,
+          currentChecklistItem,
         }),
       });
 
@@ -231,6 +296,11 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
               </svg>
             </button>
           </div>
+          {isInSession && sessionState.execution && (
+            <p className="border-b border-border-subtle px-4 py-1.5 font-mono text-[10px] text-text-muted">
+              Session active · Step {sessionState.execution.currentIndex + 1} of {sessionState.scope?.items?.length ?? 0}
+            </p>
+          )}
 
           <div ref={messageListRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
             {messages.map((message) => (

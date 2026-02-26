@@ -17,6 +17,10 @@ interface TutorRequestBody {
   articleSlug?: string;
   message?: string;
   conversationId?: number | string;
+  checklistProgress?: number;
+  sessionElapsedMs?: number;
+  sessionId?: string | null;
+  currentChecklistItem?: string;
 }
 
 interface StoredTutorMessage {
@@ -29,6 +33,7 @@ interface TutorConversationRow {
   id: number;
   user_id: number;
   article_id: string | null;
+  session_uuid?: string | null;
   messages: StoredTutorMessage[];
 }
 
@@ -49,6 +54,28 @@ function normalizeConversationId(value: number | string | undefined): number | n
   }
 
   return null;
+}
+
+function normalizeChecklistProgress(value: number | undefined): number {
+  if (value === undefined || !Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function normalizeSessionElapsedMs(value: number | undefined): number {
+  if (value === undefined || !Number.isFinite(value)) return 0;
+  return Math.max(0, Math.floor(value));
+}
+
+function normalizeSessionUuid(value: string | null | undefined): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function normalizeChecklistItem(value: string | undefined): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
 }
 
 function coerceMessages(value: unknown): StoredTutorMessage[] {
@@ -97,23 +124,32 @@ export async function POST(req: NextRequest) {
     }
 
     const body = (await req.json()) as TutorRequestBody;
-    const articleSlug = body.articleSlug?.trim();
-    const message = body.message?.trim();
+    const {
+      articleSlug,
+      message,
+      conversationId: rawConversationId,
+      checklistProgress,
+      sessionElapsedMs,
+      sessionId,
+      currentChecklistItem,
+    } = body;
+    const normalizedArticleSlug = articleSlug?.trim();
+    const normalizedMessage = message?.trim();
 
-    if (!articleSlug) {
+    if (!normalizedArticleSlug) {
       return NextResponse.json({ error: 'articleSlug is required' }, { status: 400 });
     }
 
-    if (!message) {
+    if (!normalizedMessage) {
       return NextResponse.json({ error: 'message is required' }, { status: 400 });
     }
 
-    if (message.length > 2000) {
+    if (normalizedMessage.length > 2000) {
       return NextResponse.json({ error: 'Message too long (max 2000 characters)' }, { status: 400 });
     }
 
     const includeDrafts = !!effectiveRole && hasRole(effectiveRole, UserRole.EDITOR);
-    const article = await getLearningArticleBySlugGlobal(articleSlug, includeDrafts);
+    const article = await getLearningArticleBySlugGlobal(normalizedArticleSlug, includeDrafts);
 
     if (!article) {
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
@@ -136,7 +172,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
 
-    const resolvedConversationId = normalizeConversationId(body.conversationId);
+    const resolvedConversationId = normalizeConversationId(rawConversationId);
+    const resolvedChecklistProgress = normalizeChecklistProgress(checklistProgress);
+    const resolvedSessionElapsedMs = normalizeSessionElapsedMs(sessionElapsedMs);
+    const resolvedSessionUuid = normalizeSessionUuid(sessionId);
+    const resolvedChecklistItem = normalizeChecklistItem(currentChecklistItem);
 
     let conversationId = resolvedConversationId;
     let existingMessages: StoredTutorMessage[] = [];
@@ -144,7 +184,7 @@ export async function POST(req: NextRequest) {
     if (conversationId) {
       const { data: conversation, error: conversationError } = await admin
         .from('TutorConversations')
-        .select('id, user_id, article_id, messages')
+        .select('id, user_id, article_id, session_uuid, messages')
         .eq('id', conversationId)
         .eq('user_id', userId)
         .single();
@@ -170,14 +210,15 @@ export async function POST(req: NextRequest) {
       articleSummary: articleContext.summary,
       codeBlocks: articleContext.codeBlocks,
       keyConcepts: articleContext.keyConcepts,
-      checklistProgress: 0,
-      sessionElapsedMs: 0,
+      checklistProgress: resolvedChecklistProgress,
+      sessionElapsedMs: resolvedSessionElapsedMs,
+      checklistItem: resolvedChecklistItem,
       userRole: effectiveRole,
     });
 
     const userMessage: StoredTutorMessage = {
       role: 'user',
-      content: message,
+      content: normalizedMessage,
       created_at: new Date().toISOString(),
     };
 
@@ -188,6 +229,7 @@ export async function POST(req: NextRequest) {
         .from('TutorConversations')
         .update({
           messages: persistedMessagesBeforeAssistant,
+          session_uuid: resolvedSessionUuid ?? undefined,
           updated_at: new Date().toISOString(),
         })
         .eq('id', conversationId)
@@ -203,6 +245,7 @@ export async function POST(req: NextRequest) {
         .insert({
           user_id: userId,
           article_id: article.id,
+          session_uuid: resolvedSessionUuid,
           messages: persistedMessagesBeforeAssistant,
         })
         .select('id')
@@ -269,6 +312,7 @@ export async function POST(req: NextRequest) {
             .from('TutorConversations')
             .update({
               messages: finalMessages,
+              session_uuid: resolvedSessionUuid ?? undefined,
               updated_at: new Date().toISOString(),
             })
             .eq('id', conversationId)
