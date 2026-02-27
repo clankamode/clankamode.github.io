@@ -2,7 +2,8 @@
 // Looks for <div class="audio-player" data-src="..."> and hydrates it
 (function () {
   const container = document.querySelector('.audio-player');
-  if (!container) return;
+  if (!container || container.dataset.hydrated) return;
+  container.dataset.hydrated = "1";
 
   const src = container.dataset.src;
   if (!src) return;

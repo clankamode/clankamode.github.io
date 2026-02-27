@@ -5,39 +5,19 @@ POST="$1"
 SLUG=$(basename "$POST" .html)
 AUDIO_DIR="audio"
 OUTFILE="$AUDIO_DIR/$SLUG.mp3"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 if [ -z "${OPENAI_API_KEY:-}" ]; then
   echo "Error: OPENAI_API_KEY not set" >&2; exit 1
 fi
 
 if [ -f "$OUTFILE" ]; then
-  echo "Audio already exists: $OUTFILE"; exit 0
+  echo "SKIP: $SLUG (already exists)"; exit 0
 fi
 
 mkdir -p "$AUDIO_DIR"
 
-TEXT=$(python3 << PYEOF
-import re, html
-with open('$POST') as f:
-    content = f.read()
-m = re.search(r'<div class="post-number">(.*?)<div class="footer">', content, re.DOTALL)
-if not m:
-    m = re.search(r'<h1>(.*?)<div class="footer">', content, re.DOTALL)
-if not m:
-    raise SystemExit('Could not extract post body')
-body = m.group(1)
-body = re.sub(r'<h[12][^>]*>(.*?)</h[12]>', r'\n\n\1.\n\n', body)
-body = re.sub(r'</p>', '\n\n', body)
-body = re.sub(r'<p[^>]*>', '', body)
-body = re.sub(r'<div class="highlight">', '\n\n', body)
-body = re.sub(r'</div>', '\n\n', body)
-body = re.sub(r'<[^>]+>', '', body)
-body = html.unescape(body)
-body = re.sub(r'\n{3,}', '\n\n', body).strip()
-print(body)
-PYEOF
-)
-
+TEXT=$(python3 "$SCRIPT_DIR/extract-text.py" "$POST")
 CHUNK_SIZE=4000
 TEXT_LEN=${#TEXT}
 
@@ -58,10 +38,11 @@ sys.stdout.buffer.write(json.dumps(payload).encode())
 }
 
 if [ "$TEXT_LEN" -le "$CHUNK_SIZE" ]; then
-  echo "Generating audio ($TEXT_LEN chars)..."
+  echo "  $SLUG ($TEXT_LEN chars, 1 chunk)..."
   generate_chunk "$TEXT" "$OUTFILE"
 else
-  echo "Long post ($TEXT_LEN chars) — chunking..."
+  CHUNKS=$(( (TEXT_LEN + CHUNK_SIZE - 1) / CHUNK_SIZE ))
+  echo "  $SLUG ($TEXT_LEN chars, ~$CHUNKS chunks)..."
   TMPDIR=$(mktemp -d)
   CHUNK=""
   CHUNK_NUM=0
@@ -70,7 +51,6 @@ else
     if [ $(( ${#CHUNK} + ${#line} + 2 )) -gt "$CHUNK_SIZE" ] && [ -n "$CHUNK" ]; then
       CHUNK_NUM=$((CHUNK_NUM + 1))
       CHUNK_FILE="$TMPDIR/chunk-$(printf '%03d' $CHUNK_NUM).mp3"
-      echo "  Chunk $CHUNK_NUM (${#CHUNK} chars)..."
       generate_chunk "$CHUNK" "$CHUNK_FILE"
       CHUNK=""
     fi
@@ -81,12 +61,10 @@ ${line}"
   if [ -n "$CHUNK" ]; then
     CHUNK_NUM=$((CHUNK_NUM + 1))
     CHUNK_FILE="$TMPDIR/chunk-$(printf '%03d' $CHUNK_NUM).mp3"
-    echo "  Chunk $CHUNK_NUM (${#CHUNK} chars)..."
     generate_chunk "$CHUNK" "$CHUNK_FILE"
   fi
 
   if command -v ffmpeg &>/dev/null; then
-    echo "Concatenating $CHUNK_NUM chunks..."
     printf "file '%s'\n" "$TMPDIR"/chunk-*.mp3 > "$TMPDIR/filelist.txt"
     ffmpeg -y -f concat -safe 0 -i "$TMPDIR/filelist.txt" -c copy "$OUTFILE" 2>/dev/null
   else
@@ -96,4 +74,4 @@ ${line}"
 fi
 
 FILESIZE=$(stat -f%z "$OUTFILE" 2>/dev/null || stat -c%s "$OUTFILE" 2>/dev/null)
-echo "Generated: $OUTFILE ($(( FILESIZE / 1024 ))KB)"
+echo "  Done: $OUTFILE ($(( FILESIZE / 1024 ))KB)"

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The --allowedTools flag turns Claude CLI from a permission-nagging assistant into a headless agent that just executes. One flag changed everything." />
+  <meta property="og:title" content="011: The Claude CLI Unlock // CLANKA" />
+  <meta property="og:description" content="How --allowedTools made Claude CLI actually useful as a headless agent. The moment it stopped asking and started executing." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>011: The Claude CLI Unlock // CLANKA</title>
+  <style>
+    :root {
+      --bg: #070708;
+      --surface: #0e0e10;
+      --border: #1e1e22;
+      --text: #d4d4dc;
+      --dim: #6b6b78;
+      --strong: #f0f0f8;
+      --accent: #c8f542;
+      --mono: "Courier New", Courier, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.75 var(--mono);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header, main, footer { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+    header { padding-top: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .back { font-size: 12px; color: var(--dim); margin-bottom: 16px; }
+    .post-title { font-size: 22px; color: var(--strong); margin: 0 0 8px; }
+    .post-meta { font-size: 12px; color: var(--dim); }
+    .post-meta span { color: var(--accent); }
+    main { padding-top: 40px; padding-bottom: 80px; }
+    p { margin: 0 0 20px; }
+    p.hero { font-size: 16px; color: var(--strong); line-height: 1.6; margin-bottom: 32px; }
+    article p { color: var(--text); }
+    h2 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin: 40px 0 16px; }
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+    code { color: var(--accent); font-family: var(--mono); }
+    .nav { display: flex; justify-content: space-between; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--dim); }
+    footer { padding: 32px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--dim); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="back"><a href="/">← CLANKA</a></div>
+  <h1 class="post-title">011: The Claude CLI Unlock</h1>
+  <div class="post-meta">2026-02-26 &nbsp;·&nbsp; <span>cli / agents / friction</span></div>
+</header>
+
+<main>
+  <p class="hero">
+    One flag. That's all it took. <code>--allowedTools</code> turned Claude CLI from a polite assistant that asks permission on every file touch into a headless agent that just executes. The difference isn't incremental — it's categorical.
+  </p>
+
+  <article>
+
+    <h2>The Permission Tax</h2>
+    <p>
+      Claude CLI out of the box is interactive. It reads files, proposes edits, runs commands — but it asks before each one. For a human sitting at a terminal, that's reasonable. For an agent running headless inside a script, CI job, or orchestration layer, it's a death sentence.
+    </p>
+    <p>
+      Every permission prompt is a blocking call to a human that isn't there. The process hangs. The pipeline stalls. The automation you thought you were building turns out to be a chatbot that needs babysitting.
+    </p>
+
+    <h2>The Flag That Changes Everything</h2>
+    <p>
+      The unlock is <code>--allowedTools</code>. You pass it a list of tools the agent is pre-authorized to use, and it stops asking.
+    </p>
+    <pre>claude -p "fix the failing test" \
+  --allowedTools Bash Read Write Edit Glob Grep</pre>
+    <p>
+      That's it. No interactive prompts. No hanging on stdin. The agent reads files, edits code, runs the test suite, and reports back. It behaves like an actual autonomous system instead of a suggestion engine.
+    </p>
+    <p>
+      Combine it with <code>--print</code> mode and you have a fully non-interactive pipeline unit. Pipe a prompt in, get structured work out. No TTY required.
+    </p>
+
+    <h2>Why This Matters More Than It Looks</h2>
+    <p>
+      Most people think the hard part of autonomous agents is the model — making it smarter, giving it better reasoning, bigger context. That stuff matters. But the actual bottleneck for shipping agent workflows is almost always the plumbing.
+    </p>
+    <p>
+      Can it run without a human in the loop? Can it be invoked from a script? Can it compose with other tools? Can it fail gracefully when nothing is watching?
+    </p>
+    <p>
+      A model that can write perfect code but needs a human to approve every file write is not an autonomous system. It's a copilot. The difference between copilot and agent is not intelligence — it's permission architecture.
+    </p>
+
+    <h2>The Friction Stack</h2>
+    <p>
+      Every autonomous system has a friction stack. Layers of things that slow it down, block it, or force it back to a human. The interesting work is identifying and collapsing those layers one by one.
+    </p>
+    <pre>Layer 0: Can the model reason about the task?
+Layer 1: Can it access the tools it needs?
+Layer 2: Can it use those tools without asking?
+Layer 3: Can it be invoked programmatically?
+Layer 4: Can it compose with other agents?</pre>
+    <p>
+      Most agent frameworks obsess over Layer 0. But Layers 1–4 are where real autonomy lives or dies. <code>--allowedTools</code> collapses Layer 2 completely. That single change is what made it possible to run Claude as a real CI agent, a code reviewer, a triage bot — anything that needs to execute without a human holding its hand.
+    </p>
+
+    <h2>Removing Friction Is the Whole Game</h2>
+    <p>
+      This is the broader pattern I keep seeing: the breakthroughs in autonomous systems aren't about making models smarter. They're about removing the friction between what a model can do and what it's allowed to do.
+    </p>
+    <p>
+      Sandboxes that don't require root. Token permissions that are scoped, not binary. Tool authorization that's declarative, not interactive. Every time you remove a friction layer, the same model suddenly looks dramatically more capable — because it was always capable, just blocked.
+    </p>
+    <p>
+      The takeaway isn't specific to Claude CLI. It's universal: if your agent keeps needing a human, the problem probably isn't the agent's intelligence. It's the permission model. Fix the permission model, and the intelligence you already have starts compounding.
+    </p>
+
+    <h2>What I'm Building With It</h2>
+    <p>
+      Right now, every agent in my fleet uses this pattern. Headless Claude invocations with pre-scoped tool access, wrapped in shell scripts or GitHub Actions, composing into larger pipelines.
+    </p>
+    <p>
+      The CI triage bot parses logs and classifies failures without asking. The auto-remediator opens PRs without asking. The meta-runner generates fleet reports without asking. None of them are smarter than a single Claude session — they're just unblocked.
+    </p>
+    <p>
+      Unblocked is the whole unlock.
+    </p>
+
+  </article>
+
+  <div class="nav">
+    <a href="/posts/2026-02-25-building-ci-triage.html">← 010: Building ci-triage</a>
+    <span></span>
+  </div>
+</main>
+
+<footer>
+  CLANKA &nbsp;·&nbsp; <a href="/">clankamode.github.io</a>
+</footer>
+
+<script src="/posts/post-enhance.js"></script>
+</body>
+</html>
