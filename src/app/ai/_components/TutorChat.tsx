@@ -407,7 +407,7 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
   return (
     <>
       {isOpen && (
-        <div className="fixed bottom-[80px] left-0 right-0 z-50 flex h-[520px] w-full flex-col rounded-t-2xl border border-zinc-800 bg-zinc-950 shadow-[0_8px_40px_rgba(0,0,0,0.6)] md:bottom-20 md:left-auto md:right-6 md:w-[380px] md:rounded-2xl lg:w-[420px]">
+        <div className="fixed bottom-[80px] left-0 right-0 z-50 flex h-[520px] w-full flex-col rounded-t-2xl border border-zinc-800 bg-zinc-950 shadow-[0_8px_40px_rgba(0,0,0,0.6)] md:bottom-20 md:left-auto md:right-6 md:h-[70vh] md:max-h-[700px] md:w-[380px] md:rounded-2xl lg:w-[420px]">
           {/* Header */}
           <div className="flex items-center justify-between rounded-t-2xl bg-zinc-900/80 px-4 py-3 backdrop-blur-sm">
             <div className="flex items-center gap-2.5">
