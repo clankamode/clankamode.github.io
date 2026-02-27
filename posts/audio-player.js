@@ -56,7 +56,7 @@
   const contentEls = [];
   const contentArea = document.querySelector('article') || document.querySelector('.page');
   if (contentArea) {
-    contentArea.querySelectorAll('p, h2, h3, pre, .highlight').forEach(el => {
+    contentArea.querySelectorAll('p, h2, h3, pre').forEach(el => {
       if (el.closest('.audio-player') || el.closest('.footer') || el.closest('.post-nav') || el.closest('.meta') || el.classList.contains('post-number')) return;
       if (el.textContent.trim().length > 5) contentEls.push(el);
     });
@@ -162,7 +162,7 @@
         contentEls.forEach((el, i) => {
           el.classList.toggle('lm-active', i === activeIdx);
           el.classList.toggle('lm-past', activeIdx > -1 && i < activeIdx);
-          const isCode = el.tagName === 'PRE' || el.classList.contains('highlight');
+          const isCode = el.tagName === 'PRE';
           el.classList.toggle('lm-code-glow', isCode && i === activeIdx);
         });
 
