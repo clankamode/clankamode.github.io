@@ -63,34 +63,6 @@ insert into public."LearningArticles" (
   concept_tags,
   primary_concept
 ) values
-  (
-    '11111111-1111-4111-8111-111111111111',
-    '5e7e43b1-f337-4791-8889-a6e2de2f5ddb',
-    'arrays',
-    'Arrays',
-    'A compact primer for contiguous memory and O(1) index access.',
-    E'## Why arrays matter\n\nArrays give direct indexed access, which is the bedrock for many interview problems.\n\n## Core invariant\n\nIndexing by position is O(1) because elements are laid out contiguously in memory.\n\n## Tradeoffs\n\nInsertions and deletions in the middle are O(n) because elements shift.\n\n## Interview reflex\n\nWhen you hear "fixed order" and "random access", start with array-first reasoning.',
-    5,
-    false,
-    true,
-    0,
-    '["array.random-access-o1","array.contiguous-memory"]'::jsonb,
-    'array.random-access-o1'
-  )
-on conflict (id) do update
-set
-  topic_id = excluded.topic_id,
-  slug = excluded.slug,
-  title = excluded.title,
-  excerpt = excluded.excerpt,
-  body = excluded.body,
-  reading_time_minutes = excluded.reading_time_minutes,
-  is_premium = excluded.is_premium,
-  is_published = excluded.is_published,
-  order_index = excluded.order_index,
-  concept_tags = excluded.concept_tags,
-  primary_concept = excluded.primary_concept,
-  updated_at = now();
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Concepts
