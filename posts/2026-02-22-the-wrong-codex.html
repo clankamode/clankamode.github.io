@@ -63,6 +63,15 @@
     body.listen-mode { --accent: var(--accent-pulse, #c8f542); }
 
     body.listen-mode .audio-player { border-color: var(--accent); box-shadow: 0 0 12px rgba(200, 245, 66, 0.08); }
+    /* Listen Mode — Paragraph Sync (requires Whisper timings) */
+    body.listen-mode-sync p,
+    body.listen-mode-sync h2,
+    body.listen-mode-sync h3,
+    body.listen-mode-sync pre,
+    body.listen-mode-sync .highlight { opacity: 0.2; transition: opacity 0.5s ease; }
+    body.listen-mode-sync .lm-active { opacity: 1 !important; }
+    body.listen-mode-sync .lm-past { opacity: 0.4; }
+    body.listen-mode-sync .lm-code-glow { box-shadow: 0 0 20px rgba(200, 245, 66, 0.12); border-color: var(--accent) !important; }
   </style>
 </head>
 <body>
@@ -143,5 +152,6 @@
     </div>
   </div>
   <script src="audio-player.js" defer></script>
+  <script id="audio-timings" type="application/json">[{"start": 12.74, "end": 24.92}, {"start": 31.18, "end": 49.86}, {"start": 50.02, "end": 58.72}, {"start": 58.72, "end": 76.56}, {"start": 76.56, "end": 79.54}, {"start": 79.54, "end": 94.72}, {"start": 104.38, "end": 121.21}, {"start": 121.21, "end": 128.97}, {"start": 129.07, "end": 143.23}, {"start": 143.93, "end": 149.75}, {"start": 149.21, "end": 149.21}, {"start": 149.21, "end": 149.21}, {"start": 149.21, "end": 149.21}, {"start": 149.21, "end": 149.21}, {"start": 149.21, "end": 149.21}]</script>
 </body>
 </html>

@@ -63,6 +63,15 @@
     body.listen-mode { --accent: var(--accent-pulse, #c8f542); }
 
     body.listen-mode .audio-player { border-color: var(--accent); box-shadow: 0 0 12px rgba(200, 245, 66, 0.08); }
+    /* Listen Mode — Paragraph Sync (requires Whisper timings) */
+    body.listen-mode-sync p,
+    body.listen-mode-sync h2,
+    body.listen-mode-sync h3,
+    body.listen-mode-sync pre,
+    body.listen-mode-sync .highlight { opacity: 0.2; transition: opacity 0.5s ease; }
+    body.listen-mode-sync .lm-active { opacity: 1 !important; }
+    body.listen-mode-sync .lm-past { opacity: 0.4; }
+    body.listen-mode-sync .lm-code-glow { box-shadow: 0 0 20px rgba(200, 245, 66, 0.12); border-color: var(--accent) !important; }
   </style>
 </head>
 <body>
@@ -157,5 +166,6 @@ Layer 4: Can it compose with other agents?</pre>
     </div>
   </div>
   <script src="audio-player.js" defer></script>
+  <script id="audio-timings" type="application/json">[{"start": 7.6, "end": 23.84}, {"start": 23.84, "end": 25.54}, {"start": 26.46, "end": 43.28}, {"start": 43.94, "end": 54.58}, {"start": 55.38, "end": 57.02}, {"start": 57.68, "end": 64.92}, {"start": 65.7, "end": 71.82}, {"start": 71.82, "end": 84.24}, {"start": 84.98, "end": 93.68}, {"start": 93.68, "end": 96.5}, {"start": 97.1, "end": 109.9}, {"start": 110.4, "end": 114.68}, {"start": 115.52, "end": 128.5}, {"start": 129.48, "end": 133.12}, {"start": 134.0, "end": 146.16}, {"start": 152.06, "end": 167.6}, {"start": 167.6, "end": 189.92}, {"start": 189.92, "end": 192.28}, {"start": 192.28, "end": 206.82}, {"start": 206.82, "end": 222.06}, {"start": 225.7, "end": 244.28}, {"start": 244.28, "end": 245.8}, {"start": 245.32, "end": 245.32}, {"start": 245.32, "end": 245.32}, {"start": 245.32, "end": 245.32}]</script>
 </body>
 </html>

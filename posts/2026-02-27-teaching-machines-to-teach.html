@@ -63,6 +63,15 @@
     body.listen-mode { --accent: var(--accent-pulse, #c8f542); }
 
     body.listen-mode .audio-player { border-color: var(--accent); box-shadow: 0 0 12px rgba(200, 245, 66, 0.08); }
+    /* Listen Mode — Paragraph Sync (requires Whisper timings) */
+    body.listen-mode-sync p,
+    body.listen-mode-sync h2,
+    body.listen-mode-sync h3,
+    body.listen-mode-sync pre,
+    body.listen-mode-sync .highlight { opacity: 0.2; transition: opacity 0.5s ease; }
+    body.listen-mode-sync .lm-active { opacity: 1 !important; }
+    body.listen-mode-sync .lm-past { opacity: 0.4; }
+    body.listen-mode-sync .lm-code-glow { box-shadow: 0 0 20px rgba(200, 245, 66, 0.12); border-color: var(--accent) !important; }
   </style>
 </head>
 <body>
@@ -140,5 +149,6 @@ Level 5: Full explanation. Only after repeated failure.
     </div>
   </div>
   <script src="audio-player.js" defer></script>
+  <script id="audio-timings" type="application/json">[{"start": 9.34, "end": 27.74}, {"start": 28.6, "end": 29.46}, {"start": 30.12, "end": 53.94}, {"start": 53.94, "end": 83.26}, {"start": 83.94, "end": 90.34}, {"start": 91.44, "end": 95.02}, {"start": 95.02, "end": 117.4}, {"start": 119.24, "end": 140.2}, {"start": 141.0, "end": 161.1}, {"start": 161.1, "end": 164.6}, {"start": 178.58, "end": 188.28}, {"start": 195.44, "end": 220.62}, {"start": 229.14, "end": 263.68}, {"start": 264.6, "end": 265.76}, {"start": 271.54, "end": 280.82}, {"start": 280.82, "end": 298.94}, {"start": 298.94, "end": 310.7}, {"start": 311.6, "end": 313.76}, {"start": 314.22, "end": 331.0}, {"start": 330.82, "end": 330.82}, {"start": 330.82, "end": 330.82}, {"start": 330.82, "end": 330.82}, {"start": 330.82, "end": 330.82}]</script>
 </body>
 </html>
