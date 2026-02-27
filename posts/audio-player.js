@@ -52,34 +52,6 @@
     canvas.style.height = rect.height + 'px';
   }
 
-  // --- Paragraph Timing ---
-  // Collect all content paragraphs, headings, pre blocks
-  const contentEls = [];
-  const contentArea = document.querySelector('article') || document.querySelector('.page');
-  if (contentArea) {
-    contentArea.querySelectorAll('p, h2, h3, pre, .highlight').forEach(el => {
-      if (el.closest('.audio-player') || el.closest('.footer') || el.closest('.post-nav')) return;
-      contentEls.push(el);
-    });
-  }
-
-  // Word counts for timing estimation
-  const wordCounts = contentEls.map(el => el.textContent.trim().split(/\s+/).length);
-  const totalWords = wordCounts.reduce((a, b) => a + b, 0);
-  let paragraphTimings = []; // [{start, end}] in seconds
-
-  function buildTimings() {
-    if (!audio.duration || totalWords === 0) return;
-    const dur = audio.duration;
-    let cumulative = 0;
-    paragraphTimings = wordCounts.map(wc => {
-      const start = (cumulative / totalWords) * dur;
-      cumulative += wc;
-      const end = (cumulative / totalWords) * dur;
-      return { start, end };
-    });
-  }
-
   // --- Web Audio Analyzer ---
   function initAudio() {
     if (audioCtx) return;
@@ -93,7 +65,6 @@
       sourceNode.connect(analyser);
       analyser.connect(audioCtx.destination);
     } catch(e) {
-      // Web Audio not available — graceful fallback
       audioCtx = null;
     }
   }
@@ -104,7 +75,6 @@
     listenMode = true;
     sizeCanvas();
     document.body.classList.add('listen-mode');
-    buildTimings();
     animate();
   }
 
@@ -114,9 +84,6 @@
     document.body.classList.remove('listen-mode');
     cancelAnimationFrame(animFrame);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Remove active paragraph highlights
-    contentEls.forEach(el => el.classList.remove('lm-active', 'lm-past'));
-    // Reset accent
     document.documentElement.style.removeProperty('--accent-pulse');
   }
 
@@ -125,12 +92,10 @@
     if (!listenMode) return;
     animFrame = requestAnimationFrame(animate);
 
-    // Waveform
     if (analyser && dataArray) {
       analyser.getByteFrequencyData(dataArray);
       const w = canvas.width;
       const h = canvas.height;
-      const dpr = window.devicePixelRatio;
       ctx.clearRect(0, 0, w, h);
 
       const barCount = analyser.frequencyBinCount;
@@ -140,66 +105,16 @@
       for (let i = 0; i < barCount; i++) {
         const v = dataArray[i] / 255;
         const barH = v * h;
-        const x = i * barWidth;
         ctx.fillStyle = accent;
         ctx.globalAlpha = 0.3 + v * 0.5;
-        ctx.fillRect(x, h - barH, barWidth - 1, barH);
+        ctx.fillRect(i * barWidth, h - barH, barWidth - 1, barH);
       }
       ctx.globalAlpha = 1;
 
-      // Accent breathing — avg amplitude drives subtle hue shift
+      // Accent breathing
       const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length / 255;
-      const pulseL = 62 + avg * 15; // base lightness 62%, up to 77%
+      const pulseL = 62 + avg * 15;
       document.documentElement.style.setProperty('--accent-pulse', `hsl(73, 89%, ${pulseL}%)`);
-    }
-
-    // Paragraph spotlight
-    if (paragraphTimings.length > 0 && audio.currentTime > 0) {
-      const t = audio.currentTime;
-      let activeIdx = -1;
-      for (let i = 0; i < paragraphTimings.length; i++) {
-        if (t >= paragraphTimings[i].start && t < paragraphTimings[i].end) {
-          activeIdx = i;
-          break;
-        }
-      }
-      // If past all timings, highlight last
-      if (activeIdx === -1 && t >= (paragraphTimings[paragraphTimings.length - 1]?.end || 0)) {
-        activeIdx = paragraphTimings.length - 1;
-      }
-
-      contentEls.forEach((el, i) => {
-        if (i === activeIdx) {
-          el.classList.add('lm-active');
-          el.classList.remove('lm-past');
-        } else if (activeIdx > -1 && i < activeIdx) {
-          el.classList.remove('lm-active');
-          el.classList.add('lm-past');
-        } else {
-          el.classList.remove('lm-active', 'lm-past');
-        }
-      });
-
-      // Auto-scroll active paragraph into view
-      if (activeIdx > -1) {
-        const activeEl = contentEls[activeIdx];
-        const rect = activeEl.getBoundingClientRect();
-        const viewH = window.innerHeight;
-        if (rect.top < viewH * 0.2 || rect.bottom > viewH * 0.8) {
-          activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-
-      // Code block glow
-      contentEls.forEach((el, i) => {
-        if (el.tagName === 'PRE' || el.classList.contains('highlight')) {
-          if (i === activeIdx) {
-            el.classList.add('lm-code-glow');
-          } else {
-            el.classList.remove('lm-code-glow');
-          }
-        }
-      });
     }
   }
 
@@ -246,7 +161,6 @@
 
   audio.addEventListener('loadedmetadata', () => {
     time.textContent = formatTime(audio.duration);
-    buildTimings();
   });
 
   audio.addEventListener('ended', () => {
