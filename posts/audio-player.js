@@ -12,13 +12,18 @@
   audio.preload = 'metadata';
   let speed = 1;
 
+  const playSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polygon points="3,1 13,8 3,15" fill="currentColor"/></svg>`;
+  const pauseSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="4" height="14" rx="1" fill="currentColor"/><rect x="10" y="1" width="4" height="14" rx="1" fill="currentColor"/></svg>`;
+  const skipBackSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/><text x="12" y="16" text-anchor="middle" font-size="8" font-family="monospace" fill="currentColor" stroke="none">15</text></svg>`;
+  const skipFwdSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/><text x="12" y="16" text-anchor="middle" font-size="8" font-family="monospace" fill="currentColor" stroke="none">15</text></svg>`;
+
   container.innerHTML = `
-    <button class="ap-play" aria-label="Play audio narration">▶</button>
-    <button class="ap-skip" data-skip="-15" aria-label="Back 15s">-15</button>
+    <button class="ap-play" aria-label="Play audio narration">${playSvg}</button>
+    <button class="ap-skip" data-skip="-15" aria-label="Back 15s">${skipBackSvg}</button>
     <div class="ap-progress-wrap">
       <div class="ap-progress"></div>
     </div>
-    <button class="ap-skip" data-skip="15" aria-label="Forward 15s">+15</button>
+    <button class="ap-skip" data-skip="15" aria-label="Forward 15s">${skipFwdSvg}</button>
     <button class="ap-speed" aria-label="Playback speed">1×</button>
     <span class="ap-time">0:00</span>
   `;
@@ -39,11 +44,11 @@
   btn.addEventListener('click', () => {
     if (audio.paused) {
       audio.play();
-      btn.textContent = '⏸';
+      btn.innerHTML = pauseSvg;
       btn.setAttribute('aria-label', 'Pause');
     } else {
       audio.pause();
-      btn.textContent = '▶';
+      btn.innerHTML = playSvg;
       btn.setAttribute('aria-label', 'Play');
     }
   });
@@ -73,7 +78,7 @@
   });
 
   audio.addEventListener('ended', () => {
-    btn.textContent = '▶';
+    btn.innerHTML = playSvg;
     btn.setAttribute('aria-label', 'Play');
     progress.style.width = '0%';
   });
