@@ -39,7 +39,6 @@ interface TutorConversationRow {
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 20;
-const tutorRateLimitByUser = new Map<number, number[]>();
 
 function normalizeConversationId(value: number | string | undefined): number | null {
   if (typeof value === 'number' && Number.isInteger(value) && value > 0) {
@@ -93,20 +92,21 @@ function coerceMessages(value: unknown): StoredTutorMessage[] {
     });
 }
 
-function isRateLimited(userId: number): boolean {
-  const now = Date.now();
-  const windowStart = now - RATE_LIMIT_WINDOW_MS;
-  const existingTimestamps = tutorRateLimitByUser.get(userId) ?? [];
-  const recentTimestamps = existingTimestamps.filter((timestamp) => timestamp > windowStart);
+async function isRateLimited(admin: ReturnType<typeof getSupabaseAdminClient>, userId: number): Promise<boolean> {
+  const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+  const { count, error } = await admin
+    .from('TutorConversations')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .gte('updated_at', windowStart);
 
-  if (recentTimestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
-    tutorRateLimitByUser.set(userId, recentTimestamps);
-    return true;
+  if (error) {
+    // Fail open — don't block users if rate limit check fails
+    console.error('[api/tutor] rate limit check failed:', error);
+    return false;
   }
 
-  recentTimestamps.push(now);
-  tutorRateLimitByUser.set(userId, recentTimestamps);
-  return false;
+  return (count ?? 0) >= RATE_LIMIT_MAX_REQUESTS;
 }
 
 export async function POST(req: NextRequest) {
@@ -168,7 +168,7 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = user.id as number;
-    if (isRateLimited(userId)) {
+    if (await isRateLimited(admin, userId)) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
 
