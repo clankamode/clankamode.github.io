@@ -10,6 +10,13 @@ export interface SessionPlannerCandidate {
   item: SessionItem;
 }
 
+export interface CandidateConceptStat {
+  conceptSlug: string;
+  exposures: number;
+  lastSeenAt: string | null;
+  mediumCompletions?: number;
+}
+
 interface SessionPlannerInput {
   cacheKey?: string;
   budgetKey?: string;
@@ -23,6 +30,7 @@ interface SessionPlannerInput {
   requirePracticeItem?: boolean;
   candidates: SessionPlannerCandidate[];
   maxItems?: number;
+  conceptStats?: CandidateConceptStat[];
 }
 
 interface PlannerOutcomeSignals {
@@ -97,6 +105,38 @@ const CONCEPT_ALIASES: Record<string, string> = {
   heap: 'heaps',
   heaps: 'heaps',
 };
+
+// Research-backed constants
+const SPACED_REVIEW_PENALTY = 3.5;
+const MEDIUM_COMPLETIONS_HARD_ESCALATION_THRESHOLD = 5;
+
+/**
+ * Days elapsed since a concept was last seen. Returns Infinity when never seen.
+ */
+export function daysSinceLastSeen(lastSeenAt: string | null): number {
+  if (!lastSeenAt) return Infinity;
+  const diffMs = Date.now() - new Date(lastSeenAt).getTime();
+  return diffMs / (1000 * 60 * 60 * 24);
+}
+
+/**
+ * Minimum days that should elapse before re-surfacing a concept.
+ * Based on spaced-repetition schedule: exposures 1-2 → 2d, 3-5 → 3d, 6+ → 5d.
+ */
+export function minDaysUntilReview(exposures: number): number {
+  if (exposures <= 2) return 2;
+  if (exposures <= 5) return 3;
+  return 5;
+}
+
+/**
+ * Difficulty weight multiplier (research: 1 hard ≈ 2.3 medium for interview readiness).
+ */
+export function difficultyMultiplier(difficulty: 'Easy' | 'Medium' | 'Hard' | undefined): number {
+  if (difficulty === 'Hard') return 2.3;
+  if (difficulty === 'Easy') return 0.3;
+  return 1.0;
+}
 
 export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promise<SessionItem[] | null> {
   if (!plannerClient) return null;
@@ -845,7 +885,8 @@ export function rankCandidatesHeuristically(
   userState: UserLearningState | null,
   outcomeSignals?: PlannerOutcomeSignals,
   recentActivityTitles: string[] = [],
-  personalizationProfile?: SessionPersonalizationProfile | null
+  personalizationProfile?: SessionPersonalizationProfile | null,
+  conceptStats?: CandidateConceptStat[]
 ): SessionPlannerCandidate[] {
   return [...candidates].sort((a, b) => {
     const scoreA = heuristicCandidateScore(
@@ -853,14 +894,16 @@ export function rankCandidatesHeuristically(
       userState,
       outcomeSignals,
       recentActivityTitles,
-      personalizationProfile
+      personalizationProfile,
+      conceptStats
     );
     const scoreB = heuristicCandidateScore(
       b.item,
       userState,
       outcomeSignals,
       recentActivityTitles,
-      personalizationProfile
+      personalizationProfile,
+      conceptStats
     );
     if (scoreA !== scoreB) return scoreB - scoreA;
     return (a.item.estMinutes ?? 5) - (b.item.estMinutes ?? 5);
@@ -872,7 +915,8 @@ function heuristicCandidateScore(
   userState: UserLearningState | null,
   outcomeSignals?: PlannerOutcomeSignals,
   recentActivityTitles: string[] = [],
-  personalizationProfile?: SessionPersonalizationProfile | null
+  personalizationProfile?: SessionPersonalizationProfile | null,
+  conceptStats?: CandidateConceptStat[]
 ): number {
   const completionRate = clamp01(outcomeSignals?.completionRate ?? 0.65);
   const timeAdherence = clamp01(outcomeSignals?.timeAdherence ?? 0.65);
@@ -884,6 +928,11 @@ function heuristicCandidateScore(
   const stubborn = new Set((userState?.stubbornConcepts || []).map((value) => normalizeConceptKey(value)).filter(Boolean) as string[]);
   const recent = new Set((userState?.recentConcepts || []).map((value) => normalizeConceptKey(value)).filter(Boolean) as string[]);
   const activitySimilarity = highestTitleSimilarity(item.title, recentActivityTitles);
+
+  // Look up concept stats for spaced review and difficulty escalation
+  const conceptStat = concept && conceptStats
+    ? (conceptStats.find((s) => normalizeConceptKey(s.conceptSlug) === concept) ?? null)
+    : null;
 
   let score = confidence * 6;
   score += item.type === 'practice' ? 1 : 2;
@@ -910,6 +959,30 @@ function heuristicCandidateScore(
     }
   }
 
+  // Spaced review suppression: deprioritize concepts seen too recently (not hard-excluded)
+  if (conceptStat) {
+    const days = daysSinceLastSeen(conceptStat.lastSeenAt);
+    const minDays = minDaysUntilReview(conceptStat.exposures);
+    if (Number.isFinite(days) && days < minDays) {
+      score -= SPACED_REVIEW_PENALTY;
+    }
+  }
+
+  // Difficulty weighting for practice items (research: 1 hard ≈ 2.3 medium problems)
+  if (item.type === 'practice') {
+    const diffMult = difficultyMultiplier(item.practiceDifficulty);
+    score += (diffMult - 1.0) * 2.5;
+
+    // Hard problem escalation: after ≥5 medium completions in a concept, prefer hard
+    if (
+      item.practiceDifficulty === 'Hard' &&
+      conceptStat &&
+      (conceptStat.mediumCompletions ?? 0) >= MEDIUM_COMPLETIONS_HARD_ESCALATION_THRESHOLD
+    ) {
+      score += 2.0;
+    }
+  }
+
   return score;
 }
 
@@ -921,13 +994,15 @@ export function buildHeuristicPlan(input: {
   personalizationProfile?: SessionPersonalizationProfile | null;
   outcomeSignals?: PlannerOutcomeSignals;
   recentActivityTitles?: string[];
+  conceptStats?: CandidateConceptStat[];
 }): SessionItem[] {
   const ranked = rankCandidatesHeuristically(
     input.candidates,
     input.userState,
     input.outcomeSignals,
     input.recentActivityTitles || [],
-    input.personalizationProfile
+    input.personalizationProfile,
+    input.conceptStats
   );
   const selected: SessionItem[] = [];
   const usedHrefs = new Set<string>();
@@ -1336,6 +1411,11 @@ export function buildPlannerPrompt(input: PromptInput): string {
     'Selection hygiene:',
     '- Before returning JSON, internally compute scores for ALL candidates and select the highest-scoring set.',
     '- If you cannot compute scores from provided fields, treat missing data as 0 and explain via intentText.',
+    '',
+    'Research-backed learning strategy (follow strictly):',
+    '- INTERLEAVING: If selecting 2+ items, select from at least 2 different concept families. Mixing topics improves long-term retention by 50-125% vs blocked practice.',
+    '- SPACED REVIEW: Prefer concepts the user has not seen in several days. Concepts seen in the last 2-3 days should be deprioritized unless no other candidates exist.',
+    '- DIFFICULTY ESCALATION: For concepts the user has practiced 5+ times at medium difficulty, prefer hard problems. Research shows 1 hard problem equals ~2.3 mediums for interview readiness.',
     '',
     'Diversity & Selection rules:',
     '- If selecting 2+ items: ensure at least 2 distinct targetConcepts.',
