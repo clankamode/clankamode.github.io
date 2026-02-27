@@ -207,9 +207,8 @@ export async function POST(req: NextRequest) {
 
     const articleContext = extractArticleContext(article);
     const userLearningContext = await getUserLearningContext(
-      identity.email,
+      userId,
       articleContext.keyConcepts,
-      identity.googleId
     );
 
     const systemPrompt = buildTutorSystemPrompt({
