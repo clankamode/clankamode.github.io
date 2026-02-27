@@ -1,5 +1,8 @@
 import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { supabase } from '@/lib/supabase';
+import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import { PracticeEditor } from '../../_components/PracticeEditor';
 
 interface InterviewQuestion {
@@ -26,6 +29,8 @@ interface PageProps {
 export default async function PracticePage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { source, returnTo, sessionQuestionId } = await searchParams;
+  const session = await getServerSession(authOptions);
+  const showTutor = isFeatureEnabled(FeatureFlags.AI_TUTOR, session?.user);
 
   if (!id) {
     redirect('/peralta75');
@@ -50,6 +55,7 @@ export default async function PracticePage({ params, searchParams }: PageProps) 
   return (
     <PracticeEditor
       question={question}
+      showTutor={showTutor}
       context={{
         isSession: source === 'session',
         returnTo: safeReturnTo,

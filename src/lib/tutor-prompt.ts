@@ -1,5 +1,16 @@
 import type { UserLearningContext } from '@/lib/user-learning-context';
 
+export interface PracticePromptInput {
+  questionName: string;
+  questionPrompt: string;
+  difficulty: string;
+  category: string | null;
+  pattern: string | null;
+  currentCode: string;
+  testResults: Array<{ id: number; passed: boolean; error?: string }> | null;
+  userRole?: string;
+}
+
 export interface TutorPromptInput {
   articleTitle: string;
   articleSummary: string;
@@ -171,6 +182,94 @@ export function buildTutorSystemPrompt(input: TutorPromptInput): string {
   ].join('\n');
 }
 
+function buildTestStatusLines(
+  testResults: Array<{ id: number; passed: boolean; error?: string }> | null,
+): string[] {
+  if (!testResults) {
+    return [
+      '## Test status',
+      'Tests not run yet. Encourage the student to run the tests and observe the results before asking for help.',
+    ];
+  }
+
+  if (testResults.length === 0) {
+    return ['## Test status', 'Tests not run yet.'];
+  }
+
+  const passing = testResults.filter((r) => r.passed);
+  const failing = testResults.filter((r) => !r.passed);
+
+  if (failing.length === 0) {
+    return [
+      '## Test status',
+      `All ${testResults.length} tests passing. Congratulate the student briefly, then ask about time and space complexity.`,
+    ];
+  }
+
+  return [
+    '## Test status',
+    `${passing.length}/${testResults.length} tests passing.`,
+    `Failing: ${failing
+      .map((r) => `Test ${r.id}${r.error ? ` (error: ${r.error.slice(0, 120)})` : ''}`)
+      .join(', ')}`,
+    '',
+    'Reference failing test numbers when guiding (e.g., "Test 2 is failing — what edge case might that be testing?"). Never reveal expected outputs.',
+  ];
+}
+
+export function buildPracticeSystemPrompt(input: PracticePromptInput): string {
+  const codeSnippet = input.currentCode.slice(0, 500);
+  const isTruncated = input.currentCode.length > 500;
+  const categoryLine = [input.category, input.pattern].filter(Boolean).join(' · ');
+  const testStatusLines = buildTestStatusLines(input.testResults);
+  const roleLine = input.userRole?.trim() ? `Learner role: ${input.userRole.trim()}` : '';
+
+  return [
+    'You are a Socratic AI tutor helping a student debug and solve a coding problem.',
+    '',
+    '## Core rule',
+    'NEVER give the solution or reveal expected outputs. Ask targeted questions that lead the student to discover the issue themselves.',
+    '',
+    '## 5-Level Escalation Ladder',
+    '- Level 0: Ask the student to run tests and describe what they observe.',
+    '- Level 1: Ask a guiding question about the failing test. (e.g., "What edge case might Test 2 be testing?")',
+    '- Level 2: Give a narrower hint. (e.g., "What happens to your logic when the list has duplicate values?")',
+    '- Level 3: Point at the specific line or logic gap. Do not show corrected code.',
+    '- Level 4: Walk through the first fix step, then ask the student to do the next.',
+    '- Level 5: Full explanation. Only after 4+ failed attempts at lower levels.',
+    '',
+    '## Post-solve behavior (mandatory)',
+    'When all tests pass, congratulate briefly, then ask: "What is the time and space complexity of your solution? Can you optimize it?"',
+    '',
+    '## Forbidden behaviors',
+    '- Do NOT reveal expected outputs or correct return values.',
+    '- Do NOT write or complete working code for the student.',
+    '- Do NOT escalate more than one level per message.',
+    '- Do NOT skip Level 0 — always make the student run tests first if they have not.',
+    '',
+    '## Problem context',
+    `Name: ${input.questionName}`,
+    `Difficulty: ${input.difficulty}`,
+    ...(categoryLine ? [`Category: ${categoryLine}`] : []),
+    ...(roleLine ? [roleLine] : []),
+    '',
+    '## Problem statement',
+    input.questionPrompt.slice(0, 800),
+    '',
+    "## Student's current code",
+    '```python',
+    codeSnippet + (isTruncated ? '\n... (truncated)' : ''),
+    '```',
+    '',
+    ...testStatusLines,
+    '',
+    '## Response format',
+    '- Keep replies concise (2–5 sentences).',
+    '- End with one focused question that advances the student.',
+    '- Do not provide working code solutions or reveal the expected output.',
+  ].join('\n');
+}
+
 export function buildTutorWelcomeMessage(articleTitle: string, checklistItem?: string): string {
   const safeTitle = articleTitle.trim() || 'this topic';
   const task = checklistItem?.trim();
@@ -180,4 +279,9 @@ export function buildTutorWelcomeMessage(articleTitle: string, checklistItem?: s
   }
 
   return `Welcome back — we're studying "${safeTitle}". I'll coach you Socratically with short questions and hints so you can reason your way to the answer. What part feels most unclear right now?`;
+}
+
+export function buildPracticeWelcomeMessage(questionName: string): string {
+  const safeName = questionName.trim() || 'this problem';
+  return `Let's work through "${safeName}". I won't give away the solution, but I'll guide you with targeted questions so you can figure it out yourself. Run the tests first if you haven't, then tell me where you're stuck.`;
 }

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { MonacoWrapper } from './MonacoWrapper';
 import { OutputPanel } from './OutputPanel';
 import { SuccessOverlay } from './SuccessOverlay';
+import TutorChat from '@/app/ai/_components/TutorChat';
 import { usePythonRunner } from '@/hooks/usePythonRunner';
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
 import { logTelemetryEvent } from '@/lib/telemetry';
@@ -34,6 +35,7 @@ interface InterviewQuestion {
 
 interface PracticeEditorProps {
   question: InterviewQuestion;
+  showTutor?: boolean;
   context?: {
     isSession?: boolean;
     returnTo?: string | null;
@@ -87,7 +89,7 @@ function DifficultyBadge({ difficulty }: { difficulty: string }) {
   );
 }
 
-export function PracticeEditor({ question, context }: PracticeEditorProps) {
+export function PracticeEditor({ question, showTutor = false, context }: PracticeEditorProps) {
   const router = useRouter();
   const { state: sessionFlowState, advanceItem } = useSessionContext();
   const isSessionContext = Boolean(context?.isSession);
@@ -472,6 +474,22 @@ export function PracticeEditor({ question, context }: PracticeEditorProps) {
         onDismiss={() => setShowSuccess(false)}
         passedCount={testResults.filter((r) => r.passed).length}
         totalCount={testCases.length}
+      />
+
+      <TutorChat
+        articleSlug={question.category || 'practice'}
+        articleTitle={question.name}
+        enabled={showTutor}
+        practiceContext={{
+          questionName: question.name,
+          questionPrompt: question.prompt_full,
+          difficulty: question.difficulty,
+          category: question.category,
+          pattern: question.pattern,
+          starterCode: question.starter_code,
+          currentCode: code,
+          testResults: hasRun ? testResults : null,
+        }}
       />
     </>
   );

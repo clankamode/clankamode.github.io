@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 import { getToken } from 'next-auth/jwt';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { getEffectiveIdentityFromToken } from '@/lib/auth-identity';
-import { buildTutorSystemPrompt } from '@/lib/tutor-prompt';
+import { buildTutorSystemPrompt, buildPracticeSystemPrompt } from '@/lib/tutor-prompt';
 import { extractArticleContext } from '@/lib/article-context';
 import { getUserLearningContext } from '@/lib/user-learning-context';
 import { getLearningArticleBySlugGlobal } from '@/lib/content';
@@ -14,6 +14,16 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+interface PracticeContextBody {
+  questionName: string;
+  questionPrompt: string;
+  difficulty: string;
+  category: string | null;
+  pattern: string | null;
+  currentCode: string;
+  testResults: Array<{ id: number; passed: boolean; error?: string }> | null;
+}
+
 interface TutorRequestBody {
   articleSlug?: string;
   message?: string;
@@ -22,6 +32,7 @@ interface TutorRequestBody {
   sessionElapsedMs?: number;
   sessionId?: string | null;
   currentChecklistItem?: string;
+  practiceContext?: PracticeContextBody;
 }
 
 interface StoredTutorMessage {
@@ -133,11 +144,13 @@ export async function POST(req: NextRequest) {
       sessionElapsedMs,
       sessionId,
       currentChecklistItem,
+      practiceContext,
     } = body;
     const normalizedArticleSlug = articleSlug?.trim();
     const normalizedMessage = message?.trim();
+    const isPractice = !!practiceContext;
 
-    if (!normalizedArticleSlug) {
+    if (!isPractice && !normalizedArticleSlug) {
       return NextResponse.json({ error: 'articleSlug is required' }, { status: 400 });
     }
 
@@ -150,9 +163,11 @@ export async function POST(req: NextRequest) {
     }
 
     const includeDrafts = !!effectiveRole && hasRole(effectiveRole, UserRole.EDITOR);
-    const article = await getLearningArticleBySlugGlobal(normalizedArticleSlug, includeDrafts);
+    const article = isPractice
+      ? null
+      : await getLearningArticleBySlugGlobal(normalizedArticleSlug!, includeDrafts);
 
-    if (!article) {
+    if (!isPractice && !article) {
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
@@ -199,30 +214,49 @@ export async function POST(req: NextRequest) {
       }
 
       const row = conversation as unknown as TutorConversationRow;
-      if (row.article_id !== article.id) {
-        return NextResponse.json({ error: 'Conversation does not belong to this article' }, { status: 400 });
+      if (isPractice) {
+        if (row.article_id !== null) {
+          return NextResponse.json({ error: 'Conversation context mismatch' }, { status: 400 });
+        }
+      } else {
+        if (row.article_id !== article!.id) {
+          return NextResponse.json({ error: 'Conversation does not belong to this article' }, { status: 400 });
+        }
       }
       existingMessages = coerceMessages(row.messages);
     }
 
-    const articleContext = extractArticleContext(article);
-    const userLearningContext = await getUserLearningContext(
-      identity.email,
-      articleContext.keyConcepts,
-    );
-
-    const systemPrompt = buildTutorSystemPrompt({
-      articleTitle: articleContext.title,
-      articleSummary: articleContext.summary,
-      codeBlocks: articleContext.codeBlocks,
-      keyConcepts: articleContext.keyConcepts,
-      articleSections: articleContext.sections,
-      checklistProgress: resolvedChecklistProgress,
-      sessionElapsedMs: resolvedSessionElapsedMs,
-      checklistItem: resolvedChecklistItem,
-      userRole: effectiveRole,
-      userLearningContext,
-    });
+    let systemPrompt: string;
+    if (isPractice) {
+      systemPrompt = buildPracticeSystemPrompt({
+        questionName: practiceContext!.questionName,
+        questionPrompt: practiceContext!.questionPrompt,
+        difficulty: practiceContext!.difficulty,
+        category: practiceContext!.category,
+        pattern: practiceContext!.pattern,
+        currentCode: practiceContext!.currentCode,
+        testResults: practiceContext!.testResults,
+        userRole: effectiveRole,
+      });
+    } else {
+      const articleContext = extractArticleContext(article!);
+      const userLearningContext = await getUserLearningContext(
+        identity.email,
+        articleContext.keyConcepts,
+      );
+      systemPrompt = buildTutorSystemPrompt({
+        articleTitle: articleContext.title,
+        articleSummary: articleContext.summary,
+        codeBlocks: articleContext.codeBlocks,
+        keyConcepts: articleContext.keyConcepts,
+        articleSections: articleContext.sections,
+        checklistProgress: resolvedChecklistProgress,
+        sessionElapsedMs: resolvedSessionElapsedMs,
+        checklistItem: resolvedChecklistItem,
+        userRole: effectiveRole,
+        userLearningContext,
+      });
+    }
 
     const userMessage: StoredTutorMessage = {
       role: 'user',
@@ -252,7 +286,7 @@ export async function POST(req: NextRequest) {
         .from('TutorConversations')
         .insert({
           user_id: userId,
-          article_id: article.id,
+          article_id: isPractice ? null : article!.id,
           session_uuid: resolvedSessionUuid,
           messages: persistedMessagesBeforeAssistant,
         })

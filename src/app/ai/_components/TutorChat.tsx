@@ -4,13 +4,25 @@ import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { RichText } from '@/app/ai/_components/RichText';
 import TutorNudge from '@/app/ai/_components/TutorNudge';
 import { useCurrentSessionItemTitle, useIsInSession, useSession } from '@/contexts/SessionContext';
-import { buildTutorWelcomeMessage } from '@/lib/tutor-prompt';
+import { buildTutorWelcomeMessage, buildPracticeWelcomeMessage } from '@/lib/tutor-prompt';
 import { cn } from '@/lib/utils';
+
+export interface PracticeContext {
+  questionName: string;
+  questionPrompt: string;
+  difficulty: string;
+  category: string | null;
+  pattern: string | null;
+  starterCode: string;
+  currentCode: string;
+  testResults: Array<{ id: number; passed: boolean; actual?: string; error?: string }> | null;
+}
 
 interface TutorChatProps {
   articleSlug: string;
   articleTitle: string;
   enabled: boolean;
+  practiceContext?: PracticeContext;
 }
 
 type TutorRole = 'user' | 'assistant';
@@ -126,7 +138,7 @@ export function deriveTutorSessionContext(
   };
 }
 
-export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorChatProps) {
+export default function TutorChat({ articleSlug, articleTitle, enabled, practiceContext }: TutorChatProps) {
   const isInSession = useIsInSession();
   const currentChecklistItem = useCurrentSessionItemTitle();
   const [isOpen, setIsOpen] = useState(false);
@@ -134,8 +146,12 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [input, setInput] = useState('');
   const [nudgeVisible, setNudgeVisible] = useState(false);
+  const buildWelcome = () =>
+    practiceContext
+      ? buildPracticeWelcomeMessage(practiceContext.questionName)
+      : buildTutorWelcomeMessage(articleTitle);
   const [messages, setMessages] = useState<TutorUiMessage[]>(() => [
-    createMessage('assistant', buildTutorWelcomeMessage(articleTitle)),
+    createMessage('assistant', buildWelcome()),
   ]);
 
   const bottomAnchorRef = useRef<HTMLDivElement | null>(null);
@@ -155,13 +171,14 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
   useEffect(() => {
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
-    setMessages([createMessage('assistant', buildTutorWelcomeMessage(articleTitle))]);
+    setMessages([createMessage('assistant', buildWelcome())]);
     setConversationId(null);
     setIsLoading(false);
     setInput('');
     setNudgeVisible(false);
     nudgeFiredForRef.current = null;
     stepStartedAtRef.current = Date.now();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleSlug, articleTitle]);
 
   useEffect(() => {
@@ -223,6 +240,20 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
         currentChecklistItem,
       } = deriveTutorSessionContext(sessionState, isInSession);
 
+      const practicePayload = practiceContext
+        ? {
+            questionName: practiceContext.questionName,
+            questionPrompt: practiceContext.questionPrompt,
+            difficulty: practiceContext.difficulty,
+            category: practiceContext.category,
+            pattern: practiceContext.pattern,
+            currentCode: practiceContext.currentCode,
+            testResults: practiceContext.testResults
+              ? practiceContext.testResults.map(({ id, passed, error }) => ({ id, passed, error }))
+              : null,
+          }
+        : undefined;
+
       const response = await fetch('/api/tutor', {
         method: 'POST',
         signal: abortController.signal,
@@ -237,6 +268,7 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
           sessionElapsedMs,
           sessionId,
           currentChecklistItem,
+          ...(practicePayload ? { practiceContext: practicePayload } : {}),
         }),
       });
 
@@ -348,7 +380,7 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
   const resetConversation = () => {
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
-    setMessages([createMessage('assistant', buildTutorWelcomeMessage(articleTitle))]);
+    setMessages([createMessage('assistant', buildWelcome())]);
     setConversationId(null);
     setIsLoading(false);
     setInput('');
