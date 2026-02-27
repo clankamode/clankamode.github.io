@@ -232,7 +232,7 @@ function injectStyles(): void {
     /* ── Stream Mode Toolbar ─────────────────────── */
     #${TOOLBAR_ID} {
       position: fixed;
-      right: 16px;
+      left: 16px;
       bottom: 16px;
       display: flex;
       align-items: center;
