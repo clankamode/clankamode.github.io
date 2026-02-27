@@ -1,8 +1,6 @@
 'use client';
 
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 import { RichText } from '@/app/ai/_components/RichText';
 import TutorNudge from '@/app/ai/_components/TutorNudge';
 import { useCurrentSessionItemTitle, useIsInSession, useSession } from '@/contexts/SessionContext';
@@ -335,18 +333,24 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 flex flex-col items-end gap-3 md:bottom-4 md:left-auto md:right-4">
+    <>
       {isOpen && (
-        <Card className="flex w-full max-h-[60vh] flex-col rounded-b-none border-border-interactive/50 bg-background/95 p-0 shadow-xl md:h-[min(70vh,680px)] md:max-h-none md:w-[min(420px,calc(100vw-2rem))] md:rounded-xl">
-          <div className="flex items-center justify-between border-b border-border-subtle px-4 py-3">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted">AI Tutor</p>
-              <p className="text-sm font-semibold text-text-primary">{articleTitle}</p>
+        <div className="fixed bottom-[80px] left-0 right-0 z-50 flex h-[520px] w-full flex-col rounded-t-2xl border border-zinc-800 bg-zinc-950 shadow-[0_8px_40px_rgba(0,0,0,0.6)] md:bottom-20 md:left-auto md:right-6 md:w-[380px] md:rounded-2xl">
+          {/* Header */}
+          <div className="flex items-center justify-between rounded-t-2xl bg-zinc-900/80 px-4 py-3 backdrop-blur-sm">
+            <div className="flex items-center gap-2.5">
+              <svg className="h-4 w-4 flex-shrink-0 text-[#c8f542]" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 1L9.5 6.5L15 8L9.5 9.5L8 15L6.5 9.5L1 8L6.5 6.5L8 1Z" />
+              </svg>
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-400">AI Tutor</p>
+                <p className="text-sm font-semibold text-zinc-100">{articleTitle}</p>
+              </div>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="rounded-md p-1 text-text-muted transition-colors hover:bg-surface-interactive hover:text-text-primary"
+              className="p-1 text-zinc-500 transition-colors hover:text-zinc-200"
               aria-label="Close AI tutor"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -354,52 +358,49 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
               </svg>
             </button>
           </div>
-          {isInSession && sessionState.execution && (
-            <p className="border-b border-border-subtle px-4 py-1.5 font-mono text-[10px] text-text-muted">
-              Session active · Step {sessionState.execution.currentIndex + 1} of {sessionState.scope?.items?.length ?? 0}
-            </p>
-          )}
 
-          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+          {isInSession && <div className="h-[2px] w-full bg-[#c8f542]/60" />}
+
+          {/* Messages */}
+          <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-thumb-zinc-800">
             {messages.length === 0 ? (
               <div className="flex h-full items-center justify-center">
-                <p className="text-xs text-zinc-500">Ask me anything about this article →</p>
+                <p className="text-center text-xs text-zinc-600">Start with a question about this topic</p>
               </div>
             ) : (
               messages.map((message) => (
                 <div key={message.id} className={cn('flex', message.role === 'user' ? 'justify-end' : 'justify-start')}>
-                  <div
-                    className={cn(
-                      'max-w-[90%] rounded-xl px-3 py-2 text-sm',
-                      message.role === 'user'
-                        ? 'bg-brand-green/15 text-text-primary border border-brand-green/25'
-                        : 'bg-card text-text-secondary border border-border-subtle'
-                    )}
-                  >
-                    {message.role === 'assistant' ? (
-                      isLoading && message.content.length === 0 ? (
+                  {message.role === 'user' ? (
+                    <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-zinc-800 px-4 py-2.5 text-sm text-zinc-100">
+                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    </div>
+                  ) : (
+                    <div className="max-w-[85%]">
+                      {isLoading && message.content.length === 0 ? (
                         <div className="flex items-center gap-1 py-1">
-                          <span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce [animation-delay:0ms]" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce [animation-delay:150ms]" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce [animation-delay:300ms]" />
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c8f542] [animation-delay:0ms]" />
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c8f542] [animation-delay:150ms]" />
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c8f542] [animation-delay:300ms]" />
                         </div>
                       ) : (
-                        <RichText content={message.content} className="space-y-3 text-sm leading-6" />
-                      )
-                    ) : (
-                      <p className="whitespace-pre-wrap">{message.content}</p>
-                    )}
-                  </div>
+                        <div className="flex items-start gap-2">
+                          <span className="mt-1 flex-shrink-0 text-xs text-[#c8f542]">✦</span>
+                          <RichText content={message.content} className="text-sm leading-relaxed text-zinc-300" />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))
             )}
             <div ref={bottomAnchorRef} />
           </div>
 
+          {/* Input */}
           <form
             onSubmit={handleSubmit}
-            className="border-t border-border-subtle px-4 py-3"
-            style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
+            className="border-t border-zinc-800 p-4"
+            style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
           >
             <textarea
               value={input}
@@ -407,38 +408,57 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
               onKeyDown={onInputKeyDown}
               rows={2}
               placeholder="Ask a focused question about this article"
-              className="w-full resize-none rounded-lg border border-border-subtle bg-background px-3 py-2 text-sm text-text-primary outline-none transition-colors focus:border-border-interactive"
+              className="w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-500 focus:outline-none"
             />
             <div className="mt-2 flex items-center justify-between">
-              <p className="text-xs text-text-muted">Socratic hints only, no full solutions.</p>
-              <Button type="submit" size="sm" disabled={!canSubmit}>
-                {isLoading ? 'Thinking...' : 'Send'}
-              </Button>
+              <p className="font-mono text-[10px] text-zinc-600">Socratic only</p>
+              <button
+                type="submit"
+                disabled={!canSubmit}
+                className="rounded-lg bg-[#c8f542] px-3 py-1.5 text-xs font-bold text-zinc-950 transition-colors hover:bg-[#d4f75a] disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                {isLoading ? (
+                  <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                ) : (
+                  'Send'
+                )}
+              </button>
             </div>
           </form>
-        </Card>
+        </div>
       )}
 
       {nudgeVisible && !isOpen && (
-        <TutorNudge
-          onOpen={() => {
-            setIsOpen(true);
-            setNudgeVisible(false);
-            setInput(currentChecklistItem ? `I'm stuck on: ${currentChecklistItem}` : 'I need a hint');
-          }}
-          checklistItemTitle={currentChecklistItem}
-        />
+        <div className="fixed bottom-20 right-6 z-50">
+          <TutorNudge
+            onOpen={() => {
+              setIsOpen(true);
+              setNudgeVisible(false);
+              setInput(currentChecklistItem ? `I'm stuck on: ${currentChecklistItem}` : 'I need a hint');
+            }}
+            checklistItemTitle={currentChecklistItem}
+          />
+        </div>
       )}
 
-      <Button
+      <button
         type="button"
-        size="sm"
-        variant="outline"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="mb-4 mr-4 border-border-interactive/50 bg-background/90 backdrop-blur-sm md:mb-0 md:mr-0"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-100 transition-all hover:bg-zinc-800 hover:shadow-[0_0_12px_rgba(200,245,66,0.15)]"
       >
-        {isOpen ? 'Hide Tutor' : 'Ask AI Tutor'}
-      </Button>
-    </div>
+        <span className="relative flex items-center">
+          <svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 1L9.5 6.5L15 8L9.5 9.5L8 15L6.5 9.5L1 8L6.5 6.5L8 1Z" />
+          </svg>
+          {isOpen && (
+            <span className="absolute -right-1 -top-1 h-1.5 w-1.5 animate-pulse rounded-full bg-[#c8f542]" />
+          )}
+        </span>
+        {isOpen ? 'Close' : 'Tutor'}
+      </button>
+    </>
   );
 }
