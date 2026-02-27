@@ -141,20 +141,14 @@
       const t = audio.currentTime;
       let activeIdx = -1;
 
-      for (let i = 0; i < timings.length; i++) {
-        if (t >= timings[i].start && t < timings[i].end) {
+      // Find the last spoken element whose start time we've passed
+      // Spoken = duration > 0.5s
+      for (let i = timings.length - 1; i >= 0; i--) {
+        const dur = timings[i].end - timings[i].start;
+        if (dur > 0.5 && t >= timings[i].start) {
           activeIdx = i;
           break;
         }
-        // Between elements — keep previous active
-        if (i < timings.length - 1 && t >= timings[i].end && t < timings[i + 1].start) {
-          activeIdx = i;
-          break;
-        }
-      }
-      // Past everything
-      if (activeIdx === -1 && timings.length > 0 && t >= timings[timings.length - 1].start) {
-        activeIdx = timings.length - 1;
       }
 
       // Add sync dimming only once audio reaches first timed content
