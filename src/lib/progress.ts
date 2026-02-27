@@ -13,6 +13,7 @@ import { applySessionPlanPolicySelection, buildHeuristicPlan, planSessionItemsWi
 import { chunkArticleByHeadings } from '@/lib/article-chunking';
 import { estimateReadingTimeMinutes } from '@/lib/reading-time';
 import { getFromCache, setInCache } from '@/lib/redis';
+import { getCachedSessionPlan, storeCachedSessionPlan } from '@/lib/session-plan-cache';
 import {
   applyPersonalizationScopeExperiment,
   type PersonalizationScopeExperiment,
@@ -1374,41 +1375,55 @@ export async function getSessionState(
         });
         planPolicyDecisionId = planDecision.id;
       } else {
-        const plannedItems = await planSessionItemsWithLLM({
-          cacheKey: `${userId}:${plannerTrackSlug}:${dayKey}:${plannerCandidates.map((c) => c.id).join('|')}`,
-          budgetKey: `${userId}:${dayKey}`,
-          trackSlug: plannerTrackSlug,
-          trackName: plannerTrackName,
-          userState,
-          personalizationProfile,
-          recentActivityTitles: summary.recentActivity.map((activity) => activity.title),
-          outcomeSignals,
-          practiceTargetDifficulty: practicePerformance?.targetDifficulty || null,
-          requirePracticeItem,
-          candidates: plannerCandidates,
-          maxItems: 3,
-        });
+        const supabaseCached = await getCachedSessionPlan(userId, plannerTrackSlug);
+        const isSupabaseCacheValid = supabaseCached &&
+          supabaseCached.length > 0 &&
+          supabaseCached.every((item) => {
+            const normalized = normalizeSessionItemHref(item.href);
+            const inDbCompletions = item.articleId ? completedIds.has(item.articleId) : false;
+            return plannerCandidateSet.has(item.href) && !recentExclusionHrefs.has(normalized) && !inDbCompletions;
+          });
 
-        if (plannedItems && plannedItems.length > 0) {
-          sessionItems = plannedItems;
-          console.log('[AI Session Planner] Selected Items:', sessionItems.map(item => ({
-            id: item.slug || item.practiceQuestionId,
-            estMinutes: item.estMinutes,
-            articleId: item.articleId,
-            concepts: item.primaryConceptSlug ? [item.primaryConceptSlug] : [],
-            intent: item.intent.text
-          })));
-        } else if (filteredPracticeCandidates.length > 0) {
-          if (articleCandidates.length >= 2) {
-            sessionItems = articleCandidates.slice(0, 3);
-          } else {
-            const baseLearn = sectionCandidates[0] || articleCandidates[0] || null;
-            sessionItems = baseLearn
-              ? [baseLearn, filteredPracticeCandidates[0]]
-              : [filteredPracticeCandidates[0]];
+        if (isSupabaseCacheValid) {
+          sessionItems = supabaseCached!.slice(0, 3);
+        } else {
+          const plannedItems = await planSessionItemsWithLLM({
+            cacheKey: `${userId}:${plannerTrackSlug}:${dayKey}:${plannerCandidates.map((c) => c.id).join('|')}`,
+            budgetKey: `${userId}:${dayKey}`,
+            trackSlug: plannerTrackSlug,
+            trackName: plannerTrackName,
+            userState,
+            personalizationProfile,
+            recentActivityTitles: summary.recentActivity.map((activity) => activity.title),
+            outcomeSignals,
+            practiceTargetDifficulty: practicePerformance?.targetDifficulty || null,
+            requirePracticeItem,
+            candidates: plannerCandidates,
+            maxItems: 3,
+          });
+
+          if (plannedItems && plannedItems.length > 0) {
+            sessionItems = plannedItems;
+            console.log('[AI Session Planner] Selected Items:', sessionItems.map(item => ({
+              id: item.slug || item.practiceQuestionId,
+              estMinutes: item.estMinutes,
+              articleId: item.articleId,
+              concepts: item.primaryConceptSlug ? [item.primaryConceptSlug] : [],
+              intent: item.intent.text
+            })));
+            storeCachedSessionPlan(userId, plannerTrackSlug, plannedItems).catch(() => {});
+          } else if (filteredPracticeCandidates.length > 0) {
+            if (articleCandidates.length >= 2) {
+              sessionItems = articleCandidates.slice(0, 3);
+            } else {
+              const baseLearn = sectionCandidates[0] || articleCandidates[0] || null;
+              sessionItems = baseLearn
+                ? [baseLearn, filteredPracticeCandidates[0]]
+                : [filteredPracticeCandidates[0]];
+            }
+          } else if (deterministicPlan.length > 0) {
+            sessionItems = deterministicPlan;
           }
-        } else if (deterministicPlan.length > 0) {
-          sessionItems = deterministicPlan;
         }
       }
 

@@ -207,6 +207,13 @@ export async function POST(req: NextRequest) {
 
     await invalidateCache(`session-plan-lock:v1:${identity.email}:${trackSlug}`);
 
+    // Fire-and-forget: pre-bake the next session plan so it's ready on the next /home visit.
+    fetch(new URL('/api/session-plan-prebake', req.url).toString(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-internal-secret': process.env.INTERNAL_SECRET ?? '' },
+      body: JSON.stringify({ email: identity.email, trackSlug }),
+    }).catch(() => {});
+
     return NextResponse.json({ finalized: true, dedupeKey });
   } catch (error) {
     console.error('[session/finalize] unexpected:', error);
