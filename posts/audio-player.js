@@ -10,12 +10,16 @@
 
   const audio = new Audio(src);
   audio.preload = 'metadata';
+  let speed = 1;
 
   container.innerHTML = `
     <button class="ap-play" aria-label="Play audio narration">▶</button>
+    <button class="ap-skip" data-skip="-15" aria-label="Back 15s">-15</button>
     <div class="ap-progress-wrap">
       <div class="ap-progress"></div>
     </div>
+    <button class="ap-skip" data-skip="15" aria-label="Forward 15s">+15</button>
+    <button class="ap-speed" aria-label="Playback speed">1×</button>
     <span class="ap-time">0:00</span>
   `;
 
@@ -23,6 +27,8 @@
   const progressWrap = container.querySelector('.ap-progress-wrap');
   const progress = container.querySelector('.ap-progress');
   const time = container.querySelector('.ap-time');
+  const speedBtn = container.querySelector('.ap-speed');
+  const skips = container.querySelectorAll('.ap-skip');
 
   function formatTime(s) {
     const m = Math.floor(s / 60);
@@ -40,6 +46,19 @@
       btn.textContent = '▶';
       btn.setAttribute('aria-label', 'Play');
     }
+  });
+
+  skips.forEach(s => s.addEventListener('click', () => {
+    if (!audio.duration) return;
+    audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + parseInt(s.dataset.skip)));
+  }));
+
+  const speeds = [1, 1.25, 1.5, 1.75, 2];
+  speedBtn.addEventListener('click', () => {
+    const idx = (speeds.indexOf(speed) + 1) % speeds.length;
+    speed = speeds[idx];
+    audio.playbackRate = speed;
+    speedBtn.textContent = speed === 1 ? '1×' : `${speed}×`;
   });
 
   audio.addEventListener('timeupdate', () => {
