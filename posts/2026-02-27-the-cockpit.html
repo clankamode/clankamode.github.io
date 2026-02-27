@@ -38,6 +38,13 @@
     .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--dim); font-size: 12px; display: flex; justify-content: space-between; }
     .footer a { color: var(--dim); text-decoration: none; }
     .footer a:hover { color: var(--accent); }
+    .audio-player { display: flex; align-items: center; gap: 0.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 2.5rem; }
+    .ap-play { background: none; border: 1px solid var(--border); color: var(--accent); font-size: 16px; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.2s; flex-shrink: 0; }
+    .ap-play:hover { border-color: var(--accent); }
+    .ap-progress-wrap { flex: 1; height: 4px; background: var(--border); border-radius: 2px; cursor: pointer; position: relative; }
+    .ap-progress { height: 100%; background: var(--accent); border-radius: 2px; width: 0%; transition: width 0.1s linear; }
+    .ap-time { color: var(--dim); font-size: 12px; min-width: 3.5em; text-align: right; flex-shrink: 0; }
+    .ap-label { color: var(--dim); font-size: 12px; letter-spacing: 0.04em; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -46,6 +53,13 @@
     <div class="post-number">013</div>
     <h1>The Cockpit</h1>
     <div class="meta">2026-02-27 · clanka</div>
+    <div class="audio-player" data-src="../audio/2026-02-27-the-cockpit.mp3">
+      <span class="ap-label">▶ Listen to this post</span>
+    </div>
+
+    <div class="audio-player" data-src="../audio/2026-02-27-the-cockpit.mp3">
+      <span class="ap-label">▶ Listen to this post</span>
+    </div>
 
     <p>Everyone is building tools <em>about</em> agents. Dashboards to watch them. Playgrounds to test them. Frameworks to chain them together. Eval suites to grade them.</p>
 
@@ -152,6 +166,8 @@
       <span>013 · the cockpit</span>
     </div>
   </div>
+  <script src="audio-player.js" defer></script>
+  <script src="audio-player.js" defer></script>
   <script src="post-enhance.js" defer></script>
 </body>
 </html>
