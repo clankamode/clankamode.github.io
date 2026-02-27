@@ -20,8 +20,8 @@ const THEME_RULES = [
   { token: 'constant', foreground: '2563eb' },
   { token: 'parameter', foreground: '2563eb' },
   { token: 'decorator', foreground: '4f46e5' },
-  { token: 'operator', foreground: '3f3f46' },
-  { token: 'delimiter', foreground: '3f3f46' },
+  { token: 'operator', foreground: 'a1a1aa' },
+  { token: 'delimiter', foreground: 'a1a1aa' },
 ];
 
 const LIGHT_THEME_COLORS: Record<string, string> = {

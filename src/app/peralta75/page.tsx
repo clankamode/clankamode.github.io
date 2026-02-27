@@ -132,11 +132,15 @@ export default function Component() {
             .map((leetcodeNumber) => ({ leetcodeNumber, status: 'solved' as const, origin: 'manual' as const }));
 
           if (updates.length > 0) {
-            await saveProgressUpdates(updates);
+            const saved = await saveProgressUpdates(updates);
+            if (saved) {
+              window.localStorage.setItem(LOCAL_IMPORT_FLAG_KEY, '1');
+            }
+          } else {
+            // Nothing to import — mark as done so we don't retry
+            window.localStorage.setItem(LOCAL_IMPORT_FLAG_KEY, '1');
           }
         } catch {
-        } finally {
-          window.localStorage.setItem(LOCAL_IMPORT_FLAG_KEY, '1');
         }
       }
 
