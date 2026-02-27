@@ -40,7 +40,7 @@ export const flags: Record<FeatureFlag, FlagConfig> = {
         allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
     [FeatureFlags.AI_TUTOR]: {
-        defaultValue: false,
+        defaultValue: true,
         allowRoles: [UserRole.ADMIN, UserRole.INSIDER],
     },
     [FeatureFlags.PERSONALIZATION_SCOPE_EXPERIMENT]: {
