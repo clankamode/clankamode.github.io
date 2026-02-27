@@ -1,3 +1,5 @@
+import './styles.css';
+import { initUI } from './ui-scripts';
 import './clanka-presence';
 import './clanka-activity';
 import './clanka-fleet';
@@ -150,3 +152,5 @@ if (presence) {
 
   typeLineOne(0);
 })();
+
+initUI();
