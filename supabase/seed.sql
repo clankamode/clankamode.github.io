@@ -46,23 +46,6 @@ insert into public."LearningTopics" (id, pillar_id, slug, name, description, ord
   ('26ba26b7-7547-4dd7-8a4a-b0b71b1036d2', '540c34d4-a8f7-421b-88f2-3d03330feecb', 'chasing-expert',           'Chasing Expert',            null,                                                                                                          0, '2026-02-13 23:11:05.094299+00')
 on conflict (id) do nothing;
 
--- ─────────────────────────────────────────────────────────────────────────────
--- LearningArticles (minimal local content so /home session routes don't 404)
--- ─────────────────────────────────────────────────────────────────────────────
-insert into public."LearningArticles" (
-  id,
-  topic_id,
-  slug,
-  title,
-  excerpt,
-  body,
-  reading_time_minutes,
-  is_premium,
-  is_published,
-  order_index,
-  concept_tags,
-  primary_concept
-) values
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Concepts
