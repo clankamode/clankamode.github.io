@@ -1,5 +1,6 @@
 import './styles.css';
 import { initUI } from './ui-scripts';
+import { loadLiveStats } from './clanka-stats';
 import './clanka-presence';
 import './clanka-activity';
 import './clanka-fleet';
@@ -154,3 +155,4 @@ if (presence) {
 })();
 
 initUI();
+void loadLiveStats();
