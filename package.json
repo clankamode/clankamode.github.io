@@ -5,13 +5,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && mkdir -p dist/posts dist/audio && cp -R posts/. dist/posts && cp -R audio/. dist/audio && cp og-image.png og-image.svg feed.xml dist/ && cp dist/index.html dist/404.html",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "playwright test"
   },
   "dependencies": {
     "lit": "^3.3.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/uuid": "^10.0.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.5"
