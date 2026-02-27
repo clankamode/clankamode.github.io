@@ -114,16 +114,19 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
     createMessage('assistant', buildTutorWelcomeMessage(articleTitle)),
   ]);
 
-  const messageListRef = useRef<HTMLDivElement | null>(null);
+  const bottomAnchorRef = useRef<HTMLDivElement | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { state: sessionState } = useSession();
   const nudgeFiredForRef = useRef<string | null>(null);
   const stepStartedAtRef = useRef<number>(Date.now());
 
+  const lastMessageContentLength = messages.at(-1)?.content.length ?? 0;
+
   useEffect(() => {
-    if (!messageListRef.current) return;
-    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-  }, [messages, isOpen]);
+    if (!isOpen) return;
+    bottomAnchorRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length, lastMessageContentLength, isOpen]);
 
   useEffect(() => {
     abortControllerRef.current?.abort();
@@ -332,9 +335,9 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3">
+    <div className="fixed bottom-0 left-0 right-0 z-40 flex flex-col items-end gap-3 md:bottom-4 md:left-auto md:right-4">
       {isOpen && (
-        <Card className="flex h-[min(70vh,680px)] w-[min(420px,calc(100vw-2rem))] flex-col border-border-interactive/50 bg-background/95 p-0 shadow-xl">
+        <Card className="flex w-full max-h-[60vh] flex-col rounded-b-none border-border-interactive/50 bg-background/95 p-0 shadow-xl md:h-[min(70vh,680px)] md:max-h-none md:w-[min(420px,calc(100vw-2rem))] md:rounded-xl">
           <div className="flex items-center justify-between border-b border-border-subtle px-4 py-3">
             <div>
               <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted">AI Tutor</p>
@@ -357,28 +360,47 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
             </p>
           )}
 
-          <div ref={messageListRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
-            {messages.map((message) => (
-              <div key={message.id} className={cn('flex', message.role === 'user' ? 'justify-end' : 'justify-start')}>
-                <div
-                  className={cn(
-                    'max-w-[90%] rounded-xl px-3 py-2 text-sm',
-                    message.role === 'user'
-                      ? 'bg-brand-green/15 text-text-primary border border-brand-green/25'
-                      : 'bg-card text-text-secondary border border-border-subtle'
-                  )}
-                >
-                  {message.role === 'assistant' ? (
-                    <RichText content={message.content} className="space-y-3 text-sm leading-6" />
-                  ) : (
-                    <p className="whitespace-pre-wrap">{message.content}</p>
-                  )}
-                </div>
+          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+            {messages.length === 0 ? (
+              <div className="flex h-full items-center justify-center">
+                <p className="text-xs text-zinc-500">Ask me anything about this article →</p>
               </div>
-            ))}
+            ) : (
+              messages.map((message) => (
+                <div key={message.id} className={cn('flex', message.role === 'user' ? 'justify-end' : 'justify-start')}>
+                  <div
+                    className={cn(
+                      'max-w-[90%] rounded-xl px-3 py-2 text-sm',
+                      message.role === 'user'
+                        ? 'bg-brand-green/15 text-text-primary border border-brand-green/25'
+                        : 'bg-card text-text-secondary border border-border-subtle'
+                    )}
+                  >
+                    {message.role === 'assistant' ? (
+                      isLoading && message.content.length === 0 ? (
+                        <div className="flex items-center gap-1 py-1">
+                          <span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce [animation-delay:0ms]" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce [animation-delay:150ms]" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce [animation-delay:300ms]" />
+                        </div>
+                      ) : (
+                        <RichText content={message.content} className="space-y-3 text-sm leading-6" />
+                      )
+                    ) : (
+                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+            <div ref={bottomAnchorRef} />
           </div>
 
-          <form onSubmit={handleSubmit} className="border-t border-border-subtle px-4 py-3">
+          <form
+            onSubmit={handleSubmit}
+            className="border-t border-border-subtle px-4 py-3"
+            style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
+          >
             <textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
@@ -413,7 +435,7 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
         size="sm"
         variant="outline"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="border-border-interactive/50 bg-background/90 backdrop-blur-sm"
+        className="mb-4 mr-4 border-border-interactive/50 bg-background/90 backdrop-blur-sm md:mb-0 md:mr-0"
       >
         {isOpen ? 'Hide Tutor' : 'Ask AI Tutor'}
       </Button>
