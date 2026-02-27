@@ -33,7 +33,7 @@ interface InternalizationRow {
  * are returned. Aggregates across tracks.
  */
 export async function getUserLearningContext(
-  userId: number,
+  userEmail: string,
   keyConcepts: string[],
 ): Promise<UserLearningContext[]> {
   if (keyConcepts.length === 0) return [];
@@ -46,7 +46,7 @@ export async function getUserLearningContext(
   const { data: statsData, error: statsError } = await admin
     .from('UserConceptStats')
     .select('concept_slug, exposures, internalized_count, last_seen_at')
-    .eq('user_id', userId)
+    .eq('email', userEmail)
     .in('concept_slug', slugs);
 
   if (statsError) {
@@ -85,7 +85,7 @@ export async function getUserLearningContext(
   const { data: internalizationsData, error: internalizationsError } = await admin
     .from('UserInternalizations')
     .select('concept_slug, picked')
-    .eq('user_id', userId)
+    .eq('email', userEmail)
     .in('concept_slug', foundSlugs)
     .order('created_at', { ascending: false })
     .limit(foundSlugs.length * 5);

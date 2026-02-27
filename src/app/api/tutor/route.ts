@@ -207,7 +207,7 @@ export async function POST(req: NextRequest) {
 
     const articleContext = extractArticleContext(article);
     const userLearningContext = await getUserLearningContext(
-      userId,
+      identity.email,
       articleContext.keyConcepts,
     );
 
