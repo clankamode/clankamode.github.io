@@ -216,6 +216,7 @@ export async function POST(req: NextRequest) {
       articleSummary: articleContext.summary,
       codeBlocks: articleContext.codeBlocks,
       keyConcepts: articleContext.keyConcepts,
+      articleSections: articleContext.sections,
       checklistProgress: resolvedChecklistProgress,
       sessionElapsedMs: resolvedSessionElapsedMs,
       checklistItem: resolvedChecklistItem,

@@ -12,6 +12,8 @@ export interface ArticleContext {
   keyConcepts: string[];
   /** Brief plain-text summary from the first paragraph(s), capped to ~200 chars. */
   summary: string;
+  /** h2/h3 sections with their slugified anchor IDs and heading text. */
+  sections: { id: string; text: string }[];
 }
 
 const MARKDOWN_CODE_FENCE_REGEX = /```(?:[\w-]+)?\s*\n([\s\S]*?)```/g;
@@ -102,6 +104,28 @@ function extractKeyConcepts(article: LearningArticle, body: string): string[] {
   return concepts.slice(0, 24);
 }
 
+function headingToId(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+function extractSections(body: string): { id: string; text: string }[] {
+  const sections: { id: string; text: string }[] = [];
+  const regex = /^#{2,3}\s+(.+)$/gm;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(body)) !== null) {
+    const text = (match[1] ?? '').trim();
+    if (text) {
+      sections.push({ id: headingToId(text), text });
+    }
+  }
+  return sections;
+}
+
 function buildSummary(body: string): string {
   let content = body;
 
@@ -139,5 +163,6 @@ export function extractArticleContext(article: LearningArticle): ArticleContext 
     codeBlocks: extractCodeBlocks(safeBody),
     keyConcepts: extractKeyConcepts(article, safeBody),
     summary: buildSummary(safeBody),
+    sections: extractSections(safeBody),
   };
 }

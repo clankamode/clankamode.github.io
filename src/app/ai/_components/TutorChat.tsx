@@ -60,6 +60,32 @@ interface TutorSessionContextPayload {
   currentChecklistItem: string | undefined;
 }
 
+const ARTICLE_REF_REGEX = /\[ref:([^\]]+)\]/g;
+
+function extractArticleRefs(content: string): string[] {
+  const refs: string[] = [];
+  ARTICLE_REF_REGEX.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = ARTICLE_REF_REGEX.exec(content)) !== null) {
+    refs.push(match[1]);
+  }
+  return refs;
+}
+
+function stripArticleRefs(content: string): string {
+  return content.replace(/\[ref:[^\]]+\]/g, '').trimEnd();
+}
+
+function scrollToAndHighlightSection(sectionId: string) {
+  const el = document.getElementById(sectionId);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  el.dataset.tutorHighlight = 'active';
+  setTimeout(() => {
+    delete el.dataset.tutorHighlight;
+  }, 2000);
+}
+
 function createMessage(role: TutorRole, content: string): TutorUiMessage {
   return {
     id: crypto.randomUUID(),
@@ -290,6 +316,11 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
           };
           return next;
         });
+      } else {
+        const refs = extractArticleRefs(assistantContent);
+        if (refs[0]) {
+          scrollToAndHighlightSection(refs[0]);
+        }
       }
     } catch (streamError) {
       if (abortController.signal.aborted) {
@@ -314,6 +345,15 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
     }
   };
 
+  const resetConversation = () => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    setMessages([createMessage('assistant', buildTutorWelcomeMessage(articleTitle))]);
+    setConversationId(null);
+    setIsLoading(false);
+    setInput('');
+  };
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const trimmed = input.trim();
@@ -335,7 +375,7 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
   return (
     <>
       {isOpen && (
-        <div className="fixed bottom-[80px] left-0 right-0 z-50 flex h-[520px] w-full flex-col rounded-t-2xl border border-zinc-800 bg-zinc-950 shadow-[0_8px_40px_rgba(0,0,0,0.6)] md:bottom-20 md:left-auto md:right-6 md:w-[380px] md:rounded-2xl">
+        <div className="fixed bottom-[80px] left-0 right-0 z-50 flex h-[520px] w-full flex-col rounded-t-2xl border border-zinc-800 bg-zinc-950 shadow-[0_8px_40px_rgba(0,0,0,0.6)] md:bottom-20 md:left-auto md:right-6 md:w-[380px] md:rounded-2xl lg:w-[420px]">
           {/* Header */}
           <div className="flex items-center justify-between rounded-t-2xl bg-zinc-900/80 px-4 py-3 backdrop-blur-sm">
             <div className="flex items-center gap-2.5">
@@ -347,16 +387,29 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
                 <p className="text-sm font-semibold text-zinc-100">{articleTitle}</p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="p-1 text-zinc-500 transition-colors hover:text-zinc-200"
-              aria-label="Close AI tutor"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M6 6l12 12M6 18L18 6" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={resetConversation}
+                className="p-1 text-zinc-500 transition-colors hover:text-zinc-200"
+                aria-label="New conversation"
+                title="New conversation"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="p-1 text-zinc-500 transition-colors hover:text-zinc-200"
+                aria-label="Close AI tutor"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M6 6l12 12M6 18L18 6" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {isInSession && <div className="h-[2px] w-full bg-[#c8f542]/60" />}
@@ -385,7 +438,7 @@ export default function TutorChat({ articleSlug, articleTitle, enabled }: TutorC
                       ) : (
                         <div className="flex items-start gap-2">
                           <span className="mt-1 flex-shrink-0 text-xs text-[#c8f542]">✦</span>
-                          <RichText content={message.content} className="text-sm leading-relaxed text-zinc-300" />
+                          <RichText content={stripArticleRefs(message.content)} className="text-sm leading-relaxed text-zinc-300" />
                         </div>
                       )}
                     </div>

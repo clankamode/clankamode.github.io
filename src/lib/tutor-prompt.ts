@@ -5,6 +5,7 @@ export interface TutorPromptInput {
   articleSummary: string;
   codeBlocks: string[];
   keyConcepts: string[];
+  articleSections?: { id: string; text: string }[];
   checklistItem?: string;
   checklistProgress: number;
   sessionElapsedMs: number;
@@ -82,6 +83,17 @@ function buildLearningHistoryLines(contexts: UserLearningContext[]): string[] {
   return lines;
 }
 
+function buildSectionsBlock(sections: { id: string; text: string }[] | undefined): string[] {
+  if (!sections || sections.length === 0) return [];
+  const lines = [
+    '',
+    '## Article section references',
+    'The article has these navigable sections. When your response discusses a concept that maps to one of these sections, append [ref:section-id] once at the end of the relevant sentence. Only emit one [ref:...] per response, only when directly relevant.',
+    ...sections.map((s) => `- ${s.id}: ${s.text}`),
+  ];
+  return lines;
+}
+
 export function buildTutorSystemPrompt(input: TutorPromptInput): string {
   const progress = clampProgress(input.checklistProgress);
   const elapsedMinutes = toElapsedMinutes(input.sessionElapsedMs);
@@ -149,11 +161,13 @@ export function buildTutorSystemPrompt(input: TutorPromptInput): string {
     `- ${roleLine}`,
     `- ${codeContextLine}`,
     ...(learningHistoryLines.length > 0 ? ['', ...learningHistoryLines] : []),
+    ...buildSectionsBlock(input.articleSections),
     '',
     '## Response format',
     '- Keep replies concise and interactive (2–6 sentences).',
     '- End with one focused question that advances the learner.',
     '- Do not provide working code solutions or full algorithm implementations.',
+    '- When referencing an article section, append [ref:section-id] (one per response, max).',
   ].join('\n');
 }
 

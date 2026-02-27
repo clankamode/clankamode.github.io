@@ -367,3 +367,15 @@ h6 {
   outline: none;
   box-shadow: var(--focus-ring);
 }
+
+/* Tutor article section highlight — triggered via data-tutor-highlight="active" */
+@keyframes tutorSectionPulse {
+  0% { background-color: rgba(200, 245, 66, 0.18); }
+  60% { background-color: rgba(200, 245, 66, 0.1); }
+  100% { background-color: transparent; }
+}
+
+[data-tutor-highlight="active"] {
+  border-radius: 4px;
+  animation: tutorSectionPulse 2s ease-out forwards;
+}
