@@ -34,6 +34,7 @@ interface TutorUiMessage {
 }
 
 export const NUDGE_DELAY_MS = 8 * 60 * 1000;
+export const PRACTICE_NUDGE_DELAY_MS = 2 * 60 * 1000;
 
 interface NudgeEligibilityInput {
   isInSession: boolean;
@@ -213,6 +214,21 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
 
     return () => window.clearTimeout(timer);
   }, [isInSession, isOpen, messages.length, currentChecklistItem]);
+
+  // Practice nudge: show after 2 min of failing tests without opening tutor
+  useEffect(() => {
+    if (!practiceContext?.testResults) return;
+    if (isOpen || messages.length > 1) return;
+    const hasFailing = practiceContext.testResults.some(r => !r.passed);
+    if (!hasFailing) {
+      setNudgeVisible(false);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setNudgeVisible(true);
+    }, PRACTICE_NUDGE_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [practiceContext?.testResults, isOpen, messages.length]);
 
   const canSubmit = input.trim().length > 0 && !isLoading;
 
@@ -522,9 +538,13 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
             onOpen={() => {
               setIsOpen(true);
               setNudgeVisible(false);
-              setInput(currentChecklistItem ? `I'm stuck on: ${currentChecklistItem}` : 'I need a hint');
+              setInput(
+                practiceContext?.testResults?.some(r => !r.passed)
+                  ? 'My tests are failing — can you help me debug?'
+                  : currentChecklistItem ? `I'm stuck on: ${currentChecklistItem}` : 'I need a hint'
+              );
             }}
-            checklistItemTitle={currentChecklistItem}
+            checklistItemTitle={practiceContext ? practiceContext.questionName : currentChecklistItem}
           />
         </div>
       )}

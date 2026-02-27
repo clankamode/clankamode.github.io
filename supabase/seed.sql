@@ -213,130 +213,104 @@ insert into public."InterviewQuestions" (id, name, leetcode_number, difficulty, 
 -- Two Sum
 ('f6b901eb-b5de-5899-8b2d-20e88dacdd1d', 'Two Sum', 1, 'Easy',
 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.',
-'function twoSum(nums: number[], target: number): number[] {
+'from typing import List
 
-}',
+def two_sum(nums: List[int], target: int) -> List[int]:
+    pass',
 '',
-'[{"input":{"nums":[2,7,11,15],"target":9},"expected":[0,1]},{"input":{"nums":[3,2,4],"target":6},"expected":[1,2]},{"input":{"nums":[3,3],"target":6},"expected":[0,1]}]',
+'[{"id":"test_1","label":"Basic case","input":"nums = [2, 7, 11, 15], target = 9","fnCall":"two_sum([2, 7, 11, 15], 9)","expected":"[0, 1]","expectedOutput":"[0, 1]"},{"id":"test_2","label":"Numbers in middle","input":"nums = [3, 2, 4], target = 6","fnCall":"two_sum([3, 2, 4], 6)","expected":"[1, 2]","expectedOutput":"[1, 2]"},{"id":"test_3","label":"Same numbers","input":"nums = [3, 3], target = 6","fnCall":"two_sum([3, 3], 6)","expected":"[0, 1]","expectedOutput":"[0, 1]"}]',
 '{"leetcode"}', 'Arrays & Hashing', 'Hash Map', 'https://leetcode.com/problems/two-sum/', 1, 'hash.o1-average-lookup',
 '[{"slug":"hash.o1-average-lookup","label":"O(1) average lookup"},{"slug":"array.random-access-o1","label":"O(1) random access"}]'),
 
 -- Valid Anagram
 ('46214ecc-a201-59ad-a292-da6d9798959b', 'Valid Anagram', 242, 'Easy',
 'Given two strings s and t, return true if t is an anagram of s, and false otherwise. An anagram is a word or phrase formed by rearranging the letters of a different word or phrase, using all the original letters exactly once.',
-'function isAnagram(s: string, t: string): boolean {
-
-}',
+'def is_anagram(s: str, t: str) -> bool:
+    pass',
 '',
-'[{"input":{"s":"anagram","t":"nagaram"},"expected":true},{"input":{"s":"rat","t":"car"},"expected":false},{"input":{"s":"a","t":"a"},"expected":true}]',
+'[{"id":"test_1","label":"Valid anagram","input":"s = \"anagram\", t = \"nagaram\"","fnCall":"is_anagram(\"anagram\", \"nagaram\")","expected":"True","expectedOutput":"True"},{"id":"test_2","label":"Not anagram","input":"s = \"rat\", t = \"car\"","fnCall":"is_anagram(\"rat\", \"car\")","expected":"False","expectedOutput":"False"},{"id":"test_3","label":"Single character","input":"s = \"a\", t = \"a\"","fnCall":"is_anagram(\"a\", \"a\")","expected":"True","expectedOutput":"True"}]',
 '{"leetcode"}', 'Arrays & Hashing', 'Hash Map', 'https://leetcode.com/problems/valid-anagram/', 2, 'hash.o1-average-lookup',
 '[{"slug":"hash.o1-average-lookup","label":"O(1) average lookup"}]'),
 
 -- Contains Duplicate
 ('06133161-34cb-5b7e-ab76-dd9e9a2be5f5', 'Contains Duplicate', 217, 'Easy',
 'Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.',
-'function containsDuplicate(nums: number[]): boolean {
+'from typing import List
 
-}',
+def contains_duplicate(nums: List[int]) -> bool:
+    pass',
 '',
-'[{"input":{"nums":[1,2,3,1]},"expected":true},{"input":{"nums":[1,2,3,4]},"expected":false},{"input":{"nums":[1,1,1,3,3,4,3,2,4,2]},"expected":true}]',
+'[{"id":"test_1","label":"Has duplicate","input":"nums = [1, 2, 3, 1]","fnCall":"contains_duplicate([1, 2, 3, 1])","expected":"True","expectedOutput":"True"},{"id":"test_2","label":"No duplicates","input":"nums = [1, 2, 3, 4]","fnCall":"contains_duplicate([1, 2, 3, 4])","expected":"False","expectedOutput":"False"},{"id":"test_3","label":"Many duplicates","input":"nums = [1, 1, 1, 3, 3, 4, 3, 2, 4, 2]","fnCall":"contains_duplicate([1, 1, 1, 3, 3, 4, 3, 2, 4, 2])","expected":"True","expectedOutput":"True"}]',
 '{"leetcode"}', 'Arrays & Hashing', 'Hash Set', 'https://leetcode.com/problems/contains-duplicate/', 3, 'hash.o1-average-lookup',
 '[{"slug":"hash.o1-average-lookup","label":"O(1) average lookup"}]'),
 
 -- Best Time to Buy and Sell Stock
 ('a5c3192f-49ca-5e70-bdf6-e5e36c04de4c', 'Best Time to Buy and Sell Stock', 121, 'Easy',
 'You are given an array prices where prices[i] is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.',
-'function maxProfit(prices: number[]): number {
+'from typing import List
 
-}',
+def max_profit(prices: List[int]) -> int:
+    pass',
 '',
-'[{"input":{"prices":[7,1,5,3,6,4]},"expected":5},{"input":{"prices":[7,6,4,3,1]},"expected":0},{"input":{"prices":[1,2]},"expected":1}]',
+'[{"id":"test_1","label":"Profitable case","input":"prices = [7, 1, 5, 3, 6, 4]","fnCall":"max_profit([7, 1, 5, 3, 6, 4])","expected":"5","expectedOutput":"5"},{"id":"test_2","label":"No profit","input":"prices = [7, 6, 4, 3, 1]","fnCall":"max_profit([7, 6, 4, 3, 1])","expected":"0","expectedOutput":"0"},{"id":"test_3","label":"Simple profit","input":"prices = [1, 2]","fnCall":"max_profit([1, 2])","expected":"1","expectedOutput":"1"}]',
 '{"leetcode"}', 'Sliding Window', 'Sliding Window', 'https://leetcode.com/problems/best-time-to-buy-and-sell-stock/', 4, 'sliding-window.technique',
 '[{"slug":"sliding-window.technique","label":"Sliding Window"}]'),
 
 -- Valid Parentheses
 ('64822c8c-b866-5494-9424-081dd1a29659', 'Valid Parentheses', 20, 'Easy',
 'Given a string s containing just the characters ''('', '')'', ''{'', ''}'', ''['' and '']'', determine if the input string is valid. An input string is valid if: open brackets must be closed by the same type of brackets, and open brackets must be closed in the correct order.',
-'function isValid(s: string): boolean {
-
-}',
+'def is_valid(s: str) -> bool:
+    pass',
 '',
-'[{"input":{"s":"()"},"expected":true},{"input":{"s":"()[]{}"},"expected":true},{"input":{"s":"(]"},"expected":false},{"input":{"s":"([)]"},"expected":false},{"input":{"s":"{[]}"},"expected":true}]',
+'[{"id":"test_1","label":"Simple parentheses","input":"s = \"()\"","fnCall":"is_valid(\"()\")","expected":"True","expectedOutput":"True"},{"id":"test_2","label":"Mixed brackets","input":"s = \"()[]{}\"","fnCall":"is_valid(\"()[]{}\")","expected":"True","expectedOutput":"True"},{"id":"test_3","label":"Wrong closing","input":"s = \"(]\"","fnCall":"is_valid(\"(]\")","expected":"False","expectedOutput":"False"},{"id":"test_4","label":"Wrong order","input":"s = \"([)]\"","fnCall":"is_valid(\"([)]\")","expected":"False","expectedOutput":"False"},{"id":"test_5","label":"Nested brackets","input":"s = \"{[]}\"","fnCall":"is_valid(\"{[]}\")","expected":"True","expectedOutput":"True"}]',
 '{"leetcode"}', 'Stack', 'Stack', 'https://leetcode.com/problems/valid-parentheses/', 5, 'stack.lifo-model',
 '[{"slug":"stack.lifo-model","label":"Stack LIFO model"}]'),
 
 -- Binary Search
 ('09fc40df-4b89-5e7b-95a1-e6ebb696bfdf', 'Binary Search', 704, 'Easy',
 'Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.',
-'function search(nums: number[], target: number): number {
+'from typing import List
 
-}',
+def search(nums: List[int], target: int) -> int:
+    pass',
 '',
-'[{"input":{"nums":[-1,0,3,5,9,12],"target":9},"expected":4},{"input":{"nums":[-1,0,3,5,9,12],"target":2},"expected":-1},{"input":{"nums":[5],"target":5},"expected":0}]',
+'[{"id":"test_1","label":"Target found","input":"nums = [-1, 0, 3, 5, 9, 12], target = 9","fnCall":"search([-1, 0, 3, 5, 9, 12], 9)","expected":"4","expectedOutput":"4"},{"id":"test_2","label":"Target not found","input":"nums = [-1, 0, 3, 5, 9, 12], target = 2","fnCall":"search([-1, 0, 3, 5, 9, 12], 2)","expected":"-1","expectedOutput":"-1"},{"id":"test_3","label":"Single element","input":"nums = [5], target = 5","fnCall":"search([5], 5)","expected":"0","expectedOutput":"0"}]',
 '{"leetcode"}', 'Binary Search', 'Binary Search', 'https://leetcode.com/problems/binary-search/', 6, 'binary-search.technique',
 '[{"slug":"binary-search.technique","label":"Binary Search"}]'),
 
 -- Reverse Linked List
 ('6819b7b2-2c8c-5dae-91c2-381c809431e2', 'Reverse Linked List', 206, 'Easy',
 'Given the head of a singly linked list, reverse the list, and return the reversed list.',
-'class ListNode {
-  val: number;
-  next: ListNode | null;
-  constructor(val?: number, next?: ListNode | null) {
-    this.val = val === undefined ? 0 : val;
-    this.next = next === undefined ? null : next;
-  }
-}
-
-function reverseList(head: ListNode | null): ListNode | null {
-
-}',
-'function arrayToList(arr: number[]): ListNode | null {
-  if (!arr.length) return null;
-  const head = new ListNode(arr[0]);
-  let cur = head;
-  for (let i = 1; i < arr.length; i++) { cur.next = new ListNode(arr[i]); cur = cur.next; }
-  return head;
-}
-function listToArray(head: ListNode | null): number[] {
-  const res: number[] = [];
-  while (head) { res.push(head.val); head = head.next; }
-  return res;
-}',
-'[{"input":{"head":[1,2,3,4,5]},"expected":[5,4,3,2,1]},{"input":{"head":[1,2]},"expected":[2,1]},{"input":{"head":[]},"expected":[]}]',
+E'def reverse_list(head):\n    pass',
+E'class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef list_to_linked(arr):\n    dummy = ListNode(0)\n    curr = dummy\n    for v in arr:\n        curr.next = ListNode(v)\n        curr = curr.next\n    return dummy.next\n\ndef linked_to_list(node):\n    result = []\n    while node:\n        result.append(node.val)\n        node = node.next\n    return result',
+'[{"id":1,"label":"Test 1","input":"head=[1,2,3,4,5]","fnCall":"linked_to_list(reverse_list(list_to_linked([1,2,3,4,5])))","expected":"[5, 4, 3, 2, 1]","expectedOutput":"[5, 4, 3, 2, 1]"},{"id":2,"label":"Test 2","input":"head=[1,2]","fnCall":"linked_to_list(reverse_list(list_to_linked([1,2])))","expected":"[2, 1]","expectedOutput":"[2, 1]"},{"id":3,"label":"Test 3","input":"head=[]","fnCall":"linked_to_list(reverse_list(list_to_linked([])))","expected":"[]","expectedOutput":"[]"}]',
 '{"leetcode"}', 'Linked List', 'Two Pointers', 'https://leetcode.com/problems/reverse-linked-list/', 7, null,
 '[{"slug":"two-pointer.opposite-ends","label":"Two pointers"}]'),
 
 -- Maximum Subarray (Kadane''s)
 ('e7ea5536-07ea-5c47-9261-a2d9a0936aa5', 'Maximum Subarray', 53, 'Medium',
 'Given an integer array nums, find the subarray with the largest sum, and return its sum.',
-'function maxSubArray(nums: number[]): number {
-
-}',
+E'def max_sub_array(nums: list[int]) -> int:\n    pass',
 '',
-'[{"input":{"nums":[-2,1,-3,4,-1,2,1,-5,4]},"expected":6},{"input":{"nums":[1]},"expected":1},{"input":{"nums":[5,4,-1,7,8]},"expected":23}]',
+'[{"id":1,"label":"Test 1","input":"nums=[-2,1,-3,4,-1,2,1,-5,4]","fnCall":"max_sub_array([-2, 1, -3, 4, -1, 2, 1, -5, 4])","expected":"6","expectedOutput":"6"},{"id":2,"label":"Test 2","input":"nums=[1]","fnCall":"max_sub_array([1])","expected":"1","expectedOutput":"1"},{"id":3,"label":"Test 3","input":"nums=[5,4,-1,7,8]","fnCall":"max_sub_array([5, 4, -1, 7, 8])","expected":"23","expectedOutput":"23"}]',
 '{"leetcode"}', 'Dynamic Programming', 'Kadane''s Algorithm', 'https://leetcode.com/problems/maximum-subarray/', 8, 'dp.memoization',
 '[{"slug":"dp.memoization","label":"Dynamic Programming"}]'),
 
 -- Climbing Stairs
 ('4f2d2679-48da-5bbb-8ea2-19fe5da3d5c1', 'Climbing Stairs', 70, 'Easy',
 'You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?',
-'function climbStairs(n: number): number {
-
-}',
+E'def climb_stairs(n: int) -> int:\n    pass',
 '',
-'[{"input":{"n":2},"expected":2},{"input":{"n":3},"expected":3},{"input":{"n":5},"expected":8},{"input":{"n":10},"expected":89}]',
+'[{"id":1,"label":"Test 1","input":"n=2","fnCall":"climb_stairs(2)","expected":"2","expectedOutput":"2"},{"id":2,"label":"Test 2","input":"n=3","fnCall":"climb_stairs(3)","expected":"3","expectedOutput":"3"},{"id":3,"label":"Test 3","input":"n=5","fnCall":"climb_stairs(5)","expected":"8","expectedOutput":"8"},{"id":4,"label":"Test 4","input":"n=10","fnCall":"climb_stairs(10)","expected":"89","expectedOutput":"89"}]',
 '{"leetcode"}', 'Dynamic Programming', '1D DP', 'https://leetcode.com/problems/climbing-stairs/', 9, 'dp.memoization',
 '[{"slug":"dp.memoization","label":"Dynamic Programming (Memoization)"}]'),
 
 -- Number of Islands
 ('d5e04cbe-1a27-5aed-b1a2-6dc3cab6d2c4', 'Number of Islands', 200, 'Medium',
 'Given an m x n 2D binary grid grid which represents a map of ''1''s (land) and ''0''s (water), return the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.',
-'function numIslands(grid: string[][]): number {
-
-}',
+E'def num_islands(grid: list[list[str]]) -> int:\n    pass',
 '',
-'[{"input":{"grid":[["1","1","1","1","0"],["1","1","0","1","0"],["1","1","0","0","0"],["0","0","0","0","0"]]},"expected":1},{"input":{"grid":[["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]]},"expected":3}]',
+'[{"id":1,"label":"Test 1","input":"4x5 grid with 1 island","fnCall":"num_islands([[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]])","expected":"1","expectedOutput":"1"},{"id":2,"label":"Test 2","input":"4x5 grid with 3 islands","fnCall":"num_islands([[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]])","expected":"3","expectedOutput":"3"}]',
 '{"leetcode"}', 'Graphs', 'BFS/DFS', 'https://leetcode.com/problems/number-of-islands/', 10, 'graph.traversal-dfs',
 '[{"slug":"graph.traversal-dfs","label":"DFS Traversal"},{"slug":"graph.traversal-bfs","label":"BFS Traversal"}]')
 
