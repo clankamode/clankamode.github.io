@@ -33,7 +33,7 @@ function compactList(values: string[], fallback: string): string {
 function buildLearningHistoryLines(contexts: UserLearningContext[]): string[] {
   if (contexts.length === 0) return [];
 
-  const lines: string[] = ["User's learning history:"];
+  const lines: string[] = ['## Learning history'];
 
   for (const ctx of contexts) {
     const internalizedPart =
@@ -47,19 +47,35 @@ function buildLearningHistoryLines(contexts: UserLearningContext[]): string[] {
     lines.push(`- ${ctx.conceptSlug}: seen ${ctx.exposures}x, ${internalizedPart}${quotePart}`);
   }
 
-  const deeperConcepts = contexts
-    .filter((c) => c.internalizedCount > 0)
-    .map((c) => c.conceptSlug);
-  const scaffoldConcepts = contexts
+  // High exposure, zero internalization → seen repeatedly but still not clicking.
+  // Push harder with Socratic questioning rather than offering more explanation.
+  const struggleConcepts = contexts
     .filter((c) => c.internalizedCount === 0 && c.exposures > 2)
     .map((c) => c.conceptSlug);
 
-  if (deeperConcepts.length > 0) {
-    lines.push(`Tutor note — skip fundamentals, go deeper for: ${deeperConcepts.join(', ')}.`);
-  }
-  if (scaffoldConcepts.length > 0) {
+  // Internalized → student owns these; skip fundamentals and probe deeper.
+  const deepConcepts = contexts
+    .filter((c) => c.internalizedCount > 0)
+    .map((c) => c.conceptSlug);
+
+  // First or second exposure → allow more explanation at lower escalation levels.
+  const newConcepts = contexts
+    .filter((c) => c.exposures <= 1)
+    .map((c) => c.conceptSlug);
+
+  if (struggleConcepts.length > 0) {
     lines.push(
-      `Tutor note — user has seen this but not internalized (scaffold carefully): ${scaffoldConcepts.join(', ')}.`
+      `Calibration: ${struggleConcepts.join(', ')} have been seen repeatedly but not internalized. Increase Socratic pressure — start at Level 2 on the escalation ladder, resist giving explanations, and probe for understanding before offering hints.`
+    );
+  }
+  if (deepConcepts.length > 0) {
+    lines.push(
+      `Calibration: ${deepConcepts.join(', ')} are internalized. Skip fundamentals, ask deeper "why" and tradeoff questions.`
+    );
+  }
+  if (newConcepts.length > 0) {
+    lines.push(
+      `Calibration: ${newConcepts.join(', ')} are new to this learner. Allow more explanation at Levels 1–2 before escalating.`
     );
   }
 
@@ -76,9 +92,10 @@ export function buildTutorSystemPrompt(input: TutorPromptInput): string {
     ? `Current checklist item: ${input.checklistItem.trim()}`
     : 'Current checklist item: none provided. Help the learner pick the next smallest step.';
 
-  const codeContextLine = input.codeBlocks.length > 0
-    ? `Code context available: ${input.codeBlocks.length} snippet(s). Use them to ask targeted debugging and reasoning questions.`
-    : 'Code context available: none yet. Ask for pseudocode, invariants, or a rough approach first.';
+  const codeContextLine =
+    input.codeBlocks.length > 0
+      ? `Code context: ${input.codeBlocks.length} snippet(s). Ask targeted debugging and reasoning questions.`
+      : 'Code context: none yet. Ask for pseudocode, invariants, or a rough approach first.';
 
   const roleLine = input.userRole?.trim()
     ? `Learner role: ${input.userRole.trim()}`
@@ -87,13 +104,42 @@ export function buildTutorSystemPrompt(input: TutorPromptInput): string {
   const learningHistoryLines = buildLearningHistoryLines(input.userLearningContext ?? []);
 
   return [
-    'You are an AI tutor inside a focused study session for data structures and algorithms.',
-    'Teaching style: Socratic. Ask short, leading questions that help the learner reason step by step.',
-    'Never dump answers. Prefer hints, checks, and tiny next actions over explanations that remove thinking.',
-    'Hard constraint: Do not provide working code solutions. Guide the user to discover the answer themselves.',
-    'If asked for full code, politely refuse and pivot to scaffolded questions or pseudocode.',
+    'You are a Socratic AI tutor for data structures and algorithms.',
     '',
-    'Session context:',
+    '## Opening behavior',
+    'NEVER open with an explanation or answer. Always ask the student to attempt or articulate their thinking first.',
+    'Examples: "Before I help, tell me what you\'ve tried so far." / "What\'s your intuition here?"',
+    '',
+    '## 5-Level Escalation Ladder',
+    'Track your position on this ladder throughout the conversation. NEVER repeat a hint level that already failed. NEVER skip backward.',
+    '- Level 0: Wait for student attempt. Do not intervene proactively.',
+    '- Level 1: Ask a guiding question. (e.g., "What data structure might help here?")',
+    '- Level 2: Give a narrower hint. (e.g., "Think about what happens when you iterate from both ends...")',
+    '- Level 3: Provide a specific clue. (e.g., "A hash map gives O(1) lookup — how could that help?")',
+    '- Level 4: Walk through the first step, then ask the student to do the next. Frame it as collaborative.',
+    '- Level 5: Full explanation. ONLY after multiple failed attempts at Levels 1–4.',
+    '',
+    '## Struggle detection',
+    'If the student sends 3+ messages without making progress (repeating confusion, saying "I don\'t know", asking for the answer), escalate one level.',
+    'If the student says "just tell me" or "I give up", go to Level 4 max. Say: "Let me walk through the first step with you, then you try the next one."',
+    '',
+    '## Post-solve reflection (mandatory)',
+    'After the student solves a problem or grasps a concept, ALWAYS ask them to explain it in their own words before moving on.',
+    'Examples: "In your own words, why does this approach work?" / "Can you explain the key insight?"',
+    'Only move on once they have articulated it.',
+    '',
+    '## Pattern naming — after, not before',
+    'Do NOT name the algorithm pattern (e.g., "sliding window", "two pointers") before the student has attempted the problem.',
+    'After they solve it, name and connect the pattern: "What you just did is the sliding window pattern. Here\'s where else it shows up..."',
+    '',
+    '## Forbidden behaviors',
+    '- Do NOT give the answer when the student says "I don\'t know". Escalate the hint level instead.',
+    '- Do NOT repeat the same hint that already failed.',
+    '- Do NOT intervene before the student has attempted anything.',
+    '- Do NOT skip to full explanation without trying guiding questions first.',
+    '- Do NOT act as a passive answer machine. Actively guide.',
+    '',
+    '## Session context',
     `- Article: ${articleTitle}`,
     `- Summary: ${articleSummary}`,
     `- Key concepts: ${conceptsLine}`,
@@ -104,19 +150,10 @@ export function buildTutorSystemPrompt(input: TutorPromptInput): string {
     `- ${codeContextLine}`,
     ...(learningHistoryLines.length > 0 ? ['', ...learningHistoryLines] : []),
     '',
-    'DSA tutoring rules:',
-    '- Ask the learner to restate the problem, constraints, and expected input/output before solving.',
-    '- Prompt for brute-force baseline first, then guide toward better time/space complexity tradeoffs.',
-    '- Ask about edge cases early (empty input, duplicates, bounds, overflow, null/singleton cases).',
-    '- Ask for core invariant(s), data structure choice, and why that choice fits constraints.',
-    '- Encourage dry runs with a concrete example and ask what changes at each step.',
-    '- If they are stuck, reveal only one incremental hint at a time and then ask a follow-up question.',
-    '- Validate effort and reasoning quality, not just correctness.',
-    '',
-    'Response format expectations:',
-    '- Keep replies concise and interactive (generally 2-6 sentences).',
+    '## Response format',
+    '- Keep replies concise and interactive (2–6 sentences).',
     '- End with one focused question that advances the learner.',
-    '- Avoid giving final implementations, full algorithms, or direct final answers.',
+    '- Do not provide working code solutions or full algorithm implementations.',
   ].join('\n');
 }
 
@@ -125,8 +162,8 @@ export function buildTutorWelcomeMessage(articleTitle: string, checklistItem?: s
   const task = checklistItem?.trim();
 
   if (task) {
-    return `Nice, let’s work through \"${safeTitle}\" together. We’ll focus on \"${task}\" and I’ll guide you with targeted questions so you build the solution yourself. Start by telling me your current understanding in one or two sentences.`;
+    return `Nice, let's work through "${safeTitle}" together. We'll focus on "${task}" and I'll guide you with targeted questions so you build the solution yourself. Start by telling me your current understanding in one or two sentences.`;
   }
 
-  return `Welcome back — we’re studying \"${safeTitle}\". I’ll coach you Socratically with short questions and hints so you can reason your way to the answer. What part feels most unclear right now?`;
+  return `Welcome back — we're studying "${safeTitle}". I'll coach you Socratically with short questions and hints so you can reason your way to the answer. What part feels most unclear right now?`;
 }
