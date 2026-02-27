@@ -1,0 +1,21 @@
+name: Migrate
+
+on:
+  workflow_dispatch: # disabled until secrets are configured — see issue #220
+  # push:
+  #   branches: [main]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.75.0
+
+      - name: Run migrations
+        run: supabase db push --db-url "${{ secrets.SUPABASE_DB_URL }}"
