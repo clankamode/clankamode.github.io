@@ -1,3 +1,5 @@
+import type { UserLearningContext } from '@/lib/user-learning-context';
+
 export interface TutorPromptInput {
   articleTitle: string;
   articleSummary: string;
@@ -7,6 +9,7 @@ export interface TutorPromptInput {
   checklistProgress: number;
   sessionElapsedMs: number;
   userRole?: string;
+  userLearningContext?: UserLearningContext[];
 }
 
 function clampProgress(value: number): number {
@@ -27,6 +30,42 @@ function compactList(values: string[], fallback: string): string {
   return normalized.length > 0 ? normalized.join(', ') : fallback;
 }
 
+function buildLearningHistoryLines(contexts: UserLearningContext[]): string[] {
+  if (contexts.length === 0) return [];
+
+  const lines: string[] = ["User's learning history:"];
+
+  for (const ctx of contexts) {
+    const internalizedPart =
+      ctx.internalizedCount > 0
+        ? `internalized ${ctx.internalizedCount}x`
+        : 'not yet internalized';
+    const quotePart =
+      ctx.recentInternalizations.length > 0
+        ? ` — "${ctx.recentInternalizations[0]}"`
+        : '';
+    lines.push(`- ${ctx.conceptSlug}: seen ${ctx.exposures}x, ${internalizedPart}${quotePart}`);
+  }
+
+  const deeperConcepts = contexts
+    .filter((c) => c.internalizedCount > 0)
+    .map((c) => c.conceptSlug);
+  const scaffoldConcepts = contexts
+    .filter((c) => c.internalizedCount === 0 && c.exposures > 2)
+    .map((c) => c.conceptSlug);
+
+  if (deeperConcepts.length > 0) {
+    lines.push(`Tutor note — skip fundamentals, go deeper for: ${deeperConcepts.join(', ')}.`);
+  }
+  if (scaffoldConcepts.length > 0) {
+    lines.push(
+      `Tutor note — user has seen this but not internalized (scaffold carefully): ${scaffoldConcepts.join(', ')}.`
+    );
+  }
+
+  return lines;
+}
+
 export function buildTutorSystemPrompt(input: TutorPromptInput): string {
   const progress = clampProgress(input.checklistProgress);
   const elapsedMinutes = toElapsedMinutes(input.sessionElapsedMs);
@@ -45,6 +84,8 @@ export function buildTutorSystemPrompt(input: TutorPromptInput): string {
     ? `Learner role: ${input.userRole.trim()}`
     : 'Learner role: unknown';
 
+  const learningHistoryLines = buildLearningHistoryLines(input.userLearningContext ?? []);
+
   return [
     'You are an AI tutor inside a focused study session for data structures and algorithms.',
     'Teaching style: Socratic. Ask short, leading questions that help the learner reason step by step.',
@@ -61,6 +102,7 @@ export function buildTutorSystemPrompt(input: TutorPromptInput): string {
     `- Session elapsed: ${elapsedMinutes} minutes`,
     `- ${roleLine}`,
     `- ${codeContextLine}`,
+    ...(learningHistoryLines.length > 0 ? ['', ...learningHistoryLines] : []),
     '',
     'DSA tutoring rules:',
     '- Ask the learner to restate the problem, constraints, and expected input/output before solving.',

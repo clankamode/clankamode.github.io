@@ -5,6 +5,7 @@ import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 import { buildTutorSystemPrompt } from '@/lib/tutor-prompt';
 import { extractArticleContext } from '@/lib/article-context';
+import { getUserLearningContext } from '@/lib/user-learning-context';
 import { getLearningArticleBySlugGlobal } from '@/lib/content';
 import { FeatureFlags, isFeatureEnabled } from '@/lib/flags';
 import { UserRole, hasRole } from '@/types/roles';
@@ -205,6 +206,12 @@ export async function POST(req: NextRequest) {
     }
 
     const articleContext = extractArticleContext(article);
+    const userLearningContext = await getUserLearningContext(
+      identity.email,
+      articleContext.keyConcepts,
+      identity.googleId
+    );
+
     const systemPrompt = buildTutorSystemPrompt({
       articleTitle: articleContext.title,
       articleSummary: articleContext.summary,
@@ -214,6 +221,7 @@ export async function POST(req: NextRequest) {
       sessionElapsedMs: resolvedSessionElapsedMs,
       checklistItem: resolvedChecklistItem,
       userRole: effectiveRole,
+      userLearningContext,
     });
 
     const userMessage: StoredTutorMessage = {
