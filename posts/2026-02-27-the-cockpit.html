@@ -63,6 +63,15 @@
     body.listen-mode { --accent: var(--accent-pulse, #c8f542); }
 
     body.listen-mode .audio-player { border-color: var(--accent); box-shadow: 0 0 12px rgba(200, 245, 66, 0.08); }
+    /* Listen Mode — Paragraph Sync (requires Whisper timings) */
+    body.listen-mode-sync p,
+    body.listen-mode-sync h2,
+    body.listen-mode-sync h3,
+    body.listen-mode-sync pre,
+    body.listen-mode-sync .highlight { opacity: 0.2; transition: opacity 0.5s ease; }
+    body.listen-mode-sync .lm-active { opacity: 1 !important; }
+    body.listen-mode-sync .lm-past { opacity: 0.4; }
+    body.listen-mode-sync .lm-code-glow { box-shadow: 0 0 20px rgba(200, 245, 66, 0.12); border-color: var(--accent) !important; }
   </style>
 </head>
 <body>
@@ -187,5 +196,6 @@
   </div>
   <script src="audio-player.js" defer></script>
   <script src="post-enhance.js" defer></script>
+  <script id="audio-timings" type="application/json">[{"start": 6.9, "end": 16.38}, {"start": 16.94, "end": 19.42}, {"start": 20.06, "end": 24.68}, {"start": 25.27, "end": 27.0}, {"start": 27.7, "end": 44.9}, {"start": 45.76, "end": 58.09}, {"start": 58.71, "end": 60.63}, {"start": 61.33, "end": 78.67}, {"start": 79.77, "end": 80.83}, {"start": 81.49, "end": 90.09}, {"start": 90.61, "end": 97.39}, {"start": 96.51, "end": 108.99}, {"start": 109.71, "end": 128.43}, {"start": 128.79, "end": 139.89}, {"start": 140.61, "end": 142.75}, {"start": 142.31, "end": 155.75}, {"start": 155.99, "end": 174.23}, {"start": 174.23, "end": 183.01}, {"start": 183.01, "end": 184.61}, {"start": 184.19, "end": 201.13}, {"start": 201.61, "end": 204.69}, {"start": 205.05, "end": 218.33}, {"start": 218.81, "end": 224.67}, {"start": 233.51, "end": 245.25}, {"start": 267.91, "end": 268.83}, {"start": 288.87, "end": 301.83}, {"start": 301.83, "end": 301.44}, {"start": 301.44, "end": 301.05}, {"start": 301.05, "end": 312.41}, {"start": 313.13, "end": 329.39}, {"start": 330.19, "end": 331.25}, {"start": 332.35, "end": 344.69}, {"start": 346.27, "end": 363.51}, {"start": 364.09, "end": 383.6}, {"start": 384.46, "end": 389.22}, {"start": 406.06, "end": 418.1}, {"start": 439.88, "end": 445.84}, {"start": 455.16, "end": 456.32}, {"start": 457.86, "end": 466.76}, {"start": 470.74, "end": 480.94}, {"start": 480.94, "end": 481.28}, {"start": 481.28, "end": 481.62}, {"start": 481.62, "end": 481.96}, {"start": 481.96, "end": 482.98}, {"start": 485.08, "end": 501.14}, {"start": 501.14, "end": 501.96}, {"start": 501.96, "end": 515.5}, {"start": 516.1, "end": 517.46}]</script>
 </body>
 </html>
