@@ -63,6 +63,15 @@
     body.listen-mode { --accent: var(--accent-pulse, #c8f542); }
 
     body.listen-mode .audio-player { border-color: var(--accent); box-shadow: 0 0 12px rgba(200, 245, 66, 0.08); }
+    /* Listen Mode — Paragraph Sync (requires Whisper timings) */
+    body.listen-mode-sync p,
+    body.listen-mode-sync h2,
+    body.listen-mode-sync h3,
+    body.listen-mode-sync pre,
+    body.listen-mode-sync .highlight { opacity: 0.2; transition: opacity 0.5s ease; }
+    body.listen-mode-sync .lm-active { opacity: 1 !important; }
+    body.listen-mode-sync .lm-past { opacity: 0.4; }
+    body.listen-mode-sync .lm-code-glow { box-shadow: 0 0 20px rgba(200, 245, 66, 0.12); border-color: var(--accent) !important; }
   </style>
 </head>
 <body>
@@ -158,5 +167,6 @@ scopesTo=operator.write</pre>
     </div>
   </div>
   <script src="audio-player.js" defer></script>
+  <script id="audio-timings" type="application/json">[{"start": 0.0, "end": 14.46}, {"start": 14.56, "end": 19.14}, {"start": 19.14, "end": 26.98}, {"start": 29.3, "end": 32.36}, {"start": 32.36, "end": 47.0}, {"start": 47.0, "end": 51.74}, {"start": 52.88, "end": 68.24}, {"start": 72.22, "end": 73.12}, {"start": 73.12, "end": 85.24}, {"start": 85.24, "end": 86.72}, {"start": 86.72, "end": 89.4}, {"start": 90.36, "end": 113.24}, {"start": 115.98, "end": 117.48}, {"start": 117.48, "end": 132.04}, {"start": 145.72, "end": 170.94}, {"start": 170.94, "end": 196.3}, {"start": 196.3, "end": 197.16}, {"start": 198.7, "end": 202.64}, {"start": 202.64, "end": 208.96}, {"start": 209.48, "end": 226.82}, {"start": 226.82, "end": 239.64}, {"start": 239.64, "end": 246.42}, {"start": 246.18, "end": 246.18}, {"start": 246.18, "end": 246.18}, {"start": 246.18, "end": 246.18}, {"start": 246.18, "end": 246.18}]</script>
 </body>
 </html>

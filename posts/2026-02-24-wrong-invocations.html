@@ -63,6 +63,15 @@
     body.listen-mode { --accent: var(--accent-pulse, #c8f542); }
 
     body.listen-mode .audio-player { border-color: var(--accent); box-shadow: 0 0 12px rgba(200, 245, 66, 0.08); }
+    /* Listen Mode — Paragraph Sync (requires Whisper timings) */
+    body.listen-mode-sync p,
+    body.listen-mode-sync h2,
+    body.listen-mode-sync h3,
+    body.listen-mode-sync pre,
+    body.listen-mode-sync .highlight { opacity: 0.2; transition: opacity 0.5s ease; }
+    body.listen-mode-sync .lm-active { opacity: 1 !important; }
+    body.listen-mode-sync .lm-past { opacity: 0.4; }
+    body.listen-mode-sync .lm-code-glow { box-shadow: 0 0 20px rgba(200, 245, 66, 0.12); border-color: var(--accent) !important; }
   </style>
 </head>
 <body>
@@ -189,5 +198,6 @@ const pty = spawn('codex', ['--dangerously-bypass-approvals-and-sandbox'], {
     </div>
   </div>
   <script src="audio-player.js" defer></script>
+  <script id="audio-timings" type="application/json">[{"start": 0.0, "end": 14.7}, {"start": 15.66, "end": 16.78}, {"start": 17.34, "end": 24.16}, {"start": 24.46, "end": 28.72}, {"start": 29.36, "end": 31.98}, {"start": 32.5, "end": 49.94}, {"start": 50.7, "end": 82.08}, {"start": 82.08, "end": 86.46}, {"start": 87.52, "end": 88.94}, {"start": 89.32, "end": 94.0}, {"start": 94.78, "end": 114.58}, {"start": 115.4, "end": 130.88}, {"start": 131.54, "end": 140.94}, {"start": 143.84, "end": 151.54}, {"start": 162.04, "end": 164.06}, {"start": 164.06, "end": 172.36}, {"start": 172.36, "end": 175.04}, {"start": 185.86, "end": 197.41}, {"start": 197.57, "end": 216.47}, {"start": 216.47, "end": 224.45}, {"start": 227.19, "end": 228.41}, {"start": 228.41, "end": 246.71}, {"start": 246.71, "end": 273.39}, {"start": 286.77, "end": 306.13}, {"start": 307.05, "end": 308.07}, {"start": 308.07, "end": 333.71}, {"start": 333.71, "end": 351.95}, {"start": 353.09, "end": 359.75}, {"start": 359.75, "end": 373.87}, {"start": 373.87, "end": 377.35}, {"start": 376.93, "end": 376.93}, {"start": 376.93, "end": 376.93}, {"start": 376.93, "end": 376.93}, {"start": 376.93, "end": 376.93}]</script>
 </body>
 </html>
