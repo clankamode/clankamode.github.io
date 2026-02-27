@@ -166,14 +166,9 @@
           el.classList.toggle('lm-code-glow', isCode && i === activeIdx);
         });
 
-        // Auto-scroll
+        // Auto-scroll — always on paragraph change
         if (activeIdx > -1) {
-          const el = contentEls[activeIdx];
-          const rect = el.getBoundingClientRect();
-          const vh = window.innerHeight;
-          if (rect.top < vh * 0.15 || rect.bottom > vh * 0.85) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
+          contentEls[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }
     }
