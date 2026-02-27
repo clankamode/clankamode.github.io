@@ -91,7 +91,7 @@
     listenMode = true;
     sizeCanvas();
     document.body.classList.add('listen-mode');
-    if (hasTimings) document.body.classList.add('listen-mode-sync');
+    // listen-mode-sync added dynamically when audio reaches first timed paragraph
     animate();
   }
 
@@ -155,6 +155,11 @@
       // Past everything
       if (activeIdx === -1 && timings.length > 0 && t >= timings[timings.length - 1].start) {
         activeIdx = timings.length - 1;
+      }
+
+      // Add sync dimming only once audio reaches first timed content
+      if (activeIdx > -1 && !document.body.classList.contains('listen-mode-sync')) {
+        document.body.classList.add('listen-mode-sync');
       }
 
       if (activeIdx !== lastActiveIdx) {
