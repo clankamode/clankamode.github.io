@@ -880,8 +880,8 @@ using (true);
 
 CREATE TRIGGER set_articles_updated_at BEFORE UPDATE ON public."LearningArticles" FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
-CREATE TRIGGER new_feedback AFTER INSERT ON public."UserFeedback" FOR EACH ROW EXECUTE FUNCTION supabase_functions.http_request('https://dwhegbuedhkbppekzmjd.supabase.co/functions/v1/notify-discord', 'POST', '{"Content-type":"application/json"}', '{}', '5000');
+-- LOCAL: trigger disabled (prod-only) -- CREATE TRIGGER new_feedback AFTER INSERT ON public."UserFeedback" FOR EACH ROW EXECUTE FUNCTION supabase_functions.http_request('https://dwhegbuedhkbppekzmjd.supabase.co/functions/v1/notify-discord', 'POST', '{"Content-type":"application/json"}', '{}', '5000');
 
-CREATE TRIGGER new_users AFTER INSERT ON public."Users" FOR EACH ROW EXECUTE FUNCTION supabase_functions.http_request('https://dwhegbuedhkbppekzmjd.supabase.co/functions/v1/notify-discord', 'POST', '{"Content-type":"application/json"}', '{}', '5000');
+-- LOCAL: trigger disabled (prod-only) -- CREATE TRIGGER new_users AFTER INSERT ON public."Users" FOR EACH ROW EXECUTE FUNCTION supabase_functions.http_request('https://dwhegbuedhkbppekzmjd.supabase.co/functions/v1/notify-discord', 'POST', '{"Content-type":"application/json"}', '{}', '5000');
 
 
