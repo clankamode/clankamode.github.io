@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useChromeMode } from '@/hooks/useChromeMode';
 import SessionReaderShell from '@/components/session/SessionReaderShell';
 import MobileSidebarToggle from './MobileSidebarToggle';
@@ -25,9 +25,14 @@ export default function ArticleLayoutSwitcher({
     pillarName
 }: ArticleLayoutSwitcherProps) {
     const router = useRouter();
+    const pathname = usePathname();
     const mode = useChromeMode();
     const isExecution = mode === 'execute';
     const isExit = mode === 'exit';
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
 
     useEffect(() => {
         if (isExit) {
