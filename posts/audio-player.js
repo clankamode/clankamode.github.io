@@ -52,6 +52,24 @@
     canvas.style.height = rect.height + 'px';
   }
 
+  // --- Content Elements & Timings ---
+  const contentEls = [];
+  const contentArea = document.querySelector('article') || document.querySelector('.page');
+  if (contentArea) {
+    contentArea.querySelectorAll('p, h2, h3, pre, .highlight').forEach(el => {
+      if (el.closest('.audio-player') || el.closest('.footer') || el.closest('.post-nav') || el.closest('.meta') || el.classList.contains('post-number')) return;
+      if (el.textContent.trim().length > 5) contentEls.push(el);
+    });
+  }
+
+  // Load Whisper timings if embedded in page
+  let timings = null;
+  const timingsEl = document.getElementById('audio-timings');
+  if (timingsEl) {
+    try { timings = JSON.parse(timingsEl.textContent); } catch(e) {}
+  }
+  const hasTimings = timings && timings.length === contentEls.length;
+
   // --- Web Audio Analyzer ---
   function initAudio() {
     if (audioCtx) return;
@@ -64,9 +82,7 @@
       sourceNode = audioCtx.createMediaElementSource(audio);
       sourceNode.connect(analyser);
       analyser.connect(audioCtx.destination);
-    } catch(e) {
-      audioCtx = null;
-    }
+    } catch(e) { audioCtx = null; }
   }
 
   // --- Listen Mode ---
@@ -75,23 +91,28 @@
     listenMode = true;
     sizeCanvas();
     document.body.classList.add('listen-mode');
+    if (hasTimings) document.body.classList.add('listen-mode-sync');
     animate();
   }
 
   function exitListenMode() {
     if (!listenMode) return;
     listenMode = false;
-    document.body.classList.remove('listen-mode');
+    document.body.classList.remove('listen-mode', 'listen-mode-sync');
     cancelAnimationFrame(animFrame);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    contentEls.forEach(el => el.classList.remove('lm-active', 'lm-past', 'lm-code-glow'));
     document.documentElement.style.removeProperty('--accent-pulse');
   }
 
   // --- Animation Loop ---
+  let lastActiveIdx = -1;
+
   function animate() {
     if (!listenMode) return;
     animFrame = requestAnimationFrame(animate);
 
+    // Waveform
     if (analyser && dataArray) {
       analyser.getByteFrequencyData(dataArray);
       const w = canvas.width;
@@ -104,17 +125,57 @@
 
       for (let i = 0; i < barCount; i++) {
         const v = dataArray[i] / 255;
-        const barH = v * h;
         ctx.fillStyle = accent;
         ctx.globalAlpha = 0.3 + v * 0.5;
-        ctx.fillRect(i * barWidth, h - barH, barWidth - 1, barH);
+        ctx.fillRect(i * barWidth, h - (v * h), barWidth - 1, v * h);
       }
       ctx.globalAlpha = 1;
 
       // Accent breathing
       const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length / 255;
-      const pulseL = 62 + avg * 15;
-      document.documentElement.style.setProperty('--accent-pulse', `hsl(73, 89%, ${pulseL}%)`);
+      document.documentElement.style.setProperty('--accent-pulse', `hsl(73, 89%, ${62 + avg * 15}%)`);
+    }
+
+    // Paragraph sync (only if Whisper timings exist)
+    if (hasTimings && audio.currentTime > 0) {
+      const t = audio.currentTime;
+      let activeIdx = -1;
+
+      for (let i = 0; i < timings.length; i++) {
+        if (t >= timings[i].start && t < timings[i].end) {
+          activeIdx = i;
+          break;
+        }
+        // Between elements — keep previous active
+        if (i < timings.length - 1 && t >= timings[i].end && t < timings[i + 1].start) {
+          activeIdx = i;
+          break;
+        }
+      }
+      // Past everything
+      if (activeIdx === -1 && timings.length > 0 && t >= timings[timings.length - 1].start) {
+        activeIdx = timings.length - 1;
+      }
+
+      if (activeIdx !== lastActiveIdx) {
+        lastActiveIdx = activeIdx;
+        contentEls.forEach((el, i) => {
+          el.classList.toggle('lm-active', i === activeIdx);
+          el.classList.toggle('lm-past', activeIdx > -1 && i < activeIdx);
+          const isCode = el.tagName === 'PRE' || el.classList.contains('highlight');
+          el.classList.toggle('lm-code-glow', isCode && i === activeIdx);
+        });
+
+        // Auto-scroll
+        if (activeIdx > -1) {
+          const el = contentEls[activeIdx];
+          const rect = el.getBoundingClientRect();
+          const vh = window.innerHeight;
+          if (rect.top < vh * 0.15 || rect.bottom > vh * 0.85) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      }
     }
   }
 
@@ -131,12 +192,10 @@
       if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
       audio.play();
       btn.innerHTML = pauseSvg;
-      btn.setAttribute('aria-label', 'Pause');
       enterListenMode();
     } else {
       audio.pause();
       btn.innerHTML = playSvg;
-      btn.setAttribute('aria-label', 'Play');
     }
   });
 
@@ -165,7 +224,6 @@
 
   audio.addEventListener('ended', () => {
     btn.innerHTML = playSvg;
-    btn.setAttribute('aria-label', 'Play');
     progress.style.width = '0%';
     exitListenMode();
   });
