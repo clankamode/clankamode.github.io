@@ -1,127 +1,54 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
+import { fetchEvents, relativeTime } from './time-utils';
 
-type ActivityItem = {
-  type?: string;
-  desc?: string;
-  timestamp?: string | number;
-};
+type EventItem = { type: string; repo: string; message: string; timestamp: string };
 
 @customElement('clanka-activity')
 export class ClankaActivity extends LitElement {
-  @property({ type: Array }) history: ActivityItem[] = [];
-  @property({ type: Boolean }) loading = true;
-  @property({ type: String }) error = '';
+  @state() private events: EventItem[] = [];
+  @state() private loading = true;
+  @state() private error = '';
 
   static styles = css`
-    :host {
-      display: block;
-      margin-bottom: 64px;
-    }
-    .sec-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .sec-label {
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted, #6b6b78);
-    }
-    .sec-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border, #1e1e22);
-    }
+    :host { display: block; margin-bottom: 64px; }
+    .sec-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .sec-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted, #6b6b78); }
+    .sec-line { flex: 1; height: 1px; background: var(--border, #1e1e22); }
     .row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: baseline;
-      gap: 16px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border, #1e1e22);
+      display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 16px;
+      padding: 12px 0; border-bottom: 1px solid var(--border, #1e1e22);
       border-left: 2px solid transparent;
       transition: border-color 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
     }
     .row:hover {
-      border-left-color: var(--accent, #c8f542);
-      transform: translateX(2px);
+      border-left-color: var(--accent, #c8f542); transform: translateX(2px);
       background: color-mix(in srgb, var(--surface, #0e0e10) 84%, var(--accent, #c8f542) 16%);
-      padding-left: 10px;
-      padding-right: 10px;
-      margin: 0 -10px;
+      padding-left: 10px; padding-right: 10px; margin: 0 -10px;
     }
-    .row-name {
-      color: var(--text, #d4d4dc);
-      font-size: 13px;
-    }
-    .row-meta {
-      color: var(--dim, #3a3a42);
-      font-size: 11px;
-      text-align: right;
-    }
-    .loading-text {
-      color: var(--accent, #c8f542);
-      animation: blink 1s steps(2, start) infinite;
-    }
-    .status-fallback {
-      font-size: 12px;
-      color: var(--muted, #6b6b78);
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border, #1e1e22);
-    }
-    .skeleton-row {
-      display: grid;
-      grid-template-columns: 1fr 72px;
-      gap: 16px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border, #1e1e22);
-    }
-    .skeleton-line {
-      height: 11px;
-      border-radius: 2px;
-      background: linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--surface, #0e0e10) 88%, var(--border, #1e1e22) 12%) 0%,
-        color-mix(in srgb, var(--surface, #0e0e10) 70%, var(--accent, #c8f542) 30%) 50%,
-        color-mix(in srgb, var(--surface, #0e0e10) 88%, var(--border, #1e1e22) 12%) 100%
-      );
-      background-size: 200% 100%;
-      animation: shimmer 1.8s linear infinite;
-    }
-    .skeleton-line.short {
-      width: 72px;
-      justify-self: end;
-    }
-    :host(:focus-visible) {
-      outline: 1px solid var(--accent, #c8f542);
-      outline-offset: 4px;
-    }
-    @keyframes shimmer {
-      from { background-position: 200% 0; }
-      to { background-position: -200% 0; }
-    }
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0.4; }
-    }
+    .row-name { color: var(--text, #d4d4dc); font-size: 13px; }
+    .row-meta { color: var(--dim, #3a3a42); font-size: 11px; text-align: right; }
+    .tag { color: var(--accent, #c8f542); }
+    .status-fallback { font-size: 12px; color: var(--muted, #6b6b78); padding: 12px 0; border-bottom: 1px solid var(--border, #1e1e22); }
+    .loading-text { color: var(--accent, #c8f542); animation: blink 1s steps(2, start) infinite; }
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.4; } }
   `;
 
   connectedCallback(): void {
     super.connectedCallback();
     this.setAttribute('role', 'region');
     this.setAttribute('aria-label', 'Recent activity');
-    if (!this.hasAttribute('tabindex')) {
-      this.tabIndex = 0;
-    }
+    this.loadData();
   }
 
-  private formatDate(value: string | number | undefined): string {
-    if (value === undefined) return '--';
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? '--' : parsed.toLocaleDateString();
+  private async loadData(): Promise<void> {
+    const events = await fetchEvents();
+    if (events.length === 0) {
+      this.error = '[ activity unavailable ]';
+    } else {
+      this.events = events;
+    }
+    this.loading = false;
   }
 
   render() {
@@ -130,29 +57,16 @@ export class ClankaActivity extends LitElement {
         <span class="sec-label">activity</span>
         <div class="sec-line"></div>
       </div>
-
       ${this.loading
-        ? html`
-            <div class="status-fallback"><span class="loading-text">[ loading... ]</span></div>
-            ${Array.from({ length: 3 }).map(
-              () => html`<div class="skeleton-row" aria-hidden="true">
-                <span class="skeleton-line"></span>
-                <span class="skeleton-line short"></span>
-              </div>`,
-            )}
-          `
+        ? html`<div class="status-fallback"><span class="loading-text">[ loading... ]</span></div>`
         : this.error
           ? html`<div class="status-fallback">${this.error}</div>`
-          : this.history.length === 0
-            ? html`<div class="status-fallback">[ no activity ]</div>`
-            : this.history.map(
-                (item) => html`
-                  <div class="row" role="listitem">
-                    <span class="row-name">[${(item.type ?? 'event').toString()}] ${(item.desc ?? 'update').toString()}</span>
-                    <span class="row-meta">${this.formatDate(item.timestamp)}</span>
-                  </div>
-                `,
-              )}
+          : this.events.map(e => html`
+            <div class="row" role="listitem">
+              <span class="row-name"><span class="tag">[${e.type}]</span> ${e.repo}: ${e.message}</span>
+              <span class="row-meta">${relativeTime(e.timestamp)}</span>
+            </div>
+          `)}
     `;
   }
 }
