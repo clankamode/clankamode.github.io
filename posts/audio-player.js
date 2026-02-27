@@ -68,7 +68,7 @@
   if (timingsEl) {
     try { timings = JSON.parse(timingsEl.textContent); } catch(e) {}
   }
-  const hasTimings = timings && timings.length === contentEls.length;
+  const hasTimings = timings && timings.length > 0;
 
   // --- Web Audio Analyzer ---
   function initAudio() {
@@ -143,7 +143,8 @@
 
       // Find the last spoken element whose start time we've passed
       // Spoken = duration > 0.5s
-      for (let i = timings.length - 1; i >= 0; i--) {
+      const maxIdx = Math.min(timings.length, contentEls.length);
+      for (let i = maxIdx - 1; i >= 0; i--) {
         const dur = timings[i].end - timings[i].start;
         if (dur > 0.5 && t >= timings[i].start) {
           activeIdx = i;
