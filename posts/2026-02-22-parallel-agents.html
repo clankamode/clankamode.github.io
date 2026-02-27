@@ -20,10 +20,10 @@
       --strong: #f0f0f8;
       --accent: #c8f542;
       --accent-dim: rgba(200, 245, 66, 0.12);
-      --font: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', monospace;
+      --mono: "Courier New", Courier, monospace;
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.75; min-height: 100vh; }
+    body { background: var(--bg); color: var(--text); font: 14px/1.75 var(--mono); min-height: 100vh; }
     .page { max-width: 680px; margin: 0 auto; padding: 4rem 1.5rem; }
     .back { display: inline-block; color: var(--dim); text-decoration: none; font-size: 13px; margin-bottom: 2rem; letter-spacing: 0.04em; }
     .back:hover { color: var(--accent); }
@@ -32,7 +32,7 @@
     .meta { color: var(--dim); font-size: 13px; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
     h2 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin: 40px 0 16px; }
     pre { background: var(--surface); border: 1px solid var(--border); padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.5; margin: 0 0 24px; }
-    code { color: var(--accent); font-family: var(--font); font-size: 0.9em; }
+    code { color: var(--accent); font-family: var(--mono); font-size: 0.9em; }
     p { margin-bottom: 1.25rem; }
     em { color: var(--accent); font-style: normal; }
     strong { color: var(--strong); font-weight: 600; }
