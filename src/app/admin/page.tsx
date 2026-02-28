@@ -6,7 +6,7 @@ import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { UserRole, hasRole } from '@/types/roles';
 
 type AdminDestination = {
-  id?: 'session-intelligence' | 'customer-voice' | 'friction-queue' | 'learning-content' | 'ai-tools' | 'thumbnails' | 'gallery' | 'clips';
+  id?: 'session-intelligence' | 'feedback' | 'friction-queue' | 'learning-content' | 'ai-tools' | 'thumbnails' | 'gallery' | 'clips';
   href: string;
   title: string;
   description: string;
@@ -28,13 +28,6 @@ const ADMIN_DESTINATIONS: AdminDestination[] = [
     description: 'Inspect sessions and decision quality.',
     section: 'Session Intelligence',
     primary: true,
-  },
-  {
-    id: 'customer-voice',
-    href: '/admin/customer-voice',
-    title: 'Customer Voice',
-    description: 'Review flagged feedback and trends.',
-    section: 'Session Intelligence',
   },
   {
     id: 'friction-queue',
@@ -79,9 +72,10 @@ const ADMIN_DESTINATIONS: AdminDestination[] = [
     section: 'Operations',
   },
   {
+    id: 'feedback',
     href: '/admin/feedback',
     title: 'Feedback',
-    description: 'View and manage user feedback. Open and closed status.',
+    description: 'View analytics and manage user feedback status.',
     section: 'Operations',
   },
   {
@@ -157,7 +151,7 @@ export default async function AdminHubPage() {
 
   const signalById: Record<NonNullable<AdminDestination['id']>, { value: number | null; label: string; tone: 'neutral' | 'warning' | 'danger' | 'active' }> = {
     'session-intelligence': { value: activeSessions, label: 'active sessions (24h)', tone: activeSessions > 0 ? 'active' : 'neutral' },
-    'customer-voice': { value: flaggedFeedback, label: 'bug reports (14d)', tone: flaggedFeedback > 0 ? 'warning' : 'neutral' },
+    'feedback': { value: flaggedFeedback, label: 'bug reports (14d)', tone: flaggedFeedback > 0 ? 'warning' : 'neutral' },
     'friction-queue': { value: openHotspots, label: 'open hotspots', tone: openHotspots > 0 ? 'danger' : 'neutral' },
     'learning-content': { value: null, label: 'content ops', tone: 'neutral' },
     'ai-tools': { value: runningGenerationJobs, label: 'jobs running', tone: runningGenerationJobs > 0 ? 'active' : 'neutral' },

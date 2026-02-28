@@ -149,7 +149,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
     await signOut({ callbackUrl: '/' });
   };
 
-  const isStudioSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content', '/admin/session-intelligence', '/admin/session-quality', '/admin/friction', '/admin/customer-voice'].some((path) => isActive(path));
+  const isStudioSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content', '/admin/session-intelligence', '/admin/session-quality', '/admin/friction', '/admin/feedback'].some((path) => isActive(path));
   const isPracticeSectionActive = ['/peralta75', '/assessment'].some((path) => isActive(path));
   const adminDashboardHref = '/admin';
 
