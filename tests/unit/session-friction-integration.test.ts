@@ -5,9 +5,19 @@ import { describe, expect, it } from 'vitest';
 const readWorkspaceFile = (relativePath: string) =>
   fs.readFileSync(path.resolve(process.cwd(), relativePath), 'utf8');
 
+const readSessionContextFiles = () => [
+  'src/contexts/SessionContext.tsx',
+  'src/contexts/session-context/friction.ts',
+  'src/contexts/session-context/advance.ts',
+  'src/contexts/session-context/finalize.ts',
+  'src/contexts/session-context/types.ts',
+  'src/contexts/session-context/storage.ts',
+  'src/contexts/session-context/chunk-navigation.ts',
+].map((f) => readWorkspaceFile(f)).join('\n');
+
 describe('session friction integration wiring', () => {
   it('wires classifier and silent emissions in SessionContext', () => {
-    const source = readWorkspaceFile('src/contexts/SessionContext.tsx');
+    const source = readSessionContextFiles();
 
     expect(source).toContain('classifyFriction');
     expect(source).toContain('logFrictionSnapshotAction');
@@ -17,7 +27,7 @@ describe('session friction integration wiring', () => {
   });
 
   it('keeps progression lock path intact', () => {
-    const source = readWorkspaceFile('src/contexts/SessionContext.tsx');
+    const source = readSessionContextFiles();
 
     expect(source).toContain('runWithTransitionLock');
     expect(source).toContain("runWithTransitionLock('advancing'");

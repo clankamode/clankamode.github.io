@@ -1,0 +1,12 @@
+export const PROGRESS_TABLE = 'UserArticleProgress';
+export const BOOKMARKS_TABLE = 'UserBookmarks';
+export const PRACTICE_QUESTIONS_TABLE = 'InterviewQuestions';
+export const SESSION_PLAN_LOCK_TTL_SECONDS = 20 * 60;
+export const SESSION_FINALIZED_LOOKBACK_HOURS = 8;
+export const SESSION_FINALIZED_LOOKBACK_ROWS = 12;
+export const ITEM_COMPLETED_LOOKBACK_DAYS = 7;
+export const ITEM_COMPLETED_LOOKBACK_ROWS = 120;
+export const SESSION_COMMITTED_LOOKBACK_DAYS = 7;
+export const SESSION_COMMITTED_LOOKBACK_ROWS = 120;
+export const ONBOARDING_BIAS_MAX_COMMITTED_SESSIONS = 5;
+export const POLICY_PROMPT_VERSION = 'ai_policy_os_v1';

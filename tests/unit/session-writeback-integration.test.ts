@@ -7,7 +7,11 @@ const readWorkspaceFile = (relativePath: string) =>
 
 describe('session writeback integration', () => {
   it('calls updateUserConceptStats from session completion delta path', () => {
-    const sessionContextSource = readWorkspaceFile('src/contexts/SessionContext.tsx');
+    const sessionContextSource = [
+      'src/contexts/SessionContext.tsx',
+      'src/contexts/session-context/advance.ts',
+      'src/contexts/session-context/finalize.ts',
+    ].map((f) => readWorkspaceFile(f)).join('\n');
 
     expect(sessionContextSource).toContain('updateUserConceptStats');
     expect(sessionContextSource).toContain('result.debugInfo.seenTags');
