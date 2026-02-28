@@ -1,0 +1,5 @@
+-- NOTE: This migration was generated as a duplicate full-schema remote pull.
+-- Running it after 20260227045523_remote_schema.sql is not valid because it
+-- references objects already dropped by the earlier migration (e.g. TutorConversations).
+--
+-- Keep this file as a no-op so migration history remains consistent across environments.

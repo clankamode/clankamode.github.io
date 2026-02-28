@@ -76,6 +76,18 @@ docker network create -o 'com.docker.network.bridge.host_binding_ipv4=127.0.0.1'
 npx supabase start --network-id local-network
 ```
 
+If you use `--network-id local-network` for `start`, use the same network flag for commands that recreate/restart containers:
+
+```bash
+npx supabase db reset --network-id local-network
+npx supabase db pull --network-id local-network
+```
+
+Mixing network modes (for example `start --network-id local-network` and later `db reset` without `--network-id`) can split containers across networks and cause service DNS failures like:
+
+- `getaddrinfo ENOTFOUND supabase_db_<project>`
+- storage/auth/realtime restart loops
+
 You should never expose your local development stack publicly.
 
 Reference: [Supabase Local Development](https://supabase.com/docs/guides/local-development)
@@ -99,6 +111,25 @@ supabase db reset      # wipe and re-run all migrations + seed
 supabase stop          # stop containers
 supabase studio        # open Supabase Studio at http://127.0.0.1:54323
 ```
+
+If services are stuck in restart loops after switching network modes, do a clean restart:
+
+```bash
+npx supabase stop --no-backup
+npx supabase start --network-id local-network
+```
+
+If container name conflicts persist after `stop`, remove leftover `supabase_*_<project>` containers, then run `start` again.
+
+### Migration pull gotcha
+
+`supabase db pull` can occasionally generate multiple back-to-back `*_remote_schema.sql` files that are full schema rewrites instead of safe incremental migrations. If a later `remote_schema` file drops/alters objects already removed by an earlier one, local reset will fail (for example, `relation ... does not exist`).
+
+Before committing pulled migrations:
+
+1. Review new `*_remote_schema.sql` files for duplicate destructive operations.
+2. Keep only one valid schema rewrite for that pull window.
+3. Convert accidental duplicate follow-up files to a no-op migration (preserve version ordering).
 
 ### Schema & seed data
 
