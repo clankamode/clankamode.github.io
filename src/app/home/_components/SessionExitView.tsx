@@ -314,6 +314,7 @@ export default function SessionExitView() {
                                 </motion.div>
                             </div>
 
+                            {(primaryConceptLabel || supportConcepts.length > 0) && (
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.97 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -353,6 +354,7 @@ export default function SessionExitView() {
                                     )}
                                 </div>
                             </motion.div>
+                            )}
 
                             <InternalizationRitual
                                 primaryConcept={state.exit.primaryConcept || primaryConceptSlug}
