@@ -4,6 +4,7 @@ import type { UserLearningState } from '@/types/micro';
 import { getFromCache, setInCache } from '@/lib/redis';
 import { sanitizeIntentText } from '@/lib/intent-display';
 import type { SessionPersonalizationProfile } from '@/lib/session-personalization';
+import { supabase } from '@/lib/supabase';
 
 export interface SessionPlannerCandidate {
   id: string;
@@ -49,6 +50,12 @@ interface SessionPlannerSelection {
 
 interface SessionPlannerResponse {
   selected: SessionPlannerSelection[];
+}
+
+interface PracticeQuestionSummary {
+  id: string;
+  name: string;
+  difficulty: string | null;
 }
 
 const plannerClient = process.env.OPENAI_API_KEY
@@ -206,7 +213,7 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
         22
       );
       logPlannerSelection('cache', cachedPlan, effectiveCandidates);
-      return cachedPlan;
+      return attachOptionalPracticeStep(cachedPlan);
     }
   }
 
@@ -350,7 +357,7 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
         }
 
         logPlannerSelection('llm', balancedItems, rankedCandidates);
-        return balancedItems;
+        return attachOptionalPracticeStep(balancedItems);
       } catch (error) {
         console.error(`LLM session planning failed on attempt ${attempt}:`, error);
         retryFeedback = '- Request failed unexpectedly. Return valid JSON with candidate IDs only.';
@@ -360,7 +367,130 @@ export async function planSessionItemsWithLLM(input: SessionPlannerInput): Promi
 
   const fallbackPlan = bestPlan || heuristicFallback;
   logPlannerSelection(bestPlan ? 'best-model' : 'heuristic-fallback', fallbackPlan, rankedCandidates);
-  return fallbackPlan;
+  return attachOptionalPracticeStep(fallbackPlan);
+}
+
+async function attachOptionalPracticeStep(items: SessionItem[]): Promise<SessionItem[]> {
+  const learnItems = items.filter((item) => item.type === 'learn');
+  if (learnItems.length === 0) {
+    return items;
+  }
+
+  const lastLearnItem = learnItems[learnItems.length - 1];
+  if (!lastLearnItem) {
+    return items;
+  }
+
+  const conceptKeys = deriveConceptLookupKeys(lastLearnItem);
+  if (conceptKeys.length === 0) {
+    return learnItems;
+  }
+
+  const question = await findPracticeQuestionForConcept(conceptKeys);
+  return appendPracticeStepToPlan(learnItems, lastLearnItem, question);
+}
+
+function deriveConceptLookupKeys(item: SessionItem): string[] {
+  const keys: string[] = [];
+  const addKey = (value: string | null | undefined) => {
+    const normalized = normalizeConceptKey(value);
+    if (normalized && !keys.includes(normalized)) {
+      keys.push(normalized);
+    }
+  };
+
+  addKey(item.primaryConceptSlug);
+  addKey(item.primaryConceptSlug?.split('.')[0] || null);
+  addKey(item.targetConcept);
+  addKey(item.title);
+  return keys;
+}
+
+async function findPracticeQuestionForConcept(conceptKeys: string[]): Promise<PracticeQuestionSummary | null> {
+  for (const conceptKey of conceptKeys) {
+    const byConceptSlug = await supabase
+      .from('InterviewQuestions')
+      .select('id, name, difficulty')
+      .eq('concept_slug', conceptKey)
+      .limit(1)
+      .maybeSingle();
+
+    if (byConceptSlug.data?.id) {
+      return {
+        id: byConceptSlug.data.id,
+        name: byConceptSlug.data.name,
+        difficulty: byConceptSlug.data.difficulty ?? null,
+      };
+    }
+
+    const byConceptTags = await supabase
+      .from('InterviewQuestions')
+      .select('id, name, difficulty')
+      .contains('concept_tags', [conceptKey])
+      .limit(1)
+      .maybeSingle();
+
+    if (byConceptTags.data?.id) {
+      return {
+        id: byConceptTags.data.id,
+        name: byConceptTags.data.name,
+        difficulty: byConceptTags.data.difficulty ?? null,
+      };
+    }
+  }
+
+  return null;
+}
+
+export function appendPracticeStepToPlan(
+  learnItems: SessionItem[],
+  anchorItem: SessionItem,
+  question: PracticeQuestionSummary | null
+): SessionItem[] {
+  if (!question) {
+    return [...learnItems];
+  }
+
+  const intentText = sanitizeIntentText(
+    `Do ${question.name} now because applying ${anchorItem.targetConcept || anchorItem.title} cements recall under pressure.`,
+    {
+      fallback: `Practice now because applying this concept under pressure improves transfer.`,
+      title: question.name,
+      maxChars: 140,
+      minChars: 24,
+    }
+  );
+  const difficulty = normalizePracticeDifficulty(question.difficulty);
+  const practiceItem: SessionItem = {
+    type: 'practice',
+    title: `Practice: ${question.name}`,
+    subtitle: 'Interview problem · 5 min',
+    pillarSlug: anchorItem.pillarSlug,
+    href: `/code-editor/practice/${encodeURIComponent(question.id)}?source=session&sessionQuestionId=${encodeURIComponent(question.id)}`,
+    estMinutes: 5,
+    estimatedMinutes: 5,
+    questionId: question.id,
+    questionName: question.name,
+    intent: {
+      type: 'practice',
+      text: intentText,
+    },
+    confidence: anchorItem.confidence,
+    primaryConceptSlug: anchorItem.primaryConceptSlug || null,
+    targetConcept: anchorItem.targetConcept || anchorItem.title,
+    practiceQuestionId: question.id,
+    practiceDifficulty: difficulty ?? undefined,
+    practiceQuestionDescription: undefined,
+  };
+
+  return [...learnItems, practiceItem];
+}
+
+function normalizePracticeDifficulty(value: string | null): 'Easy' | 'Medium' | 'Hard' | null {
+  if (value === 'Easy' || value === 'Medium' || value === 'Hard') {
+    return value;
+  }
+  return null;
 }
 
 function extractOutputText(response: unknown): string | null {

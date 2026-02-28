@@ -134,9 +134,12 @@ export interface SessionItem {
   sessionChunkTitle?: string | null;
   sourceArticleTitle?: string | null;
   practiceQuestionId?: string;
+  questionId?: string;
+  questionName?: string;
   practiceQuestionUrl?: string;
   practiceDifficulty?: 'Easy' | 'Medium' | 'Hard';
   practiceQuestionDescription?: string;
+  estimatedMinutes?: number;
 }
 
 export interface LearningDelta {

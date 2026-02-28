@@ -120,6 +120,7 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
   const [hasRun, setHasRun] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [completingSessionItem, setCompletingSessionItem] = useState(false);
+  const [skippingSessionItem, setSkippingSessionItem] = useState(false);
   const completionSubmitLockRef = useRef(false);
   const prevAllPassedRef = useRef(false);
   const currentSessionItem = sessionFlowState.phase === 'execution' && sessionFlowState.execution && sessionFlowState.scope
@@ -147,6 +148,10 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
     testResults.length === testCases.length &&
     testResults.length > 0 &&
     testResults.every((result) => result.passed);
+  const isActiveSessionPracticeStep = Boolean(
+    sessionFlowState.phase === 'execution' &&
+    currentSessionItem?.type === 'practice'
+  );
 
   const syncPeraltaProgress = useCallback(async (status: 'attempted' | 'solved') => {
     if (!isPeraltaQuestion || !question.leetcode_number) {
@@ -269,9 +274,9 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
       ? 'Running Python 3 (Pyodide)…'
       : 'Python 3 (Pyodide)';
   const completionLabel = completingSessionItem
-    ? 'Completing...'
+    ? 'Completing Practice...'
     : allTestsPassed
-      ? 'Complete challenge & continue'
+      ? 'Complete Practice'
       : 'Pass all tests to continue';
   const completionHint = allTestsPassed
     ? 'All tests passing. Completion unlocked.'
@@ -279,9 +284,19 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
       ? `${testResults.filter((result) => result.passed).length}/${testCases.length} tests passing. Pass all tests to unlock completion.`
       : 'Run tests to unlock completion.';
   const canAttemptSessionComplete =
+    isActiveSessionPracticeStep &&
     allTestsPassed &&
     !completingSessionItem &&
+    !skippingSessionItem &&
     !!currentSessionItem &&
+    !!sessionQuestionId &&
+    !isRunning &&
+    sessionFlowState.transitionStatus === 'ready' &&
+    sessionFlowState.execution?.transitionStatus === 'ready';
+  const canSkipSessionPractice =
+    isActiveSessionPracticeStep &&
+    !completingSessionItem &&
+    !skippingSessionItem &&
     !!sessionQuestionId &&
     !isRunning &&
     sessionFlowState.transitionStatus === 'ready' &&
@@ -290,12 +305,14 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
   useEffect(() => {
     completionSubmitLockRef.current = false;
     setCompletingSessionItem(false);
+    setSkippingSessionItem(false);
   }, [sessionQuestionId]);
 
   useEffect(() => {
     if (!isSessionContext) {
       completionSubmitLockRef.current = false;
       setCompletingSessionItem(false);
+      setSkippingSessionItem(false);
     }
   }, [isSessionContext]);
 
@@ -350,6 +367,52 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
     syncPeraltaProgress,
   ]);
 
+  const handleSessionSkip = useCallback(() => {
+    if (!isSessionContext || !sessionQuestionId) return;
+    if (completionSubmitLockRef.current || skippingSessionItem || completingSessionItem) return;
+    if (sessionFlowState.phase !== 'execution' || !sessionFlowState.execution || !sessionFlowState.scope) return;
+    if (sessionFlowState.transitionStatus !== 'ready' || sessionFlowState.execution.transitionStatus !== 'ready') return;
+
+    completionSubmitLockRef.current = true;
+    setSkippingSessionItem(true);
+    logTelemetryEvent({
+      userId: telemetryUserId,
+      trackSlug: telemetryTrackSlug,
+      sessionId: telemetrySessionId,
+      eventType: 'practice_completion_confirmed',
+      mode: 'execute',
+      payload: {
+        questionId: sessionQuestionId,
+        via: 'skipped',
+      },
+      dedupeKey: `practice_completion_skipped_${telemetrySessionId}_${sessionQuestionId}`,
+    });
+
+    advanceItem();
+    if (nextSessionItem) {
+      router.push(nextSessionItem.href);
+    } else {
+      router.push('/home');
+    }
+
+    window.setTimeout(() => {
+      completionSubmitLockRef.current = false;
+      setSkippingSessionItem(false);
+    }, 2500);
+  }, [
+    isSessionContext,
+    sessionQuestionId,
+    skippingSessionItem,
+    completingSessionItem,
+    sessionFlowState,
+    telemetryUserId,
+    telemetryTrackSlug,
+    telemetrySessionId,
+    advanceItem,
+    nextSessionItem,
+    router,
+  ]);
+
   return (
     <>
       <div className="flex md:hidden h-screen items-center justify-center bg-surface-ambient px-6">
@@ -399,12 +462,12 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
           )}
 
         </div>
-        {isSessionContext && (
+        {isSessionContext && isActiveSessionPracticeStep && (
           <div className="border-b border-border-subtle bg-surface-interactive px-4 py-2.5">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm text-text-secondary">
-                  <span className="font-semibold text-text-primary">Goal:</span> pass tests, then complete challenge.
+                  <span className="font-semibold text-text-primary">Goal:</span> pass tests, then complete practice.
                 </p>
                 <p className="mt-1 text-xs text-text-muted">
                   {completionHint}
@@ -415,13 +478,22 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
                   </p>
                 )}
               </div>
-              <button
-                onClick={handleSessionComplete}
-                disabled={!canAttemptSessionComplete}
-                className="rounded-lg px-4 py-2 text-sm font-semibold transition-colors bg-brand-green text-white hover:bg-brand-green/90 disabled:cursor-not-allowed disabled:bg-surface-dense disabled:text-text-muted"
-              >
-                {completionLabel}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleSessionSkip}
+                  disabled={!canSkipSessionPractice}
+                  className="rounded-lg border border-border-subtle px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {skippingSessionItem ? 'Skipping...' : 'Skip Practice'}
+                </button>
+                <button
+                  onClick={handleSessionComplete}
+                  disabled={!canAttemptSessionComplete}
+                  className="rounded-lg px-4 py-2 text-sm font-semibold transition-colors bg-brand-green text-white hover:bg-brand-green/90 disabled:cursor-not-allowed disabled:bg-surface-dense disabled:text-text-muted"
+                >
+                  {completionLabel}
+                </button>
+              </div>
             </div>
           </div>
         )}

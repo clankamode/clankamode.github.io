@@ -473,6 +473,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }
     }, [resetTransitionStatus, setTransitionStatus]);
 
+    const buildPracticeStepHref = useCallback((item: SessionItem): string => {
+        const questionId = item.practiceQuestionId || item.questionId;
+        if (!questionId) {
+            return item.href;
+        }
+
+        const params = new URLSearchParams();
+        params.set('source', 'session');
+        params.set('sessionQuestionId', questionId);
+        return `/code-editor/practice/${encodeURIComponent(questionId)}?${params.toString()}`;
+    }, []);
+
     const advanceItem = useCallback(() => {
         const acquired = runWithTransitionLock('advancing', () => {
             const prev = stateRef.current;
@@ -651,6 +663,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 resetFrictionMonitorForStep(newIndex);
             }
 
+            const nextItem = scope.items[newIndex] || null;
+
             setState({
                 ...prev,
                 execution: {
@@ -663,11 +677,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 },
                 transitionStatus: 'ready',
             });
+
+            if (nextItem?.type === 'practice') {
+                const nextPracticeHref = buildPracticeStepHref(nextItem);
+                if (pathname !== nextPracticeHref) {
+                    router.push(nextPracticeHref);
+                }
+            }
         });
         if (acquired === false) {
             console.warn('[SessionContext] advanceItem: lock not acquired — session not in execution phase or lock busy');
         }
-    }, [authUserRole, emitFrictionSnapshot, frictionEnabled, markInteraction, resetFrictionMonitorForStep, runWithTransitionLock]);
+    }, [authUserRole, buildPracticeStepHref, emitFrictionSnapshot, frictionEnabled, markInteraction, pathname, resetFrictionMonitorForStep, router, runWithTransitionLock]);
 
     const completeSession = useCallback(() => {
         const acquired = runWithTransitionLock('finalizing', () => {
