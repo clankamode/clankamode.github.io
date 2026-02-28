@@ -447,16 +447,7 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
               </button>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="p-1 text-zinc-500 transition-colors hover:text-zinc-200"
-                aria-label="Close AI tutor"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" d="M6 6l12 12M6 18L18 6" />
-                </svg>
-              </button>
+
             </div>
           </div>
 

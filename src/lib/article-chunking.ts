@@ -43,6 +43,11 @@ export function chunkArticleByHeadings(content: string): ArticleChunk[] {
         });
     }
 
+    // Strip leading H1 from first chunk — the page header already shows the article title
+    if (chunks.length > 0) {
+        chunks[0].content = chunks[0].content.replace(/^#\s+.+\n*/, '').trim();
+    }
+
     if (chunks.length === 0) {
         chunks.push({
             id: 'chunk-0',

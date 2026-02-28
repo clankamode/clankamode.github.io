@@ -355,8 +355,9 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                     </button>
                 </div>
 
-                <div className="absolute bottom-6 right-8 flex items-center gap-1.5 text-[10px] font-mono text-text-muted">
-                    <span className="border border-border-interactive/60 px-1.5 py-0.5 rounded">↵</span>
+                <div className="absolute bottom-6 right-8 hidden md:flex items-center gap-1.5 text-[10px] font-mono text-text-muted/50">
+                    <span>Press</span>
+                    <kbd className="border border-border-subtle px-1.5 py-0.5 rounded text-text-muted">↵</kbd>
                     <span>to start</span>
                 </div>
             </div>

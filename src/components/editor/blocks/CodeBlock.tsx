@@ -211,7 +211,7 @@ function CodeBlockComponent({ block, editable = false, mode = 'default', onChang
               'text-[10px] uppercase tracking-wider transition',
               isExecutionMode
                 ? 'border border-border-subtle/70 px-2 py-0.5 text-text-muted hover:text-text-primary'
-                : 'rounded-full border border-border-subtle bg-surface-interactive/40 px-3 py-1 text-text-secondary backdrop-blur-sm hover:border-border-interactive hover:text-text-primary'
+                : 'rounded-full border border-border-subtle bg-surface-interactive px-3 py-1 text-text-primary/70 hover:border-border-interactive hover:text-text-primary'
             )}
             onClick={handleCopy}
           >

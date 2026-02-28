@@ -157,9 +157,7 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
 
                 <div className="flex items-center justify-between gap-4">
                     {isFirstChunk ? (
-                        <div className="py-2 text-xs text-text-muted">
-                            {isFocusedMode ? 'Current section' : 'Start of article'}
-                        </div>
+                        <div />
                     ) : (
                         <button
                             onClick={prevChunk}
@@ -169,7 +167,7 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                             <span>Previous</span>
-                            <span className="text-xs text-text-muted">H / ←</span>
+                            <span className="text-xs text-text-muted">←</span>
                         </button>
                     )}
 
@@ -194,7 +192,7 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                                 : 'Next Section'}
                         </span>
                         <div className="flex items-center gap-1.5">
-                            <span className="text-xs opacity-70">L / →</span>
+                            <span className="text-xs opacity-70">→</span>
                             {isCompletingArticle ? (
                                 <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" />

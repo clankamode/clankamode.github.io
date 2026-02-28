@@ -622,6 +622,10 @@ function InternalizationRitual({
                         className="space-y-3"
                     >
                         {isMapped && choices ? (
+                            <div className="space-y-4">
+                                <p className="text-xs uppercase tracking-[0.2em] text-text-muted font-bold text-center">
+                                    What clicked?
+                                </p>
                             <div className="grid grid-cols-1 gap-3">
                                 {[
                                     { label: choices.a, value: 'A' },
@@ -674,6 +678,7 @@ function InternalizationRitual({
                                         </button>
                                     );
                                 })}
+                            </div>
                             </div>
                         ) : (
                             <div className="relative">
