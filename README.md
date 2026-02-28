@@ -67,6 +67,19 @@ supabase start   # first run pulls Docker images (~2 min)
 
 This runs migrations and seeds the database automatically. On success it prints your local keys.
 
+### Network safety on untrusted public networks
+
+If your local development machine is connected to an untrusted public network, create a separate Docker network and bind to `127.0.0.1` before starting the local development stack. This restricts access to only your local machine.
+
+```bash
+docker network create -o 'com.docker.network.bridge.host_binding_ipv4=127.0.0.1' local-network
+npx supabase start --network-id local-network
+```
+
+You should never expose your local development stack publicly.
+
+Reference: [Supabase Local Development](https://supabase.com/docs/guides/local-development)
+
 ### Point the app at your local instance
 
 In `.env.local`, replace the Supabase vars with the values from `supabase start`:
@@ -212,4 +225,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Show youtube content
 - Show stream schedule
 - Maybe analytics
-
