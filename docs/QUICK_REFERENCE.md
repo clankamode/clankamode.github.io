@@ -2,6 +2,8 @@
 
 Fast lookup for common commands, patterns, and workflows. Keep this handy while developing.
 
+> Canonical agent guidance lives in `AGENTS.md`. This file is an operational lookup.
+
 ## 🚀 Getting Started
 
 ```bash
@@ -23,6 +25,13 @@ npm run validate_interview_questions  # Validate InterviewQuestions (practice pr
 # Linting & Type Checking
 npm run lint              # ESLint
 npm run typecheck         # TypeScript
+npm run typecheck:clean   # Deterministic typecheck (clears stale .next/types)
+
+# Agent consistency checks
+npm run check:agent-docs
+npm run check:nav-contract
+npm run check:agent
+npm run verify            # lint + typecheck:clean + test + check:agent
 ```
 
 ## 📁 File Organization Cheatsheet

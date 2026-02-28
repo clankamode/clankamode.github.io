@@ -33,6 +33,8 @@
 PR_DESCRIPTION.md
 CODE_REVIEW_CHECKLIST.md
 .mcp.json
+*.swp
+*.swo
 
 # debug
 npm-debug.log*

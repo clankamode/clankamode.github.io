@@ -1,5 +1,9 @@
 # AI Agent Development Setup
 
+> Historical context only. This document is not the operational source of truth.
+>
+> Canonical agent instructions live in `AGENTS.md`.
+
 This document explains how this repository is optimized for AI agent-driven development.
 
 ## Overview

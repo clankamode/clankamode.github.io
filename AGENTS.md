@@ -1,6 +1,14 @@
 # Agent Configuration
 
-This repository is configured for AI-assisted development with Antigravity.
+> Canonical source of truth for agent behavior in this repository.
+>
+> If guidance here conflicts with `CLAUDE.md` or `.cursorrules`, follow this file.
+
+## Primary Onboarding Path
+
+1. Read this file.
+2. Use skill docs in `.agent/skills/` when task-specific guidance is needed.
+3. Run `npm run check:agent` before pushing changes that touch agent-facing docs, nav, or middleware.
 
 ## Skills
 
@@ -35,26 +43,36 @@ Located in `.agent/workflows/`:
 | `/deslop` | Wrapper for `deslop` skill |
 | `/setup-new-feature` | Wrapper for `setup-new-feature` skill |
 
-## Quick Start
+## Agent Validation Commands
 
-1. **Ask for a component**: "Create a card component following the design system"
-2. **Debug a test**: "Use the `debug` skill on this Playwright failure"
-3. **Review code**: "Run the `code-review-checklist` skill on this PR"
+- `npm run check:agent-docs` — validates skills/workflows table sync, npm script references, and local path references in agent-facing docs.
+- `npm run check:nav-contract` — validates route/nav/middleware consistency against `src/config/navigationContract.ts`.
+- `npm run check:agent` — runs all agent consistency checks.
+- `npm run verify` — full local pre-PR check (`lint`, `typecheck:clean`, `test`, `check:agent`).
 
-## Key Files
+## Adapter Docs
 
-- `.cursorrules` - Project conventions and styling rules
-- `docs/DESIGN_PRINCIPLES.md` - Full design specification (if still present)
-- `.cursor/rules/data-structure-practice-questions.mdc` - Creating "Implement X From Scratch" practice questions
+These are adapter surfaces that should stay thin and point back to this file:
 
-## Known gotchas (always update together)
+- `CLAUDE.md`
+- `.cursorrules`
 
-**When deleting code:** Always clean up unused variables, imports, types, and functions left behind. Do not leave dead code or unused declarations.
+## Historical Docs (Non-Canonical)
 
-These changes **require updating multiple files** in one pass. Do not only edit the page or one component.
+These are historical context and should not be treated as operational source of truth:
 
-| Change | Update these together |
-|--------|------------------------|
-| **Show/hide or change access to a top-level nav item** (e.g. Learn, Videos, Practice) | 1. Page route (`src/app/[section]/page.tsx`) · 2. **Navbar** `src/components/layout/Navbar.tsx` (desktop nav + mobile nav, and both editor/default branches if relevant) · 3. **Middleware** `src/middleware.ts` (public vs protected logic + `config.matcher`) |
+- `docs/AI_AGENT_SETUP.md`
+- `docs/IMPROVEMENTS_SUMMARY.md`
 
-See `.cursorrules` → "Known gotchas (multi-file consistency)" for the full checklist.
+## Known Gotchas (Always Update Together)
+
+**When deleting code:** remove unused variables, imports, types, and dead functions in the same change.
+
+For top-level nav visibility/access changes (Learn, Videos, Practice, Session, Explore), update in one pass:
+
+1. Contract: `src/config/navigationContract.ts`
+2. Navbar rendering: `src/components/layout/Navbar.tsx` (desktop + mobile)
+3. Middleware behavior: `src/middleware.ts` (logic + `config.matcher`)
+4. Route file: `src/app/[section]/page.tsx` (or equivalent route)
+
+Validation checklist: `npm run check:nav-contract` and `npm run check:agent`.

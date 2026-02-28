@@ -7,6 +7,13 @@ import { useSession, signOut } from 'next-auth/react';
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
 import { UserRole, hasRole } from '@/types/roles';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
+import { ChromeMode } from '@/hooks/useChromeMode';
+import {
+  PUBLIC_PRACTICE_NAV_ITEMS,
+  PUBLIC_PRIMARY_NAV_ITEMS,
+  SESSION_DESKTOP_NAV_ITEMS,
+  SESSION_MOBILE_NAV_ITEMS,
+} from '@/config/navigationContract';
 import AdminProxyControls from '../auth/AdminProxyControls';
 import { Button } from '@/components/ui/Button';
 
@@ -48,8 +55,6 @@ function UserAvatar({ src, name }: { src: string; name: string }) {
     </>
   );
 }
-
-import { ChromeMode } from '@/hooks/useChromeMode';
 
 interface NavbarProps {
   mode?: ChromeMode;
@@ -150,7 +155,10 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
   };
 
   const isStudioSectionActive = ['/thumbnails', '/gallery', '/clips', '/ai', '/admin/content', '/admin/session-intelligence', '/admin/session-quality', '/admin/friction', '/admin/feedback'].some((path) => isActive(path));
-  const isPracticeSectionActive = ['/peralta75', '/assessment'].some((path) => isActive(path));
+  const isPracticeSectionActive = PUBLIC_PRACTICE_NAV_ITEMS.some((item) => isActive(item.href));
+  const publicPrimaryLeadItem = PUBLIC_PRIMARY_NAV_ITEMS[0] || null;
+  const publicPrimaryTrailingItems = PUBLIC_PRIMARY_NAV_ITEMS.slice(1);
+  const editorSessionNavItems = SESSION_MOBILE_NAV_ITEMS;
   const adminDashboardHref = '/admin';
 
   if (pathname === '/ai') {
@@ -236,7 +244,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                     {/* Standard nav for logged-out + logged-in non-editor */}
                     {!isEditor && (
                       <>
-                        <Link href="/learn" className={navLinkClass('/learn')}>Learn</Link>
+                        {publicPrimaryLeadItem && (
+                          <Link href={publicPrimaryLeadItem.href} className={navLinkClass(publicPrimaryLeadItem.href)}>
+                            {publicPrimaryLeadItem.label}
+                          </Link>
+                        )}
                         <div className="relative group">
                           <button type="button" className={navButtonClass(isPracticeSectionActive)}>
                             Practice
@@ -246,32 +258,43 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                           </button>
                           <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                             <div className="py-2">
-                              <Link href="/peralta75" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">
-                                <span className="block text-foreground font-medium">Peralta 75</span>
-                                <span className="block text-xs text-muted-foreground">75 curated LeetCode problems</span>
-                              </Link>
-                              <Link href="/assessment" className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">
-                                <span className="block text-foreground font-medium">Assessment</span>
-                                <span className="block text-xs text-muted-foreground">Test your skills on demand</span>
-                              </Link>
+                              {PUBLIC_PRACTICE_NAV_ITEMS.map((item) => (
+                                <Link key={item.href} href={item.href} className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">
+                                  <span className="block text-foreground font-medium">{item.label}</span>
+                                  {item.description && (
+                                    <span className="block text-xs text-muted-foreground">{item.description}</span>
+                                  )}
+                                </Link>
+                              ))}
                             </div>
                           </div>
                         </div>
-                        <Link href="/videos" className={navLinkClass('/videos')}>Videos</Link>
+                        {publicPrimaryTrailingItems.map((item) => (
+                          <Link key={item.href} href={item.href} className={navLinkClass(item.href)}>
+                            {item.label}
+                          </Link>
+                        ))}
                       </>
                     )}
                     {/* Logged-in non-editor: Explore entry only when session features enabled */}
                     {isLoggedIn && !isEditor && showSessionFeatures && (
                       <>
-                        <Link href="/home" className={navLinkClass('/home')}>Session</Link>
-                        <Link href="/explore" className={navLinkClass('/explore')}>Explore</Link>
+                        {SESSION_DESKTOP_NAV_ITEMS.map((item) => (
+                          <Link key={item.href} href={item.href} className={navLinkClass(item.href)}>
+                            {item.label}
+                          </Link>
+                        ))}
                       </>
                     )}
                     {/* Logged-in editor: Explore + Studio */}
                     {isLoggedIn && isEditor && (
                       <>
                         {showSessionFeatures && (
-                          <Link href="/explore" className={navLinkClass('/explore')}>Explore</Link>
+                          editorSessionNavItems.map((item) => (
+                            <Link key={item.href} href={item.href} className={navLinkClass(item.href)}>
+                              {item.label}
+                            </Link>
+                          ))
                         )}
                         {!isEffectiveAdmin && (
                           <div className="relative group">
@@ -490,18 +513,33 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 {/* Standard nav for logged-out + logged-in non-editor */}
                 {!isEditor && (
                   <>
-                    <Link href="/learn" className={mobileNavLinkClass('/learn')} onClick={() => setIsMenuOpen(false)}>Learn</Link>
+                    {publicPrimaryLeadItem && (
+                      <Link href={publicPrimaryLeadItem.href} className={mobileNavLinkClass(publicPrimaryLeadItem.href)} onClick={() => setIsMenuOpen(false)}>
+                        {publicPrimaryLeadItem.label}
+                      </Link>
+                    )}
                     <div className="space-y-1 pt-3">
                       <span className="block px-4 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Practice</span>
-                      <Link href="/peralta75" className={mobileNavLinkClass('/peralta75')} onClick={() => setIsMenuOpen(false)}>Peralta 75</Link>
-                      <Link href="/assessment" className={mobileNavLinkClass('/assessment')} onClick={() => setIsMenuOpen(false)}>Assessment</Link>
+                      {PUBLIC_PRACTICE_NAV_ITEMS.map((item) => (
+                        <Link key={item.href} href={item.href} className={mobileNavLinkClass(item.href)} onClick={() => setIsMenuOpen(false)}>
+                          {item.label}
+                        </Link>
+                      ))}
                     </div>
-                    <Link href="/videos" className={mobileNavLinkClass('/videos')} onClick={() => setIsMenuOpen(false)}>Videos</Link>
+                    {publicPrimaryTrailingItems.map((item) => (
+                      <Link key={item.href} href={item.href} className={mobileNavLinkClass(item.href)} onClick={() => setIsMenuOpen(false)}>
+                        {item.label}
+                      </Link>
+                    ))}
                   </>
                 )}
                 {/* Logged-in non-editor mobile: Explore entry only when session features enabled */}
                 {isLoggedIn && !isEditor && showSessionFeatures && (
-                  <Link href="/explore" className={mobileNavLinkClass('/explore')} onClick={() => setIsMenuOpen(false)}>Explore</Link>
+                  SESSION_MOBILE_NAV_ITEMS.map((item) => (
+                    <Link key={item.href} href={item.href} className={mobileNavLinkClass(item.href)} onClick={() => setIsMenuOpen(false)}>
+                      {item.label}
+                    </Link>
+                  ))
                 )}
                 {/* Logged-in editor mobile: Explore + Studio */}
                 {isLoggedIn && isEditor && (
@@ -512,7 +550,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                       </Link>
                     )}
                     {showSessionFeatures && (
-                      <Link href="/explore" className={mobileNavLinkClass('/explore')} onClick={() => setIsMenuOpen(false)}>Explore</Link>
+                      SESSION_MOBILE_NAV_ITEMS.map((item) => (
+                        <Link key={item.href} href={item.href} className={mobileNavLinkClass(item.href)} onClick={() => setIsMenuOpen(false)}>
+                          {item.label}
+                        </Link>
+                      ))
                     )}
                     {!isEffectiveAdmin && (
                       <div className="space-y-1 pt-3">

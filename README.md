@@ -1,6 +1,6 @@
 # James Peralta Personal Website
 
-> **For AI Assistants**: See [`CLAUDE.md`](./CLAUDE.md) for development conventions and patterns.
+> **For AI Assistants**: Start with [`AGENTS.md`](./AGENTS.md) (canonical source). [`CLAUDE.md`](./CLAUDE.md) and [`.cursorrules`](./.cursorrules) are adapter docs.
 
 A modern personal website showcasing videos, blog posts, and portfolio items. Built with Next.js, TypeScript, and TailwindCSS.
 

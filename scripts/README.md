@@ -10,6 +10,16 @@ This directory contains utility scripts and one-off tasks for the project.
 
 ## Available Scripts
 
+### Agent consistency checks
+
+Use these before pushing changes that touch agent docs, navbar routes, or middleware.
+
+```bash
+npm run check:agent-docs   # docs table/path/script consistency
+npm run check:nav-contract # nav + middleware contract consistency
+npm run check:agent        # both checks
+```
+
 ### Database backup to S3
 
 **Script:** `bin/backup-db-to-s3.sh`

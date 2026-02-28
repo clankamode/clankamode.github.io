@@ -1,99 +1,25 @@
-# James Peralta Personal Website
+# Cursor Adapter Rules
 
-## Tech Stack
-- Next.js 15 (App Router)
-- React 19
-- TypeScript 5
-- Tailwind CSS 4
-- Supabase (database)
-- NextAuth (authentication)
-- Vercel (hosting, blob storage)
+> Adapter rules for Cursor.
+>
+> Canonical agent source of truth: `AGENTS.md`.
 
-## Project Structure
-```
-src/
-├── app/           # Next.js App Router pages and API routes
-│   ├── api/       # API routes (REST endpoints)
-│   └── [page]/    # Page routes with _components/ for page-specific components
-├── components/    # Shared React components
-│   ├── ui/        # Generic UI components
-│   ├── layout/    # Layout components (Navbar, etc.)
-│   └── sections/  # Page sections
-├── lib/           # Utility functions and external service clients
-├── context/       # React context providers
-└── types/         # TypeScript type definitions
-```
+## Always Apply
 
-## Conventions
+- Follow `AGENTS.md` for skills/workflows, gotchas, and validation steps.
+- Keep style and architecture consistent with nearby code.
+- Remove unused imports, variables, types, and functions when deleting/refactoring code.
 
-### File Naming
-- React components: PascalCase (e.g., `VideoCard.tsx`)
-- Utilities/libs: camelCase (e.g., `youtube.ts`)
-- Page-specific components go in `_components/` folder within the page directory
+## Critical Multi-File Consistency
 
-### Code Style
-- Use TypeScript strict mode
-- Prefer `interface` over `type` for object shapes
-- Use named exports for components
-- Use async/await over .then() chains
-- Keep components small and focused
-- **When deleting code**: Remove any variables, imports, types, or functions that become unused as a result. Do not leave dead code or unused declarations.
+For top-level nav and route-access changes, update all of:
 
-### API Routes
-- Use NextResponse for responses
-- Check authentication with `getToken({ req })`
-- Return early on errors with appropriate status codes
-- Use Supabase client from `@/lib/supabase`
+1. `src/config/navigationContract.ts`
+2. `src/components/layout/Navbar.tsx`
+3. `src/middleware.ts`
+4. Relevant route under `src/app/`
 
-### Styling
-- **CRITICAL**: Refer to `.agent/skills/brand-guidelines/SKILL.md` for design tokens and the Nine Laws.
-- See `AGENTS.md` for a full list of available skills and workflows.
-- Use Tailwind CSS 4.
-- **Current Theme**: "Cinematic Dark Mode" (base: `bg-[#09090b]`, surfaces: glassmorphism).
-- **Primary Brand**: Gradient of Mastery (Green -> Emerald -> Blue).
-- **Typography**: Editorial (Inter/Jakarta), tight tracking.
-- Do NOT use flat colors like `#1a1a1a`.
+Then run:
 
-### Authentication
-- Protected routes check for session in middleware
-- Admin-only features check for UserRole.ADMIN
-- Use `useSession()` hook in client components
-
-## Common Patterns
-
-### Fetching Data
-```typescript
-// Server component
-const data = await supabase.from('Table').select('*');
-
-// Client component
-const [data, setData] = useState([]);
-useEffect(() => { fetchData(); }, []);
-```
-
-### Error Handling
-- API routes: Return JSON with error message and status code
-- Client: Show error state in UI, log to console
-- Don't over-engineer with excessive try/catch for trusted internal calls
-
-## Testing
-- E2E tests with Playwright in `tests/` directory
-- Run: `npm run test:e2e`
-
-## Environment Variables
-See `.env.local.example` for required variables.
-
-## Known gotchas (multi-file consistency)
-
-When making changes that affect **visibility or access** of a top-level nav item, update **all** of these in one go — the AI often updates only one and forgets the rest:
-
-1. **Page/route** – e.g. `src/app/learn/page.tsx` (or the relevant route). Don’t hide/show only the page without updating nav and middleware.
-2. **Navbar** – `src/components/layout/Navbar.tsx`:
-   - Desktop nav (main `<Link>` list).
-   - Mobile nav (hamburger menu).
-   - Both branches (e.g. editor view vs default view) if the item appears in one or both.
-3. **Middleware** – `src/middleware.ts`:
-   - Add or remove the path from public vs protected logic (e.g. “Learn is public”).
-   - Ensure the path (and children like `/learn/:path*`) is in the `config.matcher` so middleware runs.
-
-**Checklist when adding, removing, or toggling a nav item:** page ✓ · Navbar desktop ✓ · Navbar mobile ✓ · middleware logic ✓ · middleware matcher ✓
+- `npm run check:nav-contract`
+- `npm run check:agent`

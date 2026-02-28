@@ -1,5 +1,9 @@
 # AI Agent Development Improvements Summary
 
+> Historical context only. This document is not the operational source of truth.
+>
+> Canonical agent instructions live in `AGENTS.md`.
+
 **Date**: 2026-02-14
 **Completed By**: Claude Sonnet 4.5
 
