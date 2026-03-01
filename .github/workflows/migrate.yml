@@ -1,9 +1,9 @@
 name: Migrate
 
 on:
-  workflow_dispatch: # disabled until secrets are configured — see issue #220
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   migrate:
