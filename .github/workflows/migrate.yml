@@ -8,7 +8,6 @@ on:
 jobs:
   migrate:
     runs-on: ubuntu-latest
-    environment: production
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
