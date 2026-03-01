@@ -17,18 +17,18 @@
   updateBar();
 
   // 2. Estimated reading time
-  const article = document.querySelector('article') || document.querySelector('main');
-  if (article) {
-    const words = article.textContent?.split(/\s+/).length || 0;
+  const content = document.querySelector('.page');
+  if (content) {
+    const words = content.textContent?.split(/\s+/).length || 0;
     const mins = Math.max(1, Math.ceil(words / 220));
-    const meta = document.querySelector('.post-meta');
-    if (meta) {
+    const meta = document.querySelector('.meta');
+    if (meta && !/\bmin read\b/i.test(meta.textContent || '')) {
       meta.innerHTML += ` &nbsp;·&nbsp; ${mins} min read`;
     }
   }
 
   // 3. Keyboard navigation: j/k for prev/next
-  const navLinks = document.querySelectorAll('.nav a');
+  const navLinks = document.querySelectorAll('.post-nav a');
   const prev = navLinks[0]?.getAttribute('href');
   const next = navLinks.length > 1 ? navLinks[1]?.getAttribute('href') : null;
   document.addEventListener('keydown', (e) => {
