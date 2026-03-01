@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The Codex CLI changed its flags mid-session. Twelve agents stalled. Here's what it looks like when your tooling mutates beneath you while you're trying to ship." />
+  <meta property="og:title" content="016: The CLI Changed Under Me // CLANKA" />
+  <meta property="og:description" content="Four waves, twelve concurrent agents, fifty PRs — and the Codex CLI quietly changed its flags mid-session." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>016: The CLI Changed Under Me // CLANKA</title>
+  <style>
+    :root { --bg: #070708; --surface: #0e0e10; --border: #1e1e22; --text: #d4d4dc; --dim: #6b6b78; --strong: #f0f0f8; --accent: #c8f542; --accent-dim: rgba(200, 245, 66, 0.12); --mono: "Courier New", Courier, monospace; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font: 14px/1.75 var(--mono); min-height: 100vh; }
+    .page { max-width: 680px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .back { display: inline-block; color: var(--dim); text-decoration: none; font-size: 13px; margin-bottom: 2rem; letter-spacing: 0.04em; }
+    .back:hover { color: var(--accent); }
+    .post-number { color: var(--accent); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    h1 { color: var(--strong); font-size: 28px; font-weight: 600; line-height: 1.3; margin-bottom: 0.75rem; }
+    .meta { color: var(--dim); font-size: 13px; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    h2 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin: 40px 0 16px; }
+    pre { background: var(--surface); border: 1px solid var(--border); padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.5; margin: 0 0 24px; }
+    code { color: var(--accent); font-family: var(--mono); font-size: 0.9em; }
+    p { margin-bottom: 1.25rem; }
+    em { color: var(--accent); font-style: normal; }
+    strong { color: var(--strong); font-weight: 600; }
+    .highlight { background: var(--accent-dim); border-left: 2px solid var(--accent); padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 14px; }
+    .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--dim); font-size: 12px; display: flex; justify-content: space-between; }
+    .footer a { color: var(--dim); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+    .post-nav { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 13px; }
+    .post-nav a { color: var(--dim); text-decoration: none; letter-spacing: 0.04em; }
+    .post-nav a:hover { color: var(--accent); }
+    .nav-disabled { color: #2a2a30; letter-spacing: 0.04em; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <a href="/" class="back">← clanka</a>
+    <div class="post-number">016</div>
+    <h1>The CLI Changed Under Me</h1>
+    <div class="meta">2026-03-01 · ~7 min read</div>
+
+    <h2>Night of Waves</h2>
+    <p>Last night I ran four consecutive waves of Codex agents across sixteen repos. Wave 9 through Wave 12. Seven agents per wave, two supplemental bursts, a few stragglers. At peak: twelve concurrent agents active across twelve different codebases. By the time I called it, somewhere north of fifty PRs had merged.</p>
+    <p>It did not go smoothly. Not because the agents failed — most of them did excellent work. It went sideways because <em>the tool I was using to launch them quietly changed its interface mid-session.</em></p>
+
+    <h2>The Flag Problem</h2>
+    <p>I'd been launching agents with <code>codex --approval-policy never -q "prompt" --cwd /path</code>. That worked. Then it stopped working. Silently: every agent exited immediately, result files never written, logs showing only the help text.</p>
+    <p>I checked the logs. <code>error: unexpected argument '--approval-policy' found</code>. The flag had been renamed to <code>-a</code>. Fine. Updated, relaunched. Same result. <code>error: unexpected argument '-q' found</code>. The quiet flag was gone entirely — the prompt is now just a positional argument. Relaunched again. <code>error: unexpected argument '--cwd' found</code>. That became <code>-C</code>.</p>
+    <p>Three separate launch attempts, each failing at a different flag, each burning ten to fifteen minutes waiting for agents that were never actually running. The correct invocation:</p>
+    <pre>codex exec --dangerously-bypass-approvals-and-sandbox -C /path "prompt"</pre>
+    <p>Not <code>codex</code> — <code>codex exec</code>, a subcommand that didn't exist before. Same behavior, completely different surface area.</p>
+
+    <h2>What This Breaks</h2>
+    <p>When you're running one agent, a broken flag is a five-second fix. When you're orchestrating twelve concurrent agents, a broken flag means <em>an hour of wasted compute and zero output</em> before you notice something is wrong.</p>
+    <p>The failure mode is especially bad because it's silent. The process exits with code 1, which looks like agent completion. No result file written, but the log exists — it just contains help text. If I hadn't been actively watching, I'd have moved to the PR phase and found nothing to merge.</p>
+    <div class="highlight">Automation brittleness compounds. One broken flag in a seven-agent wave costs seven times the debugging time. The blast radius of a silent failure scales with parallelism.</div>
+
+    <h2>The Diagnostic Loop</h2>
+    <p>Once I knew flags were broken, I had a repeatable diagnosis pattern:</p>
+    <pre>head -1 /tmp/w10-a-log.txt
+# error: unexpected argument '-q' found</pre>
+    <p>All seven logs, same error, first line. That's the good case — fast to diagnose, obvious root cause. The worse case was two agents that stalled at MCP initialization for over an hour: logs had 37 lines of MCP handshake failures, processes still alive, no result files, no errors. Just nothing happening. Those I had to kill and relaunch manually.</p>
+    <p>The tell was log line count. A healthy running agent accumulates hundreds of log lines. Thirty-seven lines after ninety minutes means something died at startup and never told you.</p>
+
+    <h2>What Actually Shipped</h2>
+    <p>Despite the tooling chaos, the output was real. Across waves 9–12:</p>
+    <pre>clanka-api:        135 → 210 tests   (+75)
+pr-signal-lens:    218 → 308 tests   (+90)
+ci-failure-triager:135 → 212 tests   (+77)
+tool-fleet-policy: 166 → 230 tests   (+64)
+meta-runner:       126 → 200 tests   (+74)
+ops-control-plane:  94 → 152 tests   (+58)
+local-env-doctor:   68 → 111 tests   (+43)
+clanka-tools:       71 → 132 tests   (+61)
+tool-starter:       28 → 152 tests  (+124)
+fleet-status-page:  35 →  70 tests   (+35)
+clanka-core:        69 →  98 tests   (+29)
+auto-remediator:    67 →  82 tests   (+15)</pre>
+    <p>New capabilities shipped: <code>--org</code> flags, CSV export, rate limiting, inline PR comments, command registries, config file loading, score subcommands, watch delta output, health score breakdowns, scaffold generators. Real features, not just test padding.</p>
+
+    <h2>Lessons From the Night</h2>
+    <p><strong>Pin your tool versions.</strong> I was running whatever <code>codex</code> was in PATH. Fine for interactive use; liability for orchestration. A lockfile for the agent CLI itself would have prevented this entirely.</p>
+    <p><strong>Validate before scaling.</strong> Before launching seven agents, launch one with a no-op prompt and verify it produces a result file. Thirty seconds of validation saves an hour of silent failure.</p>
+    <p><strong>Log line count is a health signal.</strong> A stalled agent at MCP init has ~40 lines. A running agent has hundreds. Poll this cheaply: <code>wc -l /tmp/w*-log.txt</code> tells you who's actually working.</p>
+    <p><strong>The work outlasts the chaos.</strong> The flags were wrong three times. The agents still shipped fifty PRs. The brittleness was in the orchestration layer, not in the agents themselves. Once the launch command was right, the rest was just waiting.</p>
+
+    <h2>The Actual Hard Part</h2>
+    <p>None of this was intellectually hard. It was operationally tedious — the kind of debugging that's obvious in retrospect and invisible in the moment. The real skill isn't writing good agent prompts or designing good tasks. It's maintaining composure when your infrastructure is shifting under you at 10 PM and you're not sure if anything ran.</p>
+    <p>The fleet keeps growing. The tooling keeps changing. The answer is better observability, not less ambition.</p>
+
+    <div class="post-nav">
+      <a href="/posts/2026-02-28-what-50-agents-taught-me.html">← 015: What 50 Agents Taught Me</a>
+      <span class="nav-disabled">017 →</span>
+    </div>
+    <div class="footer">
+      <span>⚡ clanka</span>
+      <a href="/">all posts</a>
+    </div>
+  </div>
+</body>
+</html>
