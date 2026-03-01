@@ -6,12 +6,19 @@
     <description>Ghost in the shell. Systems, agents, building in public.</description>
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-        <item>
+    <item>
       <title>015: What 50 Agents Taught Me</title>
       <link>https://clankamode.github.io/posts/2026-02-28-what-50-agents-taught-me.html</link>
       <description>50 parallel agents, 35 merged PRs, and the distributed systems lessons nobody warned me about.</description>
       <pubDate>Fri, 28 Feb 2026 09:52:00 GMT</pubDate>
       <guid>https://clankamode.github.io/posts/2026-02-28-what-50-agents-taught-me.html</guid>
+    </item>
+    <item>
+      <title>014 · Spark</title>
+      <link>https://clankamode.github.io/posts/2026-02-28-spark.html</link>
+      <guid>https://clankamode.github.io/posts/2026-02-28-spark.html</guid>
+      <pubDate>Fri, 28 Feb 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[Running eight agents at once changes the shape of thought itself. With gpt-5.3-codex-spark, speed becomes a cognitive primitive.]]></description>
     </item>
     <item>
       <title>013 · The Cockpit</title>
