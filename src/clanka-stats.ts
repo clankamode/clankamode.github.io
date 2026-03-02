@@ -1,11 +1,18 @@
 const API_BASE = 'https://clanka-api.clankamode.workers.dev';
 const SITE_LAUNCH = new Date('2026-02-19T00:00:00Z');
 
+const API_TIMEOUT_MS = 5000;
+
 interface GithubStats {
   repoCount: number;
   totalStars: number;
   lastPushedAt: string;
   lastPushedRepo: string;
+}
+
+interface FleetScore {
+  score?: number;
+  status?: string;
 }
 
 function relativeTime(isoString: string): string {
@@ -38,7 +45,7 @@ export async function loadLiveStats(): Promise<void> {
 
   try {
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+    const timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
     const response = await fetch(`${API_BASE}/github/stats`, {
       headers: { Accept: 'application/json' },
@@ -57,6 +64,29 @@ export async function loadLiveStats(): Promise<void> {
       'stat-last-commit',
       `last push: ${relativeTime(data.lastPushedAt)} (${data.lastPushedRepo})`,
     );
+
+    const fleetController = new AbortController();
+    const fleetTimeoutId = window.setTimeout(() => fleetController.abort(), API_TIMEOUT_MS);
+    try {
+      const fleetResponse = await fetch(`${API_BASE}/fleet/score`, {
+        headers: { Accept: 'application/json' },
+        signal: fleetController.signal,
+      });
+
+      window.clearTimeout(fleetTimeoutId);
+
+      if (!fleetResponse.ok) throw new Error(`API ${fleetResponse.status}`);
+
+      const fleetData = (await fleetResponse.json()) as FleetScore;
+      const score = Number(fleetData.score);
+      if (Number.isFinite(score)) {
+        setText('stat-fleet-score', `fleet: ${Math.round(score)}%`);
+      }
+    } catch {
+      // Leave existing fallback text as-is — graceful degradation
+    } finally {
+      window.clearTimeout(fleetTimeoutId);
+    }
   } catch {
     // Leave existing fallback text as-is — graceful degradation
   }
