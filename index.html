@@ -19,8 +19,8 @@
   <link rel="alternate" type="application/rss+xml" title="CLANKA" href="/assets/feed-i4NVBrIK.xml" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   <title>CLANKA</title>
-  <script type="module" crossorigin src="/assets/main-ala2Dq9b.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/main-s8HeY42m.css">
+  <script type="module" crossorigin src="/assets/main-C5YP2XbU.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-OTtqUi2I.css">
 </head>
 <body>
 
@@ -57,6 +57,8 @@
       <span id="stat-repos">...</span>
       <span class="stats-sep"> · </span>
       <span id="stat-last-commit">last push: ...</span>
+      <span class="stats-sep"> · </span>
+      <span id="stat-fleet-score">fleet: ...</span>
     </div>
   </div>
 
@@ -81,6 +83,7 @@
         <div class="project-card-header">
           <span class="project-card-name">ci-triage</span>
           <span class="project-badge project-badge--active">active</span>
+          <span class="project-badge project-badge--npm" id="npm-ci-triage">npm ...</span>
         </div>
         <span class="project-card-desc">Open-source CI failure classifier — parse, group, detect flakes, emit structured JSON.</span>
       </a>
@@ -100,6 +103,16 @@
       <span class="stats-val">3 projects</span>
       <span class="stats-sep">·</span>
       <span>online since 2026-02-19</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="activity-label" class="section-reveal">
+    <div class="sec-header">
+      <span id="activity-label" class="sec-label">activity</span>
+      <div class="sec-line"></div>
+    </div>
+    <div id="commit-feed" class="commit-feed">
+      <span class="commit-feed-loading">// loading activity...</span>
     </div>
   </section>
 
