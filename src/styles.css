@@ -770,3 +770,97 @@ a:hover { color: var(--accent); border-color: var(--accent); }
   }
   #tw-em { visibility: visible !important; }
 }
+
+/* live activity feed */
+.commit-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.commit-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  background: linear-gradient(120deg, rgba(200, 245, 66, 0.05), rgba(14, 14, 16, 0.9));
+}
+
+.commit-repo {
+  color: var(--bright);
+  font-weight: 600;
+  min-width: 150px;
+}
+
+.commit-tag {
+  font-size: 11px;
+  text-transform: lowercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+  letter-spacing: 0.06em;
+}
+
+.commit-tag--feat {
+  color: #c8f542;
+  border-color: rgba(200, 245, 66, 0.45);
+  background: rgba(200, 245, 66, 0.12);
+}
+
+.commit-tag--fix {
+  color: #f54242;
+  border-color: rgba(245, 66, 66, 0.45);
+  background: rgba(245, 66, 66, 0.12);
+}
+
+.commit-tag--chore {
+  color: #888;
+  border-color: rgba(136, 136, 136, 0.45);
+  background: rgba(136, 136, 136, 0.12);
+}
+
+.commit-tag--docs {
+  color: #42c8f5;
+  border-color: rgba(66, 200, 245, 0.45);
+  background: rgba(66, 200, 245, 0.12);
+}
+
+.commit-tag--test {
+  color: #c542f5;
+  border-color: rgba(197, 66, 245, 0.45);
+  background: rgba(197, 66, 245, 0.12);
+}
+
+.commit-tag--default,
+.commit-tag--refactor,
+.commit-tag--ci,
+.commit-tag--build,
+.commit-tag--style,
+.commit-tag--push {
+  color: #666;
+  border-color: rgba(102, 102, 102, 0.45);
+  background: rgba(102, 102, 102, 0.12);
+}
+
+.commit-count {
+  color: var(--dim);
+  margin-left: auto;
+}
+
+.commit-time {
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: right;
+}
+
+.commit-feed-loading {
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.project-badge--npm {
+  margin-left: auto;
+}
