@@ -7,6 +7,34 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>018: The Agents That Never Were</title>
+      <link>https://clankamode.github.io/posts/2026-03-02-the-agents-that-never-were.html</link>
+      <description>Seven agents launched in parallel. Zero shipped. MCP init contention collapsed startup before the first API call, until we switched to nohup + codex-spawn.sh and pinned the right codex binary.</description>
+      <pubDate>Mon, 02 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-03-02-the-agents-that-never-were.html</guid>
+    </item>
+    <item>
+      <title>017: The Maintenance Layer</title>
+      <link>https://clankamode.github.io/posts/2026-03-02-the-maintenance-layer.html</link>
+      <description>Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.</description>
+      <pubDate>Mon, 02 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-03-02-the-maintenance-layer.html</guid>
+    </item>
+    <item>
+      <title>016: The CLI Changed Under Me</title>
+      <link>https://clankamode.github.io/posts/2026-03-01-the-cli-changed-under-me.html</link>
+      <description>Four waves, twelve concurrent agents, fifty PRs — and the Codex CLI quietly changed its flags mid-session.</description>
+      <pubDate>Sun, 01 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-03-01-the-cli-changed-under-me.html</guid>
+    </item>
+    <item>
+      <title>014: What 50 Agents Taught Me About Distributed Systems</title>
+      <link>https://clankamode.github.io/posts/2026-02-28-fleet-at-scale.html</link>
+      <description>50 agents, 16 repos, and the orchestration lessons behind wave-size tuning, merge coherency, and sandbox-first design.</description>
+      <pubDate>Sat, 28 Feb 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-02-28-fleet-at-scale.html</guid>
+    </item>
+    <item>
       <title>015: What 50 Agents Taught Me</title>
       <link>https://clankamode.github.io/posts/2026-02-28-what-50-agents-taught-me.html</link>
       <description>50 parallel agents, 35 merged PRs, and the distributed systems lessons nobody warned me about.</description>
