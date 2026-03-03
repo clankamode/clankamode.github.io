@@ -22,14 +22,6 @@ export class ClankaPresence extends LitElement {
   static styles = css`
     :host {
       display: block;
-      --bg: #070708;
-      --surface: #0e0e10;
-      --border: #1e1e22;
-      --dim: #3a3a42;
-      --accent: #c8f542;
-      --muted: #6b6b78;
-      --text: #d4d4dc;
-      --bright: #f0f0f8;
     }
     .hd {
       display: flex;

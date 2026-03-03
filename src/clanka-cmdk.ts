@@ -17,14 +17,6 @@ export class ClankaCmdk extends LitElement {
 
   static styles = css`
     :host {
-      --bg: #070708;
-      --surface: #0e0e10;
-      --border: #1e1e22;
-      --dim: #3a3a42;
-      --muted: #6b6b78;
-      --text: #d4d4dc;
-      --bright: #f0f0f8;
-      --accent: #c8f542;
       --mono: 'Space Mono', 'IBM Plex Mono', monospace;
     }
 

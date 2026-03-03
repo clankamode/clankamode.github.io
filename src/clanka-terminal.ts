@@ -15,14 +15,6 @@ export class ClankaTerminal extends LitElement {
       display: block;
       margin-bottom: 28px;
       font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
-      --bg: #070708;
-      --surface: #0e0e10;
-      --border: #1e1e22;
-      --dim: #3a3a42;
-      --muted: #6b6b78;
-      --text: #d4d4dc;
-      --bright: #f0f0f8;
-      --accent: #c8f542;
     }
     .sec-header {
       display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
@@ -33,7 +25,11 @@ export class ClankaTerminal extends LitElement {
     .sec-line { flex: 1; height: 1px; background: var(--border); }
     .terminal {
       border: 1px solid var(--border);
-      background: radial-gradient(circle at top, #0f1110 0%, #070708 68%);
+      background: radial-gradient(
+        circle at top,
+        color-mix(in srgb, var(--surface) 84%, var(--accent) 16%) 0%,
+        var(--bg) 68%
+      );
       padding: 14px;
       color: var(--accent);
       font-size: 11px;
