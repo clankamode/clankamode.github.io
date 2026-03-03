@@ -56,7 +56,8 @@
   const contentEls = [];
   const contentArea = document.querySelector('article') || document.querySelector('.page');
   if (contentArea) {
-    contentArea.querySelectorAll('p, h2, h3, pre').forEach(el => {
+    // Keep selector aligned with listen-mode dimming rules, including callout blocks.
+    contentArea.querySelectorAll('p, h2, h3, pre, .highlight').forEach(el => {
       if (el.closest('.audio-player') || el.closest('.footer') || el.closest('.post-nav') || el.closest('.meta') || el.classList.contains('post-number')) return;
       if (el.textContent.trim().length > 5) contentEls.push(el);
     });

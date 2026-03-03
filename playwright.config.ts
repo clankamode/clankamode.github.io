@@ -10,7 +10,7 @@ export default defineConfig({
     { name: 'chromium', use: { browserName: 'chromium' } },
   ],
   webServer: {
-    command: 'python3 -m http.server 8080',
+    command: 'vite --host 127.0.0.1 --port 8080',
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
   },

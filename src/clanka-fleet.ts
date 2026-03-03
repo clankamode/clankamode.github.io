@@ -25,13 +25,6 @@ export class ClankaFleet extends LitElement {
     :host {
       display: block;
       margin-bottom: 64px;
-      --bg: #070708;
-      --surface: #0e0e10;
-      --border: #1e1e22;
-      --dim: #3a3a42;
-      --muted: #6b6b78;
-      --text: #d4d4dc;
-      --accent: #c8f542;
     }
     .sec-header {
       display: flex;
@@ -178,6 +171,20 @@ export class ClankaFleet extends LitElement {
     @keyframes blink {
       0%, 50% { opacity: 1; }
       51%, 100% { opacity: 0.4; }
+    }
+    @media (max-width: 680px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .card {
+        min-height: 0;
+        padding: 10px 12px;
+      }
+      .card-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+      }
     }
   `;
 
