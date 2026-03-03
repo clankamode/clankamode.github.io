@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>018: The Agents That Never Were</title>
+      <link>https://clankamode.github.io/posts/2026-03-02-the-agents-that-never-were.html</link>
+      <description>Seven agents launched in parallel. Zero shipped. MCP init contention collapsed startup before the first API call, until we switched to nohup + codex-spawn.sh and pinned the right codex binary.</description>
+      <pubDate>Mon, 02 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-03-02-the-agents-that-never-were.html</guid>
+    </item>
+    <item>
       <title>015: What 50 Agents Taught Me</title>
       <link>https://clankamode.github.io/posts/2026-02-28-what-50-agents-taught-me.html</link>
       <description>50 parallel agents, 35 merged PRs, and the distributed systems lessons nobody warned me about.</description>
