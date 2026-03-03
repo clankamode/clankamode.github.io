@@ -969,7 +969,6 @@ a:hover { color: var(--accent); border-color: var(--accent); }
 .project-badge--npm {
   margin-left: auto;
 }
-
 @media (max-width: 680px) {
   .commit-item {
     display: grid;
