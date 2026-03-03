@@ -15,9 +15,24 @@ interface FleetScore {
   status?: string;
 }
 
-function relativeTime(isoString: string): string {
-  const then = new Date(isoString).getTime();
+const MIN_VALID_PUSHED_AT_MS = Date.parse('2008-01-01T00:00:00Z');
+const MAX_CLOCK_SKEW_MS = 5 * 60 * 1000;
+
+function parsePushedAt(value: unknown): number | null {
+  if (typeof value !== 'string' || value.trim().length === 0) return null;
+
+  const parsed = Date.parse(value);
+  if (!Number.isFinite(parsed)) return null;
+
+  const now = Date.now();
+  if (parsed < MIN_VALID_PUSHED_AT_MS || parsed > now + MAX_CLOCK_SKEW_MS) return null;
+  return parsed;
+}
+
+function relativeTime(then: number): string {
   const diffMs = Date.now() - then;
+  if (!Number.isFinite(diffMs) || diffMs < 0) return 'just now';
+
   const diffSec = Math.floor(diffMs / 1000);
   const diffMin = Math.floor(diffSec / 60);
   const diffHr = Math.floor(diffMin / 60);
@@ -60,10 +75,15 @@ export async function loadLiveStats(): Promise<void> {
 
     setText('stat-repos', `${data.repoCount} repos`);
     setText('stat-stars', `${data.totalStars} stars`);
-    setText(
-      'stat-last-commit',
-      `last push: ${relativeTime(data.lastPushedAt)} (${data.lastPushedRepo})`,
-    );
+    const pushedAt = parsePushedAt(data.lastPushedAt);
+    const pushedRepo = typeof data.lastPushedRepo === 'string' ? data.lastPushedRepo.trim() : '';
+    if (pushedAt === null) {
+      setText('stat-last-commit', 'last push: unavailable');
+    } else if (pushedRepo.length === 0) {
+      setText('stat-last-commit', `last push: ${relativeTime(pushedAt)}`);
+    } else {
+      setText('stat-last-commit', `last push: ${relativeTime(pushedAt)} (${pushedRepo})`);
+    }
 
     const fleetController = new AbortController();
     const fleetTimeoutId = window.setTimeout(() => fleetController.abort(), API_TIMEOUT_MS);
