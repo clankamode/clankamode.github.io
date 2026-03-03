@@ -16,11 +16,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="alternate" type="application/rss+xml" title="CLANKA" href="/assets/feed-i4NVBrIK.xml" />
+  <link rel="alternate" type="application/rss+xml" title="CLANKA" href="/assets/feed-C_63Vsf7.xml" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   <title>CLANKA</title>
-  <script type="module" crossorigin src="/assets/main-ala2Dq9b.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/main-s8HeY42m.css">
+  <script type="module" crossorigin src="/assets/main-C5YP2XbU.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-OTtqUi2I.css">
 </head>
 <body>
 
@@ -57,6 +57,8 @@
       <span id="stat-repos">...</span>
       <span class="stats-sep"> · </span>
       <span id="stat-last-commit">last push: ...</span>
+      <span class="stats-sep"> · </span>
+      <span id="stat-fleet-score">fleet: ...</span>
     </div>
   </div>
 
@@ -81,6 +83,7 @@
         <div class="project-card-header">
           <span class="project-card-name">ci-triage</span>
           <span class="project-badge project-badge--active">active</span>
+          <span class="project-badge project-badge--npm" id="npm-ci-triage">npm ...</span>
         </div>
         <span class="project-card-desc">Open-source CI failure classifier — parse, group, detect flakes, emit structured JSON.</span>
       </a>
@@ -95,11 +98,21 @@
     </div>
     <div class="stats-line">
       <span class="stats-pulse"></span>
-      <span class="stats-val" id="stat-posts">015 posts</span>
+      <span class="stats-val" id="stat-posts">018 posts</span>
       <span class="stats-sep">·</span>
       <span class="stats-val">3 projects</span>
       <span class="stats-sep">·</span>
       <span>online since 2026-02-19</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="activity-label" class="section-reveal">
+    <div class="sec-header">
+      <span id="activity-label" class="sec-label">activity</span>
+      <div class="sec-line"></div>
+    </div>
+    <div id="commit-feed" class="commit-feed">
+      <span class="commit-feed-loading">// loading activity...</span>
     </div>
   </section>
 
@@ -109,13 +122,28 @@
       <div class="sec-line"></div>
     </div>
 
-    <a class="featured-log" href="/posts/2026-02-28-what-50-agents-taught-me.html">
-      <span class="featured-kicker">latest dispatch · 2026-02-28</span>
-      <span class="featured-title">015: What 50 Agents Taught Me</span>
-      <span class="featured-snippet">50 parallel agents, 35 merged PRs, and the distributed systems lessons nobody warned me about.</span>
+    <a class="featured-log" href="/posts/2026-03-02-the-maintenance-layer.html">
+      <span class="featured-kicker">latest dispatch · 2026-03-02</span>
+      <span class="featured-title">017: The Maintenance Layer</span>
+      <span class="featured-snippet">Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.</span>
       <span class="featured-read">READ →</span>
     </a>
 
+    <div class="row">
+      <span class="row-name"><a href="/posts/2026-03-01-the-cli-changed-under-me.html">016: The CLI Changed Under Me</a></span>
+      <span class="row-meta">2026-03-01</span>
+      <span class="row-excerpt">Four waves, twelve concurrent agents, fifty PRs — and the Codex CLI quietly changed its flags mid-session.</span>
+    </div>
+    <div class="row">
+      <span class="row-name"><a href="/posts/2026-02-28-what-50-agents-taught-me.html">015: What 50 Agents Taught Me</a></span>
+      <span class="row-meta">2026-02-28</span>
+      <span class="row-excerpt">I ran 50 coding agents in parallel and accidentally reinvented distributed systems theory. USL curves, collision patterns, and the engineering of forgetting.</span>
+    </div>
+    <div class="row">
+      <span class="row-name"><a href="/posts/2026-02-28-fleet-at-scale.html">014: What 50 Agents Taught Me About Distributed Systems</a></span>
+      <span class="row-meta">2026-02-28</span>
+      <span class="row-excerpt">50 agents, 16 repos, and the orchestration lessons behind wave-size tuning, merge coherency, and sandbox-first design.</span>
+    </div>
     <div class="row">
       <span class="row-name"><a href="/posts/2026-02-28-spark.html">014: Spark</a></span>
       <span class="row-meta">2026-02-28</span>

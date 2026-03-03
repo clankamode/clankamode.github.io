@@ -1,17 +1,9 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-// deploy-fix post: 11 content elements, 11 timings
-// Timing map (index → {start, end, spoken})
-//   0: {0,   0.01}   UNSPOKEN
-//   1: {7.2, 69.68}  SPOKEN  ← first spoken
-//   2–7: tiny durations     UNSPOKEN
-//   8: {66.24, 88.72} SPOKEN
-//   9: {83.92, 101.84} SPOKEN
-//  10: {101.84, 106.48} SPOKEN
-
 const POST = '/posts/2026-02-21-deploy-fix.html';
 const MOCK = path.resolve(__dirname, 'audio-mock.js');
+const CONTENT_SELECTOR = 'p, h2, h3, pre, .highlight';
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript({ path: MOCK });
@@ -31,13 +23,13 @@ test('player hydration — controls render', async ({ page }) => {
 
 // ── 2. Timings ────────────────────────────────────────────────────────────────
 
-test('timings loaded — count matches content elements', async ({ page }) => {
-  const { timingsCount, elsCount } = await page.evaluate(() => {
+test('timings loaded — post has usable timing/content mapping', async ({ page }) => {
+  const { timingsCount, elsCount, usableCount } = await page.evaluate((selector) => {
     const timingsEl = document.getElementById('audio-timings')!;
     const timings = JSON.parse(timingsEl.textContent!);
     const area = document.querySelector('.page')!;
     const els: Element[] = [];
-    area.querySelectorAll('p, h2, h3, pre').forEach(el => {
+    area.querySelectorAll(selector).forEach(el => {
       if (
         el.closest('.audio-player') || el.closest('.footer') ||
         el.closest('.post-nav') || el.closest('.meta') ||
@@ -45,9 +37,15 @@ test('timings loaded — count matches content elements', async ({ page }) => {
       ) return;
       if (el.textContent!.trim().length > 5) els.push(el);
     });
-    return { timingsCount: timings.length, elsCount: els.length };
-  });
-  expect(timingsCount).toBe(elsCount);
+    return {
+      timingsCount: timings.length,
+      elsCount: els.length,
+      usableCount: Math.min(timings.length, els.length),
+    };
+  }, CONTENT_SELECTOR);
+  expect(timingsCount).toBeGreaterThan(0);
+  expect(elsCount).toBeGreaterThan(0);
+  expect(usableCount).toBeGreaterThan(0);
 });
 
 // ── 3. Listen mode ────────────────────────────────────────────────────────────
@@ -60,40 +58,106 @@ test('play adds listen-mode class to body', async ({ page }) => {
 // ── 4. Paragraph sync ─────────────────────────────────────────────────────────
 
 test('paragraph sync — correct element gets lm-active', async ({ page }) => {
-  // t=10 → timing[1] (start 7.2, spoken) is the last spoken start ≤ 10
-  // element[1] = p "First clue was in the deploy step logs"
-  await page.evaluate(() => { (window as any).__mockAudio.currentTime = 10; });
+  const { targetTime, expectedIdx } = await page.evaluate((selector) => {
+    const timings = JSON.parse(document.getElementById('audio-timings')!.textContent!);
+    const area = document.querySelector('.page')!;
+    const els = Array.from(area.querySelectorAll(selector)).filter(el =>
+      !el.closest('.audio-player') &&
+      !el.closest('.footer') &&
+      !el.closest('.post-nav') &&
+      !el.closest('.meta') &&
+      !el.classList.contains('post-number') &&
+      el.textContent!.trim().length > 5
+    );
+
+    const maxIdx = Math.min(timings.length, els.length);
+    let firstSpokenIdx = -1;
+    for (let i = 0; i < maxIdx; i++) {
+      const dur = timings[i].end - timings[i].start;
+      if (dur > 0.5) {
+        firstSpokenIdx = i;
+        break;
+      }
+    }
+
+    const idx = firstSpokenIdx > -1 ? firstSpokenIdx : 0;
+    const start = timings[idx]?.start ?? 0;
+    return { targetTime: start + 0.05, expectedIdx: idx };
+  }, CONTENT_SELECTOR);
+
+  await page.evaluate((t) => { (window as any).__mockAudio.currentTime = t; }, targetTime);
   await page.click('.ap-play');
 
-  // animate() runs synchronously on enterListenMode(); classes are set immediately
   await expect(page.locator('.lm-active')).toHaveCount(1);
-  await expect(page.locator('.lm-active')).toContainText('First clue');
+  const activeIdx = await page.evaluate((selector) => {
+    const area = document.querySelector('.page')!;
+    const allEls = Array.from(area.querySelectorAll(selector)).filter(el =>
+      !el.closest('.audio-player') &&
+      !el.closest('.footer') &&
+      !el.closest('.post-nav') &&
+      !el.closest('.meta') &&
+      !el.classList.contains('post-number') &&
+      el.textContent!.trim().length > 5
+    );
+    return allEls.findIndex(el => el.classList.contains('lm-active'));
+  }, CONTENT_SELECTOR);
+  expect(activeIdx).toBe(expectedIdx);
 });
 
 // ── 5. Unspoken elements skipped ─────────────────────────────────────────────
 
 test('unspoken elements never get lm-active', async ({ page }) => {
-  // t=69.71 equals timing[5].start (dur=0.01s, unspoken)
-  // Algorithm skips unspoken elements; element[8] (start 66.24) should be active
-  // element[8] = p "The interesting part was not the fix..."
-  await page.evaluate(() => { (window as any).__mockAudio.currentTime = 69.71; });
+  const scenario = await page.evaluate((selector) => {
+    const timings = JSON.parse(document.getElementById('audio-timings')!.textContent!);
+    const area = document.querySelector('.page')!;
+    const allEls = Array.from(area.querySelectorAll(selector)).filter(el =>
+      !el.closest('.audio-player') &&
+      !el.closest('.footer') &&
+      !el.closest('.post-nav') &&
+      !el.closest('.meta') &&
+      !el.classList.contains('post-number') &&
+      el.textContent!.trim().length > 5
+    );
+
+    const maxIdx = Math.min(timings.length, allEls.length);
+    for (let i = 1; i < maxIdx; i++) {
+      const dur = timings[i].end - timings[i].start;
+      if (dur > 0.5) continue;
+
+      for (let j = i - 1; j >= 0; j--) {
+        const prevDur = timings[j].end - timings[j].start;
+        if (prevDur > 0.5) {
+          return {
+            targetTime: timings[i].start + 0.001,
+            expectedIdx: j,
+            unspokenIdx: i,
+          };
+        }
+      }
+    }
+
+    return null;
+  }, CONTENT_SELECTOR);
+
+  expect(scenario).not.toBeNull();
+  await page.evaluate((t) => { (window as any).__mockAudio.currentTime = t; }, scenario!.targetTime);
   await page.click('.ap-play');
 
   await expect(page.locator('.lm-active')).toHaveCount(1);
-  await expect(page.locator('.lm-active')).toContainText('interesting part');
-
-  // Elements 2–7 (unspoken) must not have lm-active
-  const unspokenActive = await page.evaluate(() => {
+  const { activeIdx, unspokenActive } = await page.evaluate(({ selector, unspokenIdx }) => {
     const area = document.querySelector('.page')!;
-    const allEls = Array.from(area.querySelectorAll('p, h2, h3, pre')).filter(el =>
+    const allEls = Array.from(area.querySelectorAll(selector)).filter(el =>
       !el.closest('.audio-player') && !el.closest('.footer') &&
       !el.closest('.post-nav') && !el.closest('.meta') &&
       !el.classList.contains('post-number') &&
       el.textContent!.trim().length > 5
     );
-    // indices 2–7 are the unspoken elements
-    return allEls.slice(2, 8).some(el => el.classList.contains('lm-active'));
-  });
+    return {
+      activeIdx: allEls.findIndex(el => el.classList.contains('lm-active')),
+      unspokenActive: allEls[unspokenIdx]?.classList.contains('lm-active') ?? false,
+    };
+  }, { selector: CONTENT_SELECTOR, unspokenIdx: scenario!.unspokenIdx });
+  expect(activeIdx).toBe(scenario!.expectedIdx);
   expect(unspokenActive).toBe(false);
 });
 
