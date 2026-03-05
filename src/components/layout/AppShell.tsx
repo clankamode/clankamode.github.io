@@ -1,10 +1,12 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useChromeVisibility } from '@/hooks/useChromeMode';
 import { useSession } from '@/contexts/SessionContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import FeedbackWidget from '@/components/feedback/FeedbackWidget';
+
+const FeedbackWidget = dynamic(() => import('@/components/feedback/FeedbackWidget'), { ssr: false });
 
 
 interface AppShellProps {

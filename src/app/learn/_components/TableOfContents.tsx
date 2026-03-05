@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { ArticleCompassGlyph, ArticleNodeGlyph } from '@/components/ui/LearnGlyphs';
 
 export interface TableOfContentsItem {
   id: string;
@@ -47,21 +48,35 @@ export default function TableOfContents({ items }: TableOfContentsProps) {
 
   return (
     <div className="sticky top-28 space-y-3">
-      <p className="text-xs uppercase tracking-[0.2em] text-text-muted">In this article</p>
+      <div className="flex items-center gap-2">
+        <ArticleCompassGlyph className="h-4 w-4 text-brand-green/80" />
+        <p className="text-xs uppercase tracking-[0.2em] text-text-muted">In this article</p>
+      </div>
       <ul className="space-y-2 text-sm">
-        {items.map((item) => (
-          <li key={item.id} className={cn(item.level === 3 && 'ml-4')}>
-            <a
-              href={`#${item.id}`}
-              className={cn(
-                'block rounded-md border-l-2 border-l-transparent px-3 py-1.5 text-text-muted transition-all duration-200 hover:border-l-border-interactive hover:bg-surface-interactive hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/70',
-                activeId === item.id && 'border-l-brand-green bg-surface-interactive text-text-primary'
-              )}
-            >
-              {item.text}
-            </a>
-          </li>
-        ))}
+        {items.map((item) => {
+          const isActive = activeId === item.id;
+          return (
+            <li key={item.id} className={cn(item.level === 3 && 'ml-4')}>
+              <a
+                href={`#${item.id}`}
+                className={cn(
+                  'flex items-center gap-2 rounded-md border-l-2 border-l-transparent px-3 py-1.5 text-text-muted transition-all duration-200 hover:border-l-border-interactive hover:bg-surface-interactive hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/70',
+                  isActive && 'border-l-brand-green bg-surface-interactive text-text-primary'
+                )}
+              >
+                <ArticleNodeGlyph
+                  active={isActive}
+                  level={item.level}
+                  className={cn(
+                    'h-3.5 w-3.5 shrink-0 transition-colors',
+                    isActive ? 'text-brand-green' : 'text-text-muted'
+                  )}
+                />
+                <span className="truncate">{item.text}</span>
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

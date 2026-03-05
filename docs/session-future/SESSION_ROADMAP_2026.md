@@ -1,7 +1,7 @@
 # Session Experience Roadmap 2026
 
 Created: February 15, 2026
-Last Updated: February 16, 2026
+Last Updated: March 3, 2026
 Scope: Session OS v2 rollout
 
 ## Current Status Snapshot
@@ -12,7 +12,9 @@ Scope: Session OS v2 rollout
 2. Phase 0 reliability work remains partially open:
    - additional invariants stress coverage
    - writeback reconciliation depth
-3. Next cycle priority:
+3. Transfer quality baseline is partially complete:
+   - Transfer Score v0 and quality-adjusted completion readouts are active in admin quality reporting
+4. Next cycle priority:
    - control-plane hardening and reliability backfill before broad adaptive UI exposure
 
 ## Roadmap Goals
@@ -96,12 +98,12 @@ Exit criteria:
 ## Phase 4: Transfer Optimization (Quarterly)
 
 Objective:
-- Move objective function from completion to transfer.
+- Move objective function from completion to transfer beyond v0 baseline.
 
 Workstreams:
 
 1. Delayed recall checks
-2. Transfer score computation
+2. Transfer score advancement beyond v0 (calibration + delayed outcome weighting)
 3. Planner objective tuning with guardrails
 
 Exit criteria:

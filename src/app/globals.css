@@ -19,10 +19,10 @@
   /* Expert */
 
   /* Semantic Tokens (Light Mode Defaults) */
-  --surface-ambient: #fafafa;
-  --surface-interactive: #f6f6f7;
-  --surface-dense: #ececef;
-  --surface-workbench: #f1f1f2;
+  --surface-ambient: #f6f1e8;
+  --surface-interactive: #f1ece0;
+  --surface-dense: #e6dfd2;
+  --surface-workbench: #ede6d8;
 
   --text-primary: #09090b;
   --text-secondary: #3f3f46;
@@ -66,22 +66,22 @@
   --shadow-glow-focus: 0 0 0 4px rgba(44, 187, 93, 0.25);
 
   /* Base Colors - Light Mode Defaults */
-  --background: #fafafa;
+  --background: #f6f1e8;
   --foreground: #09090b;
   /* Zinc 950 */
-  --card: #ffffff;
+  --card: #f8f2e8;
   --card-foreground: #09090b;
-  --popover: #ffffff;
+  --popover: #f8f2e8;
   --popover-foreground: #09090b;
   --primary: #2cbb5d;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
+  --secondary: #efe7d9;
   /* Zinc 100 */
   --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
+  --muted: #efe7d9;
   --muted-foreground: #71717a;
   /* Zinc 500 */
-  --accent: #f4f4f5;
+  --accent: #efe7d9;
   --accent-foreground: #18181b;
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
@@ -91,9 +91,9 @@
   --ring: #2cbb5d;
 
   /* Surfaces (Light Mode) */
-  --surface-1: rgba(255, 255, 255, 0.5);
-  --surface-2: rgba(255, 255, 255, 0.7);
-  --surface-3: rgba(255, 255, 255, 0.9);
+  --surface-1: rgba(248, 242, 232, 0.5);
+  --surface-2: rgba(248, 242, 232, 0.7);
+  --surface-3: rgba(248, 242, 232, 0.9);
 
   --border-muted: rgba(0, 0, 0, 0.1);
 }

@@ -1,7 +1,7 @@
 # Session Future Risks and Open Questions
 
 Created: February 15, 2026
-Last Updated: February 16, 2026
+Last Updated: March 3, 2026
 Status: Active decision log
 
 ## High-Risk Areas
@@ -80,7 +80,7 @@ Mitigation:
 
 1. What is the canonical source of truth for session progression state across routes?
 2. Should session debt be persisted in a dedicated table or encoded in telemetry-derived views?
-3. How should finalize semantics behave on abrupt tab close/network loss?
+3. Is the current finalize durability strategy (sendBeacon + pagehide/visibilitychange + keepalive + dedupe) sufficient under observed failure modes?
 4. Where should friction classification run: client, server, or hybrid?
 5. What confidence threshold policy is stable across cohorts?
 

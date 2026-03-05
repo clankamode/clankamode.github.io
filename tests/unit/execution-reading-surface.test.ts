@@ -40,6 +40,9 @@ describe('execution reading surface invariants', () => {
     expect(surfaceSource).toContain('ReadingGrid');
     expect(hudSource).toContain('EXECUTION_SURFACE_LAYOUT_CLASS');
     expect(hudSource).not.toContain('max-w-screen-xl');
+    expect(hudSource).toContain('ConfirmDialog');
+    expect(hudSource).toContain('Leave session?');
+    expect(hudSource).toContain('sm:hidden');
     expect(layoutSwitcherSource).toContain('SessionReaderShell');
     expect(layoutSwitcherSource).not.toContain('SessionCommitControl');
   });

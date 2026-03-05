@@ -42,11 +42,16 @@ export default function FeedbackWidget() {
   const [isUploadingAttachment, setIsUploadingAttachment] = useState(false);
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
   const [messageAreaDrag, setMessageAreaDrag] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const attachmentZoneRef = useRef<FeedbackAttachmentZoneRef>(null);
 
   const shouldHide = useMemo(() => {
     return pathname.startsWith('/admin') || pathname.startsWith('/ai') || pathname.startsWith('/login') || pathname.startsWith('/feedback');
   }, [pathname]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!didAutofillEmail && session?.user?.email) {
@@ -69,6 +74,19 @@ export default function FeedbackWidget() {
     window.addEventListener('keydown', onEscape);
     return () => window.removeEventListener('keydown', onEscape);
   }, [isOpen]);
+
+  useEffect(() => {
+    const launcherClass = 'feedback-launcher-visible';
+    if (!shouldHide && !isOpen) {
+      document.body.classList.add(launcherClass);
+    } else {
+      document.body.classList.remove(launcherClass);
+    }
+
+    return () => {
+      document.body.classList.remove(launcherClass);
+    };
+  }, [isOpen, shouldHide]);
 
   const handlePaste = useCallback(
     (e: React.ClipboardEvent) => {
@@ -103,7 +121,7 @@ export default function FeedbackWidget() {
     setMessageAreaDrag(e.type === 'dragenter' || e.type === 'dragover');
   }, []);
 
-  if (shouldHide) {
+  if (!isMounted || shouldHide) {
     return null;
   }
 
@@ -177,8 +195,8 @@ export default function FeedbackWidget() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed z-40 min-h-[48px] min-w-[48px] rounded-full border border-border-subtle bg-surface-interactive/90 px-4 py-3 text-sm font-semibold text-foreground shadow-[0_20px_50px_-25px_rgba(0,0,0,0.7)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-border-interactive hover:bg-surface-dense/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation"
-          style={{ left: 'max(1rem, env(safe-area-inset-left))', bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+          className="fixed left-4 z-30 min-h-[48px] min-w-[48px] rounded-full border border-border-subtle bg-surface-interactive/90 px-4 py-3 text-sm font-semibold text-foreground shadow-[0_20px_50px_-25px_rgba(0,0,0,0.7)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-border-interactive hover:bg-surface-dense/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation max-[480px]:left-auto max-[480px]:right-3"
+          style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
           aria-label="Open feedback form"
         >
           <span className="inline-flex items-center gap-2">

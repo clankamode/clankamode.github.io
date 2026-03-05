@@ -23,6 +23,7 @@ import ArticleLayoutSwitcher from '../../_components/ArticleLayoutSwitcher';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
 import ChunkedArticleRenderer from '@/components/session/ChunkedArticleRenderer';
 import TutorChat from '@/app/ai/_components/TutorChat';
+import PageFeedback from '@/components/feedback/PageFeedback';
 
 interface ArticlePageProps {
   params: Promise<{ pillar: string; slug: string }>;
@@ -182,35 +183,40 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
         }
         standardFooter={
           <>
-            {showProgress && canViewPremium && (
-              <div className="mt-8">
+            <div className="mt-8 space-y-2">
+              {showProgress && canViewPremium && (
                 <CompletionButton
                   articleId={article.id}
                   initialCompleted={completionStatus?.completed}
                 />
-              </div>
-            )}
-            <ArticleNav
-              previous={
-                prev
-                  ? {
-                    label: 'Previous',
-                    title: prev.title,
-                    href: `/learn/${pillar.slug}/${prev.slug}`,
-                    topicName: prev.topicName,
-                  }
-                  : null
-              }
-              next={
-                next
-                  ? {
-                    label: 'Next',
-                    title: next.title,
-                    href: `/learn/${pillar.slug}/${next.slug}`,
-                    topicName: next.topicName,
-                  }
-                  : null
-              }
+              )}
+              <ArticleNav
+                previous={
+                  prev
+                    ? {
+                      label: 'Previous',
+                      title: prev.title,
+                      href: `/learn/${pillar.slug}/${prev.slug}`,
+                      topicName: prev.topicName,
+                    }
+                    : null
+                }
+                next={
+                  next
+                    ? {
+                      label: 'Next',
+                      title: next.title,
+                      href: `/learn/${pillar.slug}/${next.slug}`,
+                      topicName: next.topicName,
+                    }
+                    : null
+                }
+              />
+            </div>
+            <PageFeedback
+              pageSlug={`/learn/${pillar.slug}/${article.slug}`}
+              compact
+              className="mt-5"
             />
           </>
         }

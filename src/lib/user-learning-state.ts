@@ -165,14 +165,14 @@ async function fetchLastInternalization(
     googleId?: string
 ): Promise<InternalizationRecord | null> {
     const identity: EffectiveIdentity = googleId ? { email: userId, googleId } : { email: userId };
-    const { data, error } = await getDB()
-        .from('UserInternalizations')
-        .select('concept_slug, picked, created_at')
-        .or(buildIdentityOrFilter(identity))
-        .eq('track_slug', trackSlug)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+  const { data, error } = await getDB()
+    .from('UserInternalizations')
+    .select('concept_slug, picked, created_at')
+    .or(buildIdentityOrFilter(identity))
+    .eq('track_slug', trackSlug)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
     if (error || !data) return null;
 

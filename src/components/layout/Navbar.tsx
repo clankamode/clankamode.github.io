@@ -65,6 +65,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -81,10 +82,20 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty('--nav-height', scrolled ? '89px' : '113px');
-  }, [scrolled]);
+  useLayoutEffect(() => {
+    const syncNavHeight = () => {
+      const height = navRef.current?.getBoundingClientRect().height;
+      if (!height) {
+        return;
+      }
+      const rounded = Math.round(height);
+      document.documentElement.style.setProperty('--nav-height', `${rounded}px`);
+    };
+
+    syncNavHeight();
+    window.addEventListener('resize', syncNavHeight);
+    return () => window.removeEventListener('resize', syncNavHeight);
+  }, [scrolled, isMenuOpen]);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -168,6 +179,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
   return (
     <>
       <nav
+        ref={navRef}
         className={`fixed w-full z-50 top-0 left-0 transition-all duration-500 border-b ${scrolled || isMenuOpen
           ? 'bg-surface-ambient/80 backdrop-blur-xl border-border-subtle py-3'
           : 'bg-transparent border-transparent py-5'
@@ -493,7 +505,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
       <div
         className={`fixed inset-0 z-40 bg-surface-ambient/95 backdrop-blur-2xl transition-transform duration-500 md:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
-        style={{ top: scrolled ? '89px' : '113px' }}
+        style={{ top: 'var(--nav-height, 113px)' }}
       >
         <div className="p-6 space-y-4">
           <div className="space-y-2">

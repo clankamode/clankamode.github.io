@@ -232,8 +232,8 @@ function injectStyles(): void {
     /* ── Stream Mode Toolbar ─────────────────────── */
     #${TOOLBAR_ID} {
       position: fixed;
-      left: 16px;
-      bottom: 16px;
+      left: max(1rem, env(safe-area-inset-left));
+      bottom: max(1rem, env(safe-area-inset-bottom));
       display: flex;
       align-items: center;
       gap: 10px;
@@ -250,6 +250,16 @@ function injectStyles(): void {
       animation: stream-toolbar-in 300ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
       user-select: none;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    body.feedback-launcher-visible #${TOOLBAR_ID} {
+      bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 4.5rem);
+    }
+
+    @media (max-width: 480px) {
+      body.feedback-launcher-visible #${TOOLBAR_ID} {
+        bottom: max(1rem, env(safe-area-inset-bottom));
+      }
     }
     @keyframes stream-toolbar-in {
       to { opacity: 1; transform: translateY(0); }

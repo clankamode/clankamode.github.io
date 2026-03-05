@@ -1,7 +1,7 @@
 # Current State Atlas: Session Experience
 
 Created: February 15, 2026
-Last Updated: February 16, 2026
+Last Updated: March 3, 2026
 Purpose: High-fidelity map of the current production session system
 Audience: Product, engineering, design, and analytics
 
@@ -25,7 +25,7 @@ The current session experience is distributed across six runtime layers:
 
 ### Root Composition
 
-`/Users/issackjohn/repos/personal-website/src/app/layout.tsx`
+`src/app/layout.tsx`
 
 Current provider stack:
 
@@ -36,7 +36,7 @@ Current provider stack:
 
 ### Chrome Mode Resolution
 
-`/Users/issackjohn/repos/personal-website/src/hooks/useChromeMode.ts`
+`src/hooks/useChromeMode.ts`
 
 Modes:
 
@@ -53,7 +53,7 @@ Key rule:
 
 ### Shell Visibility
 
-`/Users/issackjohn/repos/personal-website/src/components/layout/AppShell.tsx`
+`src/components/layout/AppShell.tsx`
 
 Current behavior:
 
@@ -65,7 +65,7 @@ Current behavior:
 
 ### Session State Source
 
-`/Users/issackjohn/repos/personal-website/src/contexts/SessionContext.tsx`
+`src/contexts/SessionContext.tsx`
 
 Current phase model:
 
@@ -113,7 +113,7 @@ Note:
 
 ### Session State Construction
 
-`/Users/issackjohn/repos/personal-website/src/lib/progress.ts`
+`src/lib/progress.ts`
 
 `getSessionState(userId, preferredTrackSlug, googleId)` is the planner entry.
 
@@ -133,7 +133,7 @@ Current pipeline:
 
 ### LLM Planner
 
-`/Users/issackjohn/repos/personal-website/src/lib/session-llm-planner.ts`
+`src/lib/session-llm-planner.ts`
 
 Capabilities:
 
@@ -146,15 +146,15 @@ Capabilities:
 ### Intent Derivation
 
 1. Static and state-aware intent:
-   - `/Users/issackjohn/repos/personal-website/src/lib/gate-intent.ts`
+   - `src/lib/gate-intent.ts`
 2. Display sanitization:
-   - `/Users/issackjohn/repos/personal-website/src/lib/intent-display.ts`
+   - `src/lib/intent-display.ts`
 
 ## 4) Gate Flow (Entry)
 
 ### Home Route
 
-`/Users/issackjohn/repos/personal-website/src/app/home/page.tsx`
+`src/app/home/page.tsx`
 
 Behavior:
 
@@ -164,7 +164,7 @@ Behavior:
 
 ### Gate Client
 
-`/Users/issackjohn/repos/personal-website/src/app/home/HomeClient.tsx`
+`src/app/home/HomeClient.tsx`
 
 Behavior:
 
@@ -174,7 +174,7 @@ Behavior:
 
 ### Gate Card
 
-`/Users/issackjohn/repos/personal-website/src/app/home/_components/NowCard.tsx`
+`src/app/home/_components/NowCard.tsx`
 
 Behavior:
 
@@ -186,7 +186,7 @@ Behavior:
 
 ### Route Integration
 
-`/Users/issackjohn/repos/personal-website/src/app/learn/[pillar]/[slug]/page.tsx`
+`src/app/learn/[pillar]/[slug]/page.tsx`
 
 Behavior:
 
@@ -196,7 +196,7 @@ Behavior:
 
 ### Mode Switcher
 
-`/Users/issackjohn/repos/personal-website/src/app/learn/_components/ArticleLayoutSwitcher.tsx`
+`src/app/learn/_components/ArticleLayoutSwitcher.tsx`
 
 Behavior:
 
@@ -206,7 +206,7 @@ Behavior:
 
 ### Reader Shell
 
-`/Users/issackjohn/repos/personal-website/src/components/session/SessionReaderShell.tsx`
+`src/components/session/SessionReaderShell.tsx`
 
 Behavior:
 
@@ -216,8 +216,8 @@ Behavior:
 
 ### Execution Surface + Grid
 
-1. `/Users/issackjohn/repos/personal-website/src/components/session/ExecutionSurface.tsx`
-2. `/Users/issackjohn/repos/personal-website/src/components/session/ReadingGrid.tsx`
+1. `src/components/session/ExecutionSurface.tsx`
+2. `src/components/session/ReadingGrid.tsx`
 
 Current invariants:
 
@@ -227,7 +227,7 @@ Current invariants:
 
 ### Chunk Navigation
 
-`/Users/issackjohn/repos/personal-website/src/components/session/ChunkedArticleRenderer.tsx`
+`src/components/session/ChunkedArticleRenderer.tsx`
 
 Behavior:
 
@@ -239,7 +239,7 @@ Behavior:
 
 ### Chunking Primitive
 
-`/Users/issackjohn/repos/personal-website/src/lib/article-chunking.ts`
+`src/lib/article-chunking.ts`
 
 Current logic:
 
@@ -250,7 +250,7 @@ Current logic:
 
 ### Session Practice Route
 
-`/Users/issackjohn/repos/personal-website/src/app/session/practice/[questionId]/page.tsx`
+`src/app/session/practice/[questionId]/page.tsx`
 
 Behavior:
 
@@ -258,7 +258,7 @@ Behavior:
 
 ### Assessment Client Session Mode
 
-`/Users/issackjohn/repos/personal-website/src/app/assessment/_components/AssessmentClient.tsx`
+`src/app/assessment/_components/AssessmentClient.tsx`
 
 Behavior when current session item is practice:
 
@@ -269,7 +269,7 @@ Behavior when current session item is practice:
 
 ### Coding Chamber
 
-`/Users/issackjohn/repos/personal-website/src/app/code-editor/_components/PracticeEditor.tsx`
+`src/app/code-editor/_components/PracticeEditor.tsx`
 
 Behavior:
 
@@ -285,7 +285,7 @@ Behavior:
 
 ### Exit Surface
 
-`/Users/issackjohn/repos/personal-website/src/app/home/_components/SessionExitView.tsx`
+`src/app/home/_components/SessionExitView.tsx`
 
 Behavior:
 
@@ -296,7 +296,7 @@ Behavior:
 
 ### Internalization Save
 
-`/Users/issackjohn/repos/personal-website/src/app/actions/internalize.ts`
+`src/app/actions/internalize.ts`
 
 Behavior:
 
@@ -306,23 +306,26 @@ Behavior:
 
 ### Session Finalize API
 
-`/Users/issackjohn/repos/personal-website/src/app/api/session/finalize/route.ts`
+`src/app/api/session/finalize/route.ts`
 
 Behavior:
 
 1. Auth + feature gate checks.
-2. Inserts `session_finalized` telemetry with completed item list.
-3. Invalidates session plan lock cache key.
+2. Inserts deduped `session_finalized` telemetry with completed item list.
+3. Upserts learning article completions into `UserArticleProgress`.
+4. Upserts session-attempted practice rows into `UserPracticeProgress`.
+5. Invalidates session plan lock cache key.
+6. Triggers fire-and-forget session plan prebake for next `/home` load.
 
 ## 8) Telemetry Model (Current)
 
 ### Client Helper
 
-`/Users/issackjohn/repos/personal-website/src/lib/telemetry.ts`
+`src/lib/telemetry.ts`
 
 ### Server Action
 
-`/Users/issackjohn/repos/personal-website/src/app/actions/telemetry.ts`
+`src/app/actions/telemetry.ts`
 
 Allowed event family includes:
 
@@ -350,20 +353,20 @@ Allowed event family includes:
 Friction runtime and persistence:
 
 1. Classifier:
-   - `/Users/issackjohn/repos/personal-website/src/lib/friction-classifier.ts`
+   - `src/lib/friction-classifier.ts`
 2. Snapshot payload normalization:
-   - `/Users/issackjohn/repos/personal-website/src/lib/friction-snapshot.ts`
+   - `src/lib/friction-snapshot.ts`
 3. Snapshot server write action:
-   - `/Users/issackjohn/repos/personal-website/src/app/actions/friction.ts`
+   - `src/app/actions/friction.ts`
 4. Snapshot table:
    - `SessionFrictionSnapshots`
 
 Admin observability and triage:
 
 1. Dashboard:
-   - `/Users/issackjohn/repos/personal-website/src/app/admin/session-intelligence/page.tsx`
+   - `src/app/admin/session-intelligence/page.tsx`
 2. Triage action path:
-   - `/Users/issackjohn/repos/personal-website/src/app/actions/friction-triage.ts`
+   - `src/app/actions/friction-triage.ts`
 3. Triage table:
    - `SessionFrictionTriage`
 4. AI decision registry:
@@ -381,7 +384,7 @@ Admin observability and triage:
 
 ### Middleware
 
-`/Users/issackjohn/repos/personal-website/src/middleware.ts`
+`src/middleware.ts`
 
 Current behavior:
 
@@ -394,16 +397,16 @@ Current behavior:
 
 Relevant tests:
 
-1. `/Users/issackjohn/repos/personal-website/tests/session-mode.spec.ts`
-2. `/Users/issackjohn/repos/personal-website/tests/session-telemetry.spec.ts`
-3. `/Users/issackjohn/repos/personal-website/tests/session-invariants.spec.ts`
-4. `/Users/issackjohn/repos/personal-website/tests/unit/execution-reading-surface.test.ts`
-5. `/Users/issackjohn/repos/personal-website/tests/unit/session-planner-invariants.test.ts`
-6. `/Users/issackjohn/repos/personal-website/tests/unit/session-logic.test.ts`
-7. `/Users/issackjohn/repos/personal-website/tests/unit/friction-classifier.test.ts`
-8. `/Users/issackjohn/repos/personal-website/tests/unit/friction-payload-shape.test.ts`
-9. `/Users/issackjohn/repos/personal-website/tests/unit/session-friction-integration.test.ts`
-10. `/Users/issackjohn/repos/personal-website/tests/unit/session-ai-replay.test.ts`
+1. `tests/session-mode.spec.ts`
+2. `tests/session-telemetry.spec.ts`
+3. `tests/session-invariants.spec.ts`
+4. `tests/unit/execution-reading-surface.test.ts`
+5. `tests/unit/session-planner-invariants.test.ts`
+6. `tests/unit/session-logic.test.ts`
+7. `tests/unit/friction-classifier.test.ts`
+8. `tests/unit/friction-payload-shape.test.ts`
+9. `tests/unit/session-friction-integration.test.ts`
+10. `tests/unit/session-ai-replay.test.ts`
 
 Coverage strengths:
 
@@ -417,15 +420,15 @@ Coverage limitations:
 
 1. Some invariant tests appear out-of-sync with current labels/selectors.
 2. Limited stress coverage for rapid repeated progression actions.
-3. Limited coverage for finalize interruption edge cases.
+3. Finalize interruption durability has source-level guards, but broader interruption timing stress coverage is still limited.
 
 ## 11) Current Seams and Tensions
 
 This section captures objective seams, not future proposals:
 
 1. Progression control has multiple advancing surfaces in reading mode.
-2. Transition status fields exist but are not fully exercised.
-3. Learning-state exposure updates are not clearly invoked in session completion path.
+2. Transition lock semantics are exercised in runtime, but rapid-repeat race hardening depth is still limited.
+3. Learning-state writeback hooks are invoked in terminal flow, but reconciliation and alerting depth still needs operational hardening.
 4. Chunking is heading-level and may vary in granularity by content authoring style.
 5. Cross-surface continuity between assessment and coding chamber is functional but verbose.
 6. AI triage updates depend on override-proxy interpretation; direct quality labels are still not explicit.

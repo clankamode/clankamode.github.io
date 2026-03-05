@@ -1,8 +1,8 @@
 # Session OS v2 Release Playbook
 
 Created: February 15, 2026
-Last Updated: February 16, 2026
-Status: Operating playbook
+Last Updated: March 3, 2026
+Status: Operating playbook with Transfer Score v0 quality readout and triage audit baseline active
 
 ## Purpose
 
@@ -99,6 +99,10 @@ Flag policy:
 2. each flag has default off in production until promoted
 3. each flag has cleanup plan once stable
 
+Runtime baseline note:
+
+1. transition lock semantics are now core runtime behavior; rely on invariant/race guardrails rather than a dedicated rollout flag for lock activation.
+
 ## Monitoring Plan
 
 Real-time monitors:
@@ -114,6 +118,7 @@ Daily monitors:
 1. debt creation/paydown
 2. repeat failure loop rate
 3. quality-adjusted completion
+4. AI triage audit write success/failure and review coverage
 
 ## Rollback Triggers
 

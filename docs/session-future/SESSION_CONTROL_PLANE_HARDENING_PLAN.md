@@ -1,6 +1,7 @@
 # Session Control Plane Hardening Plan
 
 Created: February 16, 2026
+Last Updated: March 3, 2026
 Owner: Product + Engineering
 Status: Execution plan for the next delivery slice
 
@@ -45,12 +46,13 @@ Objective:
 Deliverables:
 
 1. Safety model and constraints documented.
-2. Audit trail schema and write path design.
-3. Confirm-before-apply UX decision and rollout plan.
+2. Audit trail schema and write path is implemented (`SessionFrictionTriageAudit`) and kept contract-aligned.
+3. Confirm-before-apply policy, operator guardrails, and rollout decision plan.
 
 Exit criteria:
 
 1. Every AI mutation has a recoverable audit record.
+2. Policy constraints and operator safeguards are explicit and enforced in rollout guidance.
 
 ## Workstream C: Metrics Operations v1
 

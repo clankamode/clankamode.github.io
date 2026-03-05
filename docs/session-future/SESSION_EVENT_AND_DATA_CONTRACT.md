@@ -1,7 +1,7 @@
 # Session Event and Data Contract
 
 Created: February 15, 2026
-Last Updated: February 16, 2026
+Last Updated: March 3, 2026
 Status: Active core contract with staged adaptive extensions
 
 ## Purpose
@@ -57,14 +57,22 @@ All events should include:
 ## D. Adaptive Events (Implementation Status)
 
 1. `friction_state_changed` (active)
-2. `intervention_shown`
-3. `intervention_accepted`
-4. `intervention_dismissed`
-5. `intervention_outcome`
-6. `debt_created`
-7. `debt_paid`
-8. `proof_submitted`
-9. `proof_quality_scored`
+2. `intervention_shown` (proposed)
+3. `intervention_accepted` (proposed)
+4. `intervention_dismissed` (proposed)
+5. `intervention_outcome` (proposed)
+6. `debt_created` (proposed)
+7. `debt_paid` (proposed)
+8. `proof_submitted` (proposed)
+9. `proof_quality_scored` (proposed)
+
+## Operational Audit Stream (Active, Non-Telemetry Event Family)
+
+This stream is implemented as operational data writes, not as `TelemetryEvents` event names.
+
+1. `SessionFrictionTriageAudit` captures AI and manual triage mutations.
+2. Use this stream for recoverability, review, and governance analytics.
+3. Keep telemetry event family and audit stream responsibilities separate.
 
 ## Required Identity Contract
 
@@ -230,6 +238,12 @@ Additional implemented admin triage table:
    - `notes`
    - `updated_by_email`
    - `updated_at`
+
+Implemented audit table for triage mutations:
+
+1. `SessionFrictionTriageAudit`
+2. captures before/after status, owner, notes, rationale, and metadata for AI/manual updates
+3. treated as operational audit stream rather than telemetry event family
 
 ## Contract Validation Rules
 

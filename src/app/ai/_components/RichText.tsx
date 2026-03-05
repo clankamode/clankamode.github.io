@@ -210,7 +210,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <div
           key={index}
-          className="whitespace-pre-wrap text-inherit leading-7"
+          className="whitespace-pre-wrap text-inherit leading-5"
           dangerouslySetInnerHTML={{ __html: formatInline(block.content as string) }}
         />
       );
@@ -219,7 +219,7 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
       return (
         <p
           key={index}
-          className="text-inherit leading-7"
+          className="text-inherit leading-5"
           dangerouslySetInnerHTML={{ __html: formatInline(block.content as string) }}
         />
       );
@@ -231,7 +231,7 @@ export function RichText({ content, className }: { content: string; className?: 
   const blocks = parseMarkdown(content);
 
   return (
-    <div className={`space-y-4 text-base leading-relaxed ${className ?? ''}`}>
+    <div className={`space-y-2.5 text-base leading-5 ${className ?? ''}`}>
       {blocks.map((block, index) => renderBlock(block, index))}
     </div>
   );

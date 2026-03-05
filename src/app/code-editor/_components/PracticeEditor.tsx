@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { Play, Loader2, Monitor, ArrowLeft, ExternalLink } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { MonacoWrapper } from './MonacoWrapper';
 import { OutputPanel } from './OutputPanel';
 import { SuccessOverlay } from './SuccessOverlay';
@@ -91,6 +91,7 @@ function DifficultyBadge({ difficulty }: { difficulty: string }) {
 
 export function PracticeEditor({ question, showTutor = false, context }: PracticeEditorProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { state: sessionFlowState, advanceItem } = useSessionContext();
   const isSessionContext = Boolean(context?.isSession);
   const sessionQuestionId = context?.sessionQuestionId || null;
@@ -115,7 +116,7 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
         }
       })
       .catch(() => {});
-  }, [question.id]);
+  }, [question.id, pathname]);
   const [testResults, setTestResults] = useState<TestCaseResult[]>([]);
   const [hasRun, setHasRun] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -152,6 +153,13 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
     sessionFlowState.phase === 'execution' &&
     currentSessionItem?.type === 'practice'
   );
+
+  useLayoutEffect(() => {
+    setTestResults([]);
+    setHasRun(false);
+    setShowSuccess(false);
+    prevAllPassedRef.current = false;
+  }, [question.id]);
 
   const syncPeraltaProgress = useCallback(async (status: 'attempted' | 'solved') => {
     if (!isPeraltaQuestion || !question.leetcode_number) {
@@ -257,6 +265,12 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
       }).catch(() => {});
     }
   }, [testResults, isRunning, testCases.length, question.id, code]);
+
+  useEffect(() => {
+    if (!allTestsPassed && showSuccess) {
+      setShowSuccess(false);
+    }
+  }, [allTestsPassed, showSuccess]);
 
   useEffect(() => {
     if (isSessionContext || !allTestsPassed) {
@@ -460,7 +474,6 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
               View source
             </a>
           )}
-
         </div>
         {isSessionContext && isActiveSessionPracticeStep && (
           <div className="border-b border-border-subtle bg-surface-interactive px-4 py-2.5">
@@ -497,7 +510,6 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
             </div>
           </div>
         )}
-
         <ResizablePanelGroup orientation="horizontal" className="flex-1">
           <ResizablePanel defaultSize={50} minSize={30}>
             <div className="flex h-full flex-col">
@@ -539,10 +551,11 @@ export function PracticeEditor({ question, showTutor = false, context }: Practic
             />
           </ResizablePanel>
         </ResizablePanelGroup>
+
       </div>
 
       <SuccessOverlay
-        show={showSuccess}
+        show={showSuccess && allTestsPassed}
         onDismiss={() => setShowSuccess(false)}
         passedCount={testResults.filter((r) => r.passed).length}
         totalCount={testCases.length}

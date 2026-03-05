@@ -9,6 +9,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { proposeRitualChoices, type IntentType } from '@/lib/ritual_prompts';
 import Link from 'next/link';
 import { EXECUTION_SURFACE_LAYOUT_CLASS } from '@/components/session/ExecutionSurface';
+import {
+    buildMicroSessionItems,
+    getMicroFollowUpPresentation,
+} from './session-exit-utils';
 
 const formatConceptLabel = (slug: string | null) => {
     if (!slug) return 'Concept';
@@ -220,6 +224,7 @@ export default function SessionExitView() {
     const { completedCount, durationMinutes } = state.exit;
     const wasAbandoned = completedCount === 0;
     const trackName = state.scope?.track?.name || 'Session';
+    const microFollowUp = getMicroFollowUpPresentation(state.exit.microSessionProposal);
 
     if (wasAbandoned) {
         return (
@@ -375,14 +380,14 @@ export default function SessionExitView() {
                                 <div className="space-y-6">
                                     <div>
                                         <h2 className="text-xl font-semibold text-text-primary tracking-tight">
-                                            Next practice
+                                            {microFollowUp.heading}
                                         </h2>
                                     </div>
 
                                     <div className="bg-surface-interactive border border-border-subtle rounded-2xl p-7">
                                         <div className="flex justify-between items-center mb-4">
                                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
-                                                Practice Drill
+                                                {microFollowUp.badge}
                                             </span>
                                             <span className="px-2 py-0.5 rounded-full bg-surface-dense text-[9px] font-bold uppercase tracking-widest text-text-muted border border-border-subtle">
                                                 {state.exit.microSessionProposal.estimatedMinutes}m
@@ -400,15 +405,10 @@ export default function SessionExitView() {
                                             if (!finalized) return;
                                             const proposal = state.exit.microSessionProposal;
 
-                                            const microItems: SessionItem[] = proposal.items.map(i => ({
-                                                type: 'practice',
-                                                title: i.title,
-                                                subtitle: 'Micro-session',
-                                                pillarSlug: state.scope?.track?.slug || '',
-                                                href: i.href,
-                                                estMinutes: proposal.estimatedMinutes,
-                                                intent: proposal.intent
-                                            }));
+                                            const microItems: SessionItem[] = buildMicroSessionItems(
+                                                proposal,
+                                                state.scope?.track?.slug || ''
+                                            );
 
                                             logTelemetryEvent({
                                                 userId: state.scope?.userId,
@@ -417,7 +417,9 @@ export default function SessionExitView() {
                                                 eventType: 'micro_clicked',
                                                 mode: 'exit',
                                                 payload: {
-                                                    proposalLabel: proposal.label
+                                                    proposalLabel: proposal.label,
+                                                    nextItemType: proposal.items[0]?.type ?? null,
+                                                    nextItemHref: proposal.items[0]?.href ?? null,
                                                 },
                                                 dedupeKey: `micro_clicked_${state.scope?.sessionId}`
                                             });
@@ -439,7 +441,7 @@ export default function SessionExitView() {
                                         disabled={finalizeStatus === 'loading'}
                                         className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all hover:bg-emerald-500 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400"
                                     >
-                                        {finalizeStatus === 'loading' ? 'Saving...' : finalizeStatus === 'error' ? 'Retry' : 'Begin Practice'}
+                                        {finalizeStatus === 'loading' ? 'Saving...' : finalizeStatus === 'error' ? 'Retry' : microFollowUp.ctaLabel}
                                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                         </svg>

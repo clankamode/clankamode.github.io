@@ -19,11 +19,21 @@ interface FeedbackPayload {
   attachmentUrls: FeedbackAttachment[];
 }
 
+interface PageVotePayload {
+  pageSlug: string;
+  helpful: boolean;
+}
+
+type ParsedPayload =
+  | { kind: 'long_form'; payload: FeedbackPayload }
+  | { kind: 'page_vote'; payload: PageVotePayload };
+
 const FEEDBACK_CATEGORIES = new Set<FeedbackCategory>(['bug', 'idea', 'content', 'other']);
 const MIN_MESSAGE_LENGTH = 10;
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_PAGE_PATH_LENGTH = 512;
 const MAX_PAGE_URL_LENGTH = 2048;
+const MAX_PAGE_SLUG_LENGTH = 512;
 const MAX_EMAIL_LENGTH = 254;
 const MAX_ATTACHMENTS = 5;
 const MAX_ATTACHMENT_URL_LENGTH = 1024;
@@ -138,12 +148,7 @@ function parseAttachmentUrls(value: unknown): FeedbackAttachment[] {
   return out;
 }
 
-function parsePayload(payload: unknown): FeedbackPayload {
-  if (!payload || typeof payload !== 'object') {
-    throw new Error('Invalid request body.');
-  }
-
-  const candidate = payload as Record<string, unknown>;
+function parseLongFormPayload(candidate: Record<string, unknown>): FeedbackPayload {
   const category = candidate.category;
   const messageRaw = candidate.message;
 
@@ -174,6 +179,53 @@ function parsePayload(payload: unknown): FeedbackPayload {
   };
 }
 
+function parsePageSlug(value: unknown): string {
+  if (typeof value !== 'string') {
+    throw new Error('Page slug is required.');
+  }
+
+  const pageSlug = value.trim();
+  if (!pageSlug) {
+    throw new Error('Page slug is required.');
+  }
+
+  if (pageSlug.length > MAX_PAGE_SLUG_LENGTH) {
+    throw new Error(`Page slug must be at most ${MAX_PAGE_SLUG_LENGTH} characters.`);
+  }
+
+  return pageSlug;
+}
+
+function parseHelpful(value: unknown): boolean {
+  if (typeof value !== 'boolean') {
+    throw new Error('Helpful must be a boolean.');
+  }
+
+  return value;
+}
+
+function parsePageVotePayload(candidate: Record<string, unknown>): PageVotePayload {
+  return {
+    pageSlug: parsePageSlug(candidate.pageSlug),
+    helpful: parseHelpful(candidate.helpful),
+  };
+}
+
+function parsePayload(payload: unknown): ParsedPayload {
+  if (!payload || typeof payload !== 'object') {
+    throw new Error('Invalid request body.');
+  }
+
+  const candidate = payload as Record<string, unknown>;
+  const isPageVotePayload = 'pageSlug' in candidate || 'helpful' in candidate;
+
+  if (isPageVotePayload) {
+    return { kind: 'page_vote', payload: parsePageVotePayload(candidate) };
+  }
+
+  return { kind: 'long_form', payload: parseLongFormPayload(candidate) };
+}
+
 export async function POST(req: NextRequest) {
   try {
     const clientIp = getClientIp(req);
@@ -187,26 +239,40 @@ export async function POST(req: NextRequest) {
 
     const raw = await req.json();
     const payload = parsePayload(raw);
+    const client = getSupabaseAdminClient();
+
+    if (payload.kind === 'page_vote') {
+      const { error } = await client.from('page_feedback').insert({
+        page_slug: payload.payload.pageSlug,
+        helpful: payload.payload.helpful,
+      });
+
+      if (error) {
+        console.error('Error inserting page feedback:', error);
+        return NextResponse.json({ error: 'Could not save feedback.' }, { status: 500 });
+      }
+
+      return NextResponse.json({ ok: true }, { status: 201 });
+    }
 
     const token = await getToken({ req });
     const identity = getEffectiveIdentityFromToken(token);
     const userAgent = req.headers.get('user-agent');
-    const client = getSupabaseAdminClient();
 
     const { error } = await client.from('UserFeedback').insert({
       id: crypto.randomUUID(),
-      category: payload.category,
-      message: payload.message,
-      page_path: payload.pagePath,
-      contact_email: payload.contactEmail,
+      category: payload.payload.category,
+      message: payload.payload.message,
+      page_path: payload.payload.pagePath,
+      contact_email: payload.payload.contactEmail,
       user_email: identity?.email ?? null,
       google_id: identity?.googleId ?? null,
       user_agent: userAgent,
       metadata: {
         source: 'feedback_widget',
         ip: clientIp,
-        ...(payload.pageUrl && { page_url: payload.pageUrl }),
-        ...(payload.attachmentUrls.length > 0 && { attachments: payload.attachmentUrls }),
+        ...(payload.payload.pageUrl && { page_url: payload.payload.pageUrl }),
+        ...(payload.payload.attachmentUrls.length > 0 && { attachments: payload.payload.attachmentUrls }),
       },
     });
 

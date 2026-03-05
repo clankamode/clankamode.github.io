@@ -6,6 +6,13 @@ import TutorNudge from '@/app/ai/_components/TutorNudge';
 import { useCurrentSessionItemTitle, useIsInSession, useSession } from '@/contexts/SessionContext';
 import { buildTutorWelcomeMessage, buildPracticeWelcomeMessage } from '@/lib/tutor-prompt';
 import { cn } from '@/lib/utils';
+import {
+  clearTutorAssistantRetryState,
+  markTutorAssistantError,
+  restoreInputAfterTutorFailure,
+  type TutorRole,
+  type TutorUiMessage,
+} from '@/app/ai/_components/tutor-chat-utils';
 
 export interface PracticeContext {
   questionName: string;
@@ -23,14 +30,6 @@ interface TutorChatProps {
   articleTitle: string;
   enabled: boolean;
   practiceContext?: PracticeContext;
-}
-
-type TutorRole = 'user' | 'assistant';
-
-interface TutorUiMessage {
-  id: string;
-  role: TutorRole;
-  content: string;
 }
 
 export const NUDGE_DELAY_MS = 8 * 60 * 1000;
@@ -99,11 +98,16 @@ function scrollToAndHighlightSection(sectionId: string) {
   }, 2000);
 }
 
-function createMessage(role: TutorRole, content: string): TutorUiMessage {
+function createMessage(
+  role: TutorRole,
+  content: string,
+  overrides: Partial<TutorUiMessage> = {}
+): TutorUiMessage {
   return {
     id: crypto.randomUUID(),
     role,
     content,
+    ...overrides,
   };
 }
 
@@ -236,17 +240,33 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
     return null;
   }
 
-  const submitUserMessage = async (trimmed: string) => {
+  const submitUserMessage = async (
+    trimmed: string,
+    options?: { appendUserMessage?: boolean; assistantMessageId?: string }
+  ) => {
     if (!trimmed || isLoading) return;
+    const appendUserMessage = options?.appendUserMessage ?? true;
 
     setIsLoading(true);
 
     const userMessage = createMessage('user', trimmed);
-    const assistantMessage = createMessage('assistant', '');
+    const assistantMessage = createMessage('assistant', '', {
+      id: options?.assistantMessageId ?? crypto.randomUUID(),
+    });
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    setMessages((prev) => [...prev, userMessage, assistantMessage]);
+    setMessages((prev) => {
+      if (appendUserMessage) {
+        return [...prev, userMessage, assistantMessage];
+      }
+      const cleared = clearTutorAssistantRetryState({
+        messages: prev,
+        assistantMessageId: assistantMessage.id,
+      });
+      const hasAssistant = cleared.some((message) => message.id === assistantMessage.id);
+      return hasAssistant ? cleared : [...cleared, assistantMessage];
+    });
 
     try {
       const {
@@ -375,16 +395,20 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
         return;
       }
       console.error('[TutorChat] Failed to stream tutor response:', streamError);
-      setMessages((prev) => {
-        const next = [...prev];
-        const index = next.findIndex((message) => message.id === assistantMessage.id);
-        if (index === -1) return prev;
-        next[index] = {
-          ...next[index],
+      setMessages((prev) =>
+        markTutorAssistantError({
+          messages: prev,
+          assistantMessageId: assistantMessage.id,
+          retryPrompt: trimmed,
           content: 'Tutor is temporarily unavailable. Please try again.',
-        };
-        return next;
-      });
+        })
+      );
+      setInput((currentInput) =>
+        restoreInputAfterTutorFailure({
+          currentInput,
+          failedPrompt: trimmed,
+        })
+      );
     } finally {
       if (abortControllerRef.current === abortController) {
         abortControllerRef.current = null;
@@ -418,6 +442,15 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
       setInput('');
       void submitUserMessage(trimmed);
     }
+  };
+
+  const handleRetry = (message: TutorUiMessage) => {
+    if (!message.retryPrompt || isLoading) return;
+    setInput((currentInput) => (currentInput.trim() === message.retryPrompt ? '' : currentInput));
+    void submitUserMessage(message.retryPrompt, {
+      appendUserMessage: false,
+      assistantMessageId: message.id,
+    });
   };
 
   return (
@@ -475,9 +508,21 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
                           <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c8f542] [animation-delay:300ms]" />
                         </div>
                       ) : (
-                        <div className="flex items-start gap-2">
-                          <span className="mt-1 flex-shrink-0 text-xs text-[#c8f542]">✦</span>
-                          <RichText content={stripArticleRefs(message.content)} className="text-sm leading-relaxed text-zinc-300" />
+                        <div className="space-y-2">
+                          <div className="flex items-start gap-2">
+                            <span className="mt-1 flex-shrink-0 text-xs text-[#c8f542]">✦</span>
+                            <RichText content={stripArticleRefs(message.content)} className="text-sm text-zinc-300" />
+                          </div>
+                          {message.status === 'error' && message.retryPrompt ? (
+                            <button
+                              type="button"
+                              onClick={() => handleRetry(message)}
+                              disabled={isLoading}
+                              className="ml-5 inline-flex items-center rounded-md border border-zinc-700 px-2 py-1 text-[11px] font-medium text-zinc-300 transition-colors hover:border-zinc-500 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                              Retry
+                            </button>
+                          ) : null}
                         </div>
                       )}
                     </div>

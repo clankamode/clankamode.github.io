@@ -1,24 +1,33 @@
 # Session OS v2 Execution Backlog
 
 Created: February 15, 2026
-Last Updated: February 16, 2026
+Last Updated: March 3, 2026
 Status: Active backlog with in-flight reordering
 
-## Implementation Snapshot (February 16, 2026)
+## Implementation Snapshot (March 3, 2026)
 
 Completed or partially completed work:
 
-1. Epic 3 core silent mode is implemented:
+1. Progression lock baseline is implemented:
+   - transition lock lifecycle is active in `SessionContext` (`ready -> advancing/finalizing -> ready`)
+   - `advanceItem`, `completeSession`, and `abandonSession` run through lock semantics
+2. Finalization durability baseline is implemented:
+   - deduped `session_finalized` write path by session key
+   - interruption fallback via pagehide/visibility-change + beacon/keepalive finalize path
+3. Learning-state writeback hooks are implemented in terminal flow:
+   - concept exposure updates via completion delta path
+   - internalization persistence + concept internalization increment path
+4. Epic 3 core silent mode is implemented:
    - classifier runtime in `SessionContext`
    - friction snapshot persistence
    - `friction_state_changed` telemetry path
-2. Admin observability stack is implemented:
+5. Admin observability stack is implemented:
    - unified session intelligence dashboard
    - hotspot drill-down
    - triage workflow with status and owner
    - AI-assisted brief and recommendation actions
    - AI decision registry and replay readout
-3. Remaining reliability and governance work is still required:
+6. Remaining reliability and governance work is still required:
    - progression invariants hardening depth
    - finalize and writeback reconciliation
    - AI triage quality scoring beyond override proxies
@@ -172,17 +181,20 @@ Dependencies:
 Objective:
 - Shift optimization target from activity to transfer.
 
+Status:
+- Partially complete: Transfer Score v0 and quality-adjusted completion readouts are active in admin quality reporting; optimization and experiment depth remain open.
+
 Tasks:
 
-1. define transfer score inputs and weights
-2. compute quality-adjusted completion
-3. add experimental readouts for adaptive cohorts
+1. tune transfer score inputs and weights beyond v0 baseline
+2. harden quality-adjusted completion interpretation and thresholds
+3. expand experimental readouts for adaptive cohorts
 
 Acceptance criteria:
 
-1. transfer score available in reporting
-2. quality-adjusted completion becomes primary reporting metric
-3. experiment decisions reference transfer outcomes
+1. transfer score v0 remains available with documented calibration updates
+2. quality-adjusted completion is trusted for promotion/rollback decisions
+3. experiment decisions consistently reference transfer outcomes
 
 Dependencies:
 

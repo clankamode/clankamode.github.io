@@ -242,7 +242,7 @@ function CodeBlockComponent({ block, editable = false, mode = 'default', onChang
                     {lineNumber}
                   </span>
                   <span
-                    className="whitespace-pre-wrap"
+                    className="whitespace-pre"
                     dangerouslySetInnerHTML={{ __html: highlightedLine || ' ' }}
                   />
                 </span>

@@ -1,8 +1,8 @@
 # Session Metrics and Experiment Plan
 
 Created: February 15, 2026
-Last Updated: February 17, 2026
-Status: Active, with operations-first v1 metrics and Transfer Score v0 readout
+Last Updated: March 3, 2026
+Status: Active, with operations-first v1 metrics, Transfer Score v0 readout, and triage audit logging
 
 ## Measurement Philosophy
 
@@ -158,14 +158,14 @@ Success metrics:
 ## Event Additions (Status)
 
 1. `friction_state_changed` (active)
-2. `intervention_shown`
-3. `intervention_accepted`
-4. `intervention_dismissed`
-5. `intervention_outcome`
-6. `debt_created`
-7. `debt_paid`
-8. `proof_submitted`
-9. `proof_quality_scored`
+2. `intervention_shown` (proposed)
+3. `intervention_accepted` (proposed)
+4. `intervention_dismissed` (proposed)
+5. `intervention_outcome` (proposed)
+6. `debt_created` (proposed)
+7. `debt_paid` (proposed)
+8. `proof_submitted` (proposed)
+9. `proof_quality_scored` (proposed)
 
 ## Instrumentation Requirements
 
@@ -173,7 +173,7 @@ Success metrics:
 2. Consistent dedupe strategy for rapid repeat actions.
 3. Event payload schema contracts with size limits.
 4. Event drop and failure monitoring.
-5. Triage mutation audit events for AI and manual actions (recommended next).
+5. Triage mutation audit events for AI and manual actions (active via `SessionFrictionTriageAudit` write path).
 
 ## Reporting Cadence
 
