@@ -1,9 +1,11 @@
 #!/usr/bin/env tsx
 
 import { Command } from 'commander';
+import { parse as parseDotEnv } from 'dotenv';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 interface SessionFile {
   cookies: Record<string, string>;
@@ -16,8 +18,39 @@ interface GlobalOptions {
   json: boolean;
 }
 
+export interface DoctorCheckResult {
+  label: string;
+  ok: boolean;
+  details: string;
+}
+
+interface DoctorRunOptions {
+  baseUrl: string;
+  envFilePath?: string;
+  fetchFn?: typeof fetch;
+  nodeVersion?: string;
+  timeoutMs?: number;
+}
+
+export interface ParsedMarkdownContent {
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+}
+
 const DEFAULT_BASE_URL = 'http://localhost:3000';
 const SESSION_FILE = path.join(os.homedir(), '.jp-session.json');
+const ENV_FILE = path.resolve(process.cwd(), '.env.local');
+const SUPABASE_LOCAL_REST_URL = 'http://127.0.0.1:54321/rest/v1/';
+const REQUIRED_ENV_VARS = [
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  'NEXTAUTH_SECRET',
+] as const;
+const ANSI_GREEN = '\u001B[32m';
+const ANSI_RED = '\u001B[31m';
+const ANSI_RESET = '\u001B[0m';
 
 function resolveGlobals(command: Command): GlobalOptions {
   let baseUrl = DEFAULT_BASE_URL;
@@ -195,6 +228,203 @@ async function getAuthedSession(): Promise<SessionFile> {
   return session;
 }
 
+function deriveSlugFromFilePath(filePath: string): string {
+  const slug = path.parse(filePath).name.trim();
+  if (!slug) {
+    throw new Error(`Unable to derive slug from file path: ${filePath}`);
+  }
+  return slug;
+}
+
+export function parseMarkdownContent(markdown: string, filePath: string): ParsedMarkdownContent {
+  const body = markdown.trim();
+  if (!body) {
+    throw new Error(`Markdown file is empty: ${filePath}`);
+  }
+
+  const h1Match = /^#\s+(.+)$/m.exec(body);
+  if (!h1Match) {
+    throw new Error(`Markdown file must include an H1 title: ${filePath}`);
+  }
+
+  const title = h1Match[1].trim();
+  if (!title) {
+    throw new Error(`H1 title cannot be empty: ${filePath}`);
+  }
+
+  const h1LineEnd = body.indexOf('\n', h1Match.index);
+  const contentAfterH1 = h1LineEnd >= 0 ? body.slice(h1LineEnd + 1) : '';
+  const h2Match = /^##\s+.+$/m.exec(contentAfterH1);
+  const excerptSource = h2Match ? contentAfterH1.slice(0, h2Match.index) : contentAfterH1;
+  const excerpt = excerptSource.trim();
+
+  return {
+    slug: deriveSlugFromFilePath(filePath),
+    title,
+    excerpt,
+    body,
+  };
+}
+
+export async function parseMarkdownFile(filePath: string): Promise<ParsedMarkdownContent> {
+  const absolutePath = path.resolve(filePath);
+  const markdown = await fs.readFile(absolutePath, 'utf8');
+  return parseMarkdownContent(markdown, absolutePath);
+}
+
+async function loadEnvFile(envFilePath: string): Promise<{ values: Record<string, string>; loadError: string | null }> {
+  try {
+    const raw = await fs.readFile(envFilePath, 'utf8');
+    return {
+      values: parseDotEnv(raw),
+      loadError: null,
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      values: {},
+      loadError: message,
+    };
+  }
+}
+
+function parseNodeMajorVersion(nodeVersion: string): number {
+  const [majorPart] = nodeVersion.split('.');
+  const parsed = Number.parseInt(majorPart ?? '', 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+async function fetchWithTimeout(
+  fetchFn: typeof fetch,
+  input: RequestInfo | URL,
+  init: RequestInit,
+  timeoutMs: number,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutHandle = setTimeout(() => {
+    controller.abort();
+  }, timeoutMs);
+
+  try {
+    return await fetchFn(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutHandle);
+  }
+}
+
+export async function runDoctorChecks(options: DoctorRunOptions): Promise<DoctorCheckResult[]> {
+  const envFilePath = options.envFilePath ?? ENV_FILE;
+  const fetchFn = options.fetchFn ?? fetch;
+  const nodeVersion = options.nodeVersion ?? process.versions.node;
+  const timeoutMs = options.timeoutMs ?? 3000;
+  const normalizedBaseUrl = options.baseUrl.trim().replace(/\/$/, '') || DEFAULT_BASE_URL;
+  const checks: DoctorCheckResult[] = [];
+  const envFile = await loadEnvFile(envFilePath);
+  const envValues = envFile.values;
+
+  const nodeMajor = parseNodeMajorVersion(nodeVersion);
+  checks.push({
+    label: 'Node.js version >= 20',
+    ok: nodeMajor >= 20,
+    details: `found ${nodeVersion}`,
+  });
+
+  for (const key of REQUIRED_ENV_VARS) {
+    const value = envValues[key];
+    const hasValue = typeof value === 'string' && value.trim().length > 0;
+    checks.push({
+      label: `.env.local has ${key}`,
+      ok: hasValue,
+      details: hasValue
+        ? 'set'
+        : envFile.loadError
+          ? `missing (${envFile.loadError})`
+          : 'missing',
+    });
+  }
+
+  const anonKey = envValues.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseUrl = envValues.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseRestUrl =
+    typeof supabaseUrl === 'string' && supabaseUrl.trim().length > 0
+      ? `${supabaseUrl.trim().replace(/\/$/, '')}/rest/v1/`
+      : SUPABASE_LOCAL_REST_URL;
+  if (typeof anonKey !== 'string' || anonKey.trim().length === 0) {
+    checks.push({
+      label: 'Supabase REST API is reachable',
+      ok: false,
+      details: 'NEXT_PUBLIC_SUPABASE_ANON_KEY is missing in .env.local',
+    });
+  } else {
+    try {
+      const response = await fetchWithTimeout(
+        fetchFn,
+        supabaseRestUrl,
+        {
+          method: 'GET',
+          headers: {
+            apikey: anonKey,
+            authorization: `Bearer ${anonKey}`,
+          },
+        },
+        timeoutMs,
+      );
+
+      checks.push({
+        label: 'Supabase REST API is reachable',
+        ok: response.ok,
+        details: `HTTP ${response.status}`,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      checks.push({
+        label: 'Supabase REST API is reachable',
+        ok: false,
+        details: message,
+      });
+    }
+  }
+
+  try {
+    const response = await fetchWithTimeout(
+      fetchFn,
+      `${normalizedBaseUrl}/`,
+      { method: 'GET' },
+      timeoutMs,
+    );
+
+    checks.push({
+      label: `Next.js dev server is reachable at ${normalizedBaseUrl}`,
+      ok: response.ok,
+      details: `HTTP ${response.status}`,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    checks.push({
+      label: `Next.js dev server is reachable at ${normalizedBaseUrl}`,
+      ok: false,
+      details: message,
+    });
+  }
+
+  return checks;
+}
+
+function colorize(text: string, color: string): string {
+  if (!process.stdout.isTTY) {
+    return text;
+  }
+  return `${color}${text}${ANSI_RESET}`;
+}
+
+function printDoctorChecklist(checks: DoctorCheckResult[]): void {
+  process.stdout.write('Health check results:\n');
+  for (const check of checks) {
+    const marker = check.ok ? colorize('✓', ANSI_GREEN) : colorize('✗', ANSI_RED);
+    process.stdout.write(`${marker} ${check.label} (${check.details})\n`);
+  }
+}
+
 const program = new Command();
 program
   .name('jp')
@@ -310,6 +540,26 @@ auth
     process.stdout.write(`username: ${user.username ?? 'unknown'}\n`);
   });
 
+program
+  .command('doctor')
+  .description('Check local development environment health')
+  .action(async (_options, command: Command) => {
+    const globals = resolveGlobals(command);
+    const checks = await runDoctorChecks({ baseUrl: globals.baseUrl });
+    const allPassed = checks.every((check) => check.ok);
+
+    if (globals.json) {
+      printUnknown({ ok: allPassed, checks }, true);
+    } else {
+      printDoctorChecklist(checks);
+      process.stdout.write(allPassed ? `${colorize('✓', ANSI_GREEN)} All checks passed.\n` : `${colorize('✗', ANSI_RED)} Checks failed.\n`);
+    }
+
+    if (!allPassed) {
+      process.exitCode = 1;
+    }
+  });
+
 const questions = program.command('questions').description('Question lookup commands');
 
 questions
@@ -361,7 +611,7 @@ questions
 questions
   .command('get <slug>')
   .description('Get a question/article by slug')
-  .action(async (slug: string, command: Command) => {
+  .action(async (slug: string, _options: Record<string, unknown>, command: Command) => {
     const globals = resolveGlobals(command);
     const response = await requestWithSession(
       globals.baseUrl,
@@ -385,6 +635,56 @@ questions
     }
     if (item.body) {
       process.stdout.write(`\n${item.body}\n`);
+    }
+  });
+
+const content = questions.command('content').description('Content administration commands');
+
+content
+  .command('push')
+  .description('Upsert an article from a local markdown file')
+  .requiredOption('--file <path>', 'Path to local markdown file')
+  .requiredOption('--topic-id <id>', 'Topic id to assign to the article')
+  .action(async (options, command: Command) => {
+    const globals = resolveGlobals(command);
+    const session = await getAuthedSession();
+    const absolutePath = path.resolve(process.cwd(), String(options.file));
+    const fallbackSlug = deriveSlugFromFilePath(absolutePath);
+
+    try {
+      const parsed = await parseMarkdownFile(absolutePath);
+      const response = await requestWithSession(
+        globals.baseUrl,
+        '/api/content',
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            slug: parsed.slug,
+            title: parsed.title,
+            excerpt: parsed.excerpt,
+            body: parsed.body,
+            topicId: String(options.topicId),
+          }),
+        },
+        session,
+      );
+
+      const body = await readResponseBody(response);
+      ensureOk(response, body);
+      await saveSession(session);
+
+      if (globals.json) {
+        printUnknown({ ok: true, slug: parsed.slug, data: body }, true);
+        return;
+      }
+
+      process.stdout.write(`Pushed article '${parsed.slug}'.\n`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to push article '${fallbackSlug}': ${message}`);
     }
   });
 
@@ -529,8 +829,17 @@ progress
     printUnknown(body, false);
   });
 
-program.parseAsync(process.argv).catch((error: unknown) => {
-  const message = error instanceof Error ? error.message : String(error);
-  process.stderr.write(`Error: ${message}\n`);
-  process.exit(1);
-});
+export async function runCli(argv: string[] = process.argv): Promise<void> {
+  await program.parseAsync(argv);
+}
+
+const isDirectInvocation = typeof process.argv[1] === 'string'
+  && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isDirectInvocation) {
+  runCli().catch((error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(`Error: ${message}\n`);
+    process.exit(1);
+  });
+}
