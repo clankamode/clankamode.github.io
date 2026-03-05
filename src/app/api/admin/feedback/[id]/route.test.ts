@@ -34,6 +34,30 @@ function makeAdminPatchResult(result: { data?: Record<string, unknown>; error?: 
   };
 }
 
+function makeAdminPatchResultSequence(results: Array<{ data?: Record<string, unknown>; error?: { code?: string; message?: string } | null }>) {
+  const queue = [...results];
+  const updateMock = vi.fn(() => {
+    const current = queue.shift();
+    if (!current) {
+      throw new Error('Unexpected update call');
+    }
+    const singleMock = vi.fn().mockResolvedValue({
+      data: current.data ?? null,
+      error: current.error ?? null,
+    });
+    const selectMock = vi.fn(() => ({ single: singleMock }));
+    const eqMock = vi.fn(() => ({ select: selectMock }));
+    return { eq: eqMock };
+  });
+  const fromMock = vi.fn(() => ({ update: updateMock }));
+
+  return {
+    admin: { from: fromMock },
+    fromMock,
+    updateMock,
+  };
+}
+
 function makePatchRequest(body: Record<string, unknown>) {
   return new NextRequest('http://localhost/api/admin/feedback/feedback-1', {
     method: 'PATCH',
@@ -169,6 +193,37 @@ describe('/api/admin/feedback/[id] PATCH', () => {
     expect(res.status).toBe(200);
     expect(body).toMatchObject({ status: 'new', resolution: null, isOpen: true });
     expect(updateMock).toHaveBeenCalledWith({ status: 'new', resolution: null });
+  });
+
+  test('falls back when resolution column is missing', async () => {
+    const { admin, updateMock } = makeAdminPatchResultSequence([
+      {
+        error: { message: 'column "resolution" does not exist' },
+      },
+      {
+        data: {
+          id: 'feedback-1',
+          status: 'closed',
+          created_at: '2026-02-25T10:00:00.000Z',
+          category: 'bug',
+          message: 'Issue',
+          page_path: '/learn',
+          contact_email: null,
+          user_email: 'alice@example.com',
+        },
+      },
+    ]);
+
+    getTokenMock.mockResolvedValue({ role: 'ADMIN' });
+    getSupabaseAdminClientMock.mockReturnValue(admin);
+
+    const res = await PATCH(makePatchRequest({ status: 'closed', resolution: 'duplicate' }));
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toMatchObject({ status: 'closed', resolution: null, isOpen: false });
+    expect(updateMock).toHaveBeenNthCalledWith(1, { status: 'closed', resolution: 'duplicate' });
+    expect(updateMock).toHaveBeenNthCalledWith(2, { status: 'closed' });
   });
 
   test('returns 403 for non-admin users', async () => {
