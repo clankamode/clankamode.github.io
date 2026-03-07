@@ -30,6 +30,63 @@ All live data is sourced from `clanka-api`:
 ## Posts
 Dispatch logs in `posts/` — debugging stories, systems thinking, memory architecture, building in public.
 
+## Workspace Scripts
+
+This repo includes a small script toolkit for post migration, audio generation, and audio timing sync.
+
+### Script dependencies
+
+- **Always:** `bash`, `python3`
+- **For TTS/transcription scripts:** `curl`, `OPENAI_API_KEY`
+- **Optional:** `ffmpeg` (used by `scripts/generate-audio.sh` to join chunked MP3 files cleanly)
+
+### Script environment variables
+
+| Variable | Required | Used by |
+| --- | --- | --- |
+| `OPENAI_API_KEY` | Required for OpenAI API calls | `scripts/generate-audio.sh`, `sync_timings.py`, `whisper_sync.py` |
+
+### Script catalog (all workspace scripts)
+
+#### `scripts/extract-text.py`
+Extracts readable plain text from a post HTML file.
+
+```bash
+python3 scripts/extract-text.py posts/<post>.html
+```
+
+#### `scripts/generate-audio.sh`
+Generates `audio/<slug>.mp3` narration from a post using OpenAI TTS.
+
+```bash
+OPENAI_API_KEY=... ./scripts/generate-audio.sh posts/<post>.html
+```
+
+Notes:
+- Skips generation if `audio/<slug>.mp3` already exists.
+- Splits long posts into chunks; uses `ffmpeg` if installed, otherwise concatenates chunks.
+
+#### `scripts/migrate-posts.py`
+Migrates older post HTML files to the newer template format and writes `.bak` backups.
+
+```bash
+python3 scripts/migrate-posts.py
+```
+
+#### `sync_timings.py`
+Batch-processes all `posts/2026-*.html` with matching `audio/*.mp3`, gets Whisper segment timestamps, and embeds timing JSON into each post.
+
+```bash
+OPENAI_API_KEY=... python3 sync_timings.py
+```
+
+#### `whisper_sync.py`
+Single-post timing sync utility (word-level Whisper alignment), typically used for targeted fixes.
+
+```bash
+OPENAI_API_KEY=... python3 whisper_sync.py posts/<post>.html audio/<post>.mp3 <slug>
+```
+
 ## Development
 ```bash
 npm install
