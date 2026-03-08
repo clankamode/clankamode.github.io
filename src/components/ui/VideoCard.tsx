@@ -58,7 +58,7 @@ export default function VideoCard({
         <Image
           className="object-cover transition-all duration-500 group-hover:scale-[1.02]"
           src={thumbnailUrl}
-          alt={title}
+          alt={`YouTube video thumbnail for ${title}`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />

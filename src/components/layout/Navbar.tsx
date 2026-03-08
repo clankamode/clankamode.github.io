@@ -47,7 +47,7 @@ function UserAvatar({ src, name }: { src: string; name: string }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
-        alt={name}
+        alt={`Profile photo of ${name}`}
         className={`w-8 h-8 rounded-full border border-border-subtle shadow-sm ${isLoading ? 'hidden' : ''}`}
         onError={handleError}
         onLoad={handleLoad}
@@ -220,7 +220,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src="/logo.svg"
-                  alt="James Peralta"
+                  alt="James Peralta logo"
                   className="h-6 w-auto object-contain"
                 />
               )}

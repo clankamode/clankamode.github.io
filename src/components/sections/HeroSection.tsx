@@ -35,6 +35,8 @@ function ProfileImage({ src, alt, title }: { src: string; alt: string; title?: s
 }
 
 export default function HeroSection({ channelStats }: HeroSectionProps) {
+  const profileTitle = channelStats?.title || 'James Peralta';
+
   return (
     <section aria-label="Hero Section" className="relative bg-background pt-24 pb-16 px-4 md:px-8 overflow-x-hidden overflow-y-visible min-h-[80vh] flex items-center justify-center">
       {/* Ambient Background Glow */}
@@ -46,7 +48,7 @@ export default function HeroSection({ channelStats }: HeroSectionProps) {
           <div className="relative mb-12 group cursor-pointer">
             <ProfileImage
               src={channelStats.thumbnailUrl}
-              alt={channelStats.title || 'James Peralta'}
+              alt={`${profileTitle} profile photo`}
               title={channelStats.title}
             />
           </div>
