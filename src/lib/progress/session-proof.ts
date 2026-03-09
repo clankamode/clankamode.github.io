@@ -20,9 +20,15 @@ export function deriveSessionMode(now: SessionItem | null, lastCompletedAt?: str
   return 'normal';
 }
 
-export function buildLast7Proof(completionDates: string[]): {
+export function buildLast7Proof(completionDates: string[], dailyGoalTarget = 1): {
   last7: { date: string; count: number }[];
   todayCount: number;
+  dailyGoal: {
+    target: number;
+    completed: number;
+    remaining: number;
+    met: boolean;
+  };
 } {
   const last7Map = new Map<string, number>();
   const now = new Date();
@@ -45,9 +51,18 @@ export function buildLast7Proof(completionDates: string[]): {
     .sort((a, b) => a.date.localeCompare(b.date));
 
   const todayKey = new Date().toISOString().slice(0, 10);
+  const todayCount = last7Map.get(todayKey) || 0;
+  const remaining = Math.max(dailyGoalTarget - todayCount, 0);
+
   return {
     last7,
-    todayCount: last7Map.get(todayKey) || 0,
+    todayCount,
+    dailyGoal: {
+      target: dailyGoalTarget,
+      completed: todayCount,
+      remaining,
+      met: todayCount >= dailyGoalTarget,
+    },
   };
 }
 

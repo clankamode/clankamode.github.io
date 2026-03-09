@@ -118,7 +118,17 @@ export default function HomeClient({ sessionState, primer }: HomeClientProps) {
                                 mode: 'pick_track',
                                 now: null,
                                 upNext: [],
-                                proof: { streakDays: 0, todayCount: 0, last7: [] },
+                                proof: {
+                                    streakDays: 0,
+                                    todayCount: 0,
+                                    last7: [],
+                                    dailyGoal: {
+                                        target: 1,
+                                        completed: 0,
+                                        remaining: 1,
+                                        met: false,
+                                    },
+                                },
                                 track: null,
                                 personalization: null,
                                 personalizationExperiment: null

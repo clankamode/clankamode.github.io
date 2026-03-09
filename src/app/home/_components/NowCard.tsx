@@ -46,6 +46,7 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
     const [isStarting, setIsStarting] = useState(false);
     const isFirstTime = mode === 'pick_track' || !now;
     const streakDays = session.proof?.streakDays ?? 0;
+    const dailyGoal = session.proof?.dailyGoal;
 
     const assertion = isFirstTime ? {
         title: 'Data Structures',
@@ -303,6 +304,14 @@ export default function NowCard({ session, userId, googleId, primer }: NowCardPr
                                     <span className="text-border-interactive">·</span>
                                     <span className="inline-flex items-center rounded px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold">
                                         {streakDays}d streak
+                                    </span>
+                                </>
+                            )}
+                            {dailyGoal && (
+                                <>
+                                    <span className="text-border-interactive">·</span>
+                                    <span className="inline-flex items-center rounded px-1.5 py-0.5 bg-surface-interactive text-text-muted text-[10px] font-semibold">
+                                        Daily goal: {dailyGoal.completed}/{dailyGoal.target}
                                     </span>
                                 </>
                             )}

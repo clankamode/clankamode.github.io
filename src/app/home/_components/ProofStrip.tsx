@@ -5,7 +5,7 @@ interface ProofStripProps {
 }
 
 export default function ProofStrip({ proof }: ProofStripProps) {
-    const { streakDays, todayCount, last7 } = proof;
+    const { streakDays, todayCount, dailyGoal, last7 } = proof;
 
     return (
         <section className="mt-16 py-5 border-t border-white/[0.05]">
@@ -24,7 +24,9 @@ export default function ProofStrip({ proof }: ProofStripProps) {
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-accent-primary/60" />
                     <span className="text-sm text-text-secondary">
-                        {todayCount === 0 ? 'Nothing today' : `${todayCount} today`}
+                        {dailyGoal.target > 0
+                            ? `${dailyGoal.completed}/${dailyGoal.target} goal`
+                            : `${todayCount} today`}
                     </span>
                 </div>
 

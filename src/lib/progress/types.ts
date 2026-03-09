@@ -115,6 +115,12 @@ export interface LearningDelta {
 export interface SessionProof {
   streakDays: number;
   todayCount: number;
+  dailyGoal: {
+    target: number;
+    completed: number;
+    remaining: number;
+    met: boolean;
+  };
   last7: { date: string; count: number }[];
 }
 

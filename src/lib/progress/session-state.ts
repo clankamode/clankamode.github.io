@@ -240,7 +240,7 @@ export async function getSessionState(
   const now = sessionItems[0] || null;
   const upNext = sessionItems.slice(1, 4);
   const mode = deriveSessionMode(now, summary.recentActivity[0]?.completedAt);
-  const { last7, todayCount } = buildLast7Proof(summary.allCompletionDates);
+  const { last7, todayCount, dailyGoal } = buildLast7Proof(summary.allCompletionDates);
   const track = resolveSessionTrack({
     now,
     preferredTrack,
@@ -255,6 +255,7 @@ export async function getSessionState(
     proof: {
       streakDays: summary.streakDays,
       todayCount,
+      dailyGoal,
       last7,
     },
     track,
