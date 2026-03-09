@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { getLearningLibrary } from '@/lib/content';
 import { BOOKMARKS_TABLE, PROGRESS_TABLE } from '@/lib/progress/constants';
 import { buildIdentityFilter } from '@/lib/progress/identity';
-import { buildArticleLookup, getStreakDays } from '@/lib/progress/helpers';
+import { buildArticleLookup, getStreakStatus } from '@/lib/progress/helpers';
 import type {
   BookmarkItem,
   NextArticle,
@@ -41,9 +41,18 @@ export async function getBookmarkStatus(userId: string, articleId: string, googl
   return { bookmarked: true };
 }
 
+export interface ProgressSummaryOptions {
+  streak?: {
+    freezeDates?: string[];
+    weeklyFreezeLimit?: number;
+    weekendOffEnabled?: boolean;
+  };
+}
+
 export async function getProgressSummaryWithLibrary(
   userId: string,
-  googleId?: string
+  googleId?: string,
+  options?: ProgressSummaryOptions
 ): Promise<ProgressSummaryWithLibrary> {
   const library = await getLearningLibrary(false);
   const lookup = buildArticleLookup(library);
@@ -98,7 +107,12 @@ export async function getProgressSummaryWithLibrary(
     };
   });
 
-  const streakDays = getStreakDays(filteredRecords.map((record) => record.completed_at));
+  const streakStatus = getStreakStatus(filteredRecords.map((record) => record.completed_at), {
+    freezeDates: options?.streak?.freezeDates,
+    weeklyFreezeLimit: options?.streak?.weeklyFreezeLimit,
+    weekendOffEnabled: options?.streak?.weekendOffEnabled,
+  });
+  const streakDays = streakStatus.streakDays;
 
   let nextArticle: NextArticle | null = null;
   for (const pillar of library) {
@@ -125,6 +139,7 @@ export async function getProgressSummaryWithLibrary(
     completedArticles,
     percent,
     streakDays,
+    streakDayStates: streakStatus.dayStates,
     pillars,
     recentActivity,
     nextArticle,
@@ -138,8 +153,12 @@ export async function getProgressSummaryWithLibrary(
   };
 }
 
-export async function getProgressSummary(userId: string, googleId?: string): Promise<ProgressSummary> {
-  const { summary } = await getProgressSummaryWithLibrary(userId, googleId);
+export async function getProgressSummary(
+  userId: string,
+  googleId?: string,
+  options?: ProgressSummaryOptions
+): Promise<ProgressSummary> {
+  const { summary } = await getProgressSummaryWithLibrary(userId, googleId, options);
   return summary;
 }
 

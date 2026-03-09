@@ -1,8 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const DISCORD_WEBHOOK_URL = Deno.env.get('DISCORD_WEBHOOK_URL')
+const FUNCTION_VERSION = '7'
 
 serve(async (req) => {
+    if (req.method === 'GET') {
+        const webhookConfigured = Boolean(DISCORD_WEBHOOK_URL)
+
+        return Response.json({
+            ok: webhookConfigured,
+            webhookConfigured,
+            version: FUNCTION_VERSION,
+            timestamp: new Date().toISOString(),
+        })
+    }
+
     if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 })
     }

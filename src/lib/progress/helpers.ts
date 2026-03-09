@@ -19,29 +19,86 @@ function getDateKey(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
-export function getStreakDays(completedAtDates: string[]) {
+function isWeekendUTC(date: Date): boolean {
+  const day = date.getUTCDay();
+  return day === 0 || day === 6;
+}
+
+function getUTCWeekKey(date: Date): string {
+  const weekStart = new Date(date);
+  const day = weekStart.getUTCDay();
+  const daysFromMonday = (day + 6) % 7;
+  weekStart.setUTCDate(weekStart.getUTCDate() - daysFromMonday);
+  return getDateKey(weekStart);
+}
+
+export interface StreakOptions {
+  freezeDates?: string[];
+  weeklyFreezeLimit?: number;
+  weekendOffEnabled?: boolean;
+  today?: Date;
+}
+
+export interface StreakDayState {
+  date: string;
+  state: 'earned' | 'freeze';
+  reason?: 'manual-freeze' | 'weekend-off';
+}
+
+export interface StreakStatus {
+  streakDays: number;
+  dayStates: StreakDayState[];
+}
+
+export function getStreakStatus(completedAtDates: string[], options?: StreakOptions): StreakStatus {
   if (!completedAtDates.length) {
-    return 0;
+    return { streakDays: 0, dayStates: [] };
   }
 
   const completedKeys = new Set(
     completedAtDates.map((completedAt) => getDateKey(new Date(completedAt)))
   );
+  const freezeKeys = new Set(
+    (options?.freezeDates || []).map((freezeDate) => getDateKey(new Date(freezeDate)))
+  );
 
-  const todayKey = getDateKey(new Date());
-  if (!completedKeys.has(todayKey)) {
-    return 0;
-  }
+  const cursor = new Date(options?.today ?? new Date());
+  const dayStates: StreakDayState[] = [];
+  const weeklyFreezeLimit = Math.max(0, options?.weeklyFreezeLimit ?? Number.POSITIVE_INFINITY);
+  const freezeUsageByWeek = new Map<string, number>();
 
-  let streak = 0;
-  const cursor = new Date();
+  while (true) {
+    const dayKey = getDateKey(cursor);
 
-  while (completedKeys.has(getDateKey(cursor))) {
-    streak += 1;
+    if (completedKeys.has(dayKey)) {
+      dayStates.push({ date: dayKey, state: 'earned' });
+    } else if (freezeKeys.has(dayKey)) {
+      const weekKey = getUTCWeekKey(cursor);
+      const usedThisWeek = freezeUsageByWeek.get(weekKey) ?? 0;
+
+      if (usedThisWeek >= weeklyFreezeLimit) {
+        break;
+      }
+
+      freezeUsageByWeek.set(weekKey, usedThisWeek + 1);
+      dayStates.push({ date: dayKey, state: 'freeze', reason: 'manual-freeze' });
+    } else if (options?.weekendOffEnabled && isWeekendUTC(cursor)) {
+      dayStates.push({ date: dayKey, state: 'freeze', reason: 'weekend-off' });
+    } else {
+      break;
+    }
+
     cursor.setUTCDate(cursor.getUTCDate() - 1);
   }
 
-  return streak;
+  return {
+    streakDays: dayStates.length,
+    dayStates,
+  };
+}
+
+export function getStreakDays(completedAtDates: string[], options?: StreakOptions) {
+  return getStreakStatus(completedAtDates, options).streakDays;
 }
 
 export function formatConceptLabel(conceptSlug: string | null | undefined): string | null {

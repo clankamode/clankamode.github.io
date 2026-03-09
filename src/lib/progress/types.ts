@@ -44,11 +44,18 @@ export interface NextArticle {
   readingTimeMinutes: number | null;
 }
 
+export interface StreakDaySummaryState {
+  date: string;
+  state: 'earned' | 'freeze';
+  reason?: 'manual-freeze' | 'weekend-off';
+}
+
 export interface ProgressSummary {
   totalArticles: number;
   completedArticles: number;
   percent: number;
   streakDays: number;
+  streakDayStates: StreakDaySummaryState[];
   pillars: PillarProgress[];
   recentActivity: RecentActivityItem[];
   nextArticle: NextArticle | null;

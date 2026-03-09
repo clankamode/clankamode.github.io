@@ -13,6 +13,11 @@ function buildSummary(overrides: Partial<ProgressSummary> = {}): ProgressSummary
     completedArticles: 8,
     percent: 40,
     streakDays: 3,
+    streakDayStates: [
+      { date: '2026-02-20', state: 'earned' },
+      { date: '2026-02-19', state: 'earned' },
+      { date: '2026-02-18', state: 'freeze', reason: 'manual-freeze' },
+    ],
     pillars: [
       {
         id: 'pillar-1',
