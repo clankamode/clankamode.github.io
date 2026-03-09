@@ -41,6 +41,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${jakarta.variable} ${jetbrains.variable} antialiased`}>
+        <a
+          href="#main-content"
+          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-md bg-surface px-4 py-2 text-foreground shadow-lg transition-transform focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+        >
+          Skip to main content
+        </a>
         <AuthProvider session={authSession}>
           <StreamModeBootstrap />
           <SignInRecorder />

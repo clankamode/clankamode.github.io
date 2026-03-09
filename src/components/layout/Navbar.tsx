@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { useSession as useSessionContext } from '@/contexts/SessionContext';
@@ -58,6 +58,10 @@ function UserAvatar({ src, name }: { src: string; name: string }) {
 
 interface NavbarProps {
   mode?: ChromeMode;
+}
+
+export function getNavigationAriaLabel(label: string) {
+  return `Navigate to ${label}`;
 }
 
 export default function Navbar({ mode = 'app' }: NavbarProps) {
@@ -180,6 +184,7 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
     <>
       <nav
         ref={navRef}
+        aria-label="Main navigation"
         className={`fixed w-full z-50 top-0 left-0 transition-all duration-500 border-b ${scrolled || isMenuOpen
           ? 'bg-surface-ambient/80 backdrop-blur-xl border-border-subtle py-3'
           : 'bg-transparent border-transparent py-5'
@@ -235,19 +240,19 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                   <div className="h-8 w-72 rounded-full bg-surface-interactive animate-pulse" />
                 ) : isLoggedIn && isEditor && !isEffectiveAdmin ? (
                   <>
-                    <Link href="/admin/content" className={navLinkClass('/admin/content')}>
+                    <Link href="/admin/content" className={navLinkClass('/admin/content')} aria-label={getNavigationAriaLabel('Content')}>
                       Content
                     </Link>
-                    <Link href="/ai" className={navLinkClass('/ai')}>
+                    <Link href="/ai" className={navLinkClass('/ai')} aria-label={getNavigationAriaLabel('AI Tools')}>
                       AI Tools
                     </Link>
-                    <Link href="/thumbnails" className={navLinkClass('/thumbnails')}>
+                    <Link href="/thumbnails" className={navLinkClass('/thumbnails')} aria-label={getNavigationAriaLabel('Thumbnails')}>
                       Thumbnails
                     </Link>
-                    <Link href="/gallery" className={navLinkClass('/gallery')}>
+                    <Link href="/gallery" className={navLinkClass('/gallery')} aria-label={getNavigationAriaLabel('Gallery')}>
                       Gallery
                     </Link>
-                    <Link href="/clips" className={navLinkClass('/clips')}>
+                    <Link href="/clips" className={navLinkClass('/clips')} aria-label={getNavigationAriaLabel('Clips')}>
                       Clips
                     </Link>
                   </>
@@ -257,7 +262,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                     {!isEditor && (
                       <>
                         {publicPrimaryLeadItem && (
-                          <Link href={publicPrimaryLeadItem.href} className={navLinkClass(publicPrimaryLeadItem.href)}>
+                          <Link
+                            href={publicPrimaryLeadItem.href}
+                            className={navLinkClass(publicPrimaryLeadItem.href)}
+                            aria-label={getNavigationAriaLabel(publicPrimaryLeadItem.label)}
+                          >
                             {publicPrimaryLeadItem.label}
                           </Link>
                         )}
@@ -271,7 +280,12 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                           <div className="absolute left-0 top-full mt-2 w-64 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                             <div className="py-2">
                               {PUBLIC_PRACTICE_NAV_ITEMS.map((item) => (
-                                <Link key={item.href} href={item.href} className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive"
+                                  aria-label={getNavigationAriaLabel(item.label)}
+                                >
                                   <span className="block text-foreground font-medium">{item.label}</span>
                                   {item.description && (
                                     <span className="block text-xs text-muted-foreground">{item.description}</span>
@@ -282,7 +296,12 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                           </div>
                         </div>
                         {publicPrimaryTrailingItems.map((item) => (
-                          <Link key={item.href} href={item.href} className={navLinkClass(item.href)}>
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={navLinkClass(item.href)}
+                            aria-label={getNavigationAriaLabel(item.label)}
+                          >
                             {item.label}
                           </Link>
                         ))}
@@ -292,7 +311,12 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                     {isLoggedIn && !isEditor && showSessionFeatures && (
                       <>
                         {SESSION_DESKTOP_NAV_ITEMS.map((item) => (
-                          <Link key={item.href} href={item.href} className={navLinkClass(item.href)}>
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={navLinkClass(item.href)}
+                            aria-label={getNavigationAriaLabel(item.label)}
+                          >
                             {item.label}
                           </Link>
                         ))}
@@ -303,7 +327,12 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                       <>
                         {showSessionFeatures && (
                           editorSessionNavItems.map((item) => (
-                            <Link key={item.href} href={item.href} className={navLinkClass(item.href)}>
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className={navLinkClass(item.href)}
+                              aria-label={getNavigationAriaLabel(item.label)}
+                            >
                               {item.label}
                             </Link>
                           ))
@@ -318,11 +347,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                             </button>
                             <div className="absolute left-0 top-full mt-2 w-48 rounded-xl border border-border-subtle bg-surface-ambient/95 shadow-xl backdrop-blur-md opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
                               <div className="py-2">
-                                <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">AI Tools</Link>
-                                <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">Thumbnails</Link>
-                                <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">Gallery</Link>
-                                <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">Clips</Link>
-                                <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive">Learning Content</Link>
+                                <Link href="/ai" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive" aria-label={getNavigationAriaLabel('AI Tools')}>AI Tools</Link>
+                                <Link href="/thumbnails" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive" aria-label={getNavigationAriaLabel('Thumbnails')}>Thumbnails</Link>
+                                <Link href="/gallery" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive" aria-label={getNavigationAriaLabel('Gallery')}>Gallery</Link>
+                                <Link href="/clips" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive" aria-label={getNavigationAriaLabel('Clips')}>Clips</Link>
+                                <Link href="/admin/content" className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-interactive" aria-label={getNavigationAriaLabel('Learning Content')}>Learning Content</Link>
                               </div>
                             </div>
                           </div>
@@ -514,11 +543,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
             ) : isLoggedIn && isEditor && !isEffectiveAdmin ? (
               <div className="space-y-1">
                 <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Studio</span>
-                <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
-                <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
-                <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
-                <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
-                <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)}>Learning Content</Link>
+                <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('AI Tools')}>AI Tools</Link>
+                <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Thumbnails')}>Thumbnails</Link>
+                <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Gallery')}>Gallery</Link>
+                <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Clips')}>Clips</Link>
+                <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Learning Content')}>Learning Content</Link>
               </div>
             ) : (
               <>
@@ -526,20 +555,37 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 {!isEditor && (
                   <>
                     {publicPrimaryLeadItem && (
-                      <Link href={publicPrimaryLeadItem.href} className={mobileNavLinkClass(publicPrimaryLeadItem.href)} onClick={() => setIsMenuOpen(false)}>
+                      <Link
+                        href={publicPrimaryLeadItem.href}
+                        className={mobileNavLinkClass(publicPrimaryLeadItem.href)}
+                        onClick={() => setIsMenuOpen(false)}
+                        aria-label={getNavigationAriaLabel(publicPrimaryLeadItem.label)}
+                      >
                         {publicPrimaryLeadItem.label}
                       </Link>
                     )}
                     <div className="space-y-1 pt-3">
                       <span className="block px-4 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Practice</span>
                       {PUBLIC_PRACTICE_NAV_ITEMS.map((item) => (
-                        <Link key={item.href} href={item.href} className={mobileNavLinkClass(item.href)} onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={mobileNavLinkClass(item.href)}
+                          onClick={() => setIsMenuOpen(false)}
+                          aria-label={getNavigationAriaLabel(item.label)}
+                        >
                           {item.label}
                         </Link>
                       ))}
                     </div>
                     {publicPrimaryTrailingItems.map((item) => (
-                      <Link key={item.href} href={item.href} className={mobileNavLinkClass(item.href)} onClick={() => setIsMenuOpen(false)}>
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={mobileNavLinkClass(item.href)}
+                        onClick={() => setIsMenuOpen(false)}
+                        aria-label={getNavigationAriaLabel(item.label)}
+                      >
                         {item.label}
                       </Link>
                     ))}
@@ -548,7 +594,13 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 {/* Logged-in non-editor mobile: Explore entry only when session features enabled */}
                 {isLoggedIn && !isEditor && showSessionFeatures && (
                   SESSION_MOBILE_NAV_ITEMS.map((item) => (
-                    <Link key={item.href} href={item.href} className={mobileNavLinkClass(item.href)} onClick={() => setIsMenuOpen(false)}>
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={mobileNavLinkClass(item.href)}
+                      onClick={() => setIsMenuOpen(false)}
+                      aria-label={getNavigationAriaLabel(item.label)}
+                    >
                       {item.label}
                     </Link>
                   ))
@@ -557,13 +609,19 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                 {isLoggedIn && isEditor && (
                   <>
                     {isEffectiveAdmin && (
-                      <Link href={adminDashboardHref} className={mobileNavLinkClass(adminDashboardHref)} onClick={() => setIsMenuOpen(false)}>
+                      <Link href={adminDashboardHref} className={mobileNavLinkClass(adminDashboardHref)} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Control Center')}>
                         Control Center
                       </Link>
                     )}
                     {showSessionFeatures && (
                       SESSION_MOBILE_NAV_ITEMS.map((item) => (
-                        <Link key={item.href} href={item.href} className={mobileNavLinkClass(item.href)} onClick={() => setIsMenuOpen(false)}>
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={mobileNavLinkClass(item.href)}
+                          onClick={() => setIsMenuOpen(false)}
+                          aria-label={getNavigationAriaLabel(item.label)}
+                        >
                           {item.label}
                         </Link>
                       ))
@@ -571,11 +629,11 @@ export default function Navbar({ mode = 'app' }: NavbarProps) {
                     {!isEffectiveAdmin && (
                       <div className="space-y-1 pt-3">
                         <span className="block px-4 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Studio</span>
-                        <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)}>AI Tools</Link>
-                        <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)}>Thumbnails</Link>
-                        <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)}>Gallery</Link>
-                        <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)}>Clips</Link>
-                        <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)}>Learning Content</Link>
+                        <Link href="/ai" className={mobileNavLinkClass('/ai')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('AI Tools')}>AI Tools</Link>
+                        <Link href="/thumbnails" className={mobileNavLinkClass('/thumbnails')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Thumbnails')}>Thumbnails</Link>
+                        <Link href="/gallery" className={mobileNavLinkClass('/gallery')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Gallery')}>Gallery</Link>
+                        <Link href="/clips" className={mobileNavLinkClass('/clips')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Clips')}>Clips</Link>
+                        <Link href="/admin/content" className={mobileNavLinkClass('/admin/content')} onClick={() => setIsMenuOpen(false)} aria-label={getNavigationAriaLabel('Learning Content')}>Learning Content</Link>
                       </div>
                     )}
                   </>
