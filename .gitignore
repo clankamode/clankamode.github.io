@@ -62,3 +62,6 @@ node_modules/
 # GitNexus
 .gitnexus/
 supabase/.temp/
+
+# Outcome IDE
+.outcome/

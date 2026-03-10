@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { UserRole } from '@/types/roles';
+import { UsersTableSkeleton } from './DashboardSkeleton';
 
 interface UserRow {
   id: number;
@@ -104,11 +105,7 @@ export function UsersTable() {
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
 
   if (loading && !data) {
-    return (
-      <div className="rounded-2xl border border-border-subtle bg-surface-workbench/60 p-8 text-center text-text-muted">
-        Loading users…
-      </div>
-    );
+    return <UsersTableSkeleton />;
   }
 
   if (!data) {
