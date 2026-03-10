@@ -30,6 +30,17 @@ const formatInline = (text: string) => {
   return html;
 };
 
+function getYouTubeVideo(item: string): { title: string; url: string; embedUrl: string } | null {
+  const match = item.match(/^(.*?)(?:\s+[—-]\s+)(https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)[^\s]*)$/);
+  if (!match) return null;
+
+  return {
+    title: match[1].trim(),
+    url: match[2],
+    embedUrl: `https://www.youtube.com/embed/${match[3]}`,
+  };
+}
+
 const parseMarkdown = (content: string): MarkdownBlock[] => {
   const lines = content.split(/\r?\n/);
   const blocks: MarkdownBlock[] = [];
@@ -181,9 +192,36 @@ const renderBlock = (block: MarkdownBlock, index: number) => {
           className="ml-5 space-y-1 list-outside text-foreground"
           style={{ listStyleType: block.ordered ? 'decimal' : 'disc' }}
         >
-          {items.map((item, idx) => (
-            <li key={idx} dangerouslySetInnerHTML={{ __html: formatInline(item) }} />
-          ))}
+          {items.map((item, idx) => {
+            const video = getYouTubeVideo(item);
+
+            if (!video) {
+              return <li key={idx} dangerouslySetInnerHTML={{ __html: formatInline(item) }} />;
+            }
+
+            return (
+              <li key={idx} className="space-y-2">
+                <a
+                  href={video.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground underline decoration-border-subtle hover:text-brand-green"
+                >
+                  {video.title}
+                </a>
+                <div className="overflow-hidden rounded-lg border border-white/10 bg-black">
+                  <iframe
+                    src={video.embedUrl}
+                    title={video.title}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="aspect-video w-full"
+                  />
+                </div>
+              </li>
+            );
+          })}
         </ListTag>
       );
     }
