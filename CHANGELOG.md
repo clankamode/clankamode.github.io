@@ -4,6 +4,95 @@ Week-over-week overview of features shipped.
 
 ---
 
+## Week of Mar 10 – Mar 11, 2026
+
+### UX & Polish
+- Loading skeletons for question list and dashboard (#284)
+- 404 page with navigation back to dashboard (#285)
+- Remove unused eslint-disable directives (#274)
+
+### AI Chat
+- Restore related video embeds in AI chat support responses (#283)
+
+---
+
+## Week of Mar 3 – Mar 9, 2026
+
+### Daily Goals
+- Daily goal system separate from streak (#279)
+
+### Feedback & Tooling
+- Page feedback widget + completion button dark mode contrast fix (#261)
+- Recover admin feedback APIs from missing resolution column (#264)
+- Doctor checks and content push CLI command (#263)
+
+### UX & Accessibility
+- Redesign break timer UX and cleanup page (#276)
+- Add alt text to all landing page images (#278)
+- Add aria-label attributes to main navigation links (#277)
+
+### Infrastructure
+- Health-check endpoint for notify-discord edge function (#275)
+
+---
+
+## Week of Feb 24 – Mar 2, 2026
+
+### AI Tutor
+- AI Tutor — API route, chat UI, article integration (#193)
+- Session-aware context with progress, elapsed time, and checklist item (#204)
+- Proactive nudge after 8min idle on checklist step (#212)
+- Typing indicator, auto-scroll, mobile layout, empty state (#222)
+- Inject user learning history into system prompt (#221)
+- Redesign TutorChat UI — dark terminal aesthetic (#229)
+- Rebuild system prompt with Socratic escalation ladder (#232)
+- Article integration, reset button, wider panel (#234)
+- AI tutor on practice editor with code-aware hints (#241)
+- Expand tutor panel to 70vh on desktop (#242)
+- DB-backed rate limiter to fix empty in-memory map in serverless (#218)
+
+### Session Planner
+- Interleaving, spaced review, hard problem weighting (#233)
+- Pre-bake session plan to eliminate LLM cold-start latency (#228)
+- Integrate practice problems into session flow (#247)
+- Practice nudge + seed.sql Python fix (#243)
+
+### Admin
+- Add resolution reasons when closing feedback (#199)
+- Consolidate Customer Voice into Feedback admin page (#246)
+- Mobile layout fixes for customer-voice tables and navbar (#214, #215)
+
+### Refactoring
+- Split large files into focused modules (#249)
+- Harden repo for agent-driven development (#252)
+
+### Infrastructure
+- Auto-run Supabase migrations on merge to main (#219)
+- Enable migrate + deploy-functions CI workflows (#253)
+- Fix CI migration auth, pooler, project linking (#255, #256, #257, #258)
+- Fix local Supabase migration drift (#251)
+
+### Content & Data Fixes
+- Correct N-Queens test cases — order-independent comparison (#192)
+- Dijkstra template fix: use `d > dist[u]` (#195)
+- Correct Diagonal Traverse II test cases (#197)
+- Group Anagrams test case bug fix (#216)
+- Convert TypeScript starter code to Python for Pyodide editor (#240)
+
+### Fixes
+- Handle Supabase errors gracefully in content lib (#190)
+- Add cursor-pointer to Button component (#196)
+- Disable font ligatures in code editor (#194)
+- Peralta75 import flag + Monaco operator visibility (#217)
+- Hide empty concept card on session exit (#244)
+- UI polish batch — 8 session/learning surface fixes (#245)
+- Scroll to top on article navigation (#236)
+- Move stream toolbar to bottom-left to avoid tutor collision (#226)
+- Update LeetCode rating to 1794 (#213)
+- Update Codeforces rating (#254)
+
+---
+
 ## Week of Feb 17 – Feb 23, 2026
 
 ### Live
