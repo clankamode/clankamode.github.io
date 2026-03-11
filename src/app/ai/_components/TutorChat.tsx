@@ -170,7 +170,6 @@ export default function TutorChat({ articleSlug, articleTitle, enabled, practice
   useEffect(() => {
     if (!isOpen) return;
     bottomAnchorRef.current?.scrollIntoView({ behavior: 'smooth' });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages.length, lastMessageContentLength, isOpen]);
 
   useEffect(() => {
