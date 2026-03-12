@@ -1,0 +1,6 @@
+# Supabase project configuration
+# See: https://supabase.com/docs/guides/local-development/cli/config
+project_id = "jamesperalta"
+
+[functions.notify-discord]
+verify_jwt = false
