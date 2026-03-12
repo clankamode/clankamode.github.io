@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import YouTube from 'react-youtube';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 
 interface YouTubePlayer {
   playVideo: () => void;
@@ -14,15 +12,15 @@ interface YouTubePlayerEvent {
   target: YouTubePlayer;
 }
 
-const INITIAL_BREAK_SECONDS = 300;
+const DEFAULT_DURATION_SECONDS = 300;
 
 export default function BreakPage() {
-  const [time, setTime] = useState(INITIAL_BREAK_SECONDS);
-  const [duration, setDuration] = useState(INITIAL_BREAK_SECONDS);
+  const [time, setTime] = useState(DEFAULT_DURATION_SECONDS);
   const [isRunning, setIsRunning] = useState(false);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
 
@@ -30,12 +28,14 @@ export default function BreakPage() {
     const fetchVideoId = async () => {
       setIsLoading(true);
       setError(null);
+
       try {
         const response = await fetch('/api/youtube/random-video');
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Failed to fetch video ID');
         }
+
         const data = await response.json();
         setVideoId(data.videoId);
       } catch (err: unknown) {
@@ -51,44 +51,54 @@ export default function BreakPage() {
   }, []);
 
   useEffect(() => {
-    const beepSound = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRA0PVqzn77BdGAg+ltryxnMpBSl+zPLaizsIGGS57OihUBELTKXh8bllHgU2jdXzzn0vBSF1xe/glEILElyx6OyrWBUIQ5zd8sFuJAUuhM/z1YU2Bhxqvu7mnEYODlOq5O+zYBoGPJPY88p2KwUme8rx3I4+CRZiturqpVITC0mi4PK8aB8GM4nU8tGAMQYfcsLu45ZFDBFYr+ftrVoXCECY3PLEcSYELIHO8diJOQgZaLvt559NEAxPqOPwtmMcBjiP1/PMeS0GI3fH8N2RQAoUXrTp66hVFApGnt/yvmwhBTCG0fPTgjQGHW/A7eSaRQ0PVqzl77BeGQc9ltvyxnUoBSh+zPDaizsIGGS56+mjTxELTKXh8bllHgU1jdTy0HwvBSJ1xe/glEILElyx6OyrWRUIRJve8sFuJAUug8/z1YU2BRxqvu3mnEYODlOq5O+zYRsGPJLZ88p3KgUme8rx3I4+CRVht+rqpVITC0mh4fK8aiAFM4nU8tGAMQYfccPu45ZFDBFYr+ftrVwWCECY3PLEcSYGK4DN8tiIOQgZZ7zs56BODwxPp+PxtmQcBjiP1/PMeS0GI3bH8d+RQQsUXbPq66hWEwlGnt/yv2wiBDCG0PPThDUHHG3A7eSbTA0PVKrl77BgGQc9ltr0x3UoBSh9y/HajDwIF2S56+mjUREKTKPi8blnHwU1jdTy0H4wBSF0xe/glEQKElux5+yrWRUJQ5vd88NwJAQug87y1oY3BRxqvu3mnEgNDlKp5PC1YRsGOpHY88p3LAUlecnw3Y8/CBVhtuvqpVQSCkig4PG9ayAFM4nS89GBMgUfccLv45dGDRBXr+fur1wXB0CX2/PEcycFKw==';
+    const beepSound =
+      'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRA0PVqzn77BdGAg+ltryxnMpBSl+zPLaizsIGGS57OihUBELTKXh8bllHgU2jdXzzn0vBSF1xe/glEILElyx6OyrWBUIQ5zd8sFuJAUuhM/z1YU2Bhxqvu7mnEYODlOq5O+zYBoGPJPY88p2KwUme8rx3I4+CRZiturqpVITC0mi4PK8aB8GM4nU8tGAMQYfcsLu45ZFDBFYr+ftrVoXCECY3PLEcSYELIHO8diJOQgZaLvt559NEAxPqOPwtmMcBjiP1/PMeS0GI3fH8N2RQAoUXrTp66hVFApGnt/yvmwhBTCG0fPTgjQGHW/A7eSaRQ0PVqzl77BeGQc9ltvyxnUoBSh+zPDaizsIGGS56+mjTxELTKXh8bllHgU1jdTy0HwvBSJ1xe/glEILElyx6OyrWRUIRJve8sFuJAUug8/z1YU2BRxqvu3mnEYODlOq5O+zYRsGPJLZ88p3KgUme8rx3I4+CRVht+rqpVITC0mh4fK8aiAFM4nU8tGAMQYfccPu45ZFDBFYr+ftrVwWCECY3PLEcSYGK4DN8tiIOQgZZ7zs56BODwxPp+PxtmQcBjiP1/PMeS0GI3fH8N+RQAoUXrTp66hWEwlGnt/yv2wiBDCG0PPThDUHHG3A7eSbTA0PVKrl77BgGQc9ltr0x3UoBSh9y/HajDsIF2W56+mjUREKTKPi8blnHgU1jdTy0HwvBSJ0xe/glEQKElux6eyrWRUJQ5vd88FwJAQug8/z1YY2BRxqvu3mnEYODlOq5O+zYRsGOpPY88p3KgUmecnw3Y4/CBVhtuvqpVQSCkig4PG9ayAFM4nS89GBMgUfccLv45dGDRBYrufur1sYB0CX2/PEcycFK3/M8tiKOQgZZ7vs56BODwxPp+Lxt2QdBTiP1/PMeS0GI3bH8d+RQQsUXbPq66hWEwlGnt/yv2wiBDCF0PPThDUHHG3A7eSbTA0PVKrl77BgGQc9ltr0x3UoBSh9y/HajDwIF2S56+mjUREKTKPi8blnHwU1jdTy0H4wBSF0xe/glEQKElux5+yrWRUJQ5vd88NwJAQug87y1oY3BRxqvu3mnEgNDlKp5PC1YRsGOpHY88p3LAUlecnw3Y8/CBVhtuvqpVQSCkig4PG9ayAFM4nS89GBMgUfccLv45dGDRBXr+fur1wXB0CX2/PEcycFKw==';
+
     audioRef.current = new Audio(beepSound);
-    audioRef.current.volume = 1.0;
+    audioRef.current.volume = 1;
   }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval> | undefined;
 
     if (isRunning && time > 0) {
       interval = setInterval(() => {
         setTime((prevTime) => {
           const nextTime = prevTime - 1;
+
           if (nextTime <= 0) {
             setIsRunning(false);
+
             if (audioRef.current) {
               audioRef.current.currentTime = 0;
               audioRef.current.play().catch((err) => console.log('Audio playback failed:', err));
               setTimeout(() => audioRef.current?.play().catch((err) => console.log('Audio playback failed:', err)), 500);
               setTimeout(() => audioRef.current?.play().catch((err) => console.log('Audio playback failed:', err)), 1000);
             }
+
             playerRef.current?.pauseVideo();
             return 0;
           }
+
           return nextTime;
         });
       }, 1000);
     }
 
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [isRunning, time]);
 
   useEffect(() => {
-    if (playerRef.current) {
-      if (isRunning && time > 0) {
-        playerRef.current.playVideo();
-      } else {
-        playerRef.current.pauseVideo();
-      }
+    if (!playerRef.current) return;
+
+    if (isRunning && time > 0) {
+      playerRef.current.playVideo();
+    } else {
+      playerRef.current.pauseVideo();
     }
   }, [isRunning, time]);
 
@@ -99,130 +109,133 @@ export default function BreakPage() {
   };
 
   const addTime = (seconds: number) => {
-    setTime((prev) => {
-      const updatedTime = Math.max(0, prev + seconds);
-      setDuration((prevDuration) => Math.max(prevDuration + seconds, updatedTime, 1));
-      return updatedTime;
-    });
+    setTime((prev) => Math.max(0, prev + seconds));
   };
 
   const stopAlarm = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
+    if (!audioRef.current) return;
+
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
   };
 
   const handleReset = () => {
-    setTime(INITIAL_BREAK_SECONDS);
-    setDuration(INITIAL_BREAK_SECONDS);
+    setTime(DEFAULT_DURATION_SECONDS);
     setIsRunning(false);
     stopAlarm();
   };
 
   const handleStartPause = () => {
-    const newIsRunning = !isRunning;
-    if (newIsRunning && time <= 0) return;
+    const nextIsRunning = !isRunning;
+    if (nextIsRunning && time <= 0) return;
 
-    setIsRunning(newIsRunning);
-    if (newIsRunning) {
+    setIsRunning(nextIsRunning);
+
+    if (nextIsRunning) {
       stopAlarm();
-      setDuration((prevDuration) => Math.max(prevDuration, time, 1));
     }
   };
 
+  const onPlayerReady = (event: YouTubePlayerEvent) => {
+    playerRef.current = event.target;
+
+    if (isRunning && time > 0) {
+      playerRef.current.playVideo();
+    }
+  };
+
+  const timerPercent = useMemo(() => {
+    const raw = (time / DEFAULT_DURATION_SECONDS) * 100;
+    return Math.max(0, Math.min(100, raw));
+  }, [time]);
+
   const playerOptions = {
-    height: '100%',
-    width: '100%',
     playerVars: {
       autoplay: 0,
       controls: 1,
     },
   };
 
-  const onPlayerReady = (event: YouTubePlayerEvent) => {
-    playerRef.current = event.target;
-    if (isRunning && time > 0) {
-      playerRef.current.playVideo();
-    }
-  };
-
-  const progressPercent = Math.min(100, Math.max(0, (time / Math.max(duration, 1)) * 100));
-
   return (
-    <div className="min-h-screen bg-surface-ambient text-foreground px-4 py-8 sm:py-10">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 sm:gap-8">
-        <header className="text-center">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground sm:text-sm">Cinematic break mode</p>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">TAKING A BREAK</h1>
-          <p className="mt-2 text-sm text-muted-foreground sm:text-base">A focused pause with motion, sound, and a clear return countdown.</p>
+    <div className="min-h-screen bg-surface-ambient text-foreground px-4 py-8 md:px-6 md:py-10">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+        <header className="rounded-2xl border border-border-subtle bg-surface-workbench p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Cinematic Engineering Break</p>
+          <h1 className="mt-2 text-3xl font-bold md:text-5xl">Taking a break</h1>
+          <div className="mt-4 inline-flex items-center rounded-xl border border-border-interactive bg-surface-interactive px-4 py-2">
+            <span className="text-sm uppercase tracking-wide text-muted-foreground">Be back in</span>
+            <span className="ml-3 text-4xl font-mono font-bold md:text-5xl">{formatTime(time)}</span>
+          </div>
         </header>
 
-        <Card className="border-border-interactive/60 bg-card/70">
-          <CardHeader className="pb-4 sm:pb-6">
-            <CardTitle className="text-center text-xl sm:text-2xl">Be back in</CardTitle>
-            <CardDescription className="text-center text-muted-foreground">Timer syncs playback and alarms when your break ends.</CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-5 sm:space-y-6">
-            <div className="rounded-xl border border-border-subtle bg-surface-interactive/50 p-4 text-center sm:p-6">
-              <p className="text-5xl font-bold tabular-nums text-foreground sm:text-6xl md:text-7xl">{formatTime(time)}</p>
-              <p className="mt-2 text-xs uppercase tracking-[0.18em] text-muted-foreground sm:text-sm">
-                {isRunning ? 'Break in progress' : time === 0 ? 'Break finished' : 'Ready to start'}
-              </p>
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-surface-dense">
-                <div
-                  className="h-full rounded-full bg-primary transition-all duration-1000 ease-linear"
-                  style={{ width: `${progressPercent}%` }}
+        <section className="grid gap-6 lg:grid-cols-[1.35fr_1fr] lg:items-start">
+          <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface-workbench shadow-sm">
+            <div className="aspect-video w-full bg-surface-interactive">
+              {isLoading && <p className="flex h-full items-center justify-center text-muted-foreground">Loading video…</p>}
+              {error && <p className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">Unable to load video: {error}</p>}
+              {!isLoading && !error && videoId && (
+                <YouTube
+                  videoId={videoId}
+                  opts={playerOptions}
+                  onReady={onPlayerReady}
+                  className="h-full w-full"
+                  iframeClassName="h-full w-full"
                 />
+              )}
+              {!isLoading && !error && !videoId && <p className="flex h-full items-center justify-center text-muted-foreground">No video found.</p>}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-border-subtle bg-surface-workbench p-5 shadow-sm md:p-6">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground">Timer controls</h2>
+
+            <div className="mt-4 space-y-3">
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: '+0:30', value: 30 },
+                  { label: '+1:00', value: 60 },
+                  { label: '+5:00', value: 300 },
+                ].map((option) => (
+                  <button
+                    key={option.label}
+                    onClick={() => addTime(option.value)}
+                    disabled={isRunning}
+                    className="rounded-lg border border-border-subtle bg-surface-interactive px-3 py-2 text-sm font-semibold transition hover:bg-surface-dense disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleStartPause}
+                  disabled={isLoading || !!error || !videoId}
+                  className="rounded-lg border border-brand-green/40 bg-brand-green/15 px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-brand-green/25 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isRunning ? 'Pause' : 'Start'}
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="rounded-lg border border-border-subtle bg-surface-interactive px-4 py-2.5 text-sm font-semibold transition hover:bg-surface-dense"
+                >
+                  Reset
+                </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              <Button onClick={() => addTime(30)} disabled={isRunning} variant="secondary" size="sm" className="w-full rounded-lg text-sm">
-                +0:30
-              </Button>
-              <Button onClick={() => addTime(60)} disabled={isRunning} variant="secondary" size="sm" className="w-full rounded-lg text-sm">
-                +1:00
-              </Button>
-              <Button onClick={() => addTime(300)} disabled={isRunning} variant="secondary" size="sm" className="w-full rounded-lg text-sm">
-                +5:00
-              </Button>
+            <div className="mt-5">
+              <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wide text-muted-foreground">
+                <span>Session progress</span>
+                <span>{Math.round(timerPercent)}%</span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-surface-interactive">
+                <div
+                  className="h-full rounded-full bg-brand-green transition-[width] duration-1000 ease-linear"
+                  style={{ width: `${timerPercent}%` }}
+                />
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Button
-                onClick={handleStartPause}
-                disabled={isLoading || !!error || !videoId}
-                variant="primary"
-                size="lg"
-                className="w-full"
-              >
-                {isRunning ? 'Pause Break' : 'Start Break'}
-              </Button>
-              <Button onClick={handleReset} variant="outline" size="lg" className="w-full">
-                Reset Timer
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <section className="overflow-hidden rounded-xl border border-border-subtle bg-surface-interactive/40">
-          <div className="aspect-video w-full bg-surface-interactive">
-            {isLoading && <p className="flex h-full items-center justify-center text-muted-foreground">Loading video...</p>}
-            {error && <p className="flex h-full items-center justify-center px-4 text-center text-sm text-destructive">Error: {error}</p>}
-            {!isLoading && !error && videoId && (
-              <YouTube
-                videoId={videoId}
-                opts={playerOptions}
-                onReady={onPlayerReady}
-                className="h-full w-full"
-                iframeClassName="h-full w-full"
-              />
-            )}
-            {!isLoading && !error && !videoId && (
-              <p className="flex h-full items-center justify-center text-muted-foreground">No video found.</p>
-            )}
           </div>
         </section>
       </div>
