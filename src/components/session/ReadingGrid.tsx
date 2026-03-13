@@ -21,7 +21,6 @@ interface ReadingGridProps {
 const readingGridStyle = {
   '--reading-measure': `${READING_GRID_MEASURE_CH}ch`,
   '--reading-cadence': `${READING_GRID_VERTICAL_CADENCE_PX}px`,
-  '--reading-spine-offset': '2.5rem',
 } as CSSProperties;
 
 export default function ReadingGrid({ children, rail, className }: ReadingGridProps) {
@@ -40,14 +39,17 @@ export default function ReadingGrid({ children, rail, className }: ReadingGridPr
             className="absolute left-0 top-0 hidden w-28 -translate-x-28 lg:block"
             aria-label="Execution rail"
           >
-            <div className="sticky top-[5.75rem] pr-1">{rail}</div>
+            <div className="sticky top-[5.75rem] pr-1">
+              <div className="relative">
+                <div
+                  data-reading-spine="rail"
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-2 right-[-1rem] top-2 w-[1.5px] bg-border-interactive/75"
+                />
+                {rail}
+              </div>
+            </div>
           </aside>
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute bottom-4 left-0 top-4 hidden translate-x-[calc(var(--reading-spine-offset)*-1)] lg:block"
-          >
-            <div className="h-full w-[1.5px] bg-border-interactive/75" />
-          </div>
         </>
       ) : null}
 

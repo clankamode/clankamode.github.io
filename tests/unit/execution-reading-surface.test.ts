@@ -32,12 +32,19 @@ describe('execution reading surface invariants', () => {
     const shellSource = readWorkspaceFile('src/components/session/SessionReaderShell.tsx');
     const hudSource = readWorkspaceFile('src/components/session/SessionHUD.tsx');
     const surfaceSource = readWorkspaceFile('src/components/session/ExecutionSurface.tsx');
+    const readingGridSource = readWorkspaceFile('src/components/session/ReadingGrid.tsx');
+    const chunkedRendererSource = readWorkspaceFile('src/components/session/ChunkedArticleRenderer.tsx');
     const layoutSwitcherSource = readWorkspaceFile('src/app/learn/_components/ArticleLayoutSwitcher.tsx');
 
     expect(shellSource).toContain('ExecutionSurface');
     expect(shellSource).toContain('SessionRail');
     expect(shellSource).not.toContain('max-w-3xl');
     expect(surfaceSource).toContain('ReadingGrid');
+    expect(surfaceSource).toContain('[&_.article-spec-title]:text-[2.15rem]');
+    expect(surfaceSource).toContain('sm:[&_.article-spec-title]:text-[2.55rem]');
+    expect(readingGridSource).toContain('data-reading-spine="rail"');
+    expect(readingGridSource).not.toContain('absolute bottom-4 left-0 top-4 hidden');
+    expect(chunkedRendererSource).not.toMatch(/>\s*[←→]\s*</);
     expect(hudSource).toContain('EXECUTION_SURFACE_LAYOUT_CLASS');
     expect(hudSource).not.toContain('max-w-screen-xl');
     expect(hudSource).toContain('ConfirmDialog');

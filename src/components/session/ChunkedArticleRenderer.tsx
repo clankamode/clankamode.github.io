@@ -167,7 +167,6 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                             <span>Previous</span>
-                            <span className="text-xs text-text-muted">←</span>
                         </button>
                     )}
 
@@ -181,7 +180,7 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                         }}
                         disabled={isLastChunk && (isCompletingArticle || isTransitioning)}
                         className="group relative flex items-center gap-2.5 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-emerald-500 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400 disabled:cursor-not-allowed disabled:opacity-70"
-                    >
+                        >
                         <span>
                             {isLastChunk
                                 ? isCompletingArticle || isTransitioning
@@ -192,7 +191,6 @@ export default function ChunkedArticleRenderer({ content, focusedChunkIndex = nu
                                 : 'Next Section'}
                         </span>
                         <div className="flex items-center gap-1.5">
-                            <span className="text-xs opacity-70">→</span>
                             {isCompletingArticle ? (
                                 <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" />
