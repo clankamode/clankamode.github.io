@@ -1,13 +1,14 @@
 import './styles.css';
 import { initUI } from './ui-scripts';
 import './clanka-cmdk';
-import { CONTENT_INDEX, createArchiveCard, formatCount } from './content-browser';
+import { loadContentIndex, createArchiveCard, formatCount } from './content-browser';
 
-function renderTopicPage(): void {
+async function renderTopicPage(): Promise<void> {
   const slug = document.body.dataset.topicSlug;
   if (!slug) return;
 
-  const topic = CONTENT_INDEX.topics.find((entry) => entry.slug === slug);
+  const contentIndex = await loadContentIndex();
+  const topic = contentIndex.topics.find((entry) => entry.slug === slug);
   const description = document.getElementById('topic-description');
   const count = document.getElementById('topic-count');
   const latest = document.getElementById('topic-latest');
@@ -23,7 +24,7 @@ function renderTopicPage(): void {
 
   postsHost.textContent = '';
   topic.posts.forEach((post) => {
-    const detailed = CONTENT_INDEX.posts.find((entry) => entry.slug === post.slug);
+    const detailed = contentIndex.posts.find((entry) => entry.slug === post.slug);
     if (detailed) {
       postsHost.append(createArchiveCard(detailed));
     }
@@ -31,4 +32,4 @@ function renderTopicPage(): void {
 }
 
 initUI();
-renderTopicPage();
+void renderTopicPage();

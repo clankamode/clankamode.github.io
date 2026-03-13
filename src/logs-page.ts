@@ -1,11 +1,11 @@
 import './styles.css';
 import { initUI } from './ui-scripts';
 import './clanka-cmdk';
-import { CONTENT_INDEX, createArchiveCard, formatCount, populateSelect } from './content-browser';
+import { loadContentIndex, createArchiveCard, formatCount, populateSelect } from './content-browser';
 
 type ArchiveFormat = 'all' | 'listen' | 'read';
 
-function renderArchivePage(): void {
+async function renderArchivePage(): Promise<void> {
   const searchInput = document.getElementById('archive-search-input') as HTMLInputElement | null;
   const topicSelect = document.getElementById('archive-topic-select') as HTMLSelectElement | null;
   const yearSelect = document.getElementById('archive-year-select') as HTMLSelectElement | null;
@@ -17,13 +17,15 @@ function renderArchivePage(): void {
     return;
   }
 
+  const contentIndex = await loadContentIndex();
+
   populateSelect(topicSelect, [
     { value: 'all', label: 'all topics' },
-    ...CONTENT_INDEX.topics.map((topic) => ({ value: topic.slug, label: topic.name.toLowerCase() })),
+    ...contentIndex.topics.map((topic) => ({ value: topic.slug, label: topic.name.toLowerCase() })),
   ]);
   populateSelect(yearSelect, [
     { value: 'all', label: 'all years' },
-    ...CONTENT_INDEX.homepage.years.map((year) => ({ value: String(year), label: String(year) })),
+    ...contentIndex.homepage.years.map((year) => ({ value: String(year), label: String(year) })),
   ]);
 
   let selectedFormat: ArchiveFormat = 'all';
@@ -33,7 +35,7 @@ function renderArchivePage(): void {
     const topic = topicSelect.value;
     const year = yearSelect.value;
 
-    const filtered = CONTENT_INDEX.posts.filter((post) => {
+    const filtered = contentIndex.posts.filter((post) => {
       if (topic !== 'all' && !post.topics.some((entry) => entry.slug === topic)) return false;
       if (year !== 'all' && String(post.year) !== year) return false;
       if (selectedFormat === 'listen' && !post.audio) return false;
@@ -77,4 +79,4 @@ function renderArchivePage(): void {
 }
 
 initUI();
-renderArchivePage();
+void renderArchivePage();

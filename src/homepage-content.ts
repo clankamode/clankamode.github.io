@@ -1,6 +1,6 @@
-import { CONTENT_INDEX, createCompactLogRow, createTopicChip, formatCount } from './content-browser';
+import { loadContentIndex, createCompactLogRow, createTopicChip } from './content-browser';
 
-export function renderHomepageContent(): void {
+export async function renderHomepageContent(): Promise<void> {
   const featuredHost = document.getElementById('homepage-featured-log');
   const previewHost = document.getElementById('homepage-log-preview');
   const topicsHost = document.getElementById('homepage-topic-preview');
@@ -8,7 +8,7 @@ export function renderHomepageContent(): void {
   const audioCount = document.getElementById('stat-audio-posts');
   const archiveCta = document.getElementById('logs-archive-link-count');
 
-  const { featured, recent, topics, counts } = CONTENT_INDEX.homepage;
+  const { featured, recent, topics, counts } = (await loadContentIndex()).homepage;
 
   if (featuredHost && featured) {
     featuredHost.textContent = '';
