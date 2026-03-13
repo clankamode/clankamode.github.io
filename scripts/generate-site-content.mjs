@@ -5,7 +5,6 @@ import ts from 'typescript';
 
 const ROOT = process.cwd();
 const POSTS_MODULE_PATH = path.join(ROOT, 'src/content/posts.ts');
-const GENERATED_TS_PATH = path.join(ROOT, 'src/generated/content-index.ts');
 const GENERATED_JSON_PATH = path.join(ROOT, 'public/content-index.json');
 const FEED_PATH = path.join(ROOT, 'feed.xml');
 const LOGS_PAGE_PATH = path.join(ROOT, 'logs/index.html');
@@ -339,11 +338,6 @@ function buildTopicPage(topic) {
 }
 
 async function writeOutputs(contentIndex) {
-  const generatedTs = `export const CONTENT_INDEX = ${JSON.stringify(contentIndex, null, 2)} as const;\n\nexport type ContentIndex = typeof CONTENT_INDEX;\n\nexport default CONTENT_INDEX;\n`;
-
-  await ensureDir(GENERATED_TS_PATH);
-  await fs.writeFile(GENERATED_TS_PATH, generatedTs);
-
   await ensureDir(GENERATED_JSON_PATH);
   await fs.writeFile(GENERATED_JSON_PATH, `${JSON.stringify(contentIndex, null, 2)}\n`);
 

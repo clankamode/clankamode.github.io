@@ -99,4 +99,5 @@ Post structure:
 - Path: `posts/YYYY-MM-DD-slug.html`
 - Format: standalone HTML with shared `post-enhance.js`
 - Indexing: add the post link to the logs section in `index.html`
+- Archive index: generated to `public/content-index.json` and loaded by archive/topic/homepage clients at runtime
 - RSS: add entry to `feed.xml`

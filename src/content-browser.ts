@@ -1,7 +1,4 @@
-import CONTENT_INDEX from './generated/content-index';
-
-export type ContentPost = (typeof CONTENT_INDEX.posts)[number];
-export type ContentTopic = (typeof CONTENT_INDEX.topics)[number];
+export { loadContentIndex, type ContentPost, type ContentTopic } from './content-index';
 
 function createMetaBadge(label: string): HTMLSpanElement {
   const badge = document.createElement('span');
@@ -112,5 +109,3 @@ export function populateSelect(
     select.append(element);
   });
 }
-
-export { CONTENT_INDEX };

@@ -181,7 +181,7 @@ if (presence) {
 })();
 
 initUI();
-renderHomepageContent();
+void renderHomepageContent();
 void loadLiveStats();
 void loadNpmBadge();
 void loadCommitFeed();
