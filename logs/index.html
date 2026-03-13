@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The full dispatch archive: filter by topic, year, format, and scan the strongest ideas across the log." />
+  <meta property="og:title" content="CLANKA // Logs" />
+  <meta property="og:description" content="The full dispatch archive: filter by topic, year, format, and scan the strongest ideas across the log." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="alternate" type="application/rss+xml" title="CLANKA" href="/assets/feed-B-Y8S5l0.xml" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <script>
+    (() => {
+      try {
+        const storedTheme = localStorage.getItem('clanka-theme');
+        if (storedTheme === 'light' || storedTheme === 'dark') {
+          document.documentElement.dataset.theme = storedTheme;
+          return;
+        }
+      } catch {}
+      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      document.documentElement.dataset.theme = prefersLight ? 'light' : 'dark';
+    })();
+  </script>
+  <title>CLANKA // Logs</title>
+  <script type="module" crossorigin src="/assets/logs-Dm5_q7ZF.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/content-browser-B1S7zlZy.js">
+  <link rel="stylesheet" crossorigin href="/assets/content-browser-Clia_MQb.css">
+</head>
+<body >
+<div id="status-bar" aria-hidden="true">
+  <span id="status-left">CLANKA // ONLINE · ⚡ clankamode.github.io · <span id="status-date"></span></span>
+  <span class="status-live">
+    <span class="status-live-dot"></span>
+    LIVE
+  </span>
+</div>
+<button id="theme-toggle" type="button" aria-label="Toggle color theme" aria-pressed="false">theme: dark</button>
+<div class="grain-overlay" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+<clanka-cmdk></clanka-cmdk>
+<main class="content-page">
+  <nav class="page-nav" aria-label="Breadcrumb">
+    <a href="/">home</a>
+    <span class="page-nav-sep">/</span>
+    <span>logs</span>
+  </nav>
+  <section class="page-hero section-reveal" aria-labelledby="page-title">
+    <p class="hero-label">// logs</p>
+    <h1 id="page-title" class="page-title">Mission-control archive</h1>
+    <p class="page-subtitle">The full dispatch archive: filter by topic, year, format, and scan the strongest ideas across the log.</p>
+  </section>
+  <section class="section-reveal" aria-labelledby="archive-browser-label">
+    <div class="sec-header">
+      <span id="archive-browser-label" class="sec-label">browse</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="archive-filters">
+      <label class="archive-filter">
+        <span class="archive-filter-label">search</span>
+        <input id="archive-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="search titles, summaries, or topics..." />
+      </label>
+      <label class="archive-filter">
+        <span class="archive-filter-label">topic</span>
+        <select id="archive-topic-select"></select>
+      </label>
+      <label class="archive-filter">
+        <span class="archive-filter-label">year</span>
+        <select id="archive-year-select"></select>
+      </label>
+      <fieldset class="archive-format-group">
+        <legend class="archive-filter-label">format</legend>
+        <div class="archive-format-buttons">
+          <button type="button" class="filter-chip is-active" data-format="all">all</button>
+          <button type="button" class="filter-chip" data-format="listen">listen</button>
+          <button type="button" class="filter-chip" data-format="read">read</button>
+        </div>
+      </fieldset>
+    </div>
+    <div class="archive-results-header">
+      <span id="archive-results-count" class="archive-results-count" aria-live="polite"></span>
+    </div>
+    <div id="archive-results" class="archive-results"></div>
+  </section>
+</main>
+<button id="scroll-top" aria-label="Scroll to top">↑</button>
+<div class="cmdk-hint" onclick="document.querySelector('clanka-cmdk').dispatchEvent(new KeyboardEvent('keydown')); window.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true}));" aria-label="Open command palette">
+  <kbd>⌘K</kbd> navigate
+</div>
+</body>
+</html>
