@@ -99,7 +99,7 @@ test.beforeEach(async ({ page }) => {
 
   await mockApiResponses(page);
   await page.goto('/');
-  await page.waitForSelector('#posts-search-input');
+  await page.waitForSelector('#homepage-featured-log .featured-log');
 });
 
 test('theme toggle persists after reload', async ({ page }) => {
@@ -112,25 +112,19 @@ test('theme toggle persists after reload', async ({ page }) => {
   await expect(toggle).toHaveText('theme: light');
 
   await page.reload();
-  await page.waitForSelector('#posts-search-input');
+  await page.waitForSelector('#homepage-featured-log .featured-log');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('#theme-toggle')).toHaveText('theme: light');
 });
 
-test('logs search filters rows and supports keyboard focus', async ({ page }) => {
-  const searchInput = page.locator('#posts-search-input');
+test('homepage logs section links into archive and renders generated topic chips', async ({ page }) => {
+  await expect(page.locator('#homepage-log-preview .row')).toHaveCount(5);
+  await expect(page.locator('#homepage-topic-preview .topic-chip')).toHaveCount(6);
+  await expect(page.locator('#logs-archive-link-count')).toContainText('dispatches');
 
-  await page.keyboard.press('/');
-  await expect(searchInput).toBeFocused();
-
-  await searchInput.fill('spark');
-  const visibleRows = page.locator('#logs-list .row:not([hidden])');
-  await expect(visibleRows).toHaveCount(1);
-  await expect(visibleRows.first().locator('.row-name a')).toContainText('Spark');
-  await expect(page.locator('#posts-search-count')).toHaveText('1 match');
-
-  await searchInput.press('ArrowDown');
-  await expect(visibleRows.first().locator('.row-name a')).toBeFocused();
+  await page.locator('.archive-cta').click();
+  await expect(page).toHaveURL('/logs/');
+  await expect(page.locator('#archive-search-input')).toBeVisible();
 });
 
 test('active agent stat is populated from live now payload', async ({ page }) => {
