@@ -30,14 +30,49 @@ const formatInline = (text: string) => {
   return html;
 };
 
+function extractYouTubeVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    const shortId = parsed.hostname.includes('youtu.be') ? parsed.pathname.slice(1) : null;
+    const watchId = parsed.searchParams.get('v');
+    const embedId = parsed.pathname.startsWith('/embed/') ? parsed.pathname.split('/')[2] : null;
+    const id = shortId || watchId || embedId;
+
+    return id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
+  } catch {
+    return null;
+  }
+}
+
 function getYouTubeVideo(item: string): { title: string; url: string; embedUrl: string } | null {
-  const match = item.match(/^(.*?)(?:\s+[—-]\s+)(https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)[^\s]*)$/);
-  if (!match) return null;
+  const markdownLinkMatch = item.match(/\[([^\]]+)]\((https?:\/\/[^\s)]+)\)/);
+  if (markdownLinkMatch) {
+    const videoId = extractYouTubeVideoId(markdownLinkMatch[2]);
+    if (videoId) {
+      return {
+        title: markdownLinkMatch[1].trim(),
+        url: markdownLinkMatch[2],
+        embedUrl: `https://www.youtube.com/embed/${videoId}`,
+      };
+    }
+  }
+
+  const urlMatch = item.match(/(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)[^\s)]+)/);
+  if (!urlMatch) return null;
+
+  const videoId = extractYouTubeVideoId(urlMatch[1]);
+  if (!videoId) return null;
+
+  const title = item
+    .replace(urlMatch[1], '')
+    .replace(/\[|\]\([^)]+\)/g, '')
+    .replace(/\s+[—:-]\s*$/, '')
+    .trim();
 
   return {
-    title: match[1].trim(),
-    url: match[2],
-    embedUrl: `https://www.youtube.com/embed/${match[3]}`,
+    title: title || urlMatch[1],
+    url: urlMatch[1],
+    embedUrl: `https://www.youtube.com/embed/${videoId}`,
   };
 }
 

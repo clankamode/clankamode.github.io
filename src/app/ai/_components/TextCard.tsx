@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { RichText } from './RichText';
 
 interface TextCardProps {
