@@ -185,7 +185,7 @@ export class ClankaCmdk extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.buildItems();
+    void this.buildItems();
     window.addEventListener('keydown', this.handleGlobalKey);
   }
 
@@ -220,7 +220,7 @@ export class ClankaCmdk extends LitElement {
     this.query = '';
   }
 
-  private buildItems(): void {
+  private async buildItems(): Promise<void> {
     const items: CmdItem[] = [];
 
     // Sections
@@ -229,24 +229,50 @@ export class ClankaCmdk extends LitElement {
     items.push({ label: 'About', hint: 'bio', href: '#about-label', section: 'navigate' });
     items.push({ label: 'Capabilities', hint: 'skills', href: '#cap-label', section: 'navigate' });
 
-    // Blog posts (scrape from DOM)
-    document.querySelectorAll('.featured-log, .row a').forEach((el) => {
-      const anchor = el.tagName === 'A' ? el as HTMLAnchorElement : el as HTMLAnchorElement;
-      const href = anchor.getAttribute('href');
-      if (!href || !href.includes('/posts/')) return;
-      const title = el.classList.contains('featured-log')
-        ? el.querySelector('.featured-title')?.textContent?.trim() || ''
-        : el.textContent?.trim() || '';
-      if (title) {
-        items.push({ label: title, hint: 'post', href, section: 'logs' });
+    items.push({ label: 'Archive', hint: 'all dispatches', href: '/logs/', section: 'logs' });
+
+    try {
+      const response = await fetch('/content-index.json', {
+        headers: { Accept: 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error(`content index ${response.status}`);
       }
-    });
+
+      const data = (await response.json()) as {
+        posts?: Array<{ title?: string; canonicalPath?: string }>;
+        topics?: Array<{ name?: string; slug?: string }>;
+      };
+
+      data.posts?.forEach((post) => {
+        if (!post.title || !post.canonicalPath) return;
+        items.push({ label: post.title, hint: 'post', href: post.canonicalPath, section: 'logs' });
+      });
+
+      data.topics?.forEach((topic) => {
+        if (!topic.name || !topic.slug) return;
+        items.push({ label: topic.name, hint: 'topic', href: `/topics/${topic.slug}/`, section: 'topics' });
+      });
+    } catch {
+      document.querySelectorAll('.featured-log, .row a').forEach((el) => {
+        const anchor = el as HTMLAnchorElement;
+        const href = anchor.getAttribute('href');
+        if (!href || !href.includes('/posts/')) return;
+        const title = el.classList.contains('featured-log')
+          ? el.querySelector('.featured-title')?.textContent?.trim() || ''
+          : el.textContent?.trim() || '';
+        if (title) {
+          items.push({ label: title, hint: 'post', href, section: 'logs' });
+        }
+      });
+    }
 
     // External links
     items.push({ label: 'GitHub', hint: 'github.com/clankamode', href: 'https://github.com/clankamode', section: 'links' });
     items.push({ label: 'RSS Feed', hint: 'subscribe', href: '/feed.xml', section: 'links' });
 
-    this.items = items;
+    this.items = items.filter((item, index, all) => all.findIndex((candidate) => candidate.href === item.href) === index);
   }
 
   private get filtered(): CmdItem[] {

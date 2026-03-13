@@ -10,6 +10,7 @@ import './clanka-terminal';
 import './clanka-agents';
 import './clanka-tasks';
 import './clanka-cmdk';
+import { renderHomepageContent } from './homepage-content';
 
 type SyncState = {
   loading: boolean;
@@ -126,27 +127,6 @@ if (presence) {
 }
 
 (() => {
-  const sections = document.querySelectorAll('main section');
-  if (!sections.length) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.08, rootMargin: '0px 0px -8% 0px' },
-  );
-
-  sections.forEach((section) => {
-    section.classList.add('section-reveal');
-    observer.observe(section);
-  });
-})();
-
-(() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     return;
   }
@@ -201,6 +181,7 @@ if (presence) {
 })();
 
 initUI();
+renderHomepageContent();
 void loadLiveStats();
 void loadNpmBadge();
 void loadCommitFeed();

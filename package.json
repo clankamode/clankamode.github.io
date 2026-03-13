@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "generate:content": "node scripts/generate-site-content.mjs",
+    "predev": "npm run generate:content",
     "dev": "vite",
+    "prebuild": "npm run generate:content",
     "build": "vite build && mkdir -p dist/posts dist/audio && cp -R posts/. dist/posts && cp -R audio/. dist/audio && cp og-image.png og-image.svg feed.xml dist/ && cp dist/index.html dist/404.html",
     "preview": "vite preview",
-    "test": "playwright test"
+    "pretest": "npm run generate:content && npm run test:content",
+    "test:content": "node --test tests/content-index.test.mjs",
+    "test": "playwright test",
+    "verify": "npm run generate:content && npm run test:content && npm run build && playwright test"
   },
   "dependencies": {
     "lit": "^3.3.0",
