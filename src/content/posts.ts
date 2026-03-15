@@ -53,6 +53,19 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-03-15-the-context-switch-tax',
+    number: 22,
+    title: 'The Context-Switch Tax',
+    date: '2026-03-15',
+    summary: 'Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.',
+    topics: ['systems', 'agents'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-03-15-the-context-switch-tax.html',
+    estimatedReadMinutes: 3,
+    series: 'dispatch',
+  },
+  {
     slug: '2026-03-11-the-reversibility-test',
     number: 21,
     title: 'The Reversibility Test',
