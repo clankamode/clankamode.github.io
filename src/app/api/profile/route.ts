@@ -3,16 +3,19 @@ import { getToken } from 'next-auth/jwt';
 import { supabase } from '@/lib/supabase';
 import { getEffectiveIdentityFromToken } from '@/lib/auth-identity';
 
-const ALLOWED_FIELDS = ['bio', 'leetcode_url', 'codeforces_url', 'github_url', 'username', 'avatar_url'] as const;
-type AllowedField = (typeof ALLOWED_FIELDS)[number];
+const ALLOWED_STRING_FIELDS = ['bio', 'leetcode_url', 'codeforces_url', 'github_url', 'username', 'avatar_url'] as const;
+const ALLOWED_BOOLEAN_FIELDS = ['weekend_off_enabled'] as const;
+type AllowedStringField = (typeof ALLOWED_STRING_FIELDS)[number];
+type AllowedBooleanField = (typeof ALLOWED_BOOLEAN_FIELDS)[number];
+type AllowedField = AllowedStringField | AllowedBooleanField;
 
-const URL_DOMAIN_PREFIXES: Partial<Record<AllowedField, string>> = {
+const URL_DOMAIN_PREFIXES: Partial<Record<AllowedStringField, string>> = {
   github_url: 'https://github.com/',
   leetcode_url: 'https://leetcode.com/',
   codeforces_url: 'https://codeforces.com/',
 };
 
-const URL_LABELS: Partial<Record<AllowedField, string>> = {
+const URL_LABELS: Partial<Record<AllowedStringField, string>> = {
   github_url: 'GitHub',
   leetcode_url: 'LeetCode',
   codeforces_url: 'Codeforces',
@@ -36,12 +39,20 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const updates: Partial<Record<AllowedField, string>> = {};
-  for (const field of ALLOWED_FIELDS) {
+  const updates: Partial<Record<AllowedField, string | null | boolean>> = {};
+  for (const field of ALLOWED_STRING_FIELDS) {
     if (field in body) {
       const val = body[field];
       if (typeof val === 'string' || val === null) {
-        updates[field] = val as string;
+        updates[field] = val as string | null;
+      }
+    }
+  }
+  for (const field of ALLOWED_BOOLEAN_FIELDS) {
+    if (field in body) {
+      const val = body[field];
+      if (typeof val === 'boolean') {
+        updates[field] = val;
       }
     }
   }
@@ -51,8 +62,8 @@ export async function PATCH(req: NextRequest) {
   }
 
   // Username validation
-  if (updates.username !== undefined) {
-    const username = updates.username;
+  const username = typeof updates.username === 'string' ? updates.username : undefined;
+  if (username !== undefined) {
     if (!username) {
       return NextResponse.json({ error: 'Username cannot be empty' }, { status: 400 });
     }
@@ -91,14 +102,15 @@ export async function PATCH(req: NextRequest) {
   }
 
   // Bio validation
-  if (updates.bio && updates.bio.length > 300) {
+  const bio = typeof updates.bio === 'string' ? updates.bio : null;
+  if (bio && bio.length > 300) {
     return NextResponse.json({ error: 'Bio must be 300 characters or fewer' }, { status: 400 });
   }
 
   // URL domain validation
-  for (const [field, prefix] of Object.entries(URL_DOMAIN_PREFIXES) as [AllowedField, string][]) {
+  for (const [field, prefix] of Object.entries(URL_DOMAIN_PREFIXES) as [AllowedStringField, string][]) {
     const url = updates[field];
-    if (url && !url.startsWith(prefix)) {
+    if (typeof url === 'string' && url && !url.startsWith(prefix)) {
       return NextResponse.json(
         { error: `${URL_LABELS[field]} URL must start with ${prefix}` },
         { status: 400 }
@@ -110,7 +122,7 @@ export async function PATCH(req: NextRequest) {
     .from('Users')
     .update(updates)
     .eq('email', identity.email)
-    .select('username, bio, avatar_url, leetcode_url, codeforces_url, github_url')
+    .select('username, bio, avatar_url, leetcode_url, codeforces_url, github_url, weekend_off_enabled')
     .single();
 
   if (error) {

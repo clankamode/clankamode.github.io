@@ -21,6 +21,7 @@ interface ProfileResponse {
   leetcode_url: string | null;
   codeforces_url: string | null;
   github_url: string | null;
+  weekend_off_enabled: boolean;
   stats: {
     questionsSolved: number;
     totalQuestions: number;

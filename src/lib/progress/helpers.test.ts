@@ -6,19 +6,22 @@ function isoOnDay(day: string): string {
 }
 
 describe('getStreakStatus', () => {
-  test('default behavior: returns 0 when today has no completion or protection', () => {
-    const result = getStreakStatus([isoOnDay('2026-03-01')], {
-      today: new Date('2026-03-02T12:00:00.000Z'),
+  test('default behavior: applies the free weekly freeze automatically', () => {
+    const result = getStreakStatus([isoOnDay('2026-03-03')], {
+      today: new Date('2026-03-04T12:00:00.000Z'),
     });
 
-    expect(result.streakDays).toBe(0);
-    expect(result.dayStates).toEqual([]);
+    expect(result.streakDays).toBe(2);
+    expect(result.dayStates).toEqual([
+      { date: '2026-03-04', state: 'freeze', reason: 'manual-freeze' },
+      { date: '2026-03-03', state: 'earned' },
+    ]);
   });
 
   test('freeze preserve: manual freeze keeps streak when within weekly limit', () => {
     const result = getStreakStatus([isoOnDay('2026-03-02'), isoOnDay('2026-02-28')], {
       today: new Date('2026-03-02T12:00:00.000Z'),
-      freezeDates: ['2026-03-01'],
+      freezeRecords: [{ usedAt: isoOnDay('2026-03-01'), type: 'manual' }],
       weeklyFreezeLimit: 1,
     });
 
@@ -30,15 +33,28 @@ describe('getStreakStatus', () => {
     ]);
   });
 
+  test('auto-freeze preserve: missing weekday consumes the free weekly freeze', () => {
+    const result = getStreakStatus([isoOnDay('2026-03-05'), isoOnDay('2026-03-03')], {
+      today: new Date('2026-03-05T12:00:00.000Z'),
+      weeklyFreezeLimit: 1,
+    });
+
+    expect(result.streakDays).toBe(3);
+    expect(result.dayStates).toEqual([
+      { date: '2026-03-05', state: 'earned' },
+      { date: '2026-03-04', state: 'freeze', reason: 'manual-freeze' },
+      { date: '2026-03-03', state: 'earned' },
+    ]);
+  });
+
   test('no-freeze break: manual freeze does not apply when weekly freeze limit is 0', () => {
-    const result = getStreakStatus([isoOnDay('2026-03-02'), isoOnDay('2026-02-28')], {
-      today: new Date('2026-03-02T12:00:00.000Z'),
-      freezeDates: ['2026-03-01'],
+    const result = getStreakStatus([isoOnDay('2026-03-05'), isoOnDay('2026-03-03')], {
+      today: new Date('2026-03-05T12:00:00.000Z'),
       weeklyFreezeLimit: 0,
     });
 
     expect(result.streakDays).toBe(1);
-    expect(result.dayStates).toEqual([{ date: '2026-03-02', state: 'earned' }]);
+    expect(result.dayStates).toEqual([{ date: '2026-03-05', state: 'earned' }]);
   });
 
   test('weekend-off preserve: weekend continuity applies when enabled', () => {
@@ -46,11 +62,13 @@ describe('getStreakStatus', () => {
 
     const withoutWeekendOff = getStreakStatus(completions, {
       today: new Date('2026-03-02T12:00:00.000Z'),
+      weeklyFreezeLimit: 0,
       weekendOffEnabled: false,
     });
 
     const withWeekendOff = getStreakStatus(completions, {
       today: new Date('2026-03-02T12:00:00.000Z'),
+      weeklyFreezeLimit: 0,
       weekendOffEnabled: true,
     });
 
@@ -69,6 +87,7 @@ describe('getStreakDays', () => {
   test('returns streak day count from status logic', () => {
     const streakDays = getStreakDays([isoOnDay('2026-03-02'), isoOnDay('2026-03-01')], {
       today: new Date('2026-03-02T12:00:00.000Z'),
+      weeklyFreezeLimit: 0,
     });
 
     expect(streakDays).toBe(2);

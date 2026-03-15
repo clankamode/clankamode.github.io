@@ -1,8 +1,8 @@
 import { supabase } from '@/lib/supabase';
 import { getLearningLibrary } from '@/lib/content';
-import { BOOKMARKS_TABLE, PROGRESS_TABLE } from '@/lib/progress/constants';
+import { BOOKMARKS_TABLE, PROGRESS_TABLE, STREAK_FREEZES_TABLE } from '@/lib/progress/constants';
 import { buildIdentityFilter } from '@/lib/progress/identity';
-import { buildArticleLookup, getStreakStatus } from '@/lib/progress/helpers';
+import { buildArticleLookup, getStreakStatus, type StreakDayState, type StreakFreezeRecord } from '@/lib/progress/helpers';
 import type {
   BookmarkItem,
   NextArticle,
@@ -49,6 +49,14 @@ export interface ProgressSummaryOptions {
   };
 }
 
+function getFreezeType(reason: StreakDayState['reason']): StreakFreezeRecord['type'] {
+  return reason === 'weekend-off' ? 'weekend' : 'manual';
+}
+
+function getDayKey(value: string): string {
+  return new Date(value).toISOString().slice(0, 10);
+}
+
 export async function getProgressSummaryWithLibrary(
   userId: string,
   googleId?: string,
@@ -57,14 +65,36 @@ export async function getProgressSummaryWithLibrary(
   const library = await getLearningLibrary(false);
   const lookup = buildArticleLookup(library);
 
-  const { data: progressRecords, error } = await supabase
-    .from(PROGRESS_TABLE)
-    .select('article_id, completed_at')
-    .or(buildIdentityFilter(userId, googleId))
-    .order('completed_at', { ascending: false });
+  const [{ data: progressRecords, error }, { data: userRecord, error: userError }] = await Promise.all([
+    supabase
+      .from(PROGRESS_TABLE)
+      .select('article_id, completed_at')
+      .or(buildIdentityFilter(userId, googleId))
+      .order('completed_at', { ascending: false }),
+    supabase
+      .from('Users')
+      .select('id, weekend_off_enabled')
+      .eq('email', userId)
+      .maybeSingle(),
+  ]);
 
   if (error) {
     throw error;
+  }
+  if (userError) {
+    throw userError;
+  }
+
+  const { data: freezeRows, error: freezeError } = userRecord?.id
+    ? await supabase
+        .from(STREAK_FREEZES_TABLE)
+        .select('used_at, type')
+        .eq('user_id', userRecord.id)
+        .order('used_at', { ascending: false })
+    : { data: [], error: null };
+
+  if (freezeError) {
+    throw freezeError;
   }
 
   const filteredRecords = (progressRecords || []).filter((record) => lookup.has(record.article_id));
@@ -107,12 +137,38 @@ export async function getProgressSummaryWithLibrary(
     };
   });
 
+  const storedFreezeRecords: StreakFreezeRecord[] = (freezeRows || []).map((row) => ({
+    usedAt: row.used_at,
+    type: row.type,
+  }));
   const streakStatus = getStreakStatus(filteredRecords.map((record) => record.completed_at), {
     freezeDates: options?.streak?.freezeDates,
-    weeklyFreezeLimit: options?.streak?.weeklyFreezeLimit,
-    weekendOffEnabled: options?.streak?.weekendOffEnabled,
+    freezeRecords: storedFreezeRecords,
+    weeklyFreezeLimit: options?.streak?.weeklyFreezeLimit ?? 1,
+    weekendOffEnabled: options?.streak?.weekendOffEnabled ?? Boolean(userRecord?.weekend_off_enabled),
   });
   const streakDays = streakStatus.streakDays;
+
+  if (userRecord?.id) {
+    const existingFreezeKeys = new Set(
+      storedFreezeRecords.map((record) => `${getDayKey(record.usedAt)}:${record.type}`)
+    );
+    const missingFreezeRows = streakStatus.dayStates
+      .filter((dayState) => dayState.state === 'freeze' && dayState.reason)
+      .filter((dayState) => !existingFreezeKeys.has(`${dayState.date}:${getFreezeType(dayState.reason)}`))
+      .map((dayState) => ({
+        user_id: userRecord.id,
+        used_at: `${dayState.date}T12:00:00.000Z`,
+        type: getFreezeType(dayState.reason),
+      }));
+
+    if (missingFreezeRows.length > 0) {
+      const { error: insertError } = await supabase.from(STREAK_FREEZES_TABLE).insert(missingFreezeRows);
+      if (insertError) {
+        throw insertError;
+      }
+    }
+  }
 
   let nextArticle: NextArticle | null = null;
   for (const pillar of library) {

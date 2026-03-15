@@ -1,5 +1,6 @@
 export const PROGRESS_TABLE = 'UserArticleProgress';
 export const BOOKMARKS_TABLE = 'UserBookmarks';
+export const STREAK_FREEZES_TABLE = 'streak_freezes';
 export const PRACTICE_QUESTIONS_TABLE = 'InterviewQuestions';
 export const SESSION_PLAN_LOCK_TTL_SECONDS = 20 * 60;
 export const SESSION_FINALIZED_LOOKBACK_HOURS = 8;

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { CheckCircle2, Snowflake } from 'lucide-react';
 import ActivityHeatmap from '@/app/learn/_components/ActivityHeatmap';
 import type { FingerprintData } from '@/app/actions/fingerprint';
 import type { BookmarkItem, ProgressSummary } from '@/lib/progress';
@@ -53,16 +54,85 @@ function getDisplayNote(note: string | null) {
   return trimmed;
 }
 
+function getStreakDayMeta(dayState: ProgressSummary['streakDayStates'][number]) {
+  if (dayState.state === 'earned') {
+    return {
+      label: 'Earned day',
+      detail: 'Completed',
+      icon: CheckCircle2,
+      className: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-100',
+    };
+  }
+
+  if (dayState.reason === 'weekend-off') {
+    return {
+      label: 'Weekend off',
+      detail: 'Protected',
+      icon: Snowflake,
+      className: 'border-sky-500/30 bg-sky-500/10 text-sky-100',
+    };
+  }
+
+  return {
+    label: 'Manual freeze',
+    detail: 'Protected',
+    icon: Snowflake,
+    className: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-100',
+  };
+}
+
 export default function OwnProfileProgress({
   summary,
   bookmarks,
   fingerprint,
 }: OwnProfileProgressProps) {
   const latestInternalizations = fingerprint?.internalizations.slice(0, 3) ?? [];
+  const streakPreview = summary.streakDayStates.slice(0, 6);
 
   return (
     <section className="grid gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(280px,1fr)]">
       <div className="space-y-6">
+        <div className="frame bg-surface-interactive/70 p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">Streak trail</p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-text-primary">Protected Momentum</h2>
+            </div>
+            <p className="text-sm text-text-secondary">{summary.streakDays} active days</p>
+          </div>
+          {streakPreview.length ? (
+            <>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {streakPreview.map((dayState) => {
+                  const meta = getStreakDayMeta(dayState);
+                  const Icon = meta.icon;
+
+                  return (
+                    <div
+                      key={`${dayState.date}-${dayState.reason ?? dayState.state}`}
+                      className={`rounded-xl border px-4 py-3 ${meta.className}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" aria-hidden="true" />
+                        <p className="text-sm font-semibold">{meta.label}</p>
+                      </div>
+                      <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.12em] opacity-80">
+                        {meta.detail}
+                      </p>
+                      <p className="mt-1 text-xs opacity-90">{formatDate(dayState.date)}</p>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-4 text-xs text-text-muted">
+                Check marks are earned days. Snowflakes are protected streak days.
+              </p>
+            </>
+          ) : (
+            <p className="mt-4 text-sm text-text-secondary">Complete an article to start your streak trail.</p>
+          )}
+        </div>
+
         <div className="frame bg-surface-interactive/70 p-6">
           <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">Activity map</p>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight text-text-primary">Consistency Window</h2>

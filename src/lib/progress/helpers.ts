@@ -34,9 +34,15 @@ function getUTCWeekKey(date: Date): string {
 
 export interface StreakOptions {
   freezeDates?: string[];
+  freezeRecords?: StreakFreezeRecord[];
   weeklyFreezeLimit?: number;
   weekendOffEnabled?: boolean;
   today?: Date;
+}
+
+export interface StreakFreezeRecord {
+  usedAt: string;
+  type: 'manual' | 'weekend';
 }
 
 export interface StreakDayState {
@@ -58,32 +64,51 @@ export function getStreakStatus(completedAtDates: string[], options?: StreakOpti
   const completedKeys = new Set(
     completedAtDates.map((completedAt) => getDateKey(new Date(completedAt)))
   );
-  const freezeKeys = new Set(
-    (options?.freezeDates || []).map((freezeDate) => getDateKey(new Date(freezeDate)))
-  );
+  const freezeReasonsByDate = new Map<string, StreakDayState['reason']>();
+  for (const freezeDate of options?.freezeDates || []) {
+    freezeReasonsByDate.set(getDateKey(new Date(freezeDate)), 'manual-freeze');
+  }
+  for (const freezeRecord of options?.freezeRecords || []) {
+    freezeReasonsByDate.set(
+      getDateKey(new Date(freezeRecord.usedAt)),
+      freezeRecord.type === 'weekend' ? 'weekend-off' : 'manual-freeze'
+    );
+  }
 
   const cursor = new Date(options?.today ?? new Date());
   const dayStates: StreakDayState[] = [];
-  const weeklyFreezeLimit = Math.max(0, options?.weeklyFreezeLimit ?? Number.POSITIVE_INFINITY);
+  const weeklyFreezeLimit = Math.max(0, options?.weeklyFreezeLimit ?? 1);
   const freezeUsageByWeek = new Map<string, number>();
 
   while (true) {
     const dayKey = getDateKey(cursor);
+    const weekKey = getUTCWeekKey(cursor);
+    const usedThisWeek = freezeUsageByWeek.get(weekKey) ?? 0;
+    const storedFreezeReason = freezeReasonsByDate.get(dayKey);
+    const previousDay = new Date(cursor);
+    previousDay.setUTCDate(previousDay.getUTCDate() - 1);
+    const previousDayKey = getDateKey(previousDay);
+    const canAutoFreezeBridge =
+      completedKeys.has(previousDayKey) ||
+      freezeReasonsByDate.has(previousDayKey) ||
+      (options?.weekendOffEnabled && isWeekendUTC(previousDay));
 
     if (completedKeys.has(dayKey)) {
       dayStates.push({ date: dayKey, state: 'earned' });
-    } else if (freezeKeys.has(dayKey)) {
-      const weekKey = getUTCWeekKey(cursor);
-      const usedThisWeek = freezeUsageByWeek.get(weekKey) ?? 0;
-
+    } else if (storedFreezeReason === 'manual-freeze') {
       if (usedThisWeek >= weeklyFreezeLimit) {
         break;
       }
 
       freezeUsageByWeek.set(weekKey, usedThisWeek + 1);
-      dayStates.push({ date: dayKey, state: 'freeze', reason: 'manual-freeze' });
+      dayStates.push({ date: dayKey, state: 'freeze', reason: storedFreezeReason });
+    } else if (storedFreezeReason === 'weekend-off') {
+      dayStates.push({ date: dayKey, state: 'freeze', reason: storedFreezeReason });
     } else if (options?.weekendOffEnabled && isWeekendUTC(cursor)) {
       dayStates.push({ date: dayKey, state: 'freeze', reason: 'weekend-off' });
+    } else if (usedThisWeek < weeklyFreezeLimit && canAutoFreezeBridge) {
+      freezeUsageByWeek.set(weekKey, usedThisWeek + 1);
+      dayStates.push({ date: dayKey, state: 'freeze', reason: 'manual-freeze' });
     } else {
       break;
     }

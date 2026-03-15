@@ -117,6 +117,28 @@ describe('OwnProfileProgress', () => {
     expect(html).toContain('data-count="1"');
   });
 
+  test('renders earned days and freeze indicators in the streak trail', () => {
+    const html = renderToStaticMarkup(
+      <OwnProfileProgress
+        summary={buildSummary({
+          streakDayStates: [
+            { date: '2026-02-20', state: 'earned' },
+            { date: '2026-02-19', state: 'freeze', reason: 'manual-freeze' },
+            { date: '2026-02-18', state: 'freeze', reason: 'weekend-off' },
+          ],
+        })}
+        bookmarks={[]}
+        fingerprint={null}
+      />
+    );
+
+    expect(html).toContain('Protected Momentum');
+    expect(html).toContain('Earned day');
+    expect(html).toContain('Manual freeze');
+    expect(html).toContain('Weekend off');
+    expect(html).toContain('Snowflakes are protected streak days.');
+  });
+
   test('renders pillar progress bars for each pillar in summary', () => {
     const html = renderToStaticMarkup(
       <OwnProfileProgress

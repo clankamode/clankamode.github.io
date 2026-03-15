@@ -12,6 +12,7 @@ interface ProfileData {
   leetcode_url: string | null;
   codeforces_url: string | null;
   github_url: string | null;
+  weekend_off_enabled?: boolean;
 }
 
 interface ProfileCardProps {

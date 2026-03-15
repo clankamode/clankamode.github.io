@@ -14,7 +14,7 @@ export async function GET(_req: NextRequest, context: RouteContext) {
 
   const { data: user, error: userError } = await supabase
     .from('Users')
-    .select('username, bio, avatar_url, leetcode_url, codeforces_url, github_url, email')
+    .select('username, bio, avatar_url, leetcode_url, codeforces_url, github_url, weekend_off_enabled, email')
     .eq('username', username)
     .single();
 
@@ -93,6 +93,7 @@ export async function GET(_req: NextRequest, context: RouteContext) {
     leetcode_url: user.leetcode_url,
     codeforces_url: user.codeforces_url,
     github_url: user.github_url,
+    weekend_off_enabled: Boolean(user.weekend_off_enabled),
     stats: {
       questionsSolved: solvedSubmissions.length,
       totalQuestions,

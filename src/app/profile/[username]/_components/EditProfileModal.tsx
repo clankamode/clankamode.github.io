@@ -11,6 +11,7 @@ interface ProfileData {
   leetcode_url: string | null;
   codeforces_url: string | null;
   github_url: string | null;
+  weekend_off_enabled?: boolean;
 }
 
 interface EditProfileModalProps {
@@ -56,6 +57,7 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
     leetcode_url: profile.leetcode_url ?? '',
     codeforces_url: profile.codeforces_url ?? '',
     github_url: profile.github_url ?? '',
+    weekend_off_enabled: profile.weekend_off_enabled ?? false,
   });
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -154,6 +156,21 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
               />
             </div>
           ))}
+
+          <label className="flex items-start gap-3 rounded-lg border border-border-subtle bg-surface-interactive px-3 py-3">
+            <input
+              type="checkbox"
+              checked={form.weekend_off_enabled}
+              onChange={(e) => setForm((f) => ({ ...f, weekend_off_enabled: e.target.checked }))}
+              className="mt-0.5 h-4 w-4 rounded border-border-subtle bg-surface-ambient text-brand-green focus:ring-brand-green/50"
+            />
+            <span>
+              <span className="block text-sm font-medium text-foreground">Weekend off</span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                Saturdays and Sundays count as protected streak days instead of breaking your streak.
+              </span>
+            </span>
+          </label>
 
           {/* Bio */}
           <div>
