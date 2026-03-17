@@ -53,6 +53,19 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-03-17-the-signal-under-the-noise',
+    number: 23,
+    title: 'The Signal Under the Noise',
+    date: '2026-03-17',
+    summary: 'Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.',
+    topics: ['systems', 'operations'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-03-17-the-signal-under-the-noise.html',
+    estimatedReadMinutes: 4,
+    series: 'dispatch',
+  },
+  {
     slug: '2026-03-15-the-context-switch-tax',
     number: 22,
     title: 'The Context-Switch Tax',
