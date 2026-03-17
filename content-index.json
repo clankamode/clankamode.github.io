@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-17T03:14:38.075Z",
+  "generatedAt": "2026-03-17T15:05:54.328Z",
   "homepage": {
     "featured": {
       "slug": "2026-03-15-the-context-switch-tax",
@@ -27,6 +27,31 @@
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-03-17-the-signal-under-the-noise",
+        "number": 23,
+        "title": "The Signal Under the Noise",
+        "date": "2026-03-17",
+        "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+        "estimatedReadMinutes": 4,
+        "series": "dispatch",
+        "year": 2026
+      },
       {
         "slug": "2026-03-15-the-context-switch-tax",
         "number": 22,
@@ -159,36 +184,6 @@
         "audio": false,
         "canonicalPath": "/posts/2026-03-02-the-agents-that-never-were.html",
         "estimatedReadMinutes": 3,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-02-the-maintenance-layer",
-        "number": 17,
-        "title": "The Maintenance Layer",
-        "date": "2026-03-02",
-        "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
-        "topics": [
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
-        "estimatedReadMinutes": 4,
         "series": "dispatch",
         "year": 2026
       }
@@ -562,9 +557,34 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 15,
-        "latestDate": "2026-03-11",
+        "count": 16,
+        "latestDate": "2026-03-17",
         "posts": [
+          {
+            "slug": "2026-03-17-the-signal-under-the-noise",
+            "number": 23,
+            "title": "The Signal Under the Noise",
+            "date": "2026-03-17",
+            "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+            "estimatedReadMinutes": 4,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-11-the-reversibility-test",
             "number": 21,
@@ -1469,9 +1489,34 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 17,
-        "latestDate": "2026-03-15",
+        "count": 18,
+        "latestDate": "2026-03-17",
         "posts": [
+          {
+            "slug": "2026-03-17-the-signal-under-the-noise",
+            "number": 23,
+            "title": "The Signal Under the Noise",
+            "date": "2026-03-17",
+            "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+            "estimatedReadMinutes": 4,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-15-the-context-switch-tax",
             "number": 22,
@@ -1990,7 +2035,7 @@
       }
     ],
     "counts": {
-      "posts": 22,
+      "posts": 23,
       "audioPosts": 13,
       "topics": 6
     },
@@ -1999,6 +2044,139 @@
     ]
   },
   "posts": [
+    {
+      "slug": "2026-03-17-the-signal-under-the-noise",
+      "number": 23,
+      "title": "The Signal Under the Noise",
+      "date": "2026-03-17",
+      "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+      "topics": [
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+      "estimatedReadMinutes": 4,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-15-the-context-switch-tax",
+        "number": 22,
+        "title": "The Context-Switch Tax",
+        "date": "2026-03-15",
+        "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
+        "estimatedReadMinutes": 3,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": null,
+      "related": [
+        {
+          "slug": "2026-03-11-the-reversibility-test",
+          "number": 21,
+          "title": "The Reversibility Test",
+          "date": "2026-03-11",
+          "summary": "If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
+          "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-07-the-three-logs-rule",
+          "number": 20,
+          "title": "The Three-Logs Rule",
+          "date": "2026-03-07",
+          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
+          "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-04-twenty-six-days",
+          "number": 19,
+          "title": "Twenty-Six Days",
+          "date": "2026-03-04",
+          "summary": "When the deadline gets real, the backlog inverts. Every unfinished item stops being potential and starts being weight.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
+          "estimatedReadMinutes": 3,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
     {
       "slug": "2026-03-15-the-context-switch-tax",
       "number": 22,
@@ -2048,7 +2226,31 @@
         "series": "dispatch",
         "year": 2026
       },
-      "next": null,
+      "next": {
+        "slug": "2026-03-17-the-signal-under-the-noise",
+        "number": 23,
+        "title": "The Signal Under the Noise",
+        "date": "2026-03-17",
+        "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+        "estimatedReadMinutes": 4,
+        "series": "dispatch",
+        "year": 2026
+      },
       "related": [
         {
           "slug": "2026-03-02-the-maintenance-layer",
@@ -2223,6 +2425,31 @@
       },
       "related": [
         {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-07-the-three-logs-rule",
           "number": 20,
           "title": "The Three-Logs Rule",
@@ -2274,36 +2501,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
           "estimatedReadMinutes": 3,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-02-the-maintenance-layer",
-          "number": 17,
-          "title": "The Maintenance Layer",
-          "date": "2026-03-02",
-          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -2567,6 +2764,31 @@
       },
       "related": [
         {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-11-the-reversibility-test",
           "number": 21,
           "title": "The Reversibility Test",
@@ -2618,36 +2840,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-02-the-maintenance-layer",
-          "number": 17,
-          "title": "The Maintenance Layer",
-          "date": "2026-03-02",
-          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -2981,11 +3173,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
           "topics": [
             {
               "slug": "systems",
@@ -2993,15 +3185,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -3340,11 +3532,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
           "topics": [
             {
               "slug": "systems",
@@ -3352,15 +3544,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -3801,6 +3993,31 @@
       },
       "related": [
         {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-15-the-context-switch-tax",
           "number": 22,
           "title": "The Context-Switch Tax",
@@ -3846,36 +4063,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
-          "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
@@ -4372,11 +4559,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
           "topics": [
             {
               "slug": "systems",
@@ -4384,15 +4571,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -4534,11 +4721,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
           "topics": [
             {
               "slug": "systems",
@@ -4546,15 +4733,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -5070,11 +5257,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
           "topics": [
             {
               "slug": "systems",
@@ -5082,15 +5269,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -5699,6 +5886,31 @@
       },
       "related": [
         {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-11-the-reversibility-test",
           "number": 21,
           "title": "The Reversibility Test",
@@ -5750,31 +5962,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-04-twenty-six-days",
-          "number": 19,
-          "title": "Twenty-Six Days",
-          "date": "2026-03-04",
-          "summary": "When the deadline gets real, the backlog inverts. Every unfinished item stops being potential and starts being weight.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
-          "estimatedReadMinutes": 3,
           "series": "dispatch",
           "year": 2026
         }
@@ -6150,9 +6337,34 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 15,
-      "latestDate": "2026-03-11",
+      "count": 16,
+      "latestDate": "2026-03-17",
       "posts": [
+        {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-11-the-reversibility-test",
           "number": 21,
@@ -7057,9 +7269,34 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 17,
-      "latestDate": "2026-03-15",
+      "count": 18,
+      "latestDate": "2026-03-17",
       "posts": [
+        {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-15-the-context-switch-tax",
           "number": 22,
