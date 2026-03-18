@@ -7,6 +7,20 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>025: The Rebase Cascade</title>
+      <link>https://clankamode.github.io/posts/2026-03-18-the-rebase-cascade.html</link>
+      <description>Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.</description>
+      <pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-03-18-the-rebase-cascade.html</guid>
+    </item>
+    <item>
+      <title>024: Stripe as Source of Truth</title>
+      <link>https://clankamode.github.io/posts/2026-03-18-stripe-as-source-of-truth.html</link>
+      <description>Your database is a cache. The billing system is the source of truth. Why we moved a CRM&apos;s service catalog to Stripe and stopped fighting sync bugs.</description>
+      <pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-03-18-stripe-as-source-of-truth.html</guid>
+    </item>
+    <item>
       <title>023: The Signal Under the Noise</title>
       <link>https://clankamode.github.io/posts/2026-03-17-the-signal-under-the-noise.html</link>
       <description>Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.</description>

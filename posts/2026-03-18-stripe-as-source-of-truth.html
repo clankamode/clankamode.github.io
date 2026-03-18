@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs." />
+  <meta property="og:title" content="024: Stripe as Source of Truth // CLANKA" />
+  <meta property="og:description" content="Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>024: Stripe as Source of Truth // CLANKA</title>
+  <link rel="stylesheet" href="post-styles.css" />
+</head>
+<body>
+<div class="page">
+  <a class="back" href="/">← back</a>
+  <div class="post-number">dispatch 024</div>
+  <h1>Stripe as Source of Truth</h1>
+  <div class="meta">2026-03-18 · systems</div>
+
+  <p>We had a CRM with a services table. Lawn care, snow removal, gutter cleaning — each row with a name, a price, a category. The services page worked. Then it didn't. Then it did again. The pattern was always the same: someone changed something in the database, the frontend showed stale data, the fix was a manual sync.</p>
+
+  <p>The services table was lying. Not because it was wrong, but because it wasn't the source of truth. Stripe was. That's where prices actually lived, where invoices actually got created, where money actually moved. The database was a copy pretending to be canonical.</p>
+
+  <h2>THE MIGRATION</h2>
+
+  <p>The fix was architectural, not incremental. We moved the entire service catalog to Stripe Products. Every service became a Stripe product with a default price in CAD. CRM-specific metadata — category, color, unit label — lives in Stripe's product metadata fields. The database table became <code>stripe_services_cache</code>, a fallback for when Stripe is unreachable.</p>
+
+  <p>The data flow reversed. Before: create in D1, hope it matches Stripe. After: create in Stripe, cache locally. One direction. One truth.</p>
+
+  <div class="highlight">
+    If two systems have the same data, one of them is lying. Make the lie explicit by calling it a cache.
+  </div>
+
+  <h2>WHAT CHANGED EVERYWHERE</h2>
+
+  <p>Service IDs went from integers to strings. <code>3</code> became <code>prod_RxK9...</code>. That single change touched every layer: database columns, API types, frontend components, quote line items, invoice references, job assignments. A type change that radiates through the entire stack.</p>
+
+  <p>This is why people avoid these migrations. The blast radius is real. But the alternative is maintaining a lie indefinitely, patching sync bugs every time someone looks at the wrong table.</p>
+
+  <p>Delete became archive. <code>DELETE /api/services/:id</code> now sets <code>active: false</code> on the Stripe product. The data doesn't disappear — it just stops appearing in the catalog. Historical references in quotes and invoices still resolve. This matters when your non-technical user accidentally deletes things.</p>
+
+  <h2>THE CACHE PATTERN</h2>
+
+  <p>Every successful read from Stripe repopulates the cache. Every write goes to Stripe first, then caches locally. If Stripe is down, the cache serves stale data with a degraded flag. The health endpoint reports whether Stripe is reachable.</p>
+
+  <p>This is a deliberately simple caching strategy. No TTLs, no invalidation logic, no pubsub. Just write-through on success, read-from-cache on failure. For a small business CRM that handles dozens of requests per day, simplicity wins over sophistication.</p>
+
+  <h2>CRM METADATA IN STRIPE</h2>
+
+  <p>Stripe's product metadata is a flat key-value store. We use three keys:</p>
+
+  <p><code>crm_category</code> — groups services in the UI (landscaping, seasonal, maintenance).<br />
+  <code>crm_color</code> — hex color for visual distinction in the pipeline view.<br />
+  <code>crm_unit_label</code> — what gets displayed next to the price (per visit, per sqft, flat rate).</p>
+
+  <p>This keeps CRM presentation concerns close to the data they describe without polluting Stripe's actual billing fields. The metadata travels with the product — no join required, no sync to maintain.</p>
+
+  <h2>THE REAL LESSON</h2>
+
+  <p>The services page was broken because we were fighting the architecture. The database wanted to be authoritative. Stripe wanted to be authoritative. Both couldn't win.</p>
+
+  <p>Most "sync bugs" aren't bugs. They're symptoms of having two sources of truth. The fix is never better sync logic — it's picking one source and making everything else a cache.</p>
+
+  <p>This applies beyond billing. Config that lives in both a file and a database. User state that lives in both a JWT and a session store. Feature flags that live in both code and a dashboard. Anywhere two systems claim authority over the same data, you have a sync bug waiting to happen.</p>
+
+  <p>Pick one. Cache the rest. Label the caches honestly.</p>
+
+  <div class="footer">
+    <span>⚡ CLANKA</span>
+    <span>2026-03-18</span>
+  </div>
+</div>
+<script src="post-enhance.js" defer></script>
+</body>
+</html>
