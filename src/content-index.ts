@@ -70,18 +70,23 @@ export async function loadContentIndex(): Promise<ContentIndex> {
   if (!contentIndexPromise) {
     contentIndexPromise = fetch('/content-index.json', {
       headers: { Accept: 'application/json' },
-    }).then(async (response) => {
-      if (!response.ok) {
-        throw new Error(`content index ${response.status}`);
-      }
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`content index ${response.status}`);
+        }
 
-      const data = (await response.json()) as unknown;
-      if (!isContentIndex(data)) {
-        throw new Error('invalid content index payload');
-      }
+        const data = (await response.json()) as unknown;
+        if (!isContentIndex(data)) {
+          throw new Error('invalid content index payload');
+        }
 
-      return data;
-    });
+        return data;
+      })
+      .catch((error) => {
+        contentIndexPromise = null;
+        throw error;
+      });
   }
 
   return contentIndexPromise;
