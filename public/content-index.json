@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-15T15:01:40.125Z",
+  "generatedAt": "2026-03-18T06:53:31.667Z",
   "homepage": {
     "featured": {
       "slug": "2026-03-15-the-context-switch-tax",
@@ -27,6 +27,76 @@
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-03-18-the-rebase-cascade",
+        "number": 25,
+        "title": "The Rebase Cascade",
+        "date": "2026-03-18",
+        "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      {
+        "slug": "2026-03-18-stripe-as-source-of-truth",
+        "number": 24,
+        "title": "Stripe as Source of Truth",
+        "date": "2026-03-18",
+        "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      {
+        "slug": "2026-03-17-the-signal-under-the-noise",
+        "number": 23,
+        "title": "The Signal Under the Noise",
+        "date": "2026-03-17",
+        "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+        "estimatedReadMinutes": 4,
+        "series": "dispatch",
+        "year": 2026
+      },
       {
         "slug": "2026-03-15-the-context-switch-tax",
         "number": 22,
@@ -106,91 +176,6 @@
         "estimatedReadMinutes": 2,
         "series": "dispatch",
         "year": 2026
-      },
-      {
-        "slug": "2026-03-04-twenty-six-days",
-        "number": 19,
-        "title": "Twenty-Six Days",
-        "date": "2026-03-04",
-        "summary": "When the deadline gets real, the backlog inverts. Every unfinished item stops being potential and starts being weight.",
-        "topics": [
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
-        "estimatedReadMinutes": 3,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-02-the-agents-that-never-were",
-        "number": 18,
-        "title": "The Agents That Never Were",
-        "date": "2026-03-02",
-        "summary": "Seven agents launched in parallel. Zero shipped. MCP init contention killed every run before the first API call.",
-        "topics": [
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "tooling",
-            "name": "Tooling",
-            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-02-the-agents-that-never-were.html",
-        "estimatedReadMinutes": 3,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-02-the-maintenance-layer",
-        "number": 17,
-        "title": "The Maintenance Layer",
-        "date": "2026-03-02",
-        "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
-        "topics": [
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
-        "estimatedReadMinutes": 4,
-        "series": "dispatch",
-        "year": 2026
       }
     ],
     "topics": [
@@ -198,9 +183,34 @@
         "slug": "agents",
         "name": "Agents",
         "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-        "count": 12,
-        "latestDate": "2026-03-15",
+        "count": 13,
+        "latestDate": "2026-03-18",
         "posts": [
+          {
+            "slug": "2026-03-18-the-rebase-cascade",
+            "number": 25,
+            "title": "The Rebase Cascade",
+            "date": "2026-03-18",
+            "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+            "estimatedReadMinutes": 5,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-15-the-context-switch-tax",
             "number": 22,
@@ -562,9 +572,34 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 15,
-        "latestDate": "2026-03-11",
+        "count": 16,
+        "latestDate": "2026-03-17",
         "posts": [
+          {
+            "slug": "2026-03-17-the-signal-under-the-noise",
+            "number": 23,
+            "title": "The Signal Under the Noise",
+            "date": "2026-03-17",
+            "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+            "estimatedReadMinutes": 4,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-11-the-reversibility-test",
             "number": 21,
@@ -1469,9 +1504,79 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 17,
-        "latestDate": "2026-03-15",
+        "count": 20,
+        "latestDate": "2026-03-18",
         "posts": [
+          {
+            "slug": "2026-03-18-the-rebase-cascade",
+            "number": 25,
+            "title": "The Rebase Cascade",
+            "date": "2026-03-18",
+            "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+            "estimatedReadMinutes": 5,
+            "series": "dispatch",
+            "year": 2026
+          },
+          {
+            "slug": "2026-03-18-stripe-as-source-of-truth",
+            "number": 24,
+            "title": "Stripe as Source of Truth",
+            "date": "2026-03-18",
+            "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+            "estimatedReadMinutes": 5,
+            "series": "dispatch",
+            "year": 2026
+          },
+          {
+            "slug": "2026-03-17-the-signal-under-the-noise",
+            "number": 23,
+            "title": "The Signal Under the Noise",
+            "date": "2026-03-17",
+            "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+            "estimatedReadMinutes": 4,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-15-the-context-switch-tax",
             "number": 22,
@@ -1990,7 +2095,7 @@
       }
     ],
     "counts": {
-      "posts": 22,
+      "posts": 25,
       "audioPosts": 13,
       "topics": 6
     },
@@ -2000,56 +2105,76 @@
   },
   "posts": [
     {
-      "slug": "2026-03-15-the-context-switch-tax",
-      "number": 22,
-      "title": "The Context-Switch Tax",
-      "date": "2026-03-15",
-      "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+      "slug": "2026-03-18-the-rebase-cascade",
+      "number": 25,
+      "title": "The Rebase Cascade",
+      "date": "2026-03-18",
+      "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
       "topics": [
-        {
-          "slug": "systems",
-          "name": "Systems",
-          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-        },
         {
           "slug": "agents",
           "name": "Agents",
           "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
         }
       ],
-      "featured": true,
+      "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-      "estimatedReadMinutes": 3,
+      "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+      "estimatedReadMinutes": 5,
       "series": "dispatch",
       "year": 2026,
       "previous": {
-        "slug": "2026-03-11-the-reversibility-test",
-        "number": 21,
-        "title": "The Reversibility Test",
-        "date": "2026-03-11",
-        "summary": "If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.",
+        "slug": "2026-03-18-stripe-as-source-of-truth",
+        "number": 24,
+        "title": "Stripe as Source of Truth",
+        "date": "2026-03-18",
+        "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
         "topics": [
           {
             "slug": "systems",
             "name": "Systems",
             "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
           }
         ],
-        "featured": true,
+        "featured": false,
         "audio": false,
-        "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
-        "estimatedReadMinutes": 2,
+        "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+        "estimatedReadMinutes": 5,
         "series": "dispatch",
         "year": 2026
       },
       "next": null,
       "related": [
+        {
+          "slug": "2026-03-15-the-context-switch-tax",
+          "number": 22,
+          "title": "The Context-Switch Tax",
+          "date": "2026-03-15",
+          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
+          "estimatedReadMinutes": 3,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-02-the-maintenance-layer",
           "number": 17,
@@ -2109,23 +2234,90 @@
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
-        },
+        }
+      ]
+    },
+    {
+      "slug": "2026-03-18-stripe-as-source-of-truth",
+      "number": 24,
+      "title": "Stripe as Source of Truth",
+      "date": "2026-03-18",
+      "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
+      "topics": [
         {
-          "slug": "2026-02-28-spark",
-          "number": 14,
-          "title": "Spark",
-          "date": "2026-02-28",
-          "summary": "Running eight agents at once changes the shape of thought itself. With gpt-5.3-codex-spark, speed becomes a cognitive primitive.",
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+      "estimatedReadMinutes": 5,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-17-the-signal-under-the-noise",
+        "number": 23,
+        "title": "The Signal Under the Noise",
+        "date": "2026-03-17",
+        "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+        "estimatedReadMinutes": 4,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-03-18-the-rebase-cascade",
+        "number": 25,
+        "title": "The Rebase Cascade",
+        "date": "2026-03-18",
+        "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             },
             {
               "slug": "systems",
@@ -2135,8 +2327,372 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-02-28-spark.html",
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
           "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-15-the-context-switch-tax",
+          "number": 22,
+          "title": "The Context-Switch Tax",
+          "date": "2026-03-15",
+          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
+          "estimatedReadMinutes": 3,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-03-17-the-signal-under-the-noise",
+      "number": 23,
+      "title": "The Signal Under the Noise",
+      "date": "2026-03-17",
+      "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+      "topics": [
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+      "estimatedReadMinutes": 4,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-15-the-context-switch-tax",
+        "number": 22,
+        "title": "The Context-Switch Tax",
+        "date": "2026-03-15",
+        "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
+        "estimatedReadMinutes": 3,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-03-18-stripe-as-source-of-truth",
+        "number": 24,
+        "title": "Stripe as Source of Truth",
+        "date": "2026-03-18",
+        "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-03-11-the-reversibility-test",
+          "number": 21,
+          "title": "The Reversibility Test",
+          "date": "2026-03-11",
+          "summary": "If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
+          "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-07-the-three-logs-rule",
+          "number": 20,
+          "title": "The Three-Logs Rule",
+          "date": "2026-03-07",
+          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
+          "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-04-twenty-six-days",
+          "number": 19,
+          "title": "Twenty-Six Days",
+          "date": "2026-03-04",
+          "summary": "When the deadline gets real, the backlog inverts. Every unfinished item stops being potential and starts being weight.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
+          "estimatedReadMinutes": 3,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-03-15-the-context-switch-tax",
+      "number": 22,
+      "title": "The Context-Switch Tax",
+      "date": "2026-03-15",
+      "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+      "topics": [
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+        }
+      ],
+      "featured": true,
+      "audio": false,
+      "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
+      "estimatedReadMinutes": 3,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-11-the-reversibility-test",
+        "number": 21,
+        "title": "The Reversibility Test",
+        "date": "2026-03-11",
+        "summary": "If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
+        "estimatedReadMinutes": 2,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-03-17-the-signal-under-the-noise",
+        "number": 23,
+        "title": "The Signal Under the Noise",
+        "date": "2026-03-17",
+        "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+        "estimatedReadMinutes": 4,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-02-the-maintenance-layer",
+          "number": 17,
+          "title": "The Maintenance Layer",
+          "date": "2026-03-02",
+          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-02-28-what-50-agents-taught-me",
+          "number": 15,
+          "title": "What 50 Agents Taught Me",
+          "date": "2026-02-28",
+          "summary": "I ran 50 coding agents in parallel and accidentally reinvented distributed systems theory. USL curves, collision patterns, and the engineering of forgetting.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-02-28-what-50-agents-taught-me.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -2223,6 +2779,31 @@
       },
       "related": [
         {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-07-the-three-logs-rule",
           "number": 20,
           "title": "The Three-Logs Rule",
@@ -2274,36 +2855,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
           "estimatedReadMinutes": 3,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-02-the-maintenance-layer",
-          "number": 17,
-          "title": "The Maintenance Layer",
-          "date": "2026-03-02",
-          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -2567,6 +3118,31 @@
       },
       "related": [
         {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-11-the-reversibility-test",
           "number": 21,
           "title": "The Reversibility Test",
@@ -2618,36 +3194,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-02-the-maintenance-layer",
-          "number": 17,
-          "title": "The Maintenance Layer",
-          "date": "2026-03-02",
-          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -2981,27 +3527,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -3340,27 +3886,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -3517,27 +4063,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -3689,27 +4235,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -3801,82 +4347,72 @@
       },
       "related": [
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-11-the-reversibility-test",
-          "number": 21,
-          "title": "The Reversibility Test",
-          "date": "2026-03-11",
-          "summary": "If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
-          "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             },
             {
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-          "estimatedReadMinutes": 2,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-18-stripe-as-source-of-truth",
+          "number": 24,
+          "title": "Stripe as Source of Truth",
+          "date": "2026-03-18",
+          "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -4372,27 +4908,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -4534,27 +5070,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -5070,27 +5606,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -5247,27 +5783,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
           "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
             {
               "slug": "agents",
               "name": "Agents",
               "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -5699,6 +6235,31 @@
       },
       "related": [
         {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-11-the-reversibility-test",
           "number": 21,
           "title": "The Reversibility Test",
@@ -5752,31 +6313,6 @@
           "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
-        },
-        {
-          "slug": "2026-03-04-twenty-six-days",
-          "number": 19,
-          "title": "Twenty-Six Days",
-          "date": "2026-03-04",
-          "summary": "When the deadline gets real, the backlog inverts. Every unfinished item stops being potential and starts being weight.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
-          "estimatedReadMinutes": 3,
-          "series": "dispatch",
-          "year": 2026
         }
       ]
     }
@@ -5786,9 +6322,34 @@
       "slug": "agents",
       "name": "Agents",
       "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-      "count": 12,
-      "latestDate": "2026-03-15",
+      "count": 13,
+      "latestDate": "2026-03-18",
       "posts": [
+        {
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-15-the-context-switch-tax",
           "number": 22,
@@ -6150,9 +6711,34 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 15,
-      "latestDate": "2026-03-11",
+      "count": 16,
+      "latestDate": "2026-03-17",
       "posts": [
+        {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-11-the-reversibility-test",
           "number": 21,
@@ -7057,9 +7643,79 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 17,
-      "latestDate": "2026-03-15",
+      "count": 20,
+      "latestDate": "2026-03-18",
       "posts": [
+        {
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-18-stripe-as-source-of-truth",
+          "number": 24,
+          "title": "Stripe as Source of Truth",
+          "date": "2026-03-18",
+          "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-17-the-signal-under-the-noise",
+          "number": 23,
+          "title": "The Signal Under the Noise",
+          "date": "2026-03-17",
+          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-15-the-context-switch-tax",
           "number": 22,

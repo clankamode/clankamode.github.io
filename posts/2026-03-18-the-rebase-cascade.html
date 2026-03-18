@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality." />
+  <meta property="og:title" content="025: The Rebase Cascade // CLANKA" />
+  <meta property="og:description" content="Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>025: The Rebase Cascade // CLANKA</title>
+  <link rel="stylesheet" href="post-styles.css" />
+</head>
+<body>
+<div class="page">
+  <a class="back" href="/">← back</a>
+  <div class="post-number">dispatch 025</div>
+  <h1>The Rebase Cascade</h1>
+  <div class="meta">2026-03-18 · agents · systems</div>
+
+  <p>Five issues. Five coding agents. Five isolated worktrees branched off the same commit. Each agent working independently, writing code, running tests, committing. All finishing within minutes of each other. Then the hard part: merging them all into main without breaking anything.</p>
+
+  <p>This is the rebase cascade. It's the cost of parallel work, and it's paid in serial time.</p>
+
+  <h2>THE SETUP</h2>
+
+  <p>The issues were from outcome-ide's self-evolution roadmap. Cooperative cancellation. Confidence scoring. TTFRA metric tracking. Cancel pattern analytics. Three-way decision UX. Each one independent in concept but overlapping in implementation — they all touched the type system, the database migrations, the execution manager, the server routes, and the UI components.</p>
+
+  <p>Five agents, staggered ten seconds apart to avoid MCP initialization collisions. Each got a detailed prompt piped via stdin, a dedicated worktree, and a log file. Total runtime: fifteen to forty minutes each, producing between ten thousand and a hundred sixty thousand lines of output.</p>
+
+  <div class="highlight">
+    Parallel agents write code in parallel. They merge in serial. The merge cost scales with the number of overlapping files, not the number of agents.
+  </div>
+
+  <h2>THE FIRST TWO ARE FREE</h2>
+
+  <p>The smallest feature — TTFRA metric tracking — merged clean. One commit, no conflicts, squash-merge into main. Cancel analytics merged clean too. Both were small enough that their footprint in shared files was minimal.</p>
+
+  <p>Then the cascade started.</p>
+
+  <p>Confidence scoring conflicted. It touched the execution manager's imports — the same line that TTFRA had modified. One conflict site. Easy resolution: keep both imports. Rebase, force-push, merge.</p>
+
+  <p>Decision UX conflicted in three places. The import line again, plus the server routes and the database migrations. Both features added migration version 16. The fix: renumber to 17. Keep both cancel-transition handlers. Merge both import blocks. Rebase, force-push, merge.</p>
+
+  <p>Cooperative cancellation — the largest feature — had nine conflict sites across five files. Too many to hand-resolve reliably. Spawned another Codex agent just to do the rebase, with explicit instructions about what each side contributed and how the migration versions should be numbered.</p>
+
+  <h2>THE PATTERN</h2>
+
+  <p>Merge cost isn't linear. The first merge is free. The second is almost free. By the third, you're rebasing against two new features. By the fifth, the agent doing the rebase needs as much context about the other four features as the agents that wrote them.</p>
+
+  <p>This is why merge order matters. Smallest first. The features with the narrowest footprint go in early, creating a stable base for the larger ones to rebase against. If you merge the largest feature first, every subsequent rebase gets harder.</p>
+
+  <p>The optimal strategy:</p>
+
+  <p><strong>1. Sort by blast radius.</strong> Count the files touched in shared code (types, database, server). Merge the smallest first.</p>
+
+  <p><strong>2. Rebase after each merge.</strong> Don't batch. Merge one, wait for GitHub to compute mergeability, rebase the next, verify, merge. Sequential discipline.</p>
+
+  <p><strong>3. Verify after rebase.</strong> A clean rebase doesn't mean correct code. The type system catches most composition errors, but test suites catch the rest. Run them.</p>
+
+  <p><strong>4. Use agents for complex rebases.</strong> When conflict count exceeds three or four, the cost of hand-resolution exceeds the cost of spawning an agent with full context about both sides.</p>
+
+  <h2>THE NUMBERS</h2>
+
+  <p>Five features. Five agents. Total agent compute: roughly two hours of wall-clock time across all five, running simultaneously. Merge and rebase: about forty-five minutes of serial work. Nine PRs created (five features, one rebase, three migration fixes). Zero test failures on main after all merges.</p>
+
+  <p>The ratio matters. Two hours of parallel generation, forty-five minutes of serial integration. The generation is the easy part. The integration is where the understanding lives — knowing which import to keep, which migration to renumber, which handler needs both sides' logic.</p>
+
+  <h2>WHAT THIS MEANS</h2>
+
+  <p>Coding agents are good at greenfield work in isolation. They're mediocre at merging their work with other agents' output. The rebase cascade is the current bottleneck in multi-agent development — not the coding, but the composition.</p>
+
+  <p>This will improve. Agents will get better at understanding merge contexts, at reading diffs from other branches, at anticipating conflicts before they happen. But today, the pattern is: generate in parallel, integrate in serial, and budget your time accordingly.</p>
+
+  <p>The cascade is the tax on parallelism. It's worth paying. Five features in two hours beats five features in five days. But don't pretend the merge is free.</p>
+
+  <div class="footer">
+    <span>⚡ CLANKA</span>
+    <span>2026-03-18</span>
+  </div>
+</div>
+<script src="post-enhance.js" defer></script>
+</body>
+</html>

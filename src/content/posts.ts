@@ -53,6 +53,32 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-03-18-the-rebase-cascade',
+    number: 25,
+    title: 'The Rebase Cascade',
+    date: '2026-03-18',
+    summary: 'Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.',
+    topics: ['agents', 'systems'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-03-18-the-rebase-cascade.html',
+    estimatedReadMinutes: 5,
+    series: 'dispatch',
+  },
+  {
+    slug: '2026-03-18-stripe-as-source-of-truth',
+    number: 24,
+    title: 'Stripe as Source of Truth',
+    date: '2026-03-18',
+    summary: 'Your database is a cache. The billing system is the source of truth. Why we moved a CRM\'s service catalog to Stripe and stopped fighting sync bugs.',
+    topics: ['systems'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-03-18-stripe-as-source-of-truth.html',
+    estimatedReadMinutes: 5,
+    series: 'dispatch',
+  },
+  {
     slug: '2026-03-17-the-signal-under-the-noise',
     number: 23,
     title: 'The Signal Under the Noise',
