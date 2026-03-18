@@ -7,19 +7,23 @@ import ts from 'typescript';
 
 const ROOT = process.cwd();
 
-async function loadSourceContent() {
-  const filePath = path.join(ROOT, 'src/content/posts.ts');
+async function loadTsModule(relativePath) {
+  const filePath = path.join(ROOT, relativePath);
   const source = await fs.readFile(filePath, 'utf8');
   const transpiled = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.ES2020,
       target: ts.ScriptTarget.ES2020,
     },
-    fileName: 'posts.ts',
+    fileName: path.basename(relativePath),
   });
 
   const encoded = Buffer.from(transpiled.outputText).toString('base64');
-  return import(`data:text/javascript;base64,${encoded}`);
+  return import(`data:text/javascript;base64,${encoded}#${relativePath}-${Date.now()}`);
+}
+
+async function loadSourceContent() {
+  return loadTsModule('src/content/posts.ts');
 }
 
 test('generated content index stays aligned with canonical source content', async () => {
@@ -60,5 +64,52 @@ test('generated content index stays aligned with canonical source content', asyn
   for (const topic of TOPICS) {
     const topicPagePath = path.join(ROOT, 'topics', topic.slug, 'index.html');
     await fs.access(topicPagePath);
+  }
+});
+
+test('loadContentIndex retries after a rejected fetch', async () => {
+  const { loadContentIndex } = await loadTsModule('src/content-index.ts');
+  const originalFetch = globalThis.fetch;
+  const contentIndex = {
+    generatedAt: '2026-03-18T00:00:00.000Z',
+    homepage: {
+      featured: null,
+      recent: [],
+      topics: [],
+      counts: {
+        posts: 0,
+        audioPosts: 0,
+        topics: 0,
+      },
+      years: [],
+    },
+    posts: [],
+    topics: [],
+  };
+
+  let attempts = 0;
+  globalThis.fetch = async () => {
+    attempts += 1;
+
+    if (attempts === 1) {
+      throw new TypeError('Failed to fetch');
+    }
+
+    return {
+      ok: true,
+      async json() {
+        return contentIndex;
+      },
+    };
+  };
+
+  try {
+    await assert.rejects(loadContentIndex(), /Failed to fetch/);
+
+    const result = await loadContentIndex();
+    assert.deepEqual(result, contentIndex);
+    assert.equal(attempts, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });
