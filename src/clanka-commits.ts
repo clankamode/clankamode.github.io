@@ -4,15 +4,15 @@ const COMMIT_TIMEOUT_MS = 5000;
 
 const COMMIT_TYPES = ['feat', 'fix', 'chore', 'docs', 'test', 'refactor', 'ci', 'build', 'style'] as const;
 
-interface GithubCommit {
+interface ApiEvent {
+  type: string;
+  repo: string;
   message: string;
-  sha: string;
+  timestamp: string;
 }
 
-interface GithubPushEvent {
-  repo: string;
-  pushedAt: string;
-  commits: GithubCommit[];
+interface GithubEventsResponse {
+  events: ApiEvent[];
 }
 
 function relativeTime(isoString: string): string {
@@ -41,9 +41,6 @@ function detectCommitType(message: string): string {
   return COMMIT_TYPES.includes(tag as (typeof COMMIT_TYPES)[number]) ? tag : 'push';
 }
 
-function commitCountText(count: number): string {
-  return `${count} commit${count === 1 ? '' : 's'}`;
-}
 
 function setFeedText(message: string): void {
   const feed = document.getElementById('commit-feed');
@@ -72,7 +69,8 @@ export async function loadCommitFeed(): Promise<void> {
 
     if (!response.ok) throw new Error(`GitHub events API ${response.status}`);
 
-    const events = (await response.json()) as GithubPushEvent[];
+    const data = (await response.json()) as GithubEventsResponse;
+    const events = data.events;
 
     if (!Array.isArray(events) || events.length === 0) {
       setFeedText('// no activity data');
@@ -82,8 +80,7 @@ export async function loadCommitFeed(): Promise<void> {
     commitFeed.textContent = '';
     events.slice(0, 8).forEach((event) => {
       const repo = stripRepoPrefix(event.repo || 'unknown');
-      const count = Array.isArray(event.commits) ? event.commits.length : 0;
-      const message = Array.isArray(event.commits) && event.commits.length > 0 ? event.commits[0].message : '';
+      const message = event.message || '';
       const commitType = detectCommitType(message);
       const tagClass = COMMIT_TYPES.includes(commitType as (typeof COMMIT_TYPES)[number]) ? commitType : 'push';
 
@@ -98,15 +95,11 @@ export async function loadCommitFeed(): Promise<void> {
       tagEl.className = `commit-tag commit-tag--${tagClass}`;
       tagEl.textContent = commitType;
 
-      const countEl = document.createElement('span');
-      countEl.className = 'commit-count';
-      countEl.textContent = commitCountText(count);
-
       const timeEl = document.createElement('span');
       timeEl.className = 'commit-time';
-      timeEl.textContent = event.pushedAt ? relativeTime(event.pushedAt) : 'just now';
+      timeEl.textContent = event.timestamp ? relativeTime(event.timestamp) : 'just now';
 
-      item.append(repoEl, tagEl, countEl, timeEl);
+      item.append(repoEl, tagEl, timeEl);
       commitFeed.append(item);
     });
   } catch {
