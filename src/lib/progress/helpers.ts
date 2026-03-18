@@ -56,6 +56,8 @@ export interface StreakStatus {
   dayStates: StreakDayState[];
 }
 
+const STREAK_MILESTONES = [3, 7, 14, 30] as const;
+
 export function getStreakStatus(completedAtDates: string[], options?: StreakOptions): StreakStatus {
   if (!completedAtDates.length) {
     return { streakDays: 0, dayStates: [] };
@@ -124,6 +126,10 @@ export function getStreakStatus(completedAtDates: string[], options?: StreakOpti
 
 export function getStreakDays(completedAtDates: string[], options?: StreakOptions) {
   return getStreakStatus(completedAtDates, options).streakDays;
+}
+
+export function getStreakMilestone(streakDays: number): (typeof STREAK_MILESTONES)[number] | null {
+  return STREAK_MILESTONES.find((milestone) => milestone === streakDays) ?? null;
 }
 
 export function formatConceptLabel(conceptSlug: string | null | undefined): string | null {

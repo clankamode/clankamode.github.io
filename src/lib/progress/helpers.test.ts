@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { getStreakDays, getStreakStatus } from '@/lib/progress/helpers';
+import { getStreakDays, getStreakMilestone, getStreakStatus } from '@/lib/progress/helpers';
 
 function isoOnDay(day: string): string {
   return `${day}T12:00:00.000Z`;
@@ -91,5 +91,22 @@ describe('getStreakDays', () => {
     });
 
     expect(streakDays).toBe(2);
+  });
+});
+
+describe('getStreakMilestone', () => {
+  test.each([3, 7, 14, 30])('returns %i for a streak milestone', (streakDays) => {
+    expect(getStreakMilestone(streakDays)).toBe(streakDays);
+  });
+
+  test.each([1, 2, 4, 6, 8, 13, 15, 29, 31])(
+    'returns null between milestones for %i',
+    (streakDays) => {
+      expect(getStreakMilestone(streakDays)).toBeNull();
+    }
+  );
+
+  test.each([0, -1, -30])('returns null for non-positive streaks like %i', (streakDays) => {
+    expect(getStreakMilestone(streakDays)).toBeNull();
   });
 });
