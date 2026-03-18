@@ -29,7 +29,7 @@ export async function loadNpmBadge(): Promise<void> {
 
     badge.textContent = `${downloads} dl/mo`;
   } catch {
-    // Leave fallback text as-is — graceful degradation
+    badge.textContent = '–';
   } finally {
     window.clearTimeout(timeoutId);
   }

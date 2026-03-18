@@ -9,7 +9,7 @@ interface FleetRepo {
   repo: string;
   tier: Tier;
   criticality: Criticality;
-  online: boolean;
+  online: boolean | null;
 }
 
 const TIERS: Tier[] = ['ops', 'infra', 'core', 'quality', 'policy', 'template'];
@@ -248,15 +248,15 @@ export class ClankaFleet extends LitElement {
     return [];
   }
 
-  private readOnlineState(raw: Record<string, unknown>): boolean {
+  private readOnlineState(raw: Record<string, unknown>): boolean | null {
     if (typeof raw.online === 'boolean') return raw.online;
 
     const status = String(raw.status ?? raw.state ?? '').trim().toLowerCase();
-    if (!status) return true;
+    if (!status) return null;
 
     if (['offline', 'down', 'error', 'failed', 'degraded'].includes(status)) return false;
     if (['online', 'up', 'ok', 'healthy', 'active'].includes(status)) return true;
-    return true;
+    return null;
   }
 
   private normalizeRepo(item: unknown): FleetRepo | null {
@@ -320,9 +320,13 @@ export class ClankaFleet extends LitElement {
                         <article class="card" role="listitem">
                           <div class="card-head">
                             <span class="repo">${this.shortName(repo.repo)}</span>
-                            <span class="status-pill ${repo.online ? 'online' : 'offline'}">
-                              ${repo.online ? '● online' : '○ offline'}
-                            </span>
+                            ${repo.online === null
+                              ? null
+                              : html`
+                                  <span class="status-pill ${repo.online ? 'online' : 'offline'}">
+                                    ${repo.online ? '● online' : '● offline'}
+                                  </span>
+                                `}
                           </div>
                           <div class="tier-badge">${repo.tier}</div>
                           <div class="criticality"><span class="dot ${repo.criticality}" aria-hidden="true"></span>${repo.criticality}</div>
