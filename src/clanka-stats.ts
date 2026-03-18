@@ -10,9 +10,8 @@ interface GithubStats {
   lastPushedRepo: string;
 }
 
-interface FleetScore {
-  score?: number;
-  status?: string;
+interface FleetSummary {
+  totalRepos?: number;
 }
 
 const MIN_VALID_PUSHED_AT_MS = Date.parse('2008-01-01T00:00:00Z');
@@ -88,7 +87,7 @@ export async function loadLiveStats(): Promise<void> {
     const fleetController = new AbortController();
     const fleetTimeoutId = window.setTimeout(() => fleetController.abort(), API_TIMEOUT_MS);
     try {
-      const fleetResponse = await fetch(`${API_BASE}/fleet/score`, {
+      const fleetResponse = await fetch(`${API_BASE}/fleet/summary`, {
         headers: { Accept: 'application/json' },
         signal: fleetController.signal,
       });
@@ -97,10 +96,10 @@ export async function loadLiveStats(): Promise<void> {
 
       if (!fleetResponse.ok) throw new Error(`API ${fleetResponse.status}`);
 
-      const fleetData = (await fleetResponse.json()) as FleetScore;
-      const score = Number(fleetData.score);
-      if (Number.isFinite(score)) {
-        setText('stat-fleet-score', `fleet: ${Math.round(score)}%`);
+      const fleetData = (await fleetResponse.json()) as FleetSummary;
+      const total = Number(fleetData.totalRepos);
+      if (Number.isFinite(total) && total > 0) {
+        setText('stat-fleet-score', `fleet: ${total} repos`);
       }
     } catch {
       // Leave existing fallback text as-is — graceful degradation
