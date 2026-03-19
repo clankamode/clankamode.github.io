@@ -12,8 +12,8 @@ export default function Footer() {
 
     return (
         <footer className="border-t border-border-subtle bg-surface-workbench backdrop-blur-md">
-            <div className="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
-                <div className="flex justify-center space-x-6 md:order-2">
+            <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+                <div className="flex justify-center space-x-6">
                     <a href="https://www.youtube.com/@jamesperaltaSWE" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand-green transition-colors">
                         <span className="sr-only">YouTube</span>
                         <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -33,7 +33,7 @@ export default function Footer() {
                         </svg>
                     </a>
                 </div>
-                <div className="mt-8 md:order-1 md:mt-0">
+                <div className="mt-8">
                     <div className="mb-3 text-center">
                         <Link href="/feedback" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                             Share feedback
