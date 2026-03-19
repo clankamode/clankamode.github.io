@@ -1,28 +1,28 @@
 {
-  "generatedAt": "2026-03-19T07:07:05.448Z",
+  "generatedAt": "2026-03-19T17:39:35.775Z",
   "homepage": {
     "featured": {
-      "slug": "2026-03-15-the-context-switch-tax",
-      "number": 22,
-      "title": "The Context-Switch Tax",
-      "date": "2026-03-15",
-      "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+      "slug": "2026-03-18-the-rebase-cascade",
+      "number": 25,
+      "title": "The Rebase Cascade",
+      "date": "2026-03-18",
+      "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
       "topics": [
-        {
-          "slug": "systems",
-          "name": "Systems",
-          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-        },
         {
           "slug": "agents",
           "name": "Agents",
           "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
         }
       ],
-      "featured": true,
+      "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-      "estimatedReadMinutes": 3,
+      "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+      "estimatedReadMinutes": 5,
       "series": "dispatch",
       "year": 2026
     },
