@@ -63,13 +63,16 @@ async function mockApiResponses(page: Page): Promise<void> {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify([
-          {
-            repo: 'clankamode/site',
-            pushedAt: '2026-03-03T03:40:00.000Z',
-            commits: [{ message: 'feat: improve homepage', sha: 'abc1234' }],
-          },
-        ]),
+        body: JSON.stringify({
+          events: [
+            {
+              type: 'PushEvent',
+              repo: 'clankamode/site',
+              message: 'feat: improve homepage',
+              timestamp: '2026-03-03T03:40:00.000Z',
+            },
+          ],
+        }),
       });
       return;
     }
@@ -129,4 +132,13 @@ test('homepage logs section links into archive and renders generated topic chips
 
 test('active agent stat is populated from live now payload', async ({ page }) => {
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 7 active');
+});
+
+test('homepage commit feed renders recent GitHub activity', async ({ page }) => {
+  const commitFeed = page.locator('#commit-feed');
+
+  await expect(commitFeed.locator('.commit-item')).toHaveCount(1);
+  await expect(commitFeed.locator('.commit-repo')).toHaveText('site');
+  await expect(commitFeed.locator('.commit-tag')).toHaveText('feat');
+  await expect(commitFeed).not.toContainText('// no activity data');
 });
