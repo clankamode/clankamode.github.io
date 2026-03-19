@@ -148,7 +148,7 @@ function deriveContentIndex(posts, topics) {
   });
 
   const homepageRecent = newestFirst.slice(0, 6).map((post) => summaryBySlug.get(post.slug));
-  const featured = summaryBySlug.get(newestFirst.find((post) => post.featured)?.slug ?? newestFirst[0].slug);
+  const featured = summaryBySlug.get(newestFirst[0].slug);
 
   return {
     generatedAt: new Date().toISOString(),
