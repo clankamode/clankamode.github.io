@@ -94,14 +94,15 @@ export async function middleware(req: NextRequest) {
             return NextResponse.next();
         }
 
-        if (req.nextUrl.pathname === '/learn/progress') {
-            if (!progressEnabled) {
+        if (req.nextUrl.pathname.startsWith('/learn')) {
+            if (!token) {
+                const signInUrl = new URL('/api/auth/signin', req.url);
+                signInUrl.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
+                return NextResponse.redirect(signInUrl);
+            }
+            if (req.nextUrl.pathname === '/learn/progress' && !progressEnabled) {
                 return NextResponse.redirect(new URL('/learn', req.url));
             }
-            return NextResponse.next();
-        }
-
-        if (req.nextUrl.pathname.startsWith('/learn')) {
             return NextResponse.next();
         }
 
