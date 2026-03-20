@@ -113,3 +113,26 @@ test('loadContentIndex retries after a rejected fetch', async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+test('task display helpers normalize status and preserve labels', async () => {
+  const { getTaskDisplay, normalizeTaskStatus, TASK_SKELETON_CARD_COUNT } = await loadTsModule('src/task-utils.ts');
+
+  assert.equal(TASK_SKELETON_CARD_COUNT, 3);
+  assert.equal(normalizeTaskStatus(undefined), 'todo');
+  assert.equal(normalizeTaskStatus(' Doing '), 'doing');
+  assert.equal(normalizeTaskStatus('blocked'), 'todo');
+
+  assert.deepEqual(
+    getTaskDisplay({
+      status: 'Done',
+      priority: 0,
+    }),
+    {
+      statusClass: 'done',
+      statusLabel: 'Done',
+      title: 'untitled',
+      assignee: 'unassigned',
+      priority: '0',
+    },
+  );
+});
