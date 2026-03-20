@@ -3,7 +3,11 @@ import { getToken } from 'next-auth/jwt';
 import { getSupabaseAdminClient } from '@/lib/supabaseAdmin';
 import { UserRole } from '@/types/roles';
 import { isFeatureEnabled, FeatureFlags } from '@/lib/flags';
-import { buildUserIdentityOrFilter, getEffectiveIdentityFromToken } from '@/lib/auth-identity';
+import {
+  buildUserIdentityOrFilter,
+  getEffectiveIdentityFromToken,
+  type EffectiveIdentity,
+} from '@/lib/auth-identity';
 
 const PROGRESS_TABLE = 'UserArticleProgress';
 const IDEMPOTENCY_TTL_MS = 10 * 60 * 1000;
@@ -18,6 +22,12 @@ function consumeIdempotencyKey(rawKey: string | null): boolean {
   if (seenIdempotencyKeys.has(rawKey)) return true;
   seenIdempotencyKeys.set(rawKey, now + IDEMPOTENCY_TTL_MS);
   return false;
+}
+
+function buildScopedIdempotencyKey(rawKey: string | null, identity: EffectiveIdentity): string | null {
+  if (!rawKey) return null;
+  const userId = identity.googleId ?? identity.email;
+  return `${userId}:${rawKey}`;
 }
 
 export async function POST(req: NextRequest) {
@@ -39,7 +49,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'articleId is required' }, { status: 400 });
     }
 
-    const idempotencyKey = req.headers.get('x-idempotency-key');
+    const idempotencyKey = buildScopedIdempotencyKey(req.headers.get('x-idempotency-key'), identity);
     if (consumeIdempotencyKey(idempotencyKey)) {
       return NextResponse.json({ completed: true, deduped: true });
     }
@@ -88,7 +98,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'articleId is required' }, { status: 400 });
     }
 
-    const idempotencyKey = req.headers.get('x-idempotency-key');
+    const idempotencyKey = buildScopedIdempotencyKey(req.headers.get('x-idempotency-key'), identity);
     if (consumeIdempotencyKey(idempotencyKey)) {
       return NextResponse.json({ completed: false, deduped: true });
     }
