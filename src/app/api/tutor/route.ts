@@ -106,9 +106,9 @@ function coerceMessages(value: unknown): StoredTutorMessage[] {
 
 async function isRateLimited(admin: ReturnType<typeof getSupabaseAdminClient>, userId: number): Promise<boolean> {
   const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
-  const { count, error } = await admin
+  const { data, error } = await admin
     .from('TutorConversations')
-    .select('id', { count: 'exact', head: true })
+    .select('messages')
     .eq('user_id', userId)
     .gte('updated_at', windowStart);
 
@@ -118,7 +118,14 @@ async function isRateLimited(admin: ReturnType<typeof getSupabaseAdminClient>, u
     return false;
   }
 
-  return (count ?? 0) >= RATE_LIMIT_MAX_REQUESTS;
+  const requestCount = (data ?? []).reduce((total, row) => {
+    const messages = coerceMessages((row as { messages?: unknown }).messages);
+    return total + messages.filter((entry) => (
+      entry.role === 'user' && entry.created_at >= windowStart
+    )).length;
+  }, 0);
+
+  return requestCount >= RATE_LIMIT_MAX_REQUESTS;
 }
 
 export async function POST(req: NextRequest) {
