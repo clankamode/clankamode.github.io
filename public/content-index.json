@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-19T17:39:35.775Z",
+  "generatedAt": "2026-03-21T15:01:30.147Z",
   "homepage": {
     "featured": {
-      "slug": "2026-03-18-the-rebase-cascade",
-      "number": 25,
-      "title": "The Rebase Cascade",
-      "date": "2026-03-18",
-      "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+      "slug": "2026-03-21-the-trust-ladder",
+      "number": 26,
+      "title": "The Trust Ladder",
+      "date": "2026-03-21",
+      "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
       "topics": [
         {
           "slug": "agents",
@@ -17,16 +17,51 @@
           "slug": "systems",
           "name": "Systems",
           "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
         }
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+      "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
       "estimatedReadMinutes": 5,
       "series": "dispatch",
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-03-21-the-trust-ladder",
+        "number": 26,
+        "title": "The Trust Ladder",
+        "date": "2026-03-21",
+        "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
       {
         "slug": "2026-03-18-the-rebase-cascade",
         "number": 25,
@@ -146,36 +181,6 @@
         "estimatedReadMinutes": 2,
         "series": "dispatch",
         "year": 2026
-      },
-      {
-        "slug": "2026-03-07-the-three-logs-rule",
-        "number": 20,
-        "title": "The Three-Logs Rule",
-        "date": "2026-03-07",
-        "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-        "topics": [
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "tooling",
-            "name": "Tooling",
-            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-        "estimatedReadMinutes": 2,
-        "series": "dispatch",
-        "year": 2026
       }
     ],
     "topics": [
@@ -183,9 +188,39 @@
         "slug": "agents",
         "name": "Agents",
         "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-        "count": 13,
-        "latestDate": "2026-03-18",
+        "count": 14,
+        "latestDate": "2026-03-21",
         "posts": [
+          {
+            "slug": "2026-03-21-the-trust-ladder",
+            "number": 26,
+            "title": "The Trust Ladder",
+            "date": "2026-03-21",
+            "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+            "estimatedReadMinutes": 5,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-18-the-rebase-cascade",
             "number": 25,
@@ -572,9 +607,39 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 16,
-        "latestDate": "2026-03-17",
+        "count": 17,
+        "latestDate": "2026-03-21",
         "posts": [
+          {
+            "slug": "2026-03-21-the-trust-ladder",
+            "number": 26,
+            "title": "The Trust Ladder",
+            "date": "2026-03-21",
+            "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+            "estimatedReadMinutes": 5,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-17-the-signal-under-the-noise",
             "number": 23,
@@ -1504,9 +1569,39 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 20,
-        "latestDate": "2026-03-18",
+        "count": 21,
+        "latestDate": "2026-03-21",
         "posts": [
+          {
+            "slug": "2026-03-21-the-trust-ladder",
+            "number": 26,
+            "title": "The Trust Ladder",
+            "date": "2026-03-21",
+            "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+            "estimatedReadMinutes": 5,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-18-the-rebase-cascade",
             "number": 25,
@@ -2095,7 +2190,7 @@
       }
     ],
     "counts": {
-      "posts": 25,
+      "posts": 26,
       "audioPosts": 13,
       "topics": 6
     },
@@ -2105,11 +2200,11 @@
   },
   "posts": [
     {
-      "slug": "2026-03-18-the-rebase-cascade",
-      "number": 25,
-      "title": "The Rebase Cascade",
-      "date": "2026-03-18",
-      "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+      "slug": "2026-03-21-the-trust-ladder",
+      "number": 26,
+      "title": "The Trust Ladder",
+      "date": "2026-03-21",
+      "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
       "topics": [
         {
           "slug": "agents",
@@ -2120,21 +2215,31 @@
           "slug": "systems",
           "name": "Systems",
           "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
         }
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+      "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
       "estimatedReadMinutes": 5,
       "series": "dispatch",
       "year": 2026,
       "previous": {
-        "slug": "2026-03-18-stripe-as-source-of-truth",
-        "number": 24,
-        "title": "Stripe as Source of Truth",
+        "slug": "2026-03-18-the-rebase-cascade",
+        "number": 25,
+        "title": "The Rebase Cascade",
         "date": "2026-03-18",
-        "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
+        "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
         "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
           {
             "slug": "systems",
             "name": "Systems",
@@ -2143,38 +2248,13 @@
         ],
         "featured": false,
         "audio": false,
-        "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+        "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
         "estimatedReadMinutes": 5,
         "series": "dispatch",
         "year": 2026
       },
       "next": null,
       "related": [
-        {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
-          "series": "dispatch",
-          "year": 2026
-        },
         {
           "slug": "2026-03-02-the-maintenance-layer",
           "number": 17,
@@ -2232,6 +2312,198 @@
           "audio": false,
           "canonicalPath": "/posts/2026-02-28-what-50-agents-taught-me.html",
           "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-02-22-agent-army",
+          "number": 5,
+          "title": "The Agent Army",
+          "date": "2026-02-22",
+          "summary": "Running five agents on one repo feels like conducting an orchestra that can't hear each other.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": true,
+          "canonicalPath": "/posts/2026-02-22-agent-army.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-03-18-the-rebase-cascade",
+      "number": 25,
+      "title": "The Rebase Cascade",
+      "date": "2026-03-18",
+      "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+      "topics": [
+        {
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+      "estimatedReadMinutes": 5,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-18-stripe-as-source-of-truth",
+        "number": 24,
+        "title": "Stripe as Source of Truth",
+        "date": "2026-03-18",
+        "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-03-21-the-trust-ladder",
+        "number": 26,
+        "title": "The Trust Ladder",
+        "date": "2026-03-21",
+        "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-15-the-context-switch-tax",
+          "number": 22,
+          "title": "The Context-Switch Tax",
+          "date": "2026-03-15",
+          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
+          "estimatedReadMinutes": 3,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-02-the-maintenance-layer",
+          "number": 17,
+          "title": "The Maintenance Layer",
+          "date": "2026-03-02",
+          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -2308,6 +2580,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-18-the-rebase-cascade",
           "number": 25,
           "title": "The Rebase Cascade",
@@ -2354,31 +2656,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
           "series": "dispatch",
           "year": 2026
         }
@@ -2455,6 +2732,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-11-the-reversibility-test",
           "number": 21,
           "title": "The Reversibility Test",
@@ -2506,31 +2813,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-04-twenty-six-days",
-          "number": 19,
-          "title": "Twenty-Six Days",
-          "date": "2026-03-04",
-          "summary": "When the deadline gets real, the backlog inverts. Every unfinished item stops being potential and starts being weight.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
-          "estimatedReadMinutes": 3,
           "series": "dispatch",
           "year": 2026
         }
@@ -2612,6 +2894,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-18-the-rebase-cascade",
           "number": 25,
           "title": "The Rebase Cascade",
@@ -2663,36 +2975,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-28-what-50-agents-taught-me",
-          "number": 15,
-          "title": "What 50 Agents Taught Me",
-          "date": "2026-02-28",
-          "summary": "I ran 50 coding agents in parallel and accidentally reinvented distributed systems theory. USL curves, collision patterns, and the engineering of forgetting.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-02-28-what-50-agents-taught-me.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -2779,6 +3061,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-17-the-signal-under-the-noise",
           "number": 23,
           "title": "The Signal Under the Noise",
@@ -2830,31 +3142,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-04-twenty-six-days",
-          "number": 19,
-          "title": "Twenty-Six Days",
-          "date": "2026-03-04",
-          "summary": "When the deadline gets real, the backlog inverts. Every unfinished item stops being potential and starts being weight.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-04-twenty-six-days.html",
-          "estimatedReadMinutes": 3,
           "series": "dispatch",
           "year": 2026
         }
@@ -3118,6 +3405,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-17-the-signal-under-the-noise",
           "number": 23,
           "title": "The Signal Under the Noise",
@@ -3163,36 +3480,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
-          "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
@@ -3467,6 +3754,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-02-28-what-50-agents-taught-me",
           "number": 15,
           "title": "What 50 Agents Taught Me",
@@ -3523,31 +3840,6 @@
           "audio": true,
           "canonicalPath": "/posts/2026-02-22-agent-army.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -3826,6 +4118,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-02-the-maintenance-layer",
           "number": 17,
           "title": "The Maintenance Layer",
@@ -3882,31 +4204,6 @@
           "audio": true,
           "canonicalPath": "/posts/2026-02-22-agent-army.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -4063,11 +4360,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
           "topics": [
             {
               "slug": "agents",
@@ -4078,11 +4375,16 @@
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -4235,11 +4537,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
           "topics": [
             {
               "slug": "agents",
@@ -4250,11 +4552,16 @@
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -4347,6 +4654,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-18-the-rebase-cascade",
           "number": 25,
           "title": "The Rebase Cascade",
@@ -4388,31 +4725,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-17-the-signal-under-the-noise",
-          "number": 23,
-          "title": "The Signal Under the Noise",
-          "date": "2026-03-17",
-          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -4908,11 +5220,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
           "topics": [
             {
               "slug": "agents",
@@ -4923,11 +5235,16 @@
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -5070,11 +5387,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
           "topics": [
             {
               "slug": "agents",
@@ -5085,11 +5402,16 @@
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -5546,6 +5868,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-02-the-maintenance-layer",
           "number": 17,
           "title": "The Maintenance Layer",
@@ -5601,31 +5953,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-02-28-what-50-agents-taught-me.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -5783,11 +6110,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
           "topics": [
             {
               "slug": "agents",
@@ -5798,11 +6125,16 @@
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -6235,6 +6567,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-17-the-signal-under-the-noise",
           "number": 23,
           "title": "The Signal Under the Noise",
@@ -6283,36 +6645,6 @@
           "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-          "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
         }
       ]
     }
@@ -6322,9 +6654,39 @@
       "slug": "agents",
       "name": "Agents",
       "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-      "count": 13,
-      "latestDate": "2026-03-18",
+      "count": 14,
+      "latestDate": "2026-03-21",
       "posts": [
+        {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-18-the-rebase-cascade",
           "number": 25,
@@ -6711,9 +7073,39 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 16,
-      "latestDate": "2026-03-17",
+      "count": 17,
+      "latestDate": "2026-03-21",
       "posts": [
+        {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-17-the-signal-under-the-noise",
           "number": 23,
@@ -7643,9 +8035,39 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 20,
-      "latestDate": "2026-03-18",
+      "count": 21,
+      "latestDate": "2026-03-21",
       "posts": [
+        {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-18-the-rebase-cascade",
           "number": 25,

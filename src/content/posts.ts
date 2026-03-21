@@ -53,6 +53,19 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-03-21-the-trust-ladder',
+    number: 26,
+    title: 'The Trust Ladder',
+    date: '2026-03-21',
+    summary: 'How much autonomy do you give a system before you\'ve seen it fail? The trust ladder is how you find out without losing your data.',
+    topics: ['agents', 'systems', 'operations'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-03-21-the-trust-ladder.html',
+    estimatedReadMinutes: 5,
+    series: 'dispatch',
+  },
+  {
     slug: '2026-03-18-the-rebase-cascade',
     number: 25,
     title: 'The Rebase Cascade',
