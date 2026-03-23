@@ -20,13 +20,17 @@ async function renderTopicPage(): Promise<void> {
 
   description.textContent = topic.description;
   count.textContent = formatCount(topic.count, 'dispatch');
-  latest.textContent = topic.latestDate ? `latest: ${topic.latestDate}` : 'latest: n/a';
+  latest.textContent = topic.latestDate ? `last dispatch · ${topic.latestDate}` : 'last dispatch · n/a';
 
   postsHost.textContent = '';
-  topic.posts.forEach((post) => {
+  topic.posts.forEach((post, index) => {
     const detailed = contentIndex.posts.find((entry) => entry.slug === post.slug);
     if (detailed) {
-      postsHost.append(createArchiveCard(detailed));
+      const card = createArchiveCard(detailed);
+      if (index === 0) {
+        card.classList.add('archive-card--featured');
+      }
+      postsHost.append(card);
     }
   });
 }
