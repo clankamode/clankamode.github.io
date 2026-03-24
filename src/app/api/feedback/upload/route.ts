@@ -1,5 +1,7 @@
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB per file
 const ALLOWED_TYPES = [
@@ -13,6 +15,11 @@ const ALLOWED_TYPES = [
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = (await request.json()) as HandleUploadBody;
 
     const jsonResponse = await handleUpload({
