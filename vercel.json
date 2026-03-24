@@ -5,7 +5,7 @@
       "schedule": "5 15 * * *"
     },
     {
-      "path": "/api/admin/daily-brief",
+      "path": "/api/crons/daily-brief",
       "schedule": "59 19 * * *"
     }
   ]
