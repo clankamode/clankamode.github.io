@@ -215,6 +215,35 @@ describe('/api/peralta75/progress', () => {
           status: 'solved',
         }),
       ]),
+      { onConflict: 'google_id,problem_id' }
+    );
+  });
+
+  test('POST falls back to email conflict target for legacy email-only users', async () => {
+    const { admin, upsertMock } = makePostAdmin();
+    getTokenMock.mockResolvedValue({ email: 'alice@example.com' });
+    getSupabaseAdminClientMock.mockReturnValue(admin);
+
+    const req = new NextRequest('http://localhost/api/peralta75/progress', {
+      method: 'POST',
+      body: JSON.stringify({ updates: [{ leetcodeNumber: 1, status: 'attempted', origin: 'execution' }] }),
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.updated).toBe(1);
+    expect(upsertMock).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          email: 'alice@example.com',
+          google_id: null,
+          problem_id: 'q1',
+          leetcode_number: 1,
+          status: 'attempted',
+        }),
+      ]),
       { onConflict: 'email,problem_id' }
     );
   });

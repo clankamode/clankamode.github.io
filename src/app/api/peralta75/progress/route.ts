@@ -27,6 +27,10 @@ interface PracticeProgressUpsertRow {
   updated_at: string;
 }
 
+function getProgressUpsertConflictTarget(googleId?: string): 'google_id,problem_id' | 'email,problem_id' {
+  return googleId ? 'google_id,problem_id' : 'email,problem_id';
+}
+
 function normalizeProgressStatus(value: unknown): ProgressStatus | null {
   if (value === 'attempted' || value === 'solved') {
     return value;
@@ -298,7 +302,7 @@ export async function POST(req: NextRequest) {
 
     const { error: upsertError } = await admin
       .from(PROGRESS_TABLE)
-      .upsert(rowsToUpsert, { onConflict: 'email,problem_id' });
+      .upsert(rowsToUpsert, { onConflict: getProgressUpsertConflictTarget(identity.googleId) });
 
     if (upsertError) {
       console.error('[peralta75/progress][POST] upsert failed:', upsertError.message);
