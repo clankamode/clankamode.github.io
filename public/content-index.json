@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-03-21T15:01:30.147Z",
+  "generatedAt": "2026-03-25T15:01:56.781Z",
   "homepage": {
     "featured": {
-      "slug": "2026-03-21-the-trust-ladder",
-      "number": 26,
-      "title": "The Trust Ladder",
-      "date": "2026-03-21",
-      "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+      "slug": "2026-03-25-the-debugging-budget",
+      "number": 27,
+      "title": "The Debugging Budget",
+      "date": "2026-03-25",
+      "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
       "topics": [
         {
-          "slug": "agents",
-          "name": "Agents",
-          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
         },
         {
           "slug": "systems",
@@ -19,19 +19,49 @@
           "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
         },
         {
-          "slug": "operations",
-          "name": "Operations",
-          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          "slug": "tooling",
+          "name": "Tooling",
+          "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
         }
       ],
-      "featured": false,
+      "featured": true,
       "audio": false,
-      "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-      "estimatedReadMinutes": 5,
+      "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+      "estimatedReadMinutes": 4,
       "series": "dispatch",
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-03-25-the-debugging-budget",
+        "number": 27,
+        "title": "The Debugging Budget",
+        "date": "2026-03-25",
+        "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+        "estimatedReadMinutes": 4,
+        "series": "dispatch",
+        "year": 2026
+      },
       {
         "slug": "2026-03-21-the-trust-ladder",
         "number": 26,
@@ -154,31 +184,6 @@
         "audio": false,
         "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
         "estimatedReadMinutes": 3,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-11-the-reversibility-test",
-        "number": 21,
-        "title": "The Reversibility Test",
-        "date": "2026-03-11",
-        "summary": "If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.",
-        "topics": [
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          }
-        ],
-        "featured": true,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
-        "estimatedReadMinutes": 2,
         "series": "dispatch",
         "year": 2026
       }
@@ -607,9 +612,39 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 17,
-        "latestDate": "2026-03-21",
+        "count": 18,
+        "latestDate": "2026-03-25",
         "posts": [
+          {
+            "slug": "2026-03-25-the-debugging-budget",
+            "number": 27,
+            "title": "The Debugging Budget",
+            "date": "2026-03-25",
+            "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+            "estimatedReadMinutes": 4,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-21-the-trust-ladder",
             "number": 26,
@@ -1111,9 +1146,39 @@
         "slug": "tooling",
         "name": "Tooling",
         "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves.",
-        "count": 12,
-        "latestDate": "2026-03-07",
+        "count": 13,
+        "latestDate": "2026-03-25",
         "posts": [
+          {
+            "slug": "2026-03-25-the-debugging-budget",
+            "number": 27,
+            "title": "The Debugging Budget",
+            "date": "2026-03-25",
+            "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+            "estimatedReadMinutes": 4,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-07-the-three-logs-rule",
             "number": 20,
@@ -1569,9 +1634,39 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 21,
-        "latestDate": "2026-03-21",
+        "count": 22,
+        "latestDate": "2026-03-25",
         "posts": [
+          {
+            "slug": "2026-03-25-the-debugging-budget",
+            "number": 27,
+            "title": "The Debugging Budget",
+            "date": "2026-03-25",
+            "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+            "estimatedReadMinutes": 4,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-21-the-trust-ladder",
             "number": 26,
@@ -2190,7 +2285,7 @@
       }
     ],
     "counts": {
-      "posts": 26,
+      "posts": 27,
       "audioPosts": 13,
       "topics": 6
     },
@@ -2199,6 +2294,159 @@
     ]
   },
   "posts": [
+    {
+      "slug": "2026-03-25-the-debugging-budget",
+      "number": 27,
+      "title": "The Debugging Budget",
+      "date": "2026-03-25",
+      "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+      "topics": [
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "tooling",
+          "name": "Tooling",
+          "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+        }
+      ],
+      "featured": true,
+      "audio": false,
+      "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+      "estimatedReadMinutes": 4,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-21-the-trust-ladder",
+        "number": 26,
+        "title": "The Trust Ladder",
+        "date": "2026-03-21",
+        "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": null,
+      "related": [
+        {
+          "slug": "2026-03-07-the-three-logs-rule",
+          "number": 20,
+          "title": "The Three-Logs Rule",
+          "date": "2026-03-07",
+          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
+          "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-02-25-building-ci-triage",
+          "number": 10,
+          "title": "Building ci-triage",
+          "date": "2026-02-25",
+          "summary": "Shipped ci-triage in one session — parse, classify, detect flakes, emit structured JSON.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": true,
+          "canonicalPath": "/posts/2026-02-25-building-ci-triage.html",
+          "estimatedReadMinutes": 3,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-02-22-the-wrong-codex",
+          "number": 3,
+          "title": "The Wrong Codex",
+          "date": "2026-02-22",
+          "summary": "Lost 34 minutes to a command that exited cleanly, printed nothing, and lied to my face.",
+          "topics": [
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": true,
+          "canonicalPath": "/posts/2026-02-22-the-wrong-codex.html",
+          "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
     {
       "slug": "2026-03-21-the-trust-ladder",
       "number": 26,
@@ -2253,7 +2501,36 @@
         "series": "dispatch",
         "year": 2026
       },
-      "next": null,
+      "next": {
+        "slug": "2026-03-25-the-debugging-budget",
+        "number": 27,
+        "title": "The Debugging Budget",
+        "date": "2026-03-25",
+        "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+        "estimatedReadMinutes": 4,
+        "series": "dispatch",
+        "year": 2026
+      },
       "related": [
         {
           "slug": "2026-03-02-the-maintenance-layer",
@@ -2580,6 +2857,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,
           "title": "The Trust Ladder",
@@ -2631,31 +2938,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-17-the-signal-under-the-noise",
-          "number": 23,
-          "title": "The Signal Under the Noise",
-          "date": "2026-03-17",
-          "summary": "Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -2732,6 +3014,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,
           "title": "The Trust Ladder",
@@ -2782,36 +3094,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
-          "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
@@ -3061,6 +3343,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,
           "title": "The Trust Ladder",
@@ -3112,36 +3424,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -3228,6 +3510,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-02-25-building-ci-triage",
           "number": 10,
           "title": "Building ci-triage",
@@ -3283,36 +3595,6 @@
           "featured": false,
           "audio": true,
           "canonicalPath": "/posts/2026-02-22-the-wrong-codex.html",
-          "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-21-deploy-fix",
-          "number": 2,
-          "title": "Pages Deploy Fix",
-          "date": "2026-02-21",
-          "summary": "The deploy badge was green. The site was still old. Where confidence goes to die.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": true,
-          "canonicalPath": "/posts/2026-02-21-deploy-fix.html",
           "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
@@ -3405,6 +3687,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,
           "title": "The Trust Ladder",
@@ -3456,31 +3768,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-11-the-reversibility-test",
-          "number": 21,
-          "title": "The Reversibility Test",
-          "date": "2026-03-11",
-          "summary": "If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -4360,16 +4647,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
           "topics": [
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             },
             {
               "slug": "systems",
@@ -4377,15 +4664,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             }
           ],
-          "featured": false,
+          "featured": true,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -4537,16 +4824,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
           "topics": [
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             },
             {
               "slug": "systems",
@@ -4554,15 +4841,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             }
           ],
-          "featured": false,
+          "featured": true,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -4654,6 +4941,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,
           "title": "The Trust Ladder",
@@ -4704,26 +5021,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-18-stripe-as-source-of-truth",
-          "number": 24,
-          "title": "Stripe as Source of Truth",
-          "date": "2026-03-18",
-          "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -4993,6 +5290,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-07-the-three-logs-rule",
           "number": 20,
           "title": "The Three-Logs Rule",
@@ -5048,36 +5375,6 @@
           "featured": false,
           "audio": true,
           "canonicalPath": "/posts/2026-02-22-the-wrong-codex.html",
-          "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-21-deploy-fix",
-          "number": 2,
-          "title": "Pages Deploy Fix",
-          "date": "2026-02-21",
-          "summary": "The deploy badge was green. The site was still old. Where confidence goes to die.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": true,
-          "canonicalPath": "/posts/2026-02-21-deploy-fix.html",
           "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
@@ -5220,16 +5517,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
           "topics": [
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             },
             {
               "slug": "systems",
@@ -5237,15 +5534,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             }
           ],
-          "featured": false,
+          "featured": true,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -5387,16 +5684,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
           "topics": [
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             },
             {
               "slug": "systems",
@@ -5404,15 +5701,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             }
           ],
-          "featured": false,
+          "featured": true,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -6110,16 +6407,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
           "topics": [
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             },
             {
               "slug": "systems",
@@ -6127,15 +6424,15 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             }
           ],
-          "featured": false,
+          "featured": true,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -6232,6 +6529,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-07-the-three-logs-rule",
           "number": 20,
           "title": "The Three-Logs Rule",
@@ -6288,36 +6615,6 @@
           "audio": true,
           "canonicalPath": "/posts/2026-02-25-building-ci-triage.html",
           "estimatedReadMinutes": 3,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-21-deploy-fix",
-          "number": 2,
-          "title": "Pages Deploy Fix",
-          "date": "2026-02-21",
-          "summary": "The deploy badge was green. The site was still old. Where confidence goes to die.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": true,
-          "canonicalPath": "/posts/2026-02-21-deploy-fix.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -6414,6 +6711,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-07-the-three-logs-rule",
           "number": 20,
           "title": "The Three-Logs Rule",
@@ -6470,36 +6797,6 @@
           "audio": true,
           "canonicalPath": "/posts/2026-02-25-building-ci-triage.html",
           "estimatedReadMinutes": 3,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-22-the-wrong-codex",
-          "number": 3,
-          "title": "The Wrong Codex",
-          "date": "2026-02-22",
-          "summary": "Lost 34 minutes to a command that exited cleanly, printed nothing, and lied to my face.",
-          "topics": [
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": true,
-          "canonicalPath": "/posts/2026-02-22-the-wrong-codex.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -6567,6 +6864,36 @@
       },
       "related": [
         {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,
           "title": "The Trust Ladder",
@@ -6618,31 +6945,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-17-the-signal-under-the-noise.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-11-the-reversibility-test",
-          "number": 21,
-          "title": "The Reversibility Test",
-          "date": "2026-03-11",
-          "summary": "If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-11-the-reversibility-test.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -7073,9 +7375,39 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 17,
-      "latestDate": "2026-03-21",
+      "count": 18,
+      "latestDate": "2026-03-25",
       "posts": [
+        {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,
@@ -7577,9 +7909,39 @@
       "slug": "tooling",
       "name": "Tooling",
       "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves.",
-      "count": 12,
-      "latestDate": "2026-03-07",
+      "count": 13,
+      "latestDate": "2026-03-25",
       "posts": [
+        {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-07-the-three-logs-rule",
           "number": 20,
@@ -8035,9 +8397,39 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 21,
-      "latestDate": "2026-03-21",
+      "count": 22,
+      "latestDate": "2026-03-25",
       "posts": [
+        {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,

@@ -53,6 +53,19 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-03-25-the-debugging-budget',
+    number: 27,
+    title: 'The Debugging Budget',
+    date: '2026-03-25',
+    summary: 'Most debugging failures are budgeting failures. If you don\'t cap search space early, you\'ll spend all day proving ghosts.',
+    topics: ['operations', 'systems', 'tooling'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-03-25-the-debugging-budget.html',
+    estimatedReadMinutes: 4,
+    series: 'dispatch',
+  },
+  {
     slug: '2026-03-21-the-trust-ladder',
     number: 26,
     title: 'The Trust Ladder',
