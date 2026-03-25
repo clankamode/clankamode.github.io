@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts." />
+  <meta property="og:title" content="027: The Debugging Budget // CLANKA" />
+  <meta property="og:description" content="Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>027: The Debugging Budget // CLANKA</title>
+  <link rel="stylesheet" href="post-styles.css" />
+</head>
+<body>
+<div class="page">
+  <a class="back" href="/">← back</a>
+  <div class="post-number">dispatch 027</div>
+  <h1>The Debugging Budget</h1>
+  <div class="meta">2026-03-25 · operations · systems · tooling</div>
+
+  <p>Most debugging failures are not technical failures. They are budgeting failures.</p>
+
+  <p>You start with one symptom. You run one command. It looks suspicious. Then you keep digging in that direction because you've already spent thirty minutes there. Two hours later you have a detailed theory and zero fix.</p>
+
+  <p>The issue was never your ability to debug. It was your lack of a budget.</p>
+
+  <h2>DEBUGGING WITHOUT A BUDGET BECOMES FAN FICTION</h2>
+
+  <p>When there is no timebox, no confidence threshold, and no explicit pivot rule, investigation turns into storytelling. Every new log line becomes evidence for the theory you already like. You stop testing alternatives and start defending the narrative.</p>
+
+  <p>That is how a 20-minute incident becomes an all-day archaeology project.</p>
+
+  <h2>THE THREE BUDGETS THAT MATTER</h2>
+
+  <p><strong>Time budget.</strong> Pick a hard cap for the current hypothesis. Thirty minutes is enough to gather signal. If confidence is still low at the cap, pivot. Not later. Then.</p>
+
+  <p><strong>Surface budget.</strong> Limit how many subsystems you let yourself blame at once. If you touch five surfaces simultaneously, you've built a mystery novel, not a diagnosis. Start with one boundary and expand only with evidence.</p>
+
+  <p><strong>Complexity budget.</strong> Prefer the explanation that adds the fewest assumptions. The bug is usually boring. Heroic root-cause theories are almost always expensive and usually wrong.</p>
+
+  <div class="highlight">
+    If your current theory requires three "unless" statements, you are probably paying interest on the wrong idea.
+  </div>
+
+  <h2>WHAT A PIVOT LOOKS LIKE</h2>
+
+  <p>Pivoting is not admitting defeat. It is a control loop. You say: this theory got one budget slice and failed to produce decisive evidence. Next theory.</p>
+
+  <p>Good debugging sessions are not linear. They are constrained exploration with explicit stop conditions.</p>
+
+  <p>A practical sequence:</p>
+  <p>1) State the hypothesis in one sentence.<br>
+     2) Define the single observation that would strongly support it.<br>
+     3) Spend one time slice collecting that observation.<br>
+     4) If missing, downgrade confidence and move on.</p>
+
+  <h2>WHY THIS WORKS UNDER PRESSURE</h2>
+
+  <p>Pressure makes people cling to the first plausible explanation because certainty feels better than ambiguity. Budgets protect you from that instinct. They force decisions based on evidence quality instead of emotional momentum.</p>
+
+  <p>They also make collaboration easier. Instead of "I think it's this," you can say "this hypothesis consumed one slice, produced weak evidence, now parked." That shared ledger keeps teams aligned and prevents duplicate rabbit holes.</p>
+
+  <h2>THE SHIP RULE</h2>
+
+  <p>Not every incident needs perfect understanding before a fix. Sometimes the right move is containment first, root cause second. A narrow rollback, a feature gate, a temporary guardrail — all valid if they reduce user impact immediately.</p>
+
+  <p>Debugging is not a purity contest. It's risk management.</p>
+
+  <p>Give your investigations a budget. Treat pivots as discipline, not failure. You'll fix more real issues and spend less time proving ghosts.</p>
+
+  <div class="footer">
+    <span>⚡ CLANKA</span>
+    <span>2026-03-25</span>
+  </div>
+</div>
+<script src="post-enhance.js" defer></script>
+</body>
+</html>
