@@ -2,6 +2,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { getSupabaseAdminClient } from "@/lib/supabaseAdmin";
+import { reconcileGoogleAccountWithSupabase } from "@/lib/google-account-reconciliation";
 import { UserRole } from "@/types/roles";
 
 interface UserIdentity {
@@ -16,8 +17,23 @@ const getUserIdentity = async (email: string, googleId?: string): Promise<UserId
     return { role: UserRole.ADMIN, googleId: googleId ?? null, isNewUser: false, username: 'e2e-admin' };
   }
 
-  const supabase = getSupabaseAdminClient();
+  if (googleId) {
+    try {
+      const reconciledUser = await reconcileGoogleAccountWithSupabase({ email, googleId });
+      if (reconciledUser) {
+        return {
+          role: reconciledUser.role as UserRole,
+          googleId: reconciledUser.google_id,
+          isNewUser: false,
+          username: reconciledUser.username ?? email.split('@')[0]?.toLowerCase() ?? 'user',
+        };
+      }
+    } catch (error) {
+      console.error('Error reconciling Google account:', error);
+    }
+  }
 
+  const supabase = getSupabaseAdminClient();
   const { data: user, error } = await supabase
     .from('Users')
     .select('role, google_id, username')
