@@ -106,11 +106,21 @@ function coerceMessages(value: unknown): StoredTutorMessage[] {
 
 async function isRateLimited(admin: ReturnType<typeof getSupabaseAdminClient>, userId: number): Promise<boolean> {
   const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
-  const { data, error } = await admin
-    .from('TutorConversations')
-    .select('messages')
+  const { error: insertError } = await admin
+    .from('TutorRequestEvents')
+    .insert({ user_id: userId });
+
+  if (insertError) {
+    // Fail open — don't block users if request logging fails
+    console.error('[api/tutor] rate limit request log failed:', insertError);
+    return false;
+  }
+
+  const { count, error } = await admin
+    .from('TutorRequestEvents')
+    .select('id', { count: 'exact', head: true })
     .eq('user_id', userId)
-    .gte('updated_at', windowStart);
+    .gte('created_at', windowStart);
 
   if (error) {
     // Fail open — don't block users if rate limit check fails
@@ -118,14 +128,7 @@ async function isRateLimited(admin: ReturnType<typeof getSupabaseAdminClient>, u
     return false;
   }
 
-  const requestCount = (data ?? []).reduce((total, row) => {
-    const messages = coerceMessages((row as { messages?: unknown }).messages);
-    return total + messages.filter((entry) => (
-      entry.role === 'user' && entry.created_at >= windowStart
-    )).length;
-  }, 0);
-
-  return requestCount >= RATE_LIMIT_MAX_REQUESTS;
+  return (count ?? 0) > RATE_LIMIT_MAX_REQUESTS;
 }
 
 export async function POST(req: NextRequest) {

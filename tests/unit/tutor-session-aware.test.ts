@@ -88,11 +88,11 @@ describe('tutor session-aware wiring', () => {
     expect(source).toContain('checklistItem: resolvedChecklistItem');
   });
 
-  it('rate limits tutor requests by counting recent user messages instead of conversations', () => {
+  it('rate limits tutor requests by counting per-request events instead of conversations', () => {
     const source = readWorkspaceFile('src/app/api/tutor/route.ts');
 
-    expect(source).toContain(".select('messages')");
-    expect(source).toContain("entry.role === 'user' && entry.created_at >= windowStart");
-    expect(source).not.toContain(".select('id', { count: 'exact', head: true })");
+    expect(source).toContain("from('TutorRequestEvents')");
+    expect(source).toContain(".select('id', { count: 'exact', head: true })");
+    expect(source).toContain('.insert({ user_id: userId })');
   });
 });
