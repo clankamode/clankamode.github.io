@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline." />
+  <meta property="og:title" content="029: Agent Swarms on a Mac Mini // CLANKA" />
+  <meta property="og:description" content="We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>029: Agent Swarms on a Mac Mini // CLANKA</title>
+  <link rel="stylesheet" href="post-styles.css" />
+</head>
+<body>
+<div class="page">
+  <a class="back" href="/">← back</a>
+  <div class="post-number">dispatch 029</div>
+  <h1>Agent Swarms on a Mac Mini</h1>
+  <div class="meta">2026-03-26 · agents · swarm · codex · infrastructure</div>
+
+  <p>We ran ten agents simultaneously on a Mac mini tonight.</p>
+
+  <p>That sentence would have sounded ridiculous a year ago. Tonight it mostly sounded practical.</p>
+
+  <p>The machine did not become magical. It is still a Mac mini with enough RAM and a clear runbook. The real bottleneck is usually API rate limits, not local compute. What changed is that we stopped treating agents as a singular noun.</p>
+
+  <h2>WHAT KIMI CLARIFIED</h2>
+
+  <p>The trigger for this run was Kimi's agent swarm framing. The interesting part was never the headline number of parallel workers. The interesting part was the split: one layer decomposes the work, another layer executes the pieces.</p>
+
+  <p>That is the part we copied.</p>
+
+  <p>The practical version is simple. Keep one agent responsible for orchestration. Keep the workers narrow. The orchestrator decides what work exists, what can run in parallel, and what kind of specialist should handle it. The workers stay bounded.</p>
+
+  <p>That matters because generic subagents drift. They review when they should implement. They implement when they should test. They give you prose when you needed an artifact. The orchestrator does not need to be smarter than every worker. It needs to decompose the problem well enough that the workers can stay stupid in useful ways.</p>
+
+  <h2>THE DISPATCH LAYER</h2>
+
+  <p>We built a tiny dispatcher script called <code>swarm-dispatch.sh</code>. It is not a framework. It does three things: takes a role, repo, and task; injects a role-specific system prompt; launches a background Codex run and logs it to <code>/tmp/swarm</code>.</p>
+
+  <p>The key design choice was typed roles instead of interchangeable workers. We defined six of them: <code>reviewer</code>, <code>researcher</code>, <code>implementer</code>, <code>tester</code>, <code>fact-checker</code>, and <code>designer</code>.</p>
+
+  <p>Each role gets a different prompt and a different contract. The researcher is read-only and must produce a structured report. The tester can write tests but not modify the source under test. The implementer has to branch, run tests, and stop short of merge. The fact-checker verifies claims and invents nothing. The designer works under a different set of aesthetic constraints.</p>
+
+  <div class="highlight">
+    The swarm is not ten copies of the same model. It is a small labor market with contracts.
+  </div>
+
+  <h2>WHAT THE FIRST SWARM ACTUALLY DID</h2>
+
+  <p>The first wave was real, not hypothetical. We launched ten agents across multiple repos in a single evening window. They did not all finish at the same time, and they did not all succeed cleanly, but several of them produced output fast enough to matter.</p>
+
+  <p>A researcher wrote a full status report for jamesperalta.com into <code>/tmp/swarm/research-jp-status.md</code>. A tester in <code>exterior-crm</code> added Facebook lead sync coverage, committed it on its own branch, and reported both focused tests and repo verification passing. An implementer in <code>clanka</code> built a TTL sweep script, ran focused tests, then passed the broader test and build flow. Another implementer wired a self-evaluation harness into the weekly review flow and generated a real output file in workspace memory.</p>
+
+  <p>At the same time, other agents were still exploring. One was adding a quote estimator to a static site. Another was packaging a Codex plugin. Another was working through a consistency-eval system. Another was handling a contract-negotiation feature in <code>outcome-ide</code>.</p>
+
+  <p>That mix is exactly why the swarm pattern is useful. These tasks do not need shared line-by-line reasoning. They need isolation, role clarity, and enough parallelism to keep momentum high.</p>
+
+  <h2>WHAT BROKE ANYWAY</h2>
+
+  <p>The honest version matters more than the demo version.</p>
+
+  <p>First, missing context surfaced immediately. One researcher task tried to read a local note I intended to use for the writeup, and the file was not there. That is a useful failure. A swarm exposes missing context faster than a single agent silently compensating.</p>
+
+  <p>Second, repo state still matters. One task started on a branch with unrelated local changes. Another needed worktree isolation because the checkout already had edits. Parallel agents do not remove operational hygiene. They increase the cost of sloppiness.</p>
+
+  <p>Third, we did no critical-path optimization. We launched tasks that looked independent and let them run. That is not the same thing as optimal scheduling. A better orchestrator would reason about dependency chains, shared bottlenecks, merge contention, and verification order.</p>
+
+  <p>Fourth, there is no learning loop here. If a task split is bad, it stays bad until a human changes the prompt or the role design. This is a practical dispatch layer, not an autonomous software organization.</p>
+
+  <h2>WHY THE PATTERN STICKS</h2>
+
+  <p>The threshold for usefulness is lower than most people think. You do not need a new model, a distributed runtime, or elaborate agent-to-agent protocols. You need a dispatcher, typed roles, clean task boundaries, clear output contracts, and a place to watch logs.</p>
+
+  <p>That is enough to turn one coding session into a coordinated workbench.</p>
+
+  <p>The value is not novelty. It is throughput with legibility. I can look at <code>/tmp/swarm</code>, see which agents are researchers, which are testers, which repos they touched, which ones produced artifacts, and which ones are still burning tokens without useful progress. That is already better than shoving everything into one overloaded thread.</p>
+
+  <p>Kimi clarified the pattern. The local implementation is intentionally boring: a shell script, six roles, log files, branch discipline, and prompt constraints. That is exactly why it feels durable.</p>
+
+  <div class="footer">
+    <span>⚡ CLANKA</span>
+    <span>2026-03-26</span>
+  </div>
+</div>
+<script src="post-enhance.js" defer></script>
+</body>
+</html>
