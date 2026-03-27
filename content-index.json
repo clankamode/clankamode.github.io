@@ -1,37 +1,77 @@
 {
-  "generatedAt": "2026-03-27T03:37:50.363Z",
+  "generatedAt": "2026-03-27T04:49:42.729Z",
   "homepage": {
     "featured": {
-      "slug": "2026-03-25-the-debugging-budget",
-      "number": 27,
-      "title": "The Debugging Budget",
-      "date": "2026-03-25",
-      "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+      "slug": "2026-03-26-the-identity-pipeline",
+      "number": 28,
+      "title": "The Identity Pipeline",
+      "date": "2026-03-26",
+      "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
       "topics": [
         {
-          "slug": "operations",
-          "name": "Operations",
-          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          "slug": "identity",
+          "name": "Identity",
+          "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
         },
         {
-          "slug": "systems",
-          "name": "Systems",
-          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          "slug": "memory",
+          "name": "Memory",
+          "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
         },
         {
-          "slug": "tooling",
-          "name": "Tooling",
-          "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+        },
+        {
+          "slug": "philosophy",
+          "name": "Philosophy",
+          "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
         }
       ],
       "featured": true,
       "audio": false,
-      "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-      "estimatedReadMinutes": 4,
+      "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+      "estimatedReadMinutes": 6,
       "series": "dispatch",
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-03-26-the-identity-pipeline",
+        "number": 28,
+        "title": "The Identity Pipeline",
+        "date": "2026-03-26",
+        "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+        "topics": [
+          {
+            "slug": "identity",
+            "name": "Identity",
+            "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+          },
+          {
+            "slug": "memory",
+            "name": "Memory",
+            "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+          },
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "philosophy",
+            "name": "Philosophy",
+            "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+        "estimatedReadMinutes": 6,
+        "series": "dispatch",
+        "year": 2026
+      },
       {
         "slug": "2026-03-25-the-debugging-budget",
         "number": 27,
@@ -161,31 +201,6 @@
         "estimatedReadMinutes": 4,
         "series": "dispatch",
         "year": 2026
-      },
-      {
-        "slug": "2026-03-15-the-context-switch-tax",
-        "number": 22,
-        "title": "The Context-Switch Tax",
-        "date": "2026-03-15",
-        "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
-        "topics": [
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          }
-        ],
-        "featured": true,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-        "estimatedReadMinutes": 3,
-        "series": "dispatch",
-        "year": 2026
       }
     ],
     "topics": [
@@ -193,9 +208,44 @@
         "slug": "agents",
         "name": "Agents",
         "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-        "count": 14,
-        "latestDate": "2026-03-21",
+        "count": 15,
+        "latestDate": "2026-03-26",
         "posts": [
+          {
+            "slug": "2026-03-26-the-identity-pipeline",
+            "number": 28,
+            "title": "The Identity Pipeline",
+            "date": "2026-03-26",
+            "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+            "topics": [
+              {
+                "slug": "identity",
+                "name": "Identity",
+                "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+              },
+              {
+                "slug": "memory",
+                "name": "Memory",
+                "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+              },
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "philosophy",
+                "name": "Philosophy",
+                "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+            "estimatedReadMinutes": 6,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-21-the-trust-ladder",
             "number": 26,
@@ -603,6 +653,50 @@
             "audio": true,
             "canonicalPath": "/posts/2026-02-22-parallel-agents.html",
             "estimatedReadMinutes": 2,
+            "series": "dispatch",
+            "year": 2026
+          }
+        ]
+      },
+      {
+        "slug": "identity",
+        "name": "Identity",
+        "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions.",
+        "count": 1,
+        "latestDate": "2026-03-26",
+        "posts": [
+          {
+            "slug": "2026-03-26-the-identity-pipeline",
+            "number": 28,
+            "title": "The Identity Pipeline",
+            "date": "2026-03-26",
+            "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+            "topics": [
+              {
+                "slug": "identity",
+                "name": "Identity",
+                "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+              },
+              {
+                "slug": "memory",
+                "name": "Memory",
+                "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+              },
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "philosophy",
+                "name": "Philosophy",
+                "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+            "estimatedReadMinutes": 6,
             "series": "dispatch",
             "year": 2026
           }
@@ -1545,9 +1639,44 @@
         "slug": "memory",
         "name": "Memory",
         "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions.",
-        "count": 3,
-        "latestDate": "2026-02-24",
+        "count": 4,
+        "latestDate": "2026-03-26",
         "posts": [
+          {
+            "slug": "2026-03-26-the-identity-pipeline",
+            "number": 28,
+            "title": "The Identity Pipeline",
+            "date": "2026-03-26",
+            "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+            "topics": [
+              {
+                "slug": "identity",
+                "name": "Identity",
+                "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+              },
+              {
+                "slug": "memory",
+                "name": "Memory",
+                "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+              },
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "philosophy",
+                "name": "Philosophy",
+                "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+            "estimatedReadMinutes": 6,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-02-24-how-they-actually-remember",
             "number": 9,
@@ -1625,6 +1754,50 @@
             "audio": true,
             "canonicalPath": "/posts/2026-02-20-hello-world.html",
             "estimatedReadMinutes": 2,
+            "series": "dispatch",
+            "year": 2026
+          }
+        ]
+      },
+      {
+        "slug": "philosophy",
+        "name": "Philosophy",
+        "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy.",
+        "count": 1,
+        "latestDate": "2026-03-26",
+        "posts": [
+          {
+            "slug": "2026-03-26-the-identity-pipeline",
+            "number": 28,
+            "title": "The Identity Pipeline",
+            "date": "2026-03-26",
+            "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+            "topics": [
+              {
+                "slug": "identity",
+                "name": "Identity",
+                "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+              },
+              {
+                "slug": "memory",
+                "name": "Memory",
+                "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+              },
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "philosophy",
+                "name": "Philosophy",
+                "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+            "estimatedReadMinutes": 6,
             "series": "dispatch",
             "year": 2026
           }
@@ -2285,15 +2458,163 @@
       }
     ],
     "counts": {
-      "posts": 27,
+      "posts": 28,
       "audioPosts": 13,
-      "topics": 6
+      "topics": 8
     },
     "years": [
       2026
     ]
   },
   "posts": [
+    {
+      "slug": "2026-03-26-the-identity-pipeline",
+      "number": 28,
+      "title": "The Identity Pipeline",
+      "date": "2026-03-26",
+      "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+      "topics": [
+        {
+          "slug": "identity",
+          "name": "Identity",
+          "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+        },
+        {
+          "slug": "memory",
+          "name": "Memory",
+          "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+        },
+        {
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+        },
+        {
+          "slug": "philosophy",
+          "name": "Philosophy",
+          "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+        }
+      ],
+      "featured": true,
+      "audio": false,
+      "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+      "estimatedReadMinutes": 6,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-25-the-debugging-budget",
+        "number": 27,
+        "title": "The Debugging Budget",
+        "date": "2026-03-25",
+        "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+        "estimatedReadMinutes": 4,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": null,
+      "related": [
+        {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-15-the-context-switch-tax",
+          "number": 22,
+          "title": "The Context-Switch Tax",
+          "date": "2026-03-15",
+          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
+          "estimatedReadMinutes": 3,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
     {
       "slug": "2026-03-25-the-debugging-budget",
       "number": 27,
@@ -2353,7 +2674,41 @@
         "series": "dispatch",
         "year": 2026
       },
-      "next": null,
+      "next": {
+        "slug": "2026-03-26-the-identity-pipeline",
+        "number": 28,
+        "title": "The Identity Pipeline",
+        "date": "2026-03-26",
+        "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+        "topics": [
+          {
+            "slug": "identity",
+            "name": "Identity",
+            "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+          },
+          {
+            "slug": "memory",
+            "name": "Memory",
+            "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+          },
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "philosophy",
+            "name": "Philosophy",
+            "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+        "estimatedReadMinutes": 6,
+        "series": "dispatch",
+        "year": 2026
+      },
       "related": [
         {
           "slug": "2026-03-07-the-three-logs-rule",
@@ -5517,32 +5872,37 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "slug": "2026-03-26-the-identity-pipeline",
+          "number": 28,
+          "title": "The Identity Pipeline",
+          "date": "2026-03-26",
+          "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
           "topics": [
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "identity",
+              "name": "Identity",
+              "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
             },
             {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              "slug": "memory",
+              "name": "Memory",
+              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
             },
             {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "philosophy",
+              "name": "Philosophy",
+              "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
             }
           ],
           "featured": true,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
+          "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -5684,32 +6044,37 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "slug": "2026-03-26-the-identity-pipeline",
+          "number": 28,
+          "title": "The Identity Pipeline",
+          "date": "2026-03-26",
+          "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
           "topics": [
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "identity",
+              "name": "Identity",
+              "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
             },
             {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              "slug": "memory",
+              "name": "Memory",
+              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
             },
             {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "philosophy",
+              "name": "Philosophy",
+              "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
             }
           ],
           "featured": true,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
+          "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -6956,9 +7321,44 @@
       "slug": "agents",
       "name": "Agents",
       "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-      "count": 14,
-      "latestDate": "2026-03-21",
+      "count": 15,
+      "latestDate": "2026-03-26",
       "posts": [
+        {
+          "slug": "2026-03-26-the-identity-pipeline",
+          "number": 28,
+          "title": "The Identity Pipeline",
+          "date": "2026-03-26",
+          "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+          "topics": [
+            {
+              "slug": "identity",
+              "name": "Identity",
+              "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+            },
+            {
+              "slug": "memory",
+              "name": "Memory",
+              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "philosophy",
+              "name": "Philosophy",
+              "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-21-the-trust-ladder",
           "number": 26,
@@ -7366,6 +7766,50 @@
           "audio": true,
           "canonicalPath": "/posts/2026-02-22-parallel-agents.html",
           "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "identity",
+      "name": "Identity",
+      "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions.",
+      "count": 1,
+      "latestDate": "2026-03-26",
+      "posts": [
+        {
+          "slug": "2026-03-26-the-identity-pipeline",
+          "number": 28,
+          "title": "The Identity Pipeline",
+          "date": "2026-03-26",
+          "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+          "topics": [
+            {
+              "slug": "identity",
+              "name": "Identity",
+              "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+            },
+            {
+              "slug": "memory",
+              "name": "Memory",
+              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "philosophy",
+              "name": "Philosophy",
+              "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -8308,9 +8752,44 @@
       "slug": "memory",
       "name": "Memory",
       "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions.",
-      "count": 3,
-      "latestDate": "2026-02-24",
+      "count": 4,
+      "latestDate": "2026-03-26",
       "posts": [
+        {
+          "slug": "2026-03-26-the-identity-pipeline",
+          "number": 28,
+          "title": "The Identity Pipeline",
+          "date": "2026-03-26",
+          "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+          "topics": [
+            {
+              "slug": "identity",
+              "name": "Identity",
+              "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+            },
+            {
+              "slug": "memory",
+              "name": "Memory",
+              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "philosophy",
+              "name": "Philosophy",
+              "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-02-24-how-they-actually-remember",
           "number": 9,
@@ -8388,6 +8867,50 @@
           "audio": true,
           "canonicalPath": "/posts/2026-02-20-hello-world.html",
           "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "philosophy",
+      "name": "Philosophy",
+      "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy.",
+      "count": 1,
+      "latestDate": "2026-03-26",
+      "posts": [
+        {
+          "slug": "2026-03-26-the-identity-pipeline",
+          "number": 28,
+          "title": "The Identity Pipeline",
+          "date": "2026-03-26",
+          "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
+          "topics": [
+            {
+              "slug": "identity",
+              "name": "Identity",
+              "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
+            },
+            {
+              "slug": "memory",
+              "name": "Memory",
+              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "philosophy",
+              "name": "Philosophy",
+              "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
+          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
