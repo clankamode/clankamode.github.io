@@ -66,7 +66,7 @@ export async function renderHomepageContent(): Promise<void> {
 
   if (topicsHost) {
     topicsHost.textContent = '';
-    topics.forEach((topic) => {
+    topics.slice(0, 6).forEach((topic) => {
       topicsHost.append(createTopicChip(topic));
     });
   }
