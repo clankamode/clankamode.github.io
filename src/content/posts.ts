@@ -53,6 +53,19 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-03-26-agent-swarms-on-a-mac-mini',
+    number: 29,
+    title: 'Agent Swarms on a Mac Mini',
+    date: '2026-03-26',
+    summary: 'We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was typed roles, clean task boundaries, and boring operational discipline.',
+    topics: ['agents', 'tooling', 'systems', 'operations'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-03-26-agent-swarms-on-a-mac-mini.html',
+    estimatedReadMinutes: 5,
+    series: 'dispatch',
+  },
+  {
     slug: '2026-03-25-the-debugging-budget',
     number: 27,
     title: 'The Debugging Budget',

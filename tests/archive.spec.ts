@@ -30,7 +30,7 @@ test('topic pages show derived counts and matching posts', async ({ page }) => {
   await page.waitForSelector('#topic-count');
 
   await expect(page.locator('#topic-count')).toHaveText(/\d+ dispatches/);
-  await expect(page.locator('#topic-latest')).toHaveText(/latest: \d{4}-\d{2}-\d{2}/);
+  await expect(page.locator('#topic-latest')).toHaveText(/last dispatch · \d{4}-\d{2}-\d{2}/);
   await expect(page.locator('#topic-posts .archive-card')).not.toHaveCount(0);
 });
 
