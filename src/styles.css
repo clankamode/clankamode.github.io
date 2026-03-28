@@ -790,12 +790,18 @@ section {
 .row a:focus-visible { color: var(--accent); }
 
 .mesh-group {
+  contain: content;
   border: 1px solid var(--border);
   padding: 20px 16px 0;
   background: color-mix(in srgb, var(--surface) 66%, transparent);
 }
 
 .mesh-group clanka-terminal { margin-bottom: 28px; }
+
+clanka-fleet,
+clanka-terminal {
+  contain: content;
+}
 
 .skill-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
 .skill-group-label { font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--dim); }

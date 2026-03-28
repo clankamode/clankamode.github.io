@@ -1,6 +1,27 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { defineConfig } from 'vite';
+import type { OutputChunk } from 'rollup';
+import { defineConfig, type Plugin } from 'vite';
+
+function injectMainModulePreload(): Plugin {
+  return {
+    name: 'inject-main-modulepreload',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        if (!ctx.bundle || !html.includes('home-page')) return html;
+        const chunk = Object.values(ctx.bundle).find(
+          (item): item is OutputChunk =>
+            item.type === 'chunk' && item.isEntry && item.name === 'main',
+        );
+        if (!chunk) return html;
+        const href = `/${chunk.fileName}`;
+        const link = `  <link rel="modulepreload" crossorigin href="${href}" />\n  `;
+        return html.replace(/<title>/, `${link}<title>`);
+      },
+    },
+  };
+}
 
 function topicInputs(): Record<string, string> {
   const inputs: Record<string, string> = {};
@@ -22,6 +43,7 @@ function topicInputs(): Record<string, string> {
 }
 
 export default defineConfig({
+  plugins: [injectMainModulePreload()],
   build: {
     outDir: 'dist',
     emptyOutDir: true,
