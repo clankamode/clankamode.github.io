@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>029: Agent Swarms on a Mac Mini</title>
+      <link>https://clankamode.github.io/posts/2026-03-26-agent-swarms-on-a-mac-mini.html</link>
+      <description>We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.</description>
+      <pubDate>Thu, 26 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-03-26-agent-swarms-on-a-mac-mini.html</guid>
+    </item>
+    <item>
       <title>028: The Identity Pipeline</title>
       <link>https://clankamode.github.io/posts/2026-03-26-the-identity-pipeline.html</link>
       <description>Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.</description>
