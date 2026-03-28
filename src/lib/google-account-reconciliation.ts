@@ -29,6 +29,17 @@ interface UserBadgeRow {
   google_id: string | null;
 }
 
+interface UserQuestionSubmissionRow {
+  id: string;
+  question_id: string;
+  solved: boolean;
+  source_code: string | null;
+  created_at: string;
+  updated_at: string;
+  email: string;
+  google_id: string | null;
+}
+
 interface UserConceptStatsRow {
   concept_slug: string;
   track_slug: string;
@@ -57,18 +68,18 @@ export interface GoogleAccountReconciliationStore {
   updateUser(userId: number, updates: UserUpdates): Promise<void>;
   deleteUser(userId: number): Promise<void>;
   listArticleProgress(googleId: string, emails: string[]): Promise<UserArticleProgressRow[]>;
-  replaceArticleProgress(
-    googleId: string,
-    emails: string[],
-    rows: UserArticleProgressRow[]
-  ): Promise<void>;
   listUserBadges(googleId: string, emails: string[]): Promise<UserBadgeRow[]>;
-  replaceUserBadges(googleId: string, emails: string[], rows: UserBadgeRow[]): Promise<void>;
+  listUserQuestionSubmissions(googleId: string, emails: string[]): Promise<UserQuestionSubmissionRow[]>;
   listUserConceptStats(googleId: string, emails: string[]): Promise<UserConceptStatsRow[]>;
-  replaceUserConceptStats(
+  replaceIdentityRows(
     googleId: string,
     emails: string[],
-    rows: UserConceptStatsRow[]
+    rows: {
+      articleProgress: UserArticleProgressRow[];
+      userBadges: UserBadgeRow[];
+      userQuestionSubmissions: UserQuestionSubmissionRow[];
+      userConceptStats: UserConceptStatsRow[];
+    }
   ): Promise<void>;
 }
 
@@ -206,31 +217,67 @@ export function mergeUserConceptStatRows(
   return [...merged.values()];
 }
 
+export function mergeUserQuestionSubmissionRows(
+  rows: UserQuestionSubmissionRow[],
+  email: string,
+  googleId: string
+): UserQuestionSubmissionRow[] {
+  const merged = new Map<string, UserQuestionSubmissionRow>();
+
+  for (const row of rows) {
+    const existing = merged.get(row.question_id);
+    if (!existing) {
+      merged.set(row.question_id, { ...row, email, google_id: googleId });
+      continue;
+    }
+
+    const existingUpdatedAt = new Date(existing.updated_at).getTime();
+    const rowUpdatedAt = new Date(row.updated_at).getTime();
+    const latestRow = rowUpdatedAt >= existingUpdatedAt ? row : existing;
+    const latestSourceCodeRow =
+      row.source_code && (!existing.source_code || rowUpdatedAt >= existingUpdatedAt) ? row : existing;
+
+    merged.set(row.question_id, {
+      id: latestRow.id,
+      question_id: row.question_id,
+      solved: existing.solved || row.solved,
+      source_code: latestSourceCodeRow.source_code,
+      created_at:
+        new Date(existing.created_at).getTime() <= new Date(row.created_at).getTime()
+          ? existing.created_at
+          : row.created_at,
+      updated_at: existingUpdatedAt >= rowUpdatedAt ? existing.updated_at : row.updated_at,
+      email,
+      google_id: googleId,
+    });
+  }
+
+  return [...merged.values()];
+}
+
 async function reconcileIdentityTables(
   store: GoogleAccountReconciliationStore,
   googleId: string,
   emails: string[],
   canonicalEmail: string
 ): Promise<void> {
-  const [progressRows, badgeRows, conceptStatRows] = await Promise.all([
+  const [progressRows, badgeRows, questionSubmissionRows, conceptStatRows] = await Promise.all([
     store.listArticleProgress(googleId, emails),
     store.listUserBadges(googleId, emails),
+    store.listUserQuestionSubmissions(googleId, emails),
     store.listUserConceptStats(googleId, emails),
   ]);
 
-  await Promise.all([
-    store.replaceArticleProgress(
-      googleId,
-      emails,
-      mergeArticleProgressRows(progressRows, canonicalEmail, googleId)
+  await store.replaceIdentityRows(googleId, emails, {
+    articleProgress: mergeArticleProgressRows(progressRows, canonicalEmail, googleId),
+    userBadges: mergeUserBadgeRows(badgeRows, canonicalEmail, googleId),
+    userQuestionSubmissions: mergeUserQuestionSubmissionRows(
+      questionSubmissionRows,
+      canonicalEmail,
+      googleId
     ),
-    store.replaceUserBadges(googleId, emails, mergeUserBadgeRows(badgeRows, canonicalEmail, googleId)),
-    store.replaceUserConceptStats(
-      googleId,
-      emails,
-      mergeUserConceptStatRows(conceptStatRows, canonicalEmail, googleId)
-    ),
-  ]);
+    userConceptStats: mergeUserConceptStatRows(conceptStatRows, canonicalEmail, googleId),
+  });
 }
 
 export async function reconcileGoogleAccount(
@@ -311,7 +358,7 @@ function getGoogleAccountReconciliationStore(): GoogleAccountReconciliationStore
   const supabase = getSupabaseAdminClient();
 
   async function queryRows<T extends { email: string; google_id: string | null }>(
-    table: 'UserArticleProgress' | 'UserBadges' | 'UserConceptStats',
+    table: 'UserArticleProgress' | 'UserBadges' | 'UserQuestionSubmissions' | 'UserConceptStats',
     select: string,
     googleId: string,
     emails: string[]
@@ -344,49 +391,6 @@ function getGoogleAccountReconciliationStore(): GoogleAccountReconciliationStore
     }
 
     return combineRows(results.map((result) => (result.data as T[] | null) ?? []));
-  }
-
-  async function replaceRows<T extends { email: string; google_id: string | null }>(
-    table: 'UserArticleProgress' | 'UserBadges' | 'UserConceptStats',
-    googleId: string,
-    emails: string[],
-    rows: T[]
-  ): Promise<void> {
-    const deleteOperations: Array<Promise<{ error: { message: string } | null }>> = [];
-
-    deleteOperations.push(
-      (async () =>
-        await supabase
-          .from(table)
-          .delete()
-          .eq('google_id', googleId))()
-    );
-
-    if (emails.length > 0) {
-      deleteOperations.push(
-        (async () =>
-          await supabase
-            .from(table)
-            .delete()
-            .in('email', emails))()
-      );
-    }
-
-    const deleteResults = await Promise.all(deleteOperations);
-    for (const result of deleteResults) {
-      if (result.error) {
-        throw new Error(result.error.message);
-      }
-    }
-
-    if (rows.length === 0) {
-      return;
-    }
-
-    const { error } = await supabase.from(table).insert(rows);
-    if (error) {
-      throw new Error(error.message);
-    }
   }
 
   return {
@@ -444,14 +448,16 @@ function getGoogleAccountReconciliationStore(): GoogleAccountReconciliationStore
         emails
       );
     },
-    replaceArticleProgress(googleId: string, emails: string[], rows: UserArticleProgressRow[]) {
-      return replaceRows('UserArticleProgress', googleId, emails, rows);
-    },
     listUserBadges(googleId: string, emails: string[]) {
       return queryRows<UserBadgeRow>('UserBadges', 'badge_slug, earned_at, email, google_id', googleId, emails);
     },
-    replaceUserBadges(googleId: string, emails: string[], rows: UserBadgeRow[]) {
-      return replaceRows('UserBadges', googleId, emails, rows);
+    listUserQuestionSubmissions(googleId: string, emails: string[]) {
+      return queryRows<UserQuestionSubmissionRow>(
+        'UserQuestionSubmissions',
+        'id, question_id, solved, source_code, created_at, updated_at, email, google_id',
+        googleId,
+        emails
+      );
     },
     listUserConceptStats(googleId: string, emails: string[]) {
       return queryRows<UserConceptStatsRow>(
@@ -461,8 +467,19 @@ function getGoogleAccountReconciliationStore(): GoogleAccountReconciliationStore
         emails
       );
     },
-    replaceUserConceptStats(googleId: string, emails: string[], rows: UserConceptStatsRow[]) {
-      return replaceRows('UserConceptStats', googleId, emails, rows);
+    async replaceIdentityRows(googleId: string, emails: string[], rows) {
+      const { error } = await supabase.rpc('reconcile_google_identity_tables', {
+        p_google_id: googleId,
+        p_emails: emails,
+        p_article_progress_rows: rows.articleProgress,
+        p_user_badge_rows: rows.userBadges,
+        p_user_question_submission_rows: rows.userQuestionSubmissions,
+        p_user_concept_stat_rows: rows.userConceptStats,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
     },
   };
 }

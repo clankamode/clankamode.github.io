@@ -3,6 +3,7 @@ import {
   mergeArticleProgressRows,
   mergeUserBadgeRows,
   mergeUserConceptStatRows,
+  mergeUserQuestionSubmissionRows,
   reconcileGoogleAccount,
   type GoogleAccountReconciliationStore,
   type ReconciledUser,
@@ -23,6 +24,16 @@ interface TestState {
     email: string;
     google_id: string | null;
   }>;
+  userQuestionSubmissions: Array<{
+    id: string;
+    question_id: string;
+    solved: boolean;
+    source_code: string | null;
+    created_at: string;
+    updated_at: string;
+    email: string;
+    google_id: string | null;
+  }>;
   userConceptStats: Array<{
     concept_slug: string;
     track_slug: string;
@@ -34,7 +45,10 @@ interface TestState {
   }>;
 }
 
-function createStore(state: TestState): GoogleAccountReconciliationStore {
+function createStore(
+  state: TestState,
+  options?: { failAtomicReplace?: boolean }
+): GoogleAccountReconciliationStore {
   const matchesIdentity = (row: { email: string; google_id: string | null }, googleId: string, emails: string[]) =>
     row.google_id === googleId || emails.includes(row.email);
 
@@ -54,28 +68,35 @@ function createStore(state: TestState): GoogleAccountReconciliationStore {
     async listArticleProgress(googleId, emails) {
       return state.articleProgress.filter((row) => matchesIdentity(row, googleId, emails));
     },
-    async replaceArticleProgress(googleId, emails, rows) {
-      state.articleProgress = [
-        ...state.articleProgress.filter((row) => !matchesIdentity(row, googleId, emails)),
-        ...rows,
-      ];
-    },
     async listUserBadges(googleId, emails) {
       return state.userBadges.filter((row) => matchesIdentity(row, googleId, emails));
     },
-    async replaceUserBadges(googleId, emails, rows) {
-      state.userBadges = [
-        ...state.userBadges.filter((row) => !matchesIdentity(row, googleId, emails)),
-        ...rows,
-      ];
+    async listUserQuestionSubmissions(googleId, emails) {
+      return state.userQuestionSubmissions.filter((row) => matchesIdentity(row, googleId, emails));
     },
     async listUserConceptStats(googleId, emails) {
       return state.userConceptStats.filter((row) => matchesIdentity(row, googleId, emails));
     },
-    async replaceUserConceptStats(googleId, emails, rows) {
+    async replaceIdentityRows(googleId, emails, rows) {
+      if (options?.failAtomicReplace) {
+        throw new Error('atomic replace failed');
+      }
+
+      state.articleProgress = [
+        ...state.articleProgress.filter((row) => !matchesIdentity(row, googleId, emails)),
+        ...rows.articleProgress,
+      ];
+      state.userBadges = [
+        ...state.userBadges.filter((row) => !matchesIdentity(row, googleId, emails)),
+        ...rows.userBadges,
+      ];
+      state.userQuestionSubmissions = [
+        ...state.userQuestionSubmissions.filter((row) => !matchesIdentity(row, googleId, emails)),
+        ...rows.userQuestionSubmissions,
+      ];
       state.userConceptStats = [
         ...state.userConceptStats.filter((row) => !matchesIdentity(row, googleId, emails)),
-        ...rows,
+        ...rows.userConceptStats,
       ];
     },
   };
@@ -183,6 +204,48 @@ describe('google account reconciliation merges', () => {
       },
     ]);
   });
+
+  test('mergeUserQuestionSubmissionRows preserves solved history and latest source code', () => {
+    const merged = mergeUserQuestionSubmissionRows(
+      [
+        {
+          id: 'sub-1',
+          question_id: 'question-1',
+          solved: false,
+          source_code: 'old code',
+          created_at: '2026-03-01T10:00:00.000Z',
+          updated_at: '2026-03-09T10:00:00.000Z',
+          email: 'old@example.com',
+          google_id: 'gid-1',
+        },
+        {
+          id: 'sub-2',
+          question_id: 'question-1',
+          solved: true,
+          source_code: 'new code',
+          created_at: '2026-03-05T10:00:00.000Z',
+          updated_at: '2026-03-12T10:00:00.000Z',
+          email: 'new@example.com',
+          google_id: null,
+        },
+      ],
+      'new@example.com',
+      'gid-1'
+    );
+
+    expect(merged).toEqual([
+      {
+        id: 'sub-2',
+        question_id: 'question-1',
+        solved: true,
+        source_code: 'new code',
+        created_at: '2026-03-01T10:00:00.000Z',
+        updated_at: '2026-03-12T10:00:00.000Z',
+        email: 'new@example.com',
+        google_id: 'gid-1',
+      },
+    ]);
+  });
 });
 
 describe('reconcileGoogleAccount', () => {
@@ -242,6 +305,28 @@ describe('reconcileGoogleAccount', () => {
         {
           badge_slug: 'bookworm',
           earned_at: '2026-03-11T10:00:00.000Z',
+          email: 'new@example.com',
+          google_id: null,
+        },
+      ],
+      userQuestionSubmissions: [
+        {
+          id: 'sub-1',
+          question_id: 'question-1',
+          solved: false,
+          source_code: 'old code',
+          created_at: '2026-03-01T10:00:00.000Z',
+          updated_at: '2026-03-09T10:00:00.000Z',
+          email: 'old@example.com',
+          google_id: 'gid-1',
+        },
+        {
+          id: 'sub-2',
+          question_id: 'question-1',
+          solved: true,
+          source_code: 'new code',
+          created_at: '2026-03-05T10:00:00.000Z',
+          updated_at: '2026-03-12T10:00:00.000Z',
           email: 'new@example.com',
           google_id: null,
         },
@@ -308,6 +393,19 @@ describe('reconcileGoogleAccount', () => {
       },
     ]);
 
+    expect(state.userQuestionSubmissions).toEqual([
+      {
+        id: 'sub-2',
+        question_id: 'question-1',
+        solved: true,
+        source_code: 'new code',
+        created_at: '2026-03-01T10:00:00.000Z',
+        updated_at: '2026-03-12T10:00:00.000Z',
+        email: 'new@example.com',
+        google_id: 'gid-1',
+      },
+    ]);
+
     expect(state.userConceptStats).toEqual([
       {
         concept_slug: 'arrays',
@@ -340,6 +438,7 @@ describe('reconcileGoogleAccount', () => {
       ],
       articleProgress: [],
       userBadges: [],
+      userQuestionSubmissions: [],
       userConceptStats: [],
     };
 
@@ -356,5 +455,89 @@ describe('reconcileGoogleAccount', () => {
         google_id: 'gid-1',
       }),
     ]);
+  });
+
+  test('keeps identity tables unchanged when the atomic rewrite fails', async () => {
+    const state: TestState = {
+      users: [
+        {
+          id: 1,
+          email: 'old@example.com',
+          google_id: 'gid-1',
+          role: 'USER',
+          username: 'alice',
+          bio: null,
+          avatar_url: null,
+          leetcode_url: null,
+          codeforces_url: null,
+          github_url: null,
+          weekend_off_enabled: null,
+        },
+        {
+          id: 2,
+          email: 'new@example.com',
+          google_id: null,
+          role: 'USER',
+          username: null,
+          bio: null,
+          avatar_url: null,
+          leetcode_url: null,
+          codeforces_url: null,
+          github_url: null,
+          weekend_off_enabled: null,
+        },
+      ],
+      articleProgress: [
+        {
+          article_id: 'article-1',
+          completed_at: '2026-03-10T10:00:00.000Z',
+          created_at: '2026-03-01T10:00:00.000Z',
+          email: 'old@example.com',
+          google_id: 'gid-1',
+        },
+      ],
+      userBadges: [
+        {
+          badge_slug: 'bookworm',
+          earned_at: '2026-03-09T10:00:00.000Z',
+          email: 'old@example.com',
+          google_id: 'gid-1',
+        },
+      ],
+      userQuestionSubmissions: [
+        {
+          id: 'sub-1',
+          question_id: 'question-1',
+          solved: true,
+          source_code: 'code',
+          created_at: '2026-03-01T10:00:00.000Z',
+          updated_at: '2026-03-10T10:00:00.000Z',
+          email: 'old@example.com',
+          google_id: 'gid-1',
+        },
+      ],
+      userConceptStats: [
+        {
+          concept_slug: 'arrays',
+          track_slug: 'dsa',
+          exposures: 2,
+          internalized_count: 1,
+          last_seen_at: '2026-03-09T10:00:00.000Z',
+          email: 'old@example.com',
+          google_id: 'gid-1',
+        },
+      ],
+    };
+
+    const snapshot = structuredClone(state);
+
+    await expect(
+      reconcileGoogleAccount(createStore(state, { failAtomicReplace: true }), {
+        email: 'new@example.com',
+        googleId: 'gid-1',
+      })
+    ).rejects.toThrow('atomic replace failed');
+
+    expect(state).toEqual(snapshot);
   });
 });
