@@ -11,6 +11,7 @@ import './clanka-agents';
 import './clanka-tasks';
 import './clanka-cmdk';
 import { renderHomepageContent } from './homepage-content';
+import { runWhenNearViewport } from './lazy-near-viewport';
 
 type SyncState = {
   loading: boolean;
@@ -127,7 +128,7 @@ if (presence) {
 }
 
 initUI();
-void renderHomepageContent();
+runWhenNearViewport('.logs-section', () => void renderHomepageContent());
 void loadLiveStats();
 void loadNpmBadge();
-void loadCommitFeed();
+runWhenNearViewport('[aria-labelledby="activity-label"]', () => void loadCommitFeed());

@@ -188,6 +188,8 @@ export class ClankaFleet extends LitElement {
     }
   `;
 
+  private viewportObserver?: IntersectionObserver;
+
   connectedCallback(): void {
     super.connectedCallback();
     this.setAttribute('role', 'region');
@@ -195,7 +197,43 @@ export class ClankaFleet extends LitElement {
     if (!this.hasAttribute('tabindex')) {
       this.tabIndex = 0;
     }
-    this.loadFleet();
+    this.scheduleLoadWhenNearViewport();
+  }
+
+  disconnectedCallback(): void {
+    this.viewportObserver?.disconnect();
+    this.viewportObserver = undefined;
+    super.disconnectedCallback();
+  }
+
+  private scheduleLoadWhenNearViewport(): void {
+    const prefetchPx = 900;
+    const nearEnough = (): boolean => {
+      const r = this.getBoundingClientRect();
+      const vh = window.innerHeight;
+      return r.top < vh + prefetchPx && r.bottom > -prefetchPx;
+    };
+
+    if (nearEnough()) {
+      void this.loadFleet();
+      return;
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      void this.loadFleet();
+      return;
+    }
+
+    this.viewportObserver = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        this.viewportObserver?.disconnect();
+        this.viewportObserver = undefined;
+        void this.loadFleet();
+      },
+      { rootMargin: `0px 0px ${prefetchPx}px 0px`, threshold: 0 },
+    );
+    this.viewportObserver.observe(this);
   }
 
   private async loadFleet(): Promise<void> {
