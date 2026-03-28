@@ -15,6 +15,8 @@ interface GithubEventsResponse {
   events: ApiEvent[];
 }
 
+type GithubEventsPayload = GithubEventsResponse | ApiEvent[];
+
 function relativeTime(isoString: string): string {
   const then = new Date(isoString).getTime();
   const diffMs = Date.now() - then;
@@ -41,6 +43,13 @@ function detectCommitType(message: string): string {
   return COMMIT_TYPES.includes(tag as (typeof COMMIT_TYPES)[number]) ? tag : 'push';
 }
 
+function parseEvents(payload: GithubEventsPayload): ApiEvent[] {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  return Array.isArray(payload.events) ? payload.events : [];
+}
 
 function setFeedText(message: string): void {
   const feed = document.getElementById('commit-feed');
@@ -69,8 +78,8 @@ export async function loadCommitFeed(): Promise<void> {
 
     if (!response.ok) throw new Error(`GitHub events API ${response.status}`);
 
-    const data = (await response.json()) as GithubEventsResponse;
-    const events = data.events;
+    const data = (await response.json()) as GithubEventsPayload;
+    const events = parseEvents(data);
 
     if (!Array.isArray(events) || events.length === 0) {
       setFeedText('// no activity data');

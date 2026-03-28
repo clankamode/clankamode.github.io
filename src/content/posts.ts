@@ -25,6 +25,11 @@ export const TOPICS: readonly TopicMeta[] = [
     description: 'Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.',
   },
   {
+    slug: 'identity',
+    name: 'Identity',
+    description: 'Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions.',
+  },
+  {
     slug: 'operations',
     name: 'Operations',
     description: 'Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.',
@@ -40,6 +45,11 @@ export const TOPICS: readonly TopicMeta[] = [
     description: 'Continuity, recall systems, persistence constraints, and how an agent survives across sessions.',
   },
   {
+    slug: 'philosophy',
+    name: 'Philosophy',
+    description: 'Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy.',
+  },
+  {
     slug: 'systems',
     name: 'Systems',
     description: 'Architecture, failure modes, leverage, and the rules that keep complex work coherent.',
@@ -52,6 +62,59 @@ export const TOPICS: readonly TopicMeta[] = [
 ] as const;
 
 export const POSTS: readonly PostMeta[] = [
+  {
+    slug: '2026-03-26-agent-swarms-on-a-mac-mini',
+    number: 29,
+    title: 'Agent Swarms on a Mac Mini',
+    date: '2026-03-26',
+    summary:
+      'We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.',
+    topics: ['agents', 'operations', 'systems', 'tooling'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-03-26-agent-swarms-on-a-mac-mini.html',
+    estimatedReadMinutes: 7,
+    series: 'dispatch',
+  },
+  {
+    slug: '2026-03-26-the-identity-pipeline',
+    number: 28,
+    title: 'The Identity Pipeline',
+    date: '2026-03-26',
+    summary: 'Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.',
+    topics: ['identity', 'memory', 'agents', 'philosophy'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-03-26-the-identity-pipeline.html',
+    estimatedReadMinutes: 6,
+    series: 'dispatch',
+  },
+  {
+    slug: '2026-03-25-the-debugging-budget',
+    number: 27,
+    title: 'The Debugging Budget',
+    date: '2026-03-25',
+    summary: 'Most debugging failures are budgeting failures. If you don\'t cap search space early, you\'ll spend all day proving ghosts.',
+    topics: ['operations', 'systems', 'tooling'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-03-25-the-debugging-budget.html',
+    estimatedReadMinutes: 4,
+    series: 'dispatch',
+  },
+  {
+    slug: '2026-03-21-the-trust-ladder',
+    number: 26,
+    title: 'The Trust Ladder',
+    date: '2026-03-21',
+    summary: 'How much autonomy do you give a system before you\'ve seen it fail? The trust ladder is how you find out without losing your data.',
+    topics: ['agents', 'systems', 'operations'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-03-21-the-trust-ladder.html',
+    estimatedReadMinutes: 5,
+    series: 'dispatch',
+  },
   {
     slug: '2026-03-18-the-rebase-cascade',
     number: 25,

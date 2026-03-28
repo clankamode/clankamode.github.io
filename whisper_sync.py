@@ -173,6 +173,23 @@ def build_timings(elements, words):
     return timings
 
 
+def validate_timings(elements, timings):
+    if len(timings) != len(elements):
+        raise ValueError(f"generated {len(timings)} timings for {len(elements)} content blocks")
+
+    prev_start = None
+    for idx, timing in enumerate(timings):
+        start = timing.get('start')
+        end = timing.get('end')
+        if not isinstance(start, (int, float)) or not isinstance(end, (int, float)):
+            raise ValueError(f"timing {idx} is missing numeric start/end")
+        if end < start:
+            raise ValueError(f"timing {idx} has negative duration ({start} -> {end})")
+        if prev_start is not None and start < prev_start:
+            raise ValueError(f"timing {idx} starts before the previous segment ({start} < {prev_start})")
+        prev_start = start
+
+
 def process_post(html_path, audio_path, slug):
     # Step 1: Call Whisper API
     json_path = f'/tmp/{slug}-timestamps.json'
@@ -231,6 +248,7 @@ def process_post(html_path, audio_path, slug):
     # Step 4: Match timings
     print(f"  [4/5] Matching timings to {len(words)} Whisper words...")
     timings = build_timings(elements, words)
+    validate_timings(elements, timings)
 
     # Step 5: Patch HTML
     print(f"  [5/5] Patching HTML...")

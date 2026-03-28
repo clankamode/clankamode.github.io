@@ -5,39 +5,68 @@ import json, re, sys, os, subprocess
 from pathlib import Path
 from html.parser import HTMLParser
 
+TRACK_TAGS = {'p', 'h2', 'h3', 'pre'}
+SKIP_CLASSES = {'audio-player', 'footer', 'post-nav', 'meta', 'post-number'}
+
+
 class ContentExtractor(HTMLParser):
     def __init__(self):
         super().__init__()
         self.elements = []
-        self.current_text = ''
-        self.in_content = False
-        self.skip = False
-        self.tag_stack = []
-        self.content_tags = {'p', 'h2', 'h3', 'pre'}
-        
+        self._tracking = False
+        self._tracking_depth = 0
+        self._text_parts = []
+        self._skip_depth = 0
+
     def handle_starttag(self, tag, attrs):
-        cls = dict(attrs).get('class', '')
-        if any(x in cls for x in ['audio-player', 'footer', 'post-nav', 'meta', 'post-number']):
-            self.skip = True
+        if self._skip_depth > 0:
+            self._skip_depth += 1
+            if self._tracking:
+                self._tracking_depth += 1
             return
-        if tag in self.content_tags and not self.skip:
-            self.in_content = True
-            self.current_text = ''
-            self.tag_stack.append(tag)
-            
+
+        attrs_d = dict(attrs)
+        classes = set(attrs_d.get('class', '').split())
+
+        if classes & SKIP_CLASSES:
+            self._skip_depth = 1
+            return
+
+        if self._tracking:
+            self._tracking_depth += 1
+            return
+
+        if tag == 'div' and 'highlight' in classes:
+            self._tracking = True
+            self._tracking_depth = 0
+            self._text_parts = []
+        elif tag in TRACK_TAGS:
+            self._tracking = True
+            self._tracking_depth = 0
+            self._text_parts = []
+
     def handle_endtag(self, tag):
-        if tag in self.content_tags and self.in_content and self.tag_stack and self.tag_stack[-1] == tag:
-            text = ' '.join(self.current_text.split())
-            if text and len(text) > 5:
-                self.elements.append({'tag': tag, 'text': text})
-            self.in_content = False
-            self.tag_stack.pop()
-        if tag in self.content_tags:
-            self.skip = False
-            
+        if self._skip_depth > 0:
+            self._skip_depth -= 1
+            return
+
+        if not self._tracking:
+            return
+
+        if self._tracking_depth > 0:
+            self._tracking_depth -= 1
+            return
+
+        text = ' '.join(self._text_parts)
+        text = re.sub(r'\s+', ' ', text).strip()
+        if text and len(text) > 5:
+            self.elements.append({'tag': tag, 'text': text})
+        self._tracking = False
+        self._text_parts = []
+
     def handle_data(self, data):
-        if self.in_content:
-            self.current_text += data
+        if self._skip_depth == 0 and self._tracking:
+            self._text_parts.append(data)
 
 def normalize(text):
     """Lowercase, strip punctuation, split to words."""
@@ -79,6 +108,27 @@ def match_element_to_segments(el_text, segments, start_seg=0):
             best_end = si
     
     return (best_start, best_end)
+
+
+def validate_timings(post_path, elements, timings):
+    if len(timings) != len(elements):
+        raise ValueError(
+            f"{post_path.name}: generated {len(timings)} timings for {len(elements)} content blocks"
+        )
+
+    prev_start = None
+    for idx, timing in enumerate(timings):
+        start = timing.get('start')
+        end = timing.get('end')
+        if not isinstance(start, (int, float)) or not isinstance(end, (int, float)):
+            raise ValueError(f"{post_path.name}: timing {idx} is missing numeric start/end")
+        if end < start:
+            raise ValueError(f"{post_path.name}: timing {idx} has negative duration ({start} -> {end})")
+        if prev_start is not None and start < prev_start:
+            raise ValueError(
+                f"{post_path.name}: timing {idx} starts before the previous segment ({start} < {prev_start})"
+            )
+        prev_start = start
 
 def process_post(post_path, audio_path):
     """Generate timings for a single post."""
@@ -146,6 +196,7 @@ def process_post(post_path, audio_path):
         spoken = 'SPOKEN' if t['end'] - t['start'] > 0.1 else 'skip'
         print(f"    {i:2d} [{t['start']:6.1f}-{t['end']:6.1f}] {spoken:6s} {el['text'][:50]}")
     
+    validate_timings(post_path, elements, clean)
     return clean
 
 def embed_timings(post_path, timings):

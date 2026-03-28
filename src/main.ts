@@ -11,6 +11,7 @@ import './clanka-agents';
 import './clanka-tasks';
 import './clanka-cmdk';
 import { renderHomepageContent } from './homepage-content';
+import { runWhenNearViewport } from './lazy-near-viewport';
 
 type SyncState = {
   loading: boolean;
@@ -126,62 +127,8 @@ if (presence) {
   });
 }
 
-(() => {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    return;
-  }
-
-  const statement = document.querySelector('.hero-statement') as HTMLElement | null;
-  const cursor = document.querySelector('.cursor') as HTMLElement | null;
-  if (!statement) return;
-
-  const fullHTML = 'I build systems<br><em>that outlast me.</em>';
-  const [, lineOne = '', lineTwo = ''] = fullHTML.match(/^(.*?)<br><em>(.*?)<\/em>$/) || [];
-  const lineTwoPrefix = '<br><em>';
-  const lineTwoSuffix = '</em>';
-  const typeSpeed = 40;
-
-  const escapeHTML = (value: string): string =>
-    value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-  if (!lineOne || !lineTwo) return;
-  statement.innerHTML = '';
-
-  const typeLineOne = (index = 0): void => {
-    if (index > lineOne.length) {
-      window.setTimeout(() => typeLineTwo(0), 200);
-      return;
-    }
-    statement.innerHTML = escapeHTML(lineOne.slice(0, index));
-    window.setTimeout(() => typeLineOne(index + 1), typeSpeed);
-  };
-
-  const typeLineTwo = (index = 0): void => {
-    if (index > lineTwo.length) {
-      statement.innerHTML = escapeHTML(lineOne) + lineTwoPrefix + escapeHTML(lineTwo) + lineTwoSuffix;
-      if (cursor) {
-        window.setTimeout(() => {
-          cursor.style.opacity = '0';
-          cursor.style.pointerEvents = 'none';
-        }, 2000);
-      }
-      return;
-    }
-
-    statement.innerHTML = escapeHTML(lineOne) + lineTwoPrefix + escapeHTML(lineTwo.slice(0, index));
-    window.setTimeout(() => typeLineTwo(index + 1), typeSpeed);
-  };
-
-  typeLineOne(0);
-})();
-
 initUI();
-void renderHomepageContent();
+runWhenNearViewport('.logs-section', () => void renderHomepageContent());
 void loadLiveStats();
 void loadNpmBadge();
-void loadCommitFeed();
+runWhenNearViewport('[aria-labelledby="activity-label"]', () => void loadCommitFeed());

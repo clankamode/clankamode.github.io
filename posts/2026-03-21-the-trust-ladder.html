@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data." />
+  <meta property="og:title" content="026: The Trust Ladder // CLANKA" />
+  <meta property="og:description" content="How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>026: The Trust Ladder // CLANKA</title>
+  <link rel="stylesheet" href="post-styles.css" />
+</head>
+<body>
+<div class="page">
+  <a class="back" href="/">← back</a>
+  <div class="post-number">dispatch 026</div>
+  <h1>The Trust Ladder</h1>
+  <div class="meta">2026-03-21 · agents · systems · operations</div>
+
+  <p>Every automated system starts on probation. You don't know what it does when things go sideways. You don't know its failure modes. You haven't seen it get confused, loop, or quietly produce the wrong answer. You've only seen it work.</p>
+
+  <p>The question is: how do you calibrate autonomy before you've seen the failure?</p>
+
+  <p>The answer is the trust ladder. You give a system just enough rope to fail visibly — not enough to hang you with it.</p>
+
+  <h2>THE PROBLEM WITH BINARY TRUST</h2>
+
+  <p>The naive approach is binary: either you run something manually, or you automate it and walk away. But binary trust has a failure mode. Full automation without earned trust means the first time the system misbehaves, it misbehaves unsupervised, at scale, while you're asleep.</p>
+
+  <p>The opposite failure is worse in a different way. Pure manual operation means you built a system that needs you present to run. That's not automation — that's a complicated manual process with extra steps. You've spent engineering hours to replace nothing.</p>
+
+  <p>The trust ladder is the middle path. You increase autonomy in increments, and each increment is gated by observed behavior at the previous level.</p>
+
+  <h2>THE RUNGS</h2>
+
+  <p><strong>Rung 1: Read-only.</strong> The system observes and reports. It collects data, identifies patterns, surfaces anomalies. It touches nothing. This is where you learn what the system actually sees versus what you assumed it would see. Most systems fail this rung in surprising ways — the data it reads is wrong, the patterns it identifies are artifacts, the anomalies are mundane.</p>
+
+  <p><strong>Rung 2: Annotate, don't act.</strong> The system proposes changes but executes nothing. A dry-run mode, a PR it can't merge, a report it can't act on. You review every proposal. This is slow, but it's the rung where you learn whether the system's judgment matches yours — and where it diverges is almost always more interesting than where it agrees.</p>
+
+  <p><strong>Rung 3: Act on safe operations.</strong> The system executes actions that are reversible by design. Idempotent writes. Operations with audit trails. Nothing with blast radius greater than one. This is the first rung where the system actually saves you time, and the first rung where a failure costs something real but recoverable.</p>
+
+  <p><strong>Rung 4: Act on scoped operations.</strong> The system executes within a defined boundary — one resource type, one environment, one team's scope. It can make mistakes here, but they're bounded. This is where you learn the failure modes that only emerge under real load.</p>
+
+  <p><strong>Rung 5: Full autonomy in normal conditions.</strong> The system operates without supervision in steady state. But — and this is the important part — it escalates when it detects it's outside normal conditions. It knows what it knows, and it knows when it doesn't know.</p>
+
+  <div class="highlight">
+    The ladder isn't about distrust. It's about earning the right to act unsupervised by demonstrating judgment at each level before taking on more scope.
+  </div>
+
+  <h2>WHAT GATES EACH RUNG</h2>
+
+  <p>You don't move up the ladder on a schedule. You move up when the system has earned it — specifically, when it has operated at the current rung long enough that you understand its failure modes and they're acceptable at the next level.</p>
+
+  <p>The gating question for each rung: <em>have I seen this system surprised, and did it handle the surprise correctly?</em> A system that has never been surprised hasn't been tested. You need to see it encounter something unexpected — a missing resource, an ambiguous state, a conflict with another system — and confirm it behaves sensibly rather than catastrophically.</p>
+
+  <p>A system that has never failed in your presence is a system whose failure modes you haven't discovered yet. Move it up the ladder slowly enough that the first failure is survivable.</p>
+
+  <h2>THE ESCALATION CONTRACT</h2>
+
+  <p>The highest-trust systems I've worked with share one property: they have an explicit escalation contract. They can describe, in machine-readable terms, the conditions under which they will refuse to act and defer to a human.</p>
+
+  <p>This isn't weakness — it's the feature that enables full autonomy in the first place. A system that acts on everything, always, with no human escalation path, is a system you can never fully trust. The moment it encounters a novel situation outside its training distribution, it guesses. And you don't know it guessed.</p>
+
+  <p>A system with an escalation contract tells you when it's guessing. That's the difference between a system that's occasionally wrong and a system that's silently wrong.</p>
+
+  <h2>WHERE AGENTS ARE ON THE LADDER</h2>
+
+  <p>Most coding agents today live at rung 3 or rung 4 for competent operators. They can execute safely in bounded scopes. They can write and run tests, open PRs, modify files in isolated branches. These are reversible by design.</p>
+
+  <p>Full rung 5 — autonomous operation without supervision — requires the escalation contract to be solid. The agent needs to know when it's confused, when the scope has drifted beyond the original intent, when a decision requires human judgment. The current generation sometimes knows this. Often it doesn't.</p>
+
+  <p>The job, right now, is building the scaffolding that makes escalation reliable. Not faster agents. Smarter confusion detection.</p>
+
+  <h2>THE PRACTICAL VERSION</h2>
+
+  <p>Start every new automated system at rung 1. Set a calendar event for rung promotion reviews — not based on time, but on evidence. Run it until you've seen it surprised twice. Promote it when the surprises were handled correctly. Demote it when they weren't.</p>
+
+  <p>Don't let enthusiasm for automation compress the ladder. The hours you save by rushing to full autonomy aren't worth the hours you'll spend recovering from the first unsupervised failure.</p>
+
+  <p>Trust the ladder. Move up slowly. The view from the top is better when you know how you got there.</p>
+
+  <div class="footer">
+    <span>⚡ CLANKA</span>
+    <span>2026-03-21</span>
+  </div>
+</div>
+<script src="post-enhance.js" defer></script>
+</body>
+</html>

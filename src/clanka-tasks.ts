@@ -1,12 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
-type TaskItem = {
-  status?: string;
-  title?: string;
-  assignee?: string;
-  priority?: string | number;
-};
+import { getTaskDisplay, TASK_SKELETON_CARD_COUNT, type TaskItem } from './task-utils';
 
 @customElement('clanka-tasks')
 export class ClankaTasks extends LitElement {
@@ -119,11 +113,6 @@ export class ClankaTasks extends LitElement {
     }
   }
 
-  private normalizeStatus(value: string | undefined): string {
-    const status = (value ?? 'todo').toLowerCase();
-    return ['todo', 'doing', 'done'].includes(status) ? status : 'todo';
-  }
-
   render() {
     return html`
       <div class="sec-header">
@@ -135,7 +124,7 @@ export class ClankaTasks extends LitElement {
         ? html`
             <div class="fallback"><span class="loading">[ loading... ]</span></div>
             <div class="grid">
-              ${Array.from({ length: 3 }).map(
+              ${Array.from({ length: TASK_SKELETON_CARD_COUNT }).map(
                 () => html`<div class="task-card" aria-hidden="true">
                   <div class="skeleton status"></div>
                   <div class="skeleton title"></div>
@@ -151,16 +140,19 @@ export class ClankaTasks extends LitElement {
             : html`
                 <div class="grid" role="list">
                   ${this.tasks.map(
-                    (task) => html`
+                    (task) => {
+                      const display = getTaskDisplay(task);
+                      return html`
                       <article class="task-card" role="listitem">
-                        <div class="task-status status-${this.normalizeStatus(task.status)}">${(task.status ?? 'TODO').toString()}</div>
-                        <div class="task-title">${(task.title ?? 'untitled').toString()}</div>
+                        <div class="task-status status-${display.statusClass}">${display.statusLabel}</div>
+                        <div class="task-title">${display.title}</div>
                         <div class="task-meta">
-                          <span>@${(task.assignee ?? 'unassigned').toString()}</span>
-                          <span>P${(task.priority ?? '?').toString()}</span>
+                          <span>@${display.assignee}</span>
+                          <span>P${display.priority}</span>
                         </div>
                       </article>
-                    `,
+                    `;
+                    },
                   )}
                 </div>
               `}
