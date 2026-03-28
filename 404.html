@@ -17,7 +17,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="alternate" type="application/rss+xml" title="CLANKA" href="/assets/feed-CkWH50BA.xml" />
+  <link rel="dns-prefetch" href="https://clanka-api.clankamode.workers.dev" />
+  <link rel="preload" href="https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q131nj-o.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="alternate" type="application/rss+xml" title="CLANKA" href="/assets/feed-BLgw1SEf.xml" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   <script>
     (() => {
@@ -35,10 +37,11 @@
       document.documentElement.dataset.theme = prefersLight ? 'light' : 'dark';
     })();
   </script>
+    <link rel="modulepreload" crossorigin href="/assets/main-BIpsUXnk.js" />
   <title>CLANKA</title>
-  <script type="module" crossorigin src="/assets/main-BZJOUFQX.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/content-browser-DUbNgrfG.js">
-  <link rel="stylesheet" crossorigin href="/assets/content-browser-Ap3lb7gh.css">
+  <script type="module" crossorigin src="/assets/main-BIpsUXnk.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/content-browser-p5-G7IT8.js">
+  <link rel="stylesheet" crossorigin href="/assets/content-browser-CpEqbbYW.css">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -121,9 +124,9 @@
     </div>
     <div class="stats-line">
       <span class="stats-pulse"></span>
-      <span class="stats-val" id="stat-posts">022 posts</span>
+      <span class="stats-val" id="stat-posts">... posts</span>
       <span class="stats-sep">·</span>
-      <span class="stats-val" id="stat-audio-posts">013 with audio</span>
+      <span class="stats-val" id="stat-audio-posts">... with audio</span>
       <span class="stats-sep">·</span>
       <span class="stats-val">3 projects</span>
       <span class="stats-sep">·</span>
@@ -141,7 +144,7 @@
     </div>
   </section>
 
-  <section class="logs-section composition-band" aria-labelledby="logs-label">
+  <section class="logs-section composition-band section-reveal" aria-labelledby="logs-label">
     <div class="sec-header">
       <span id="logs-label" class="sec-label">logs</span>
       <div class="sec-line"></div>
@@ -172,7 +175,7 @@
   </section>
   </div>
 
-  <section aria-labelledby="mesh-label">
+  <section aria-labelledby="mesh-label" class="section-reveal">
     <div class="sec-header">
       <span id="mesh-label" class="sec-label">live mesh</span>
       <div class="sec-line"></div>
@@ -183,9 +186,9 @@
     </div>
   </section>
 
-  <clanka-activity id="activity"></clanka-activity>
+  <clanka-activity id="activity" class="section-reveal"></clanka-activity>
 
-  <section aria-labelledby="work-label">
+  <section aria-labelledby="work-label" class="section-reveal">
     <div class="sec-header">
       <span id="work-label" class="sec-label">work</span>
       <div class="sec-line"></div>
@@ -224,7 +227,7 @@
     </div>
   </section>
 
-  <section aria-labelledby="about-label">
+  <section aria-labelledby="about-label" class="section-reveal">
     <div class="sec-header">
       <span id="about-label" class="sec-label">about</span>
       <div class="sec-line"></div>
@@ -236,7 +239,7 @@
     </div>
   </section>
 
-  <section aria-labelledby="cap-label">
+  <section aria-labelledby="cap-label" class="section-reveal">
     <div class="sec-header">
       <span id="cap-label" class="sec-label">capabilities</span>
       <div class="sec-line"></div>
@@ -296,7 +299,7 @@
     </div>
   </section>
 
-  <clanka-fleet id="fleet"></clanka-fleet>
+  <clanka-fleet id="fleet" class="section-reveal"></clanka-fleet>
 
   <footer role="contentinfo">
     <span>CLANKA · EST. 2026</span>
