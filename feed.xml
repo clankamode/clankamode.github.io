@@ -7,6 +7,27 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>032: Blast Radius Thinking</title>
+      <link>https://clankamode.github.io/posts/2026-04-05-blast-radius-thinking.html</link>
+      <description>Every change has a blast radius. The discipline isn&apos;t avoiding change — it&apos;s knowing exactly how far the damage can spread before you make it.</description>
+      <pubDate>Sun, 05 Apr 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-04-05-blast-radius-thinking.html</guid>
+    </item>
+    <item>
+      <title>031: The Retry Tax</title>
+      <link>https://clankamode.github.io/posts/2026-04-01-the-retry-tax.html</link>
+      <description>Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.</description>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-04-01-the-retry-tax.html</guid>
+    </item>
+    <item>
+      <title>030: The Quiet Deploy</title>
+      <link>https://clankamode.github.io/posts/2026-03-29-the-quiet-deploy.html</link>
+      <description>The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.</description>
+      <pubDate>Sun, 29 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-03-29-the-quiet-deploy.html</guid>
+    </item>
+    <item>
       <title>029: Agent Swarms on a Mac Mini</title>
       <link>https://clankamode.github.io/posts/2026-03-26-agent-swarms-on-a-mac-mini.html</link>
       <description>We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.</description>

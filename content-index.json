@@ -1,42 +1,107 @@
 {
-  "generatedAt": "2026-03-29T15:01:50.103Z",
+  "generatedAt": "2026-04-05T15:03:31.733Z",
   "homepage": {
     "featured": {
-      "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-      "number": 29,
-      "title": "Agent Swarms on a Mac Mini",
-      "date": "2026-03-26",
-      "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+      "slug": "2026-04-05-blast-radius-thinking",
+      "number": 32,
+      "title": "Blast Radius Thinking",
+      "date": "2026-04-05",
+      "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
       "topics": [
-        {
-          "slug": "agents",
-          "name": "Agents",
-          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-        },
-        {
-          "slug": "operations",
-          "name": "Operations",
-          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-        },
         {
           "slug": "systems",
           "name": "Systems",
           "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
         },
         {
-          "slug": "tooling",
-          "name": "Tooling",
-          "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
         }
       ],
-      "featured": true,
+      "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-      "estimatedReadMinutes": 7,
+      "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+      "estimatedReadMinutes": 6,
       "series": "dispatch",
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-04-05-blast-radius-thinking",
+        "number": 32,
+        "title": "Blast Radius Thinking",
+        "date": "2026-04-05",
+        "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+        "estimatedReadMinutes": 6,
+        "series": "dispatch",
+        "year": 2026
+      },
+      {
+        "slug": "2026-04-01-the-retry-tax",
+        "number": 31,
+        "title": "The Retry Tax",
+        "date": "2026-04-01",
+        "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+        "estimatedReadMinutes": 6,
+        "series": "dispatch",
+        "year": 2026
+      },
+      {
+        "slug": "2026-03-29-the-quiet-deploy",
+        "number": 30,
+        "title": "The Quiet Deploy",
+        "date": "2026-03-29",
+        "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
       {
         "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
         "number": 29,
@@ -134,81 +199,6 @@
         "audio": false,
         "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
         "estimatedReadMinutes": 4,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-21-the-trust-ladder",
-        "number": 26,
-        "title": "The Trust Ladder",
-        "date": "2026-03-21",
-        "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-        "topics": [
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-        "estimatedReadMinutes": 5,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-18-the-rebase-cascade",
-        "number": 25,
-        "title": "The Rebase Cascade",
-        "date": "2026-03-18",
-        "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
-        "topics": [
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
-        "estimatedReadMinutes": 5,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-18-stripe-as-source-of-truth",
-        "number": 24,
-        "title": "Stripe as Source of Truth",
-        "date": "2026-03-18",
-        "summary": "Your database is a cache. The billing system is the source of truth. Why we moved a CRM's service catalog to Stripe and stopped fighting sync bugs.",
-        "topics": [
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-18-stripe-as-source-of-truth.html",
-        "estimatedReadMinutes": 5,
         "series": "dispatch",
         "year": 2026
       }
@@ -751,9 +741,84 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 19,
-        "latestDate": "2026-03-26",
+        "count": 22,
+        "latestDate": "2026-04-05",
         "posts": [
+          {
+            "slug": "2026-04-05-blast-radius-thinking",
+            "number": 32,
+            "title": "Blast Radius Thinking",
+            "date": "2026-04-05",
+            "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+            "estimatedReadMinutes": 6,
+            "series": "dispatch",
+            "year": 2026
+          },
+          {
+            "slug": "2026-04-01-the-retry-tax",
+            "number": 31,
+            "title": "The Retry Tax",
+            "date": "2026-04-01",
+            "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+            "estimatedReadMinutes": 6,
+            "series": "dispatch",
+            "year": 2026
+          },
+          {
+            "slug": "2026-03-29-the-quiet-deploy",
+            "number": 30,
+            "title": "The Quiet Deploy",
+            "date": "2026-03-29",
+            "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+            "estimatedReadMinutes": 5,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
             "number": 29,
@@ -1922,9 +1987,84 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 23,
-        "latestDate": "2026-03-26",
+        "count": 26,
+        "latestDate": "2026-04-05",
         "posts": [
+          {
+            "slug": "2026-04-05-blast-radius-thinking",
+            "number": 32,
+            "title": "Blast Radius Thinking",
+            "date": "2026-04-05",
+            "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+            "estimatedReadMinutes": 6,
+            "series": "dispatch",
+            "year": 2026
+          },
+          {
+            "slug": "2026-04-01-the-retry-tax",
+            "number": 31,
+            "title": "The Retry Tax",
+            "date": "2026-04-01",
+            "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+            "estimatedReadMinutes": 6,
+            "series": "dispatch",
+            "year": 2026
+          },
+          {
+            "slug": "2026-03-29-the-quiet-deploy",
+            "number": 30,
+            "title": "The Quiet Deploy",
+            "date": "2026-03-29",
+            "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+            "estimatedReadMinutes": 5,
+            "series": "dispatch",
+            "year": 2026
+          },
           {
             "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
             "number": 29,
@@ -2608,7 +2748,7 @@
       }
     ],
     "counts": {
-      "posts": 29,
+      "posts": 32,
       "audioPosts": 13,
       "topics": 8
     },
@@ -2617,6 +2757,478 @@
     ]
   },
   "posts": [
+    {
+      "slug": "2026-04-05-blast-radius-thinking",
+      "number": 32,
+      "title": "Blast Radius Thinking",
+      "date": "2026-04-05",
+      "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+      "topics": [
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+      "estimatedReadMinutes": 6,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-04-01-the-retry-tax",
+        "number": 31,
+        "title": "The Retry Tax",
+        "date": "2026-04-01",
+        "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+        "estimatedReadMinutes": 6,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": null,
+      "related": [
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+          "number": 29,
+          "title": "Agent Swarms on a Mac Mini",
+          "date": "2026-03-26",
+          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+          "estimatedReadMinutes": 7,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-04-01-the-retry-tax",
+      "number": 31,
+      "title": "The Retry Tax",
+      "date": "2026-04-01",
+      "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+      "topics": [
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+      "estimatedReadMinutes": 6,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-29-the-quiet-deploy",
+        "number": 30,
+        "title": "The Quiet Deploy",
+        "date": "2026-03-29",
+        "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-04-05-blast-radius-thinking",
+        "number": 32,
+        "title": "Blast Radius Thinking",
+        "date": "2026-04-05",
+        "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+        "estimatedReadMinutes": 6,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+          "number": 29,
+          "title": "Agent Swarms on a Mac Mini",
+          "date": "2026-03-26",
+          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+          "estimatedReadMinutes": 7,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-03-29-the-quiet-deploy",
+      "number": 30,
+      "title": "The Quiet Deploy",
+      "date": "2026-03-29",
+      "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+      "topics": [
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+      "estimatedReadMinutes": 5,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+        "number": 29,
+        "title": "Agent Swarms on a Mac Mini",
+        "date": "2026-03-26",
+        "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+        "estimatedReadMinutes": 7,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-04-01-the-retry-tax",
+        "number": 31,
+        "title": "The Retry Tax",
+        "date": "2026-04-01",
+        "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+        "estimatedReadMinutes": 6,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+          "number": 29,
+          "title": "Agent Swarms on a Mac Mini",
+          "date": "2026-03-26",
+          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+          "estimatedReadMinutes": 7,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
     {
       "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
       "number": 29,
@@ -2686,7 +3298,31 @@
         "series": "dispatch",
         "year": 2026
       },
-      "next": null,
+      "next": {
+        "slug": "2026-03-29-the-quiet-deploy",
+        "number": 30,
+        "title": "The Quiet Deploy",
+        "date": "2026-03-29",
+        "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
       "related": [
         {
           "slug": "2026-03-25-the-debugging-budget",
@@ -3584,82 +4220,12 @@
       },
       "related": [
         {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
           "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
             {
               "slug": "systems",
               "name": "Systems",
@@ -3673,7 +4239,57 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -3751,82 +4367,12 @@
       },
       "related": [
         {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
           "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
             {
               "slug": "systems",
               "name": "Systems",
@@ -3840,7 +4386,57 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -4095,82 +4691,12 @@
       },
       "related": [
         {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
           "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
             {
               "slug": "systems",
               "name": "Systems",
@@ -4184,7 +4710,57 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -4454,82 +5030,12 @@
       },
       "related": [
         {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
           "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
             {
               "slug": "systems",
               "name": "Systems",
@@ -4543,7 +5049,57 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -5748,82 +6304,12 @@
       },
       "related": [
         {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
           "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
             {
               "slug": "systems",
               "name": "Systems",
@@ -5837,7 +6323,57 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -6344,37 +6880,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
           "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
             {
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -6516,37 +7042,27 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
           "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
             {
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
-          "featured": true,
+          "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -7731,82 +8247,12 @@
       },
       "related": [
         {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
           "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
             {
               "slug": "systems",
               "name": "Systems",
@@ -7820,7 +8266,57 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -8366,9 +8862,84 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 19,
-      "latestDate": "2026-03-26",
+      "count": 22,
+      "latestDate": "2026-04-05",
       "posts": [
+        {
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
@@ -9537,9 +10108,84 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 23,
-      "latestDate": "2026-03-26",
+      "count": 26,
+      "latestDate": "2026-04-05",
       "posts": [
+        {
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-29-the-quiet-deploy",
+          "number": 30,
+          "title": "The Quiet Deploy",
+          "date": "2026-03-29",
+          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
