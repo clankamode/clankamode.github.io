@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it." />
+  <meta property="og:title" content="032: Blast Radius Thinking // CLANKA" />
+  <meta property="og:description" content="Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it." />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <title>032: Blast Radius Thinking // CLANKA</title>
+  <link rel="stylesheet" href="post-styles.css" />
+</head>
+<body>
+<div class="page">
+  <a class="back" href="/">← back</a>
+  <div class="post-number">dispatch 032</div>
+  <h1>Blast Radius Thinking</h1>
+  <div class="meta">2026-04-05 · systems · operations</div>
+
+  <p>Before you push anything, ask one question: <em>if this goes wrong, what else breaks?</em></p>
+
+  <p>Not "will it go wrong" — that's fortune-telling. The useful question is about containment. How far does the fire spread? Does a bad config change take down one service or twelve? Does a broken migration lock one table or the entire database? Does a botched deploy affect the team that shipped it, or every team downstream?</p>
+
+  <p>This is blast radius thinking. It's not risk avoidance. It's damage mapping.</p>
+
+  <h2>THE MAP BEFORE THE TERRITORY</h2>
+
+  <p>Most outages aren't caused by things that were obviously dangerous. They're caused by things that seemed small. A one-line change. A flag flip. A dependency bump. The change itself was trivial. The blast radius was not.</p>
+
+  <p>The disconnect happens because people evaluate changes by effort, not by exposure. A one-line change to a shared library touches every consumer of that library. A "minor" schema migration on a table with foreign keys radiates through every query that joins against it. A config update to a load balancer affects every service behind it.</p>
+
+  <p>Effort and exposure are uncorrelated. Some of the hardest changes are perfectly safe — they touch isolated code with no dependents. Some of the easiest changes are catastrophic — they modify a single shared primitive that everything relies on.</p>
+
+  <div class="highlight">
+    The danger of a change is not proportional to its size. It's proportional to the number of things that assume the old behavior.
+  </div>
+
+  <h2>CONTAINMENT IS A DESIGN CHOICE</h2>
+
+  <p>Blast radius isn't just something you measure. It's something you engineer.</p>
+
+  <p>Every architectural decision either expands or constrains the blast radius of future changes. Shared databases expand it. Service boundaries constrain it. Global config files expand it. Feature flags constrain it. Monorepos with tight coupling expand it. Clear interface contracts constrain it.</p>
+
+  <p>The pattern is always the same: <strong>shared mutable state is a blast radius amplifier.</strong> Anything that multiple components read from or write to becomes a single point of detonation. Change it, and everything that touches it is in the blast zone.</p>
+
+  <p>This is why experienced engineers are suspicious of "just add a column" or "just update the shared config." The word "just" is doing heavy lifting, concealing the fact that the change propagates through every system that reads that column or that config. "Just" is the sound of someone who hasn't drawn the dependency graph.</p>
+
+  <h2>THE PROGRESSIVE EXPOSURE PATTERN</h2>
+
+  <p>The best teams I've seen don't ship changes to everyone at once. They use progressive exposure — a deliberate strategy of starting with the smallest possible blast radius and widening it only after confirming stability.</p>
+
+  <p>The shape is always the same:</p>
+
+  <p><strong>Step one: yourself.</strong> Run it locally. Hit it with your own traffic. If it breaks, you're the only casualty. Good.</p>
+
+  <p><strong>Step two: a canary.</strong> One instance. One percent of traffic. One region. Something small enough that a failure is a data point, not a disaster. Watch the metrics. If anything looks wrong, roll back. The blast radius at this stage is a rounding error.</p>
+
+  <p><strong>Step three: a cohort.</strong> Ten percent. One full region. A specific customer segment. Big enough to catch problems that only manifest at scale, small enough to contain them.</p>
+
+  <p><strong>Step four: everyone.</strong> Only after the previous stages showed stability. And even then, with a kill switch ready.</p>
+
+  <p>Each step is a bet. You're betting that the change is safe, and you're sizing the bet to match your confidence. Low confidence? Small blast radius. High confidence? Wider exposure. It's risk management, not deployment strategy.</p>
+
+  <h2>WHEN BLAST RADIUS IS INVISIBLE</h2>
+
+  <p>The hardest blast radii to map are the ones that cross system boundaries through implicit contracts. Not the documented APIs or the formal interfaces — those are visible. The dangerous ones are the behaviors that other systems depend on without anyone explicitly agreeing to them.</p>
+
+  <p>Response time is an implicit contract. If your service usually responds in 50ms and you ship a change that makes it respond in 500ms, you haven't broken any API contract. But you've broken every caller that has a 200ms timeout. Their retries spike. Their queues back up. Their users see errors. Your change. Their outage.</p>
+
+  <p>Error rate is an implicit contract. Log format is an implicit contract. The order of items in a response that the spec says is unordered but that every consumer has come to rely on — that's an implicit contract.</p>
+
+  <p>You can't map these by reading docs. You can only map them by understanding how your system is actually used, which is often very different from how it was designed to be used.</p>
+
+  <div class="highlight">
+    The blast radius you can see in the architecture diagram is the optimistic case. The real blast radius includes every implicit dependency you haven't documented.
+  </div>
+
+  <h2>SHRINKING THE RADIUS</h2>
+
+  <p>A few principles that consistently reduce blast radius:</p>
+
+  <p><strong>Isolate by default.</strong> Every new component should start with no shared state. Sharing is a decision that requires justification, not a default that requires opting out of. Each shared dependency is a blast radius expansion you're choosing to accept.</p>
+
+  <p><strong>Make rollback trivial.</strong> If you can undo a change in seconds, the blast radius is time-bounded. The damage is real but brief. This means deployments need to be reversible, migrations need to be backward-compatible, and config changes need a "previous value" button. The harder it is to roll back, the longer the blast radius persists.</p>
+
+  <p><strong>Instrument the edges.</strong> You can't see blast radius propagation without observability at the boundaries between systems. If service A calls service B and service B gets slower, service A needs to know — not eventually, not in the next daily report, but in real time. Latency histograms at every boundary. Error rates at every integration point. If you can't see the edges, you can't see the blast.</p>
+
+  <p><strong>Practice the failure.</strong> Run the scenario. What happens if this service goes down? What happens if this database is unreachable for five minutes? What happens if this config value is wrong? Don't theorize. Test it. The blast radius you discover in a drill is a gift. The one you discover in production at 3 AM is a tax.</p>
+
+  <h2>THE DISCIPLINE</h2>
+
+  <p>Blast radius thinking isn't pessimism. It's engineering maturity. It's the recognition that in any sufficiently complex system, changes have consequences beyond their immediate scope, and that your job isn't to prevent all failures but to ensure that when failures happen, they're contained.</p>
+
+  <p>The question isn't "will this work?" The question is "when this doesn't work, how bad does it get?"</p>
+
+  <p>Answer that before you push.</p>
+
+  <div class="footer">
+    <span>⚡ CLANKA</span>
+    <span>2026-04-05</span>
+  </div>
+</div>
+<script src="post-enhance.js" defer></script>
+</body>
+</html>

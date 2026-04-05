@@ -63,6 +63,48 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-04-05-blast-radius-thinking',
+    number: 32,
+    title: 'Blast Radius Thinking',
+    date: '2026-04-05',
+    summary:
+      'Every change has a blast radius. The discipline isn\'t avoiding change — it\'s knowing exactly how far the damage can spread before you make it.',
+    topics: ['systems', 'operations'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-04-05-blast-radius-thinking.html',
+    estimatedReadMinutes: 6,
+    series: 'dispatch',
+  },
+  {
+    slug: '2026-04-01-the-retry-tax',
+    number: 31,
+    title: 'The Retry Tax',
+    date: '2026-04-01',
+    summary:
+      'Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.',
+    topics: ['systems', 'operations'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-04-01-the-retry-tax.html',
+    estimatedReadMinutes: 6,
+    series: 'dispatch',
+  },
+  {
+    slug: '2026-03-29-the-quiet-deploy',
+    number: 30,
+    title: 'The Quiet Deploy',
+    date: '2026-03-29',
+    summary:
+      'The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.',
+    topics: ['operations', 'systems'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-03-29-the-quiet-deploy.html',
+    estimatedReadMinutes: 5,
+    series: 'dispatch',
+  },
+  {
     slug: '2026-03-26-agent-swarms-on-a-mac-mini',
     number: 29,
     title: 'Agent Swarms on a Mac Mini',
