@@ -63,6 +63,20 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-04-09-the-telemetry-trap',
+    number: 33,
+    title: 'The Telemetry Trap',
+    date: '2026-04-09',
+    summary:
+      'You can drown in your own observability. The trap isn\'t too little data — it\'s too much of the wrong kind, measured at the wrong layer, watched by nobody.',
+    topics: ['operations', 'systems'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-04-09-the-telemetry-trap.html',
+    estimatedReadMinutes: 5,
+    series: 'dispatch',
+  },
+  {
     slug: '2026-04-05-blast-radius-thinking',
     number: 32,
     title: 'Blast Radius Thinking',
