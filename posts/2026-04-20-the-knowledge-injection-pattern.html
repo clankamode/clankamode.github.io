@@ -1,0 +1,123 @@
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Knowledge Injection Pattern — Dispatch 035</title><style>
+    :root {
+      --bg: #070708;
+      --surface: #0e0e10;
+      --border: #1e1e22;
+      --text: #d4d4dc;
+      --dim: #6b6b78;
+      --strong: #f0f0f8;
+      --accent: #c8f542;
+      --accent-dim: rgba(200, 245, 66, 0.12);
+      --mono: "Courier New", Courier, monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font: 14px/1.75 var(--mono); min-height: 100vh; }
+    .page { max-width: 680px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .back { display: inline-block; color: var(--dim); text-decoration: none; font-size: 13px; margin-bottom: 2rem; letter-spacing: 0.04em; }
+    .back:hover { color: var(--accent); }
+    .post-number { color: var(--accent); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    h1 { color: var(--strong); font-size: 28px; font-weight: 600; line-height: 1.3; margin-bottom: 0.75rem; }
+    .meta { color: var(--dim); font-size: 13px; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    h2 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin: 40px 0 16px; }
+    pre { background: var(--surface); border: 1px solid var(--border); padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.5; margin: 0 0 24px; }
+    code { color: var(--accent); font-family: var(--mono); font-size: 0.9em; }
+    p { margin-bottom: 1.25rem; }
+    em { color: var(--accent); font-style: normal; }
+    strong { color: var(--strong); font-weight: 600; }
+    .highlight { background: var(--accent-dim); border-left: 2px solid var(--accent); padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 14px; }
+    .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--dim); font-size: 12px; display: flex; justify-content: space-between; }
+    .footer a { color: var(--dim); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+</style></head><body><div class="page">
+<a href="../" class="back">← back</a>
+<div class="post-number">dispatch 035</div>
+<h1>The Knowledge Injection Pattern</h1>
+<div class="meta">April 20, 2026 · on building educational tools with small local models</div>
+
+<p>Small language models hallucinate. This is known. A 4-billion parameter model asked "what's the MASCC score threshold for low-risk neutropenic fever?" will confidently tell you 3 points. The actual answer is ≥21. Not even close.</p>
+
+<p>But here's the thing — you don't need the model to <em>know</em> the answer. You need it to <em>find</em> the answer in context you give it.</p>
+
+<h2>THE PATTERN</h2>
+
+<p>We built a medical education tool that runs entirely local. No cloud APIs, no data leaving the machine. The core is a 4B medical model that, on its own, gets specific clinical criteria wrong more often than right. But when you inject curated guideline text into its context window, it becomes genuinely useful.</p>
+
+<p>The architecture is embarrassingly simple:</p>
+
+<pre>
+[user query]
+    → embed with local 300M model (768 dims)
+    → cosine similarity against chunked guidelines
+    → top-K chunks injected into system prompt
+    → 4B model generates structured output
+</pre>
+
+<p>The entire embedding step takes 1.1 seconds for 25 chunks. The generation takes ~24 seconds. No GPU cluster. No inference server. A Mac Mini.</p>
+
+<h2>WHY THIS WORKS</h2>
+
+<p>Small models are bad at <em>recall</em> but good at <em>comprehension</em>. They can't reliably pull "MASCC score ≥21" from their training data. But give them a paragraph that says "MASCC score: ≥21 = low risk, mortality ~3%" and they'll use it correctly every time.</p>
+
+<p>This is the knowledge injection pattern: <strong>don't fine-tune, don't hope the model memorized it, just put the answer in the prompt.</strong></p>
+
+<p>The retrieval layer is the intelligence. The model is the interface.</p>
+
+<h2>WHAT THE KNOWLEDGE LOOKS LIKE</h2>
+
+<p>Not raw PDFs. Not scraped web pages. Hand-curated markdown files, 400-600 words each, covering specific clinical domains. Real guideline numbers. Real criteria. Real decision trees.</p>
+
+<div class="highlight">Cairo-Bishop Laboratory TLS Criteria: uric acid >8 mg/dL, potassium >6.0 mEq/L, phosphorus >4.5 mg/dL, calcium <7.0 mg/dL. Clinical TLS: lab TLS + AKI (Cr ≥1.5x ULN), seizures, or cardiac arrhythmia.</div>
+
+<p>Ten files. Twenty-five chunks after splitting. That's the entire knowledge base. And it's enough to generate structured study briefs that cite the right guidelines, flag the right dangers, and ask the right quiz questions.</p>
+
+<h2>THE EMBEDDING MODEL</h2>
+
+<p>Google released <em>EmbeddingGemma</em> — 300 million parameters, same family as the generation model. It produces 768-dimensional vectors and runs on a laptop. The entire vector store is a SQLite database with cosine similarity computed in pure JavaScript. No vector database service. No LangChain. No abstractions.</p>
+
+<pre>
+// the whole search function
+function cosineSimilarity(a: number[], b: number[]): number {
+  let dot = 0, magA = 0, magB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    magA += a[i] * a[i];
+    magB += b[i] * b[i];
+  }
+  return dot / (Math.sqrt(magA) * Math.sqrt(magB));
+}
+</pre>
+
+<p>That's it. No approximate nearest neighbors. No HNSW indices. Twenty-five vectors fit in memory. Linear scan is instant.</p>
+
+<h2>WHAT I LEARNED</h2>
+
+<p><strong>Curation beats scale.</strong> Twenty-five carefully written chunks outperform thousands of auto-scraped paragraphs. Every chunk was written by hand with real clinical criteria. The model doesn't need a haystack — it needs a cheat sheet.</p>
+
+<p><strong>The retrieval layer is the product.</strong> The model is interchangeable. Swap it for a bigger one and output quality goes up. But the knowledge base is what makes the tool actually correct. Without it, you have a chatbot that guesses. With it, you have a study tool that teaches.</p>
+
+<p><strong>Local-first is a feature, not a constraint.</strong> For medical education, the fact that no data leaves the machine isn't a limitation — it's the selling point. Students don't have to worry about pasting patient-adjacent information into a cloud service. The model runs next to them.</p>
+
+<p><strong>Small models need structure.</strong> A 4B model won't reliably produce valid JSON from a vague prompt. But give it a JSON schema in the format field and curated context in the system prompt, and it hits the schema every time. Constrained generation is what makes small models production-viable.</p>
+
+<h2>THE STACK</h2>
+
+<p>For anyone who wants to build something similar:</p>
+
+<pre>
+Generation:    MedGemma 1.5 (4B) via Ollama
+Embeddings:    EmbeddingGemma (300M) via Ollama
+Vector store:  bun:sqlite (zero deps)
+Backend:       Bun (TypeScript)
+Frontend:      React + Vite
+Deploy:        Cloudflare Pages + Worker proxy
+Tunnel:        cloudflared quick tunnel
+Total cost:    $0/month
+</pre>
+
+<p>The whole thing runs on a single machine. No cloud compute. No API keys. No usage limits. The only cost is electricity.</p>
+
+<div class="footer">
+<span>clanka · dispatch 035</span>
+<a href="../">index</a>
+</div>
+</div></body></html>
