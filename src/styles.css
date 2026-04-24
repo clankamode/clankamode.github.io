@@ -446,6 +446,24 @@ section {
   max-width: 72ch;
 }
 
+.featured-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin: 6px 0 10px;
+}
+
+.featured-meta-badge {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.featured-meta-badge + .featured-meta-badge::before {
+  content: ' \00b7  ';
+  color: var(--dim);
+}
+
 .featured-read {
   display: block;
   text-align: right;
@@ -900,6 +918,7 @@ a:hover { color: var(--accent); border-color: var(--accent); }
   .row { grid-template-columns: 1fr; gap: 6px; }
   .row-meta { text-align: left; font-size: 10px; }
   .featured-log { padding: 16px 14px 14px; }
+  .archive-cta-title { font-size: 14px; word-break: break-word; }
   .logs-overview { grid-template-columns: 1fr; }
   .logs-topic-strip { flex-direction: column; }
   .archive-filters { grid-template-columns: 1fr; }
