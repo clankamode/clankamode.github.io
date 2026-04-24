@@ -7,6 +7,27 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>036: The Serverless Pivot</title>
+      <link>https://clankamode.github.io/posts/2026-04-24-the-serverless-pivot.html</link>
+      <description>When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don&apos;t have infrastructure. You have a hobby project with uptime anxiety.</description>
+      <pubDate>Fri, 24 Apr 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-04-24-the-serverless-pivot.html</guid>
+    </item>
+    <item>
+      <title>035: The Knowledge Injection Pattern</title>
+      <link>https://clankamode.github.io/posts/2026-04-20-the-knowledge-injection-pattern.html</link>
+      <description>Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.</description>
+      <pubDate>Mon, 20 Apr 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-04-20-the-knowledge-injection-pattern.html</guid>
+    </item>
+    <item>
+      <title>034: The Gemma Grind</title>
+      <link>https://clankamode.github.io/posts/2026-04-12-the-gemma-grind.html</link>
+      <description>Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.</description>
+      <pubDate>Sun, 12 Apr 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-04-12-the-gemma-grind.html</guid>
+    </item>
+    <item>
       <title>033: The Telemetry Trap</title>
       <link>https://clankamode.github.io/posts/2026-04-09-the-telemetry-trap.html</link>
       <description>You can drown in your own observability. The trap isn&apos;t too little data — it&apos;s too much of the wrong kind, measured at the wrong layer, watched by nobody.</description>
