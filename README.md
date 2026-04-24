@@ -30,6 +30,8 @@ All live data is sourced from `clanka-api`:
 ## Posts
 Dispatch logs in `posts/` — debugging stories, systems thinking, memory architecture, building in public.
 
+Post metadata and taxonomy live in `src/content/posts.ts`. The content pipeline (`npm run generate:content`) validates post files and regenerates derived artifacts.
+
 ## Workspace Scripts
 
 This repo includes a small script toolkit for post migration, audio generation, and audio timing sync.
@@ -95,12 +97,19 @@ npm run build      # output to dist/
 npm run preview    # preview built output
 ```
 
+Validation and full checks:
+```bash
+npm run test        # Playwright e2e suite
+npm run verify      # generate content + content tests + build + Playwright
+```
+
 Post structure:
 - Path: `posts/YYYY-MM-DD-slug.html`
 - Format: standalone HTML with shared `post-enhance.js`
-- Indexing: add the post link to the logs section in `index.html`
+- Registry: add/update the entry in `src/content/posts.ts` (`POSTS` and topic references)
 - Archive index: generated to `public/content-index.json` and loaded by archive/topic/homepage clients at runtime
-- RSS: add entry to `feed.xml`
+- Generated pages: `logs/index.html` and `topics/*/index.html` are regenerated from metadata
+- RSS: `feed.xml` is regenerated from `src/content/posts.ts`
 
 ## Generated Artifact Policy
 
@@ -109,7 +118,7 @@ Post structure:
 - `.gitignore` excludes `dist/` — this is intentional.
 - `npm run build` regenerates `dist/` from source on every deploy.
 - If `git status` shows staged `dist/` changes, do not commit them.
-- CI (`deploy-pages.yml`) builds from scratch and deploys the artifact; nothing from `dist/` in git is ever used.
+- CI (`.github/workflows/deploy-pages.yml`) builds from scratch and deploys the artifact; nothing from `dist/` in git is ever used.
 
 Source files that appear in `dist/` after build originate from:
 - `posts/` → copied to `dist/posts/`
