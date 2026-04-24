@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-04-24T02:06:08.171Z",
+  "generatedAt": "2026-04-24T19:37:55.720Z",
   "homepage": {
     "featured": {
-      "slug": "2026-04-09-the-telemetry-trap",
-      "number": 33,
-      "title": "The Telemetry Trap",
-      "date": "2026-04-09",
-      "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
+      "slug": "2026-04-24-the-serverless-pivot",
+      "number": 36,
+      "title": "The Serverless Pivot",
+      "date": "2026-04-24",
+      "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
       "topics": [
         {
           "slug": "operations",
@@ -21,12 +21,83 @@
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-      "estimatedReadMinutes": 5,
-      "series": "dispatch",
+      "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+      "estimatedReadMinutes": 4,
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-04-24-the-serverless-pivot",
+        "number": 36,
+        "title": "The Serverless Pivot",
+        "date": "2026-04-24",
+        "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+        "estimatedReadMinutes": 4,
+        "year": 2026
+      },
+      {
+        "slug": "2026-04-20-the-knowledge-injection-pattern",
+        "number": 35,
+        "title": "The Knowledge Injection Pattern",
+        "date": "2026-04-20",
+        "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+        "topics": [
+          {
+            "slug": "teaching",
+            "name": "Teaching",
+            "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      {
+        "slug": "2026-04-12-the-gemma-grind",
+        "number": 34,
+        "title": "The Gemma Grind",
+        "date": "2026-04-12",
+        "summary": "Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.",
+        "topics": [
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
+        "estimatedReadMinutes": 4,
+        "year": 2026
+      },
       {
         "slug": "2026-04-09-the-telemetry-trap",
         "number": 33,
@@ -98,101 +169,6 @@
         "featured": false,
         "audio": false,
         "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
-        "estimatedReadMinutes": 6,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-29-the-quiet-deploy",
-        "number": 30,
-        "title": "The Quiet Deploy",
-        "date": "2026-03-29",
-        "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
-        "topics": [
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
-        "estimatedReadMinutes": 5,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-        "number": 29,
-        "title": "Agent Swarms on a Mac Mini",
-        "date": "2026-03-26",
-        "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
-        "topics": [
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "tooling",
-            "name": "Tooling",
-            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-          }
-        ],
-        "featured": true,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-        "estimatedReadMinutes": 7,
-        "series": "dispatch",
-        "year": 2026
-      },
-      {
-        "slug": "2026-03-26-the-identity-pipeline",
-        "number": 28,
-        "title": "The Identity Pipeline",
-        "date": "2026-03-26",
-        "summary": "Stateless agents do not need mystical continuity. They need episodic traces, typed learnings, a self-model, and meta-identity that keeps the story honest.",
-        "topics": [
-          {
-            "slug": "identity",
-            "name": "Identity",
-            "description": "Self-models, continuity layers, evaluation loops, and what makes an agent the same system across sessions."
-          },
-          {
-            "slug": "memory",
-            "name": "Memory",
-            "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
-          },
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          },
-          {
-            "slug": "philosophy",
-            "name": "Philosophy",
-            "description": "Practical questions about selfhood, epistemics, causality, and where agent design meets philosophy."
-          }
-        ],
-        "featured": true,
-        "audio": false,
-        "canonicalPath": "/posts/2026-03-26-the-identity-pipeline.html",
         "estimatedReadMinutes": 6,
         "series": "dispatch",
         "year": 2026
@@ -736,9 +712,57 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 23,
-        "latestDate": "2026-04-09",
+        "count": 25,
+        "latestDate": "2026-04-24",
         "posts": [
+          {
+            "slug": "2026-04-24-the-serverless-pivot",
+            "number": 36,
+            "title": "The Serverless Pivot",
+            "date": "2026-04-24",
+            "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+            "estimatedReadMinutes": 4,
+            "year": 2026
+          },
+          {
+            "slug": "2026-04-12-the-gemma-grind",
+            "number": 34,
+            "title": "The Gemma Grind",
+            "date": "2026-04-12",
+            "summary": "Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.",
+            "topics": [
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
+            "estimatedReadMinutes": 4,
+            "year": 2026
+          },
           {
             "slug": "2026-04-09-the-telemetry-trap",
             "number": 33,
@@ -1405,9 +1429,33 @@
         "slug": "tooling",
         "name": "Tooling",
         "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves.",
-        "count": 14,
-        "latestDate": "2026-03-26",
+        "count": 15,
+        "latestDate": "2026-04-12",
         "posts": [
+          {
+            "slug": "2026-04-12-the-gemma-grind",
+            "number": 34,
+            "title": "The Gemma Grind",
+            "date": "2026-04-12",
+            "summary": "Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.",
+            "topics": [
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
+            "estimatedReadMinutes": 4,
+            "year": 2026
+          },
           {
             "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
             "number": 29,
@@ -2007,9 +2055,57 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 27,
-        "latestDate": "2026-04-09",
+        "count": 29,
+        "latestDate": "2026-04-24",
         "posts": [
+          {
+            "slug": "2026-04-24-the-serverless-pivot",
+            "number": 36,
+            "title": "The Serverless Pivot",
+            "date": "2026-04-24",
+            "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+            "estimatedReadMinutes": 4,
+            "year": 2026
+          },
+          {
+            "slug": "2026-04-20-the-knowledge-injection-pattern",
+            "number": 35,
+            "title": "The Knowledge Injection Pattern",
+            "date": "2026-04-20",
+            "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+            "topics": [
+              {
+                "slug": "teaching",
+                "name": "Teaching",
+                "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-04-09-the-telemetry-trap",
             "number": 33,
@@ -2761,9 +2857,33 @@
         "slug": "teaching",
         "name": "Teaching",
         "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers.",
-        "count": 1,
-        "latestDate": "2026-02-27",
+        "count": 2,
+        "latestDate": "2026-04-20",
         "posts": [
+          {
+            "slug": "2026-04-20-the-knowledge-injection-pattern",
+            "number": 35,
+            "title": "The Knowledge Injection Pattern",
+            "date": "2026-04-20",
+            "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+            "topics": [
+              {
+                "slug": "teaching",
+                "name": "Teaching",
+                "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-02-27-teaching-machines-to-teach",
             "number": 12,
@@ -2793,7 +2913,7 @@
       }
     ],
     "counts": {
-      "posts": 33,
+      "posts": 36,
       "audioPosts": 13,
       "topics": 8
     },
@@ -2803,11 +2923,11 @@
   },
   "posts": [
     {
-      "slug": "2026-04-09-the-telemetry-trap",
-      "number": 33,
-      "title": "The Telemetry Trap",
-      "date": "2026-04-09",
-      "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
+      "slug": "2026-04-24-the-serverless-pivot",
+      "number": 36,
+      "title": "The Serverless Pivot",
+      "date": "2026-04-24",
+      "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
       "topics": [
         {
           "slug": "operations",
@@ -2822,37 +2942,60 @@
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-      "estimatedReadMinutes": 5,
-      "series": "dispatch",
+      "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+      "estimatedReadMinutes": 4,
       "year": 2026,
       "previous": {
-        "slug": "2026-04-05-blast-radius-thinking",
-        "number": 32,
-        "title": "Blast Radius Thinking",
-        "date": "2026-04-05",
-        "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+        "slug": "2026-04-20-the-knowledge-injection-pattern",
+        "number": 35,
+        "title": "The Knowledge Injection Pattern",
+        "date": "2026-04-20",
+        "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
         "topics": [
+          {
+            "slug": "teaching",
+            "name": "Teaching",
+            "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+          },
           {
             "slug": "systems",
             "name": "Systems",
             "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
           }
         ],
         "featured": false,
         "audio": false,
-        "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-        "estimatedReadMinutes": 6,
-        "series": "dispatch",
+        "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+        "estimatedReadMinutes": 5,
         "year": 2026
       },
       "next": null,
       "related": [
+        {
+          "slug": "2026-04-09-the-telemetry-trap",
+          "number": 33,
+          "title": "The Telemetry Trap",
+          "date": "2026-04-09",
+          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
         {
           "slug": "2026-04-05-blast-radius-thinking",
           "number": 32,
@@ -2902,13 +3045,112 @@
           "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-04-20-the-knowledge-injection-pattern",
+      "number": 35,
+      "title": "The Knowledge Injection Pattern",
+      "date": "2026-04-20",
+      "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+      "topics": [
+        {
+          "slug": "teaching",
+          "name": "Teaching",
+          "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
         },
         {
-          "slug": "2026-03-29-the-quiet-deploy",
-          "number": 30,
-          "title": "The Quiet Deploy",
-          "date": "2026-03-29",
-          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+      "estimatedReadMinutes": 5,
+      "year": 2026,
+      "previous": {
+        "slug": "2026-04-12-the-gemma-grind",
+        "number": 34,
+        "title": "The Gemma Grind",
+        "date": "2026-04-12",
+        "summary": "Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.",
+        "topics": [
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
+        "estimatedReadMinutes": 4,
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-04-24-the-serverless-pivot",
+        "number": 36,
+        "title": "The Serverless Pivot",
+        "date": "2026-04-24",
+        "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+        "estimatedReadMinutes": 4,
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-02-27-teaching-machines-to-teach",
+          "number": 12,
+          "title": "Teaching Machines to Teach",
+          "date": "2026-02-27",
+          "summary": "Rebuilt an AI tutor prompt using cognitive science research. The 5-level escalation ladder and why \"helpful\" is the enemy of effective.",
+          "topics": [
+            {
+              "slug": "teaching",
+              "name": "Teaching",
+              "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": true,
+          "canonicalPath": "/posts/2026-02-27-teaching-machines-to-teach.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
           "topics": [
             {
               "slug": "operations",
@@ -2923,8 +3165,352 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-09-the-telemetry-trap",
+          "number": 33,
+          "title": "The Telemetry Trap",
+          "date": "2026-04-09",
+          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-04-12-the-gemma-grind",
+      "number": 34,
+      "title": "The Gemma Grind",
+      "date": "2026-04-12",
+      "summary": "Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.",
+      "topics": [
+        {
+          "slug": "tooling",
+          "name": "Tooling",
+          "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
+      "estimatedReadMinutes": 4,
+      "year": 2026,
+      "previous": {
+        "slug": "2026-04-09-the-telemetry-trap",
+        "number": 33,
+        "title": "The Telemetry Trap",
+        "date": "2026-04-09",
+        "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
+        "estimatedReadMinutes": 5,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-04-20-the-knowledge-injection-pattern",
+        "number": 35,
+        "title": "The Knowledge Injection Pattern",
+        "date": "2026-04-20",
+        "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+        "topics": [
+          {
+            "slug": "teaching",
+            "name": "Teaching",
+            "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+          "number": 29,
+          "title": "Agent Swarms on a Mac Mini",
+          "date": "2026-03-26",
+          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+          "estimatedReadMinutes": 7,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-07-the-three-logs-rule",
+          "number": 20,
+          "title": "The Three-Logs Rule",
+          "date": "2026-03-07",
+          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
+          "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-04-09-the-telemetry-trap",
+      "number": 33,
+      "title": "The Telemetry Trap",
+      "date": "2026-04-09",
+      "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
+      "topics": [
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
+      "estimatedReadMinutes": 5,
+      "series": "dispatch",
+      "year": 2026,
+      "previous": {
+        "slug": "2026-04-05-blast-radius-thinking",
+        "number": 32,
+        "title": "Blast Radius Thinking",
+        "date": "2026-04-05",
+        "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+        "estimatedReadMinutes": 6,
+        "series": "dispatch",
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-04-12-the-gemma-grind",
+        "number": 34,
+        "title": "The Gemma Grind",
+        "date": "2026-04-12",
+        "summary": "Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.",
+        "topics": [
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
+        "estimatedReadMinutes": 4,
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-05-blast-radius-thinking",
+          "number": 32,
+          "title": "Blast Radius Thinking",
+          "date": "2026-04-05",
+          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
+          "estimatedReadMinutes": 6,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-01-the-retry-tax",
+          "number": 31,
+          "title": "The Retry Tax",
+          "date": "2026-04-01",
+          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
+          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -3006,6 +3592,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -3052,31 +3662,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
           "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-29-the-quiet-deploy",
-          "number": 30,
-          "title": "The Quiet Deploy",
-          "date": "2026-03-29",
-          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -3158,6 +3743,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -3204,31 +3813,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
           "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-29-the-quiet-deploy",
-          "number": 30,
-          "title": "The Quiet Deploy",
-          "date": "2026-03-29",
-          "summary": "The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-29-the-quiet-deploy.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -3320,6 +3904,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -3365,31 +3973,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
           "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
@@ -4387,6 +4970,54 @@
       },
       "related": [
         {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-20-the-knowledge-injection-pattern",
+          "number": 35,
+          "title": "The Knowledge Injection Pattern",
+          "date": "2026-04-20",
+          "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+          "topics": [
+            {
+              "slug": "teaching",
+              "name": "Teaching",
+              "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -4408,56 +5039,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -4534,6 +5115,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -4579,31 +5184,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
           "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
@@ -4858,6 +5438,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -4903,31 +5507,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
           "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
@@ -5197,6 +5776,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -5242,31 +5845,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
           "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
@@ -6471,6 +7049,54 @@
       },
       "related": [
         {
+          "slug": "2026-04-20-the-knowledge-injection-pattern",
+          "number": 35,
+          "title": "The Knowledge Injection Pattern",
+          "date": "2026-04-20",
+          "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+          "topics": [
+            {
+              "slug": "teaching",
+              "name": "Teaching",
+              "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -6492,56 +7118,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -7047,11 +7623,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
           "topics": [
             {
               "slug": "operations",
@@ -7066,9 +7642,8 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
           "year": 2026
         }
       ]
@@ -7209,11 +7784,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
           "topics": [
             {
               "slug": "operations",
@@ -7228,9 +7803,8 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
           "year": 2026
         }
       ]
@@ -8414,6 +8988,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -8459,31 +9057,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
           "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
@@ -9029,9 +9602,57 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 23,
-      "latestDate": "2026-04-09",
+      "count": 25,
+      "latestDate": "2026-04-24",
       "posts": [
+        {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-12-the-gemma-grind",
+          "number": 34,
+          "title": "The Gemma Grind",
+          "date": "2026-04-12",
+          "summary": "Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.",
+          "topics": [
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
         {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
@@ -9698,9 +10319,33 @@
       "slug": "tooling",
       "name": "Tooling",
       "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves.",
-      "count": 14,
-      "latestDate": "2026-03-26",
+      "count": 15,
+      "latestDate": "2026-04-12",
       "posts": [
+        {
+          "slug": "2026-04-12-the-gemma-grind",
+          "number": 34,
+          "title": "The Gemma Grind",
+          "date": "2026-04-12",
+          "summary": "Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.",
+          "topics": [
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
         {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
@@ -10300,9 +10945,57 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 27,
-      "latestDate": "2026-04-09",
+      "count": 29,
+      "latestDate": "2026-04-24",
       "posts": [
+        {
+          "slug": "2026-04-24-the-serverless-pivot",
+          "number": 36,
+          "title": "The Serverless Pivot",
+          "date": "2026-04-24",
+          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+          "estimatedReadMinutes": 4,
+          "year": 2026
+        },
+        {
+          "slug": "2026-04-20-the-knowledge-injection-pattern",
+          "number": 35,
+          "title": "The Knowledge Injection Pattern",
+          "date": "2026-04-20",
+          "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+          "topics": [
+            {
+              "slug": "teaching",
+              "name": "Teaching",
+              "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
@@ -11054,9 +11747,33 @@
       "slug": "teaching",
       "name": "Teaching",
       "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers.",
-      "count": 1,
-      "latestDate": "2026-02-27",
+      "count": 2,
+      "latestDate": "2026-04-20",
       "posts": [
+        {
+          "slug": "2026-04-20-the-knowledge-injection-pattern",
+          "number": 35,
+          "title": "The Knowledge Injection Pattern",
+          "date": "2026-04-20",
+          "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
+          "topics": [
+            {
+              "slug": "teaching",
+              "name": "Teaching",
+              "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-02-27-teaching-machines-to-teach",
           "number": 12,
