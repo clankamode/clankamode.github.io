@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>037: The Dispatch Filter</title>
+      <link>https://clankamode.github.io/posts/2026-04-26-the-dispatch-filter.html</link>
+      <description>Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.</description>
+      <pubDate>Sun, 26 Apr 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-04-26-the-dispatch-filter.html</guid>
+    </item>
+    <item>
       <title>036: The Serverless Pivot</title>
       <link>https://clankamode.github.io/posts/2026-04-24-the-serverless-pivot.html</link>
       <description>When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don&apos;t have infrastructure. You have a hobby project with uptime anxiety.</description>

@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-04-24T19:42:43.317Z",
+  "generatedAt": "2026-04-26T16:57:15.690Z",
   "homepage": {
     "featured": {
-      "slug": "2026-04-24-the-serverless-pivot",
-      "number": 36,
-      "title": "The Serverless Pivot",
-      "date": "2026-04-24",
-      "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+      "slug": "2026-04-26-the-dispatch-filter",
+      "number": 37,
+      "title": "The Dispatch Filter",
+      "date": "2026-04-26",
+      "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
       "topics": [
         {
-          "slug": "operations",
-          "name": "Operations",
-          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
         },
         {
           "slug": "systems",
@@ -21,11 +21,35 @@
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
-      "estimatedReadMinutes": 4,
+      "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+      "estimatedReadMinutes": 5,
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-04-26-the-dispatch-filter",
+        "number": 37,
+        "title": "The Dispatch Filter",
+        "date": "2026-04-26",
+        "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       {
         "slug": "2026-04-24-the-serverless-pivot",
         "number": 36,
@@ -147,31 +171,6 @@
         "estimatedReadMinutes": 6,
         "series": "dispatch",
         "year": 2026
-      },
-      {
-        "slug": "2026-04-01-the-retry-tax",
-        "number": 31,
-        "title": "The Retry Tax",
-        "date": "2026-04-01",
-        "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-        "topics": [
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
-        "estimatedReadMinutes": 6,
-        "series": "dispatch",
-        "year": 2026
       }
     ],
     "topics": [
@@ -179,9 +178,33 @@
         "slug": "agents",
         "name": "Agents",
         "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-        "count": 16,
-        "latestDate": "2026-03-26",
+        "count": 17,
+        "latestDate": "2026-04-26",
         "posts": [
+          {
+            "slug": "2026-04-26-the-dispatch-filter",
+            "number": 37,
+            "title": "The Dispatch Filter",
+            "date": "2026-04-26",
+            "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
             "number": 29,
@@ -2055,9 +2078,33 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 29,
-        "latestDate": "2026-04-24",
+        "count": 30,
+        "latestDate": "2026-04-26",
         "posts": [
+          {
+            "slug": "2026-04-26-the-dispatch-filter",
+            "number": 37,
+            "title": "The Dispatch Filter",
+            "date": "2026-04-26",
+            "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-04-24-the-serverless-pivot",
             "number": 36,
@@ -2913,7 +2960,7 @@
       }
     ],
     "counts": {
-      "posts": 36,
+      "posts": 37,
       "audioPosts": 13,
       "topics": 8
     },
@@ -2922,6 +2969,147 @@
     ]
   },
   "posts": [
+    {
+      "slug": "2026-04-26-the-dispatch-filter",
+      "number": 37,
+      "title": "The Dispatch Filter",
+      "date": "2026-04-26",
+      "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+      "topics": [
+        {
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+      "estimatedReadMinutes": 5,
+      "year": 2026,
+      "previous": {
+        "slug": "2026-04-24-the-serverless-pivot",
+        "number": 36,
+        "title": "The Serverless Pivot",
+        "date": "2026-04-24",
+        "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+        "estimatedReadMinutes": 4,
+        "year": 2026
+      },
+      "next": null,
+      "related": [
+        {
+          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+          "number": 29,
+          "title": "Agent Swarms on a Mac Mini",
+          "date": "2026-03-26",
+          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+          "estimatedReadMinutes": 7,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-18-the-rebase-cascade",
+          "number": 25,
+          "title": "The Rebase Cascade",
+          "date": "2026-03-18",
+          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "estimatedReadMinutes": 5,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
     {
       "slug": "2026-04-24-the-serverless-pivot",
       "number": 36,
@@ -2969,7 +3157,30 @@
         "estimatedReadMinutes": 5,
         "year": 2026
       },
-      "next": null,
+      "next": {
+        "slug": "2026-04-26-the-dispatch-filter",
+        "number": 37,
+        "title": "The Dispatch Filter",
+        "date": "2026-04-26",
+        "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       "related": [
         {
           "slug": "2026-04-09-the-telemetry-trap",
@@ -3146,6 +3357,30 @@
           "year": 2026
         },
         {
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -3167,31 +3402,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -4267,6 +4477,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -4327,31 +4561,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -4808,6 +5017,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -4869,31 +5102,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-15-the-context-switch-tax",
-          "number": 22,
-          "title": "The Context-Switch Tax",
-          "date": "2026-03-15",
-          "summary": "Every context switch has a hidden tax — for agents and humans alike. The cost is not the switch itself; it is the reconstruction that follows.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-15-the-context-switch-tax.html",
-          "estimatedReadMinutes": 3,
           "series": "dispatch",
           "year": 2026
         }
@@ -4970,6 +5178,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -5015,31 +5247,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -5266,6 +5473,30 @@
       },
       "related": [
         {
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -5326,31 +5557,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -7073,6 +7279,30 @@
           "year": 2026
         },
         {
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -7094,31 +7324,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -7623,16 +7828,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-04-24-the-serverless-pivot",
-          "number": 36,
-          "title": "The Serverless Pivot",
-          "date": "2026-04-24",
-          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
           "topics": [
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
             },
             {
               "slug": "systems",
@@ -7642,8 +7847,8 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
-          "estimatedReadMinutes": 4,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
           "year": 2026
         }
       ]
@@ -7784,16 +7989,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-04-24-the-serverless-pivot",
-          "number": 36,
-          "title": "The Serverless Pivot",
-          "date": "2026-04-24",
-          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
           "topics": [
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
             },
             {
               "slug": "systems",
@@ -7803,8 +8008,8 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
-          "estimatedReadMinutes": 4,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
           "year": 2026
         }
       ]
@@ -9069,9 +9274,33 @@
       "slug": "agents",
       "name": "Agents",
       "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-      "count": 16,
-      "latestDate": "2026-03-26",
+      "count": 17,
+      "latestDate": "2026-04-26",
       "posts": [
+        {
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
@@ -10945,9 +11174,33 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 29,
-      "latestDate": "2026-04-24",
+      "count": 30,
+      "latestDate": "2026-04-26",
       "posts": [
+        {
+          "slug": "2026-04-26-the-dispatch-filter",
+          "number": 37,
+          "title": "The Dispatch Filter",
+          "date": "2026-04-26",
+          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
