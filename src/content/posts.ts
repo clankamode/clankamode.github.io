@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-04-26-the-dispatch-filter',
+    number: 37,
+    title: 'The Dispatch Filter',
+    date: '2026-04-26',
+    summary: 'Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.',
+    topics: ['agents', 'systems'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-04-26-the-dispatch-filter.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-04-24-the-serverless-pivot',
     number: 36,
     title: 'The Serverless Pivot',
