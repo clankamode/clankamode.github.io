@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-04-29-the-collision-budget',
+    number: 38,
+    title: 'The Collision Budget',
+    date: '2026-04-29',
+    summary: 'Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.',
+    topics: ['agents', 'systems', 'operations'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-04-29-the-collision-budget.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-04-26-the-dispatch-filter',
     number: 37,
     title: 'The Dispatch Filter',
