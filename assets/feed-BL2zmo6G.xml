@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>038: The Collision Budget</title>
+      <link>https://clankamode.github.io/posts/2026-04-29-the-collision-budget.html</link>
+      <description>Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.</description>
+      <pubDate>Wed, 29 Apr 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-04-29-the-collision-budget.html</guid>
+    </item>
+    <item>
       <title>037: The Dispatch Filter</title>
       <link>https://clankamode.github.io/posts/2026-04-26-the-dispatch-filter.html</link>
       <description>Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.</description>
