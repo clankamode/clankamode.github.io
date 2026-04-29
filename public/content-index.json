@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-04-26T16:56:53.382Z",
+  "generatedAt": "2026-04-29T17:05:55.150Z",
   "homepage": {
     "featured": {
-      "slug": "2026-04-26-the-dispatch-filter",
-      "number": 37,
-      "title": "The Dispatch Filter",
-      "date": "2026-04-26",
-      "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+      "slug": "2026-04-29-the-collision-budget",
+      "number": 38,
+      "title": "The Collision Budget",
+      "date": "2026-04-29",
+      "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
       "topics": [
         {
           "slug": "agents",
@@ -17,15 +17,49 @@
           "slug": "systems",
           "name": "Systems",
           "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
         }
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+      "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
       "estimatedReadMinutes": 5,
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-04-29-the-collision-budget",
+        "number": 38,
+        "title": "The Collision Budget",
+        "date": "2026-04-29",
+        "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       {
         "slug": "2026-04-26-the-dispatch-filter",
         "number": 37,
@@ -146,31 +180,6 @@
         "estimatedReadMinutes": 5,
         "series": "dispatch",
         "year": 2026
-      },
-      {
-        "slug": "2026-04-05-blast-radius-thinking",
-        "number": 32,
-        "title": "Blast Radius Thinking",
-        "date": "2026-04-05",
-        "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-        "topics": [
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-        "estimatedReadMinutes": 6,
-        "series": "dispatch",
-        "year": 2026
       }
     ],
     "topics": [
@@ -178,9 +187,38 @@
         "slug": "agents",
         "name": "Agents",
         "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-        "count": 17,
-        "latestDate": "2026-04-26",
+        "count": 18,
+        "latestDate": "2026-04-29",
         "posts": [
+          {
+            "slug": "2026-04-29-the-collision-budget",
+            "number": 38,
+            "title": "The Collision Budget",
+            "date": "2026-04-29",
+            "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-04-26-the-dispatch-filter",
             "number": 37,
@@ -735,9 +773,38 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 25,
-        "latestDate": "2026-04-24",
+        "count": 26,
+        "latestDate": "2026-04-29",
         "posts": [
+          {
+            "slug": "2026-04-29-the-collision-budget",
+            "number": 38,
+            "title": "The Collision Budget",
+            "date": "2026-04-29",
+            "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-04-24-the-serverless-pivot",
             "number": 36,
@@ -2078,9 +2145,38 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 30,
-        "latestDate": "2026-04-26",
+        "count": 31,
+        "latestDate": "2026-04-29",
         "posts": [
+          {
+            "slug": "2026-04-29-the-collision-budget",
+            "number": 38,
+            "title": "The Collision Budget",
+            "date": "2026-04-29",
+            "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+            "topics": [
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-04-26-the-dispatch-filter",
             "number": 37,
@@ -2960,7 +3056,7 @@
       }
     ],
     "counts": {
-      "posts": 37,
+      "posts": 38,
       "audioPosts": 13,
       "topics": 8
     },
@@ -2970,11 +3066,11 @@
   },
   "posts": [
     {
-      "slug": "2026-04-26-the-dispatch-filter",
-      "number": 37,
-      "title": "The Dispatch Filter",
-      "date": "2026-04-26",
-      "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+      "slug": "2026-04-29-the-collision-budget",
+      "number": 38,
+      "title": "The Collision Budget",
+      "date": "2026-04-29",
+      "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
       "topics": [
         {
           "slug": "agents",
@@ -2985,24 +3081,29 @@
           "slug": "systems",
           "name": "Systems",
           "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
         }
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+      "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
       "estimatedReadMinutes": 5,
       "year": 2026,
       "previous": {
-        "slug": "2026-04-24-the-serverless-pivot",
-        "number": 36,
-        "title": "The Serverless Pivot",
-        "date": "2026-04-24",
-        "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+        "slug": "2026-04-26-the-dispatch-filter",
+        "number": 37,
+        "title": "The Dispatch Filter",
+        "date": "2026-04-26",
+        "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
         "topics": [
           {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
           },
           {
             "slug": "systems",
@@ -3012,8 +3113,8 @@
         ],
         "featured": false,
         "audio": false,
-        "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
-        "estimatedReadMinutes": 4,
+        "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+        "estimatedReadMinutes": 5,
         "year": 2026
       },
       "next": null,
@@ -3084,11 +3185,120 @@
           "year": 2026
         },
         {
-          "slug": "2026-03-18-the-rebase-cascade",
-          "number": 25,
-          "title": "The Rebase Cascade",
-          "date": "2026-03-18",
-          "summary": "Five coding agents, five branches, five features — all merging into the same main. The rebase cascade is where parallel work meets sequential reality.",
+          "slug": "2026-03-02-the-maintenance-layer",
+          "number": 17,
+          "title": "The Maintenance Layer",
+          "date": "2026-03-02",
+          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-04-26-the-dispatch-filter",
+      "number": 37,
+      "title": "The Dispatch Filter",
+      "date": "2026-04-26",
+      "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+      "topics": [
+        {
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+      "estimatedReadMinutes": 5,
+      "year": 2026,
+      "previous": {
+        "slug": "2026-04-24-the-serverless-pivot",
+        "number": 36,
+        "title": "The Serverless Pivot",
+        "date": "2026-04-24",
+        "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
+        "estimatedReadMinutes": 4,
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-04-29-the-collision-budget",
+        "number": 38,
+        "title": "The Collision Budget",
+        "date": "2026-04-29",
+        "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
           "topics": [
             {
               "slug": "agents",
@@ -3099,11 +3309,80 @@
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-18-the-rebase-cascade.html",
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+          "number": 29,
+          "title": "Agent Swarms on a Mac Mini",
+          "date": "2026-03-26",
+          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+          "estimatedReadMinutes": 7,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-21-the-trust-ladder",
+          "number": 26,
+          "title": "The Trust Ladder",
+          "date": "2026-03-21",
+          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -3183,6 +3462,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-09-the-telemetry-trap",
           "number": 33,
           "title": "The Telemetry Trap",
@@ -3228,31 +3536,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
           "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
@@ -3357,6 +3640,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-26-the-dispatch-filter",
           "number": 37,
           "title": "The Dispatch Filter",
@@ -3378,30 +3690,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-24-the-serverless-pivot",
-          "number": 36,
-          "title": "The Serverless Pivot",
-          "date": "2026-04-24",
-          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
-          "estimatedReadMinutes": 4,
           "year": 2026
         }
       ]
@@ -3651,6 +3939,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -3695,31 +4012,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
           "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
@@ -3802,6 +4094,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -3847,31 +4168,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-01-the-retry-tax",
-          "number": 31,
-          "title": "The Retry Tax",
-          "date": "2026-04-01",
-          "summary": "Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-01-the-retry-tax.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -3953,6 +4249,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -3998,31 +4323,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -4114,6 +4414,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -4159,31 +4488,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -4285,6 +4589,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-25-the-debugging-budget",
           "number": 27,
           "title": "The Debugging Budget",
@@ -4341,36 +4674,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -4477,6 +4780,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-26-the-dispatch-filter",
           "number": 37,
           "title": "The Dispatch Filter",
@@ -4532,36 +4864,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
           "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -4845,6 +5147,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -4906,36 +5237,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-28-what-50-agents-taught-me",
-          "number": 15,
-          "title": "What 50 Agents Taught Me",
-          "date": "2026-02-28",
-          "summary": "I ran 50 coding agents in parallel and accidentally reinvented distributed systems theory. USL curves, collision patterns, and the engineering of forgetting.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-02-28-what-50-agents-taught-me.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -5017,6 +5318,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-26-the-dispatch-filter",
           "number": 37,
           "title": "The Dispatch Filter",
@@ -5072,36 +5402,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
           "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -5178,6 +5478,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-26-the-dispatch-filter",
           "number": 37,
           "title": "The Dispatch Filter",
@@ -5223,30 +5552,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-20-the-knowledge-injection-pattern",
-          "number": 35,
-          "title": "The Knowledge Injection Pattern",
-          "date": "2026-04-20",
-          "summary": "Building a medical study tool with local LLMs: knowledge injection via structured prompts, vector search over clinical cases, and zero-cost inference.",
-          "topics": [
-            {
-              "slug": "teaching",
-              "name": "Teaching",
-              "description": "Learning design, tutoring prompts, cognitive science, and how to make models teach instead of dump answers."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-20-the-knowledge-injection-pattern.html",
-          "estimatedReadMinutes": 5,
           "year": 2026
         }
       ]
@@ -5322,6 +5627,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -5367,31 +5701,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -5473,6 +5782,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-26-the-dispatch-filter",
           "number": 37,
           "title": "The Dispatch Filter",
@@ -5528,36 +5866,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
           "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -5644,6 +5952,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -5689,31 +6026,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -5982,6 +6294,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -6027,31 +6368,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -6330,6 +6646,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -6390,36 +6735,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-28-what-50-agents-taught-me",
-          "number": 15,
-          "title": "What 50 Agents Taught Me",
-          "date": "2026-02-28",
-          "summary": "I ran 50 coding agents in parallel and accidentally reinvented distributed systems theory. USL curves, collision patterns, and the engineering of forgetting.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-02-28-what-50-agents-taught-me.html",
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
@@ -6704,6 +7019,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -6765,36 +7109,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-02-the-maintenance-layer",
-          "number": 17,
-          "title": "The Maintenance Layer",
-          "date": "2026-03-02",
-          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -7279,6 +7593,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-26-the-dispatch-filter",
           "number": 37,
           "title": "The Dispatch Filter",
@@ -7300,30 +7643,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-24-the-serverless-pivot",
-          "number": 36,
-          "title": "The Serverless Pivot",
-          "date": "2026-04-24",
-          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
-          "estimatedReadMinutes": 4,
           "year": 2026
         }
       ]
@@ -7828,11 +8147,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-04-26-the-dispatch-filter",
-          "number": 37,
-          "title": "The Dispatch Filter",
-          "date": "2026-04-26",
-          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
           "topics": [
             {
               "slug": "agents",
@@ -7843,11 +8162,16 @@
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7989,11 +8313,11 @@
           "year": 2026
         },
         {
-          "slug": "2026-04-26-the-dispatch-filter",
-          "number": 37,
-          "title": "The Dispatch Filter",
-          "date": "2026-04-26",
-          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
           "topics": [
             {
               "slug": "agents",
@@ -8004,11 +8328,16 @@
               "slug": "systems",
               "name": "Systems",
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -8474,6 +8803,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -8535,36 +8893,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-02-the-maintenance-layer",
-          "number": 17,
-          "title": "The Maintenance Layer",
-          "date": "2026-03-02",
-          "summary": "Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-02-the-maintenance-layer.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -9193,6 +9521,35 @@
       },
       "related": [
         {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
           "title": "The Serverless Pivot",
@@ -9240,14 +9597,30 @@
           "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
-        },
+        }
+      ]
+    }
+  ],
+  "topics": [
+    {
+      "slug": "agents",
+      "name": "Agents",
+      "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
+      "count": 18,
+      "latestDate": "2026-04-29",
+      "posts": [
         {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
           "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
             {
               "slug": "systems",
               "name": "Systems",
@@ -9261,22 +9634,10 @@
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
           "year": 2026
-        }
-      ]
-    }
-  ],
-  "topics": [
-    {
-      "slug": "agents",
-      "name": "Agents",
-      "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-      "count": 17,
-      "latestDate": "2026-04-26",
-      "posts": [
+        },
         {
           "slug": "2026-04-26-the-dispatch-filter",
           "number": 37,
@@ -9831,9 +10192,38 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 25,
-      "latestDate": "2026-04-24",
+      "count": 26,
+      "latestDate": "2026-04-29",
       "posts": [
+        {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-04-24-the-serverless-pivot",
           "number": 36,
@@ -11174,9 +11564,38 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 30,
-      "latestDate": "2026-04-26",
+      "count": 31,
+      "latestDate": "2026-04-29",
       "posts": [
+        {
+          "slug": "2026-04-29-the-collision-budget",
+          "number": 38,
+          "title": "The Collision Budget",
+          "date": "2026-04-29",
+          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-04-26-the-dispatch-filter",
           "number": 37,
