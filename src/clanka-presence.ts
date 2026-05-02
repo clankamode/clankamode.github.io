@@ -22,12 +22,13 @@ export class ClankaPresence extends LitElement {
   static styles = css`
     :host {
       display: block;
+      border-radius: 2px;
     }
     .hd {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border, #1e1e22);
+      border-bottom: 1px solid var(--border, #26292e);
       padding-bottom: 24px;
       margin-bottom: 64px;
     }
@@ -48,17 +49,9 @@ export class ClankaPresence extends LitElement {
     .dot {
       width: 6px;
       height: 6px;
-      border-radius: 50%;
+      border-radius: 2px;
       background: var(--accent);
       display: inline-block;
-      animation: pulse 2s ease-in-out infinite;
-    }
-    .dot.thinking {
-      background: #f5d442;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
     }
     .presence-block {
       margin-top: 32px;
@@ -70,34 +63,22 @@ export class ClankaPresence extends LitElement {
     }
     .loading,
     .error {
-      color: var(--accent);
-      animation: pulse 1.4s ease-in-out infinite;
+      color: var(--muted);
     }
     .error {
-      color: var(--muted);
-      animation: none;
+      color: var(--dim);
     }
     .skeleton {
       height: 12px;
       margin-top: 6px;
       width: min(380px, 80%);
       border-radius: 2px;
-      background: linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--surface) 90%, var(--border) 10%) 0%,
-        color-mix(in srgb, var(--surface) 60%, var(--accent) 40%) 50%,
-        color-mix(in srgb, var(--surface) 90%, var(--border) 10%) 100%
-      );
-      background-size: 200% 100%;
-      animation: shimmer 1.6s linear infinite;
+      background: var(--attention-panel, var(--surface));
+      border: 1px solid var(--border, #26292e);
     }
     :host(:focus-visible) {
       outline: 1px solid var(--accent);
       outline-offset: 4px;
-    }
-    @keyframes shimmer {
-      from { background-position: 200% 0; }
-      to { background-position: -200% 0; }
     }
   `;
 
@@ -146,21 +127,20 @@ export class ClankaPresence extends LitElement {
 
   render() {
     const normalizedStatus = this.status.toLowerCase();
-    const showThinking = normalizedStatus === 'thinking';
     const showOffline = normalizedStatus === 'offline';
 
     return html`
       <div class="hd">
         <span class="hd-name">CLANKA ⚡</span>
         <span class="hd-status">
-          <span class="dot ${showThinking ? 'thinking' : ''}" style=${showOffline ? 'opacity:.4' : ''}></span>
+          <span class="dot" style=${showOffline ? 'opacity:.45' : ''}></span>
           ${this.loading ? 'SYNCING' : this.status.toUpperCase()}
         </span>
       </div>
       <div class="presence-block">
         <span class="presence-label">// currently:</span>
         ${this.loading
-          ? html`<span class="loading"> [ loading... ]</span><div class="skeleton" aria-hidden="true"></div>`
+          ? html`<span class="loading"> [ awaiting update ]</span><div class="skeleton" aria-hidden="true"></div>`
           : this.error
             ? html`<span class="error"> ${this.error}</span>`
             : html` ${this.current}`}

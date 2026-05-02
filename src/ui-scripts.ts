@@ -30,7 +30,7 @@ function activeTheme(): Theme {
   const saved = getSavedTheme();
   if (saved) return saved;
 
-  return 'dark';
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
 }
 
 function setTheme(theme: Theme): void {
@@ -78,6 +78,15 @@ export function initUI(): void {
     update();
   })();
 
+  // Stagger work rows
+  (() => {
+    const workSection = document.querySelector('[aria-labelledby="work-label"]');
+    if (!workSection) return;
+    workSection.querySelectorAll<HTMLElement>('.row').forEach((row) => {
+      row.classList.add('row-stagger');
+    });
+  })();
+
   // Status bar date
   (() => {
     const el = document.getElementById('status-date');
@@ -94,52 +103,9 @@ export function initUI(): void {
     const cursor = document.getElementById('tw-cursor');
     if (!twText || !twEm || !cursor) return;
 
-    // Respect reduced motion
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      twText.textContent = 'I build systems';
-      twEm.style.visibility = 'visible';
-      cursor.classList.add('cursor--animate');
-      return;
-    }
-
-    const LINE1 = 'I build systems';
-
-    // Freeze cursor during typing
-    cursor.style.animation = 'none';
-    cursor.style.opacity = '1';
-
-    let i = 0;
-    function type() {
-      if (i <= LINE1.length) {
-        twText.textContent = LINE1.slice(0, i);
-        i++;
-        if (i <= LINE1.length) {
-          setTimeout(type, 40);
-        } else {
-          // Reveal second line
-          twEm.style.visibility = 'visible';
-          twEm.style.opacity = '0';
-          setTimeout(() => {
-            twEm.style.opacity = '1';
-          }, 60);
-
-          // Blink cursor twice, then go static
-          setTimeout(() => {
-            cursor.style.animation = 'cursorBlink 0.5s steps(2, start) 2';
-            cursor.addEventListener(
-              'animationend',
-              () => {
-                cursor.style.animation = 'none';
-                cursor.style.opacity = '1';
-              },
-              { once: true },
-            );
-          }, 400);
-        }
-      }
-    }
-
-    setTimeout(type, 180);
+    twText.textContent = 'I build systems';
+    twEm.style.visibility = 'visible';
+    cursor.style.visibility = 'visible';
   })();
 
   // Scroll to top button
@@ -153,7 +119,10 @@ export function initUI(): void {
       },
       { passive: true },
     );
-    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    btn.addEventListener('click', () => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    });
   })();
 
   // Search/filter logs + keyboard navigation

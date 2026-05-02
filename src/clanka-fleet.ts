@@ -25,6 +25,7 @@ export class ClankaFleet extends LitElement {
     :host {
       display: block;
       margin-bottom: 64px;
+      border-radius: 2px;
     }
     .sec-header {
       display: flex;
@@ -36,18 +37,18 @@ export class ClankaFleet extends LitElement {
       font-size: 10px;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--muted, #6b6b78);
+      color: var(--muted, #717986);
     }
     .sec-line {
       flex: 1;
       height: 1px;
-      background: var(--border, #1e1e22);
+      background: var(--border, #26292e);
     }
     .sync {
       font-size: 9px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--muted, #6b6b78);
+      color: var(--muted, #717986);
     }
     .sync.live {
       color: var(--accent, #c8f542);
@@ -59,24 +60,20 @@ export class ClankaFleet extends LitElement {
       font-size: 9px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--dim, #3a3a42);
+      color: var(--dim, #505661);
       margin-bottom: 6px;
     }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 1px;
-      background: var(--border, #1e1e22);
-      border: 1px solid var(--border, #1e1e22);
+      background: var(--border, #26292e);
+      border: 1px solid var(--border, #26292e);
     }
     .card {
-      background: var(--bg, #070708);
+      background: var(--bg, #0b0c0d);
       padding: 12px 16px;
-      transition: background 0.12s ease;
       min-height: 64px;
-    }
-    .card:hover {
-      background: var(--surface, #0e0e10);
     }
     .card-head {
       margin-bottom: 8px;
@@ -88,7 +85,7 @@ export class ClankaFleet extends LitElement {
     }
     .repo {
       font-size: 12px;
-      color: var(--text, #d4d4dc);
+      color: var(--text, #cfd4db);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -97,49 +94,53 @@ export class ClankaFleet extends LitElement {
       font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.2em;
-      color: var(--dim, #3a3a42);
+      color: var(--dim, #505661);
     }
     .criticality {
       font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: var(--muted, #6b6b78);
+      color: var(--muted, #717986);
     }
     .status-pill {
       font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
+      padding: 2px 6px;
+      border: 1px solid var(--border, #26292e);
+      border-radius: 2px;
     }
     .status-pill.online {
       color: var(--accent, #c8f542);
+      border-color: var(--accent, #c8f542);
     }
     .status-pill.offline {
-      color: var(--muted, #6b6b78);
-      opacity: 0.65;
+      color: var(--muted, #717986);
+      opacity: 0.85;
     }
     .dot {
       width: 6px;
       height: 6px;
-      border-radius: 50%;
+      border-radius: 2px;
       display: inline-block;
       margin-right: 6px;
     }
     .critical { background: var(--accent, #c8f542); }
-    .high { background: #f5a623; }
-    .medium { background: var(--muted, #6b6b78); }
+    .high { background: var(--muted, #717986); }
+    .medium { background: var(--dim, #505661); }
     .fallback {
       padding: 12px 16px;
-      border: 1px solid var(--border, #1e1e22);
-      background: var(--surface, #0e0e10);
-      color: var(--muted, #6b6b78);
+      border: 1px solid var(--border, #26292e);
+      background: var(--surface, #131417);
+      color: var(--muted, #717986);
       font-size: 12px;
+      border-radius: 2px;
     }
     .loading {
-      color: var(--accent, #c8f542);
-      animation: blink 1s steps(2, start) infinite;
+      color: var(--muted, #717986);
     }
     .skeleton-card {
-      background: var(--bg, #070708);
+      background: var(--bg, #0b0c0d);
       padding: 12px 16px;
       min-height: 64px;
     }
@@ -148,14 +149,8 @@ export class ClankaFleet extends LitElement {
       border-radius: 2px;
       margin-bottom: 9px;
       width: 80%;
-      background: linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--surface, #0e0e10) 88%, var(--border, #1e1e22) 12%) 0%,
-        color-mix(in srgb, var(--surface, #0e0e10) 70%, var(--accent, #c8f542) 30%) 50%,
-        color-mix(in srgb, var(--surface, #0e0e10) 88%, var(--border, #1e1e22) 12%) 100%
-      );
-      background-size: 200% 100%;
-      animation: shimmer 1.8s linear infinite;
+      background: var(--attention-panel, var(--surface, #131417));
+      border: 1px solid var(--border, #26292e);
     }
     .skeleton-line.short {
       width: 52%;
@@ -163,14 +158,6 @@ export class ClankaFleet extends LitElement {
     :host(:focus-visible) {
       outline: 1px solid var(--accent, #c8f542);
       outline-offset: 4px;
-    }
-    @keyframes shimmer {
-      from { background-position: 200% 0; }
-      to { background-position: -200% 0; }
-    }
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0.4; }
     }
     @media (max-width: 680px) {
       .grid {
@@ -336,7 +323,7 @@ export class ClankaFleet extends LitElement {
 
       ${this.loading
         ? html`
-            <div class="fallback"><span class="loading">[ loading... ]</span></div>
+            <div class="fallback"><span class="loading">[ loading fleet summary ]</span></div>
             <div class="grid" aria-hidden="true">
               ${Array.from({ length: 6 }).map(
                 () => html`<div class="skeleton-card">

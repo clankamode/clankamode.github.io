@@ -24,10 +24,7 @@ export class ClankaCmdk extends LitElement {
       position: fixed;
       inset: 0;
       z-index: 9998;
-      background: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      animation: fadeIn 0.12s ease-out;
+      background: rgba(11, 12, 13, 0.86);
     }
 
     .palette {
@@ -39,9 +36,8 @@ export class ClankaCmdk extends LitElement {
       width: min(560px, calc(100vw - 32px));
       background: var(--surface);
       border: 1px solid var(--border);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(200, 245, 66, 0.06);
       overflow: hidden;
-      animation: slideIn 0.14s ease-out;
+      border-radius: 2px;
     }
 
     .input-row {
@@ -80,6 +76,7 @@ export class ClankaCmdk extends LitElement {
       border: 1px solid var(--border);
       padding: 2px 6px;
       flex-shrink: 0;
+      border-radius: 2px;
     }
 
     .results {
@@ -104,14 +101,20 @@ export class ClankaCmdk extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      width: 100%;
       padding: 8px 16px;
       cursor: pointer;
-      transition: background 0.08s ease;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      font: inherit;
+      color: inherit;
     }
 
     .item:hover,
+    .item:focus-visible,
     .item.active {
-      background: rgba(200, 245, 66, 0.06);
+      background: var(--surface);
     }
 
     .item.active {
@@ -124,7 +127,8 @@ export class ClankaCmdk extends LitElement {
       font-size: 13px;
     }
 
-    .item.active .item-label {
+    .item.active .item-label,
+    .item:focus-visible .item-label {
       color: var(--bright);
     }
 
@@ -163,6 +167,7 @@ export class ClankaCmdk extends LitElement {
       padding: 1px 4px;
       font-family: var(--mono);
       color: var(--muted);
+      border-radius: 2px;
     }
 
     mark {
@@ -170,16 +175,6 @@ export class ClankaCmdk extends LitElement {
       color: var(--accent);
       text-decoration: underline;
       text-underline-offset: 2px;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.98); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
     }
   `;
 
@@ -285,10 +280,11 @@ export class ClankaCmdk extends LitElement {
 
   private navigate(item: CmdItem): void {
     this.close();
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (item.href.startsWith('http')) {
       window.open(item.href, '_blank', 'noopener,noreferrer');
     } else if (item.href.startsWith('#')) {
-      document.getElementById(item.href.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById(item.href.slice(1))?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     } else {
       window.location.href = item.href;
     }
@@ -327,7 +323,7 @@ export class ClankaCmdk extends LitElement {
   private renderItems(): unknown {
     const items = this.filtered;
     if (!items.length) {
-      return html`<div class="empty">no results for "${this.query}"</div>`;
+      return html`<div class="empty">No results for "${this.query}"</div>`;
     }
 
     const grouped = new Map<string, CmdItem[]>();
@@ -344,14 +340,15 @@ export class ClankaCmdk extends LitElement {
       for (const item of sectionItems) {
         const idx = flatIdx++;
         result.push(html`
-          <div
+          <button
             class="item ${idx === this.activeIndex ? 'active' : ''}"
             @click=${() => this.navigate(item)}
             @mouseenter=${() => { this.activeIndex = idx; }}
+            type="button"
           >
             <span class="item-label">${this.highlightMatch(item.label)}</span>
             <span class="item-hint">${item.hint}</span>
-          </div>
+          </button>
         `);
       }
     }

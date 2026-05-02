@@ -15,6 +15,7 @@ export class ClankaTerminal extends LitElement {
       display: block;
       margin-bottom: 28px;
       font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+      border-radius: 2px;
     }
     .sec-header {
       display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
@@ -25,30 +26,26 @@ export class ClankaTerminal extends LitElement {
     .sec-line { flex: 1; height: 1px; background: var(--border); }
     .terminal {
       border: 1px solid var(--border);
-      background: radial-gradient(
-        circle at top,
-        color-mix(in srgb, var(--surface) 84%, var(--accent) 16%) 0%,
-        var(--bg) 68%
-      );
+      background: var(--surface);
       padding: 14px;
-      color: var(--accent);
+      color: var(--muted);
       font-size: 11px;
       line-height: 1.55;
       overflow-x: auto;
+      border-radius: 2px;
     }
-    .line { white-space: pre; color: color-mix(in srgb, var(--accent) 92%, #111 8%); }
+    .line { white-space: pre; color: var(--muted); }
     .line.dim { color: var(--muted); }
     .line.prompt { color: var(--bright); }
     .tag { color: var(--accent); font-weight: 600; }
     .repo { color: var(--text); }
-    .msg { color: color-mix(in srgb, var(--accent) 70%, var(--text) 30%); }
+    .msg { color: var(--text); }
     .ts { color: var(--dim); }
     .cursor {
-      display: inline-block; width: 8px; height: 1em;
-      background: var(--accent); transform: translateY(2px);
-      animation: blink 1s steps(2, start) infinite;
+      display: inline-block; width: 6px; height: 1em;
+      border-left: 1px solid var(--accent);
+      transform: translateY(2px);
     }
-    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
   `;
 
   connectedCallback(): void {
@@ -59,7 +56,7 @@ export class ClankaTerminal extends LitElement {
   private async loadData(): Promise<void> {
     const events = await fetchEvents();
     if (events.length === 0) {
-      this.error = '[ offline — activity unavailable ]';
+      this.error = '[ activity unavailable ]';
     } else {
       this.events = events.slice(0, 8);
     }

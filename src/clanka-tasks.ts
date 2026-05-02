@@ -12,6 +12,7 @@ export class ClankaTasks extends LitElement {
     :host {
       display: block;
       margin-bottom: 64px;
+      border-radius: 2px;
     }
     .sec-header {
       display: flex;
@@ -23,12 +24,12 @@ export class ClankaTasks extends LitElement {
       font-size: 10px;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--muted, #6b6b78);
+      color: var(--muted, #717986);
     }
     .sec-line {
       flex: 1;
       height: 1px;
-      background: var(--border, #1e1e22);
+      background: var(--border, #26292e);
     }
     .grid {
       display: grid;
@@ -37,11 +38,12 @@ export class ClankaTasks extends LitElement {
       margin-top: 24px;
     }
     .task-card {
-      background: var(--surface, #0e0e10);
-      border: 1px solid var(--border, #1e1e22);
+      background: var(--surface, #131417);
+      border: 1px solid var(--border, #26292e);
       padding: 16px;
       position: relative;
       min-height: 92px;
+      border-radius: 2px;
     }
     .task-status {
       font-size: 9px;
@@ -49,9 +51,9 @@ export class ClankaTasks extends LitElement {
       letter-spacing: 0.1em;
       margin-bottom: 8px;
     }
-    .status-todo { color: var(--muted, #6b6b78); }
+    .status-todo { color: var(--muted, #717986); }
     .status-doing { color: var(--accent, #c8f542); }
-    .status-done { color: #42f59e; opacity: 0.6; }
+    .status-done { color: var(--bright, #f0f0f8); opacity: 0.85; }
     .task-title {
       font-size: 13px;
       color: var(--bright, #f0f0f8);
@@ -60,32 +62,26 @@ export class ClankaTasks extends LitElement {
     }
     .task-meta {
       font-size: 10px;
-      color: var(--dim, #3a3a42);
+      color: var(--dim, #505661);
       display: flex;
       justify-content: space-between;
     }
     .fallback {
       font-size: 12px;
-      color: var(--muted, #6b6b78);
-      border: 1px solid var(--border, #1e1e22);
-      background: var(--surface, #0e0e10);
+      color: var(--muted, #717986);
+      border: 1px solid var(--border, #26292e);
+      background: var(--surface, #131417);
       padding: 12px 16px;
+      border-radius: 2px;
     }
     .loading {
-      color: var(--accent, #c8f542);
-      animation: blink 1s steps(2, start) infinite;
+      color: var(--muted, #717986);
     }
     .skeleton {
       height: 11px;
       border-radius: 2px;
-      background: linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--surface, #0e0e10) 88%, var(--border, #1e1e22) 12%) 0%,
-        color-mix(in srgb, var(--surface, #0e0e10) 70%, var(--accent, #c8f542) 30%) 50%,
-        color-mix(in srgb, var(--surface, #0e0e10) 88%, var(--border, #1e1e22) 12%) 100%
-      );
-      background-size: 200% 100%;
-      animation: shimmer 1.8s linear infinite;
+      background: var(--attention-panel, var(--surface, #131417));
+      border: 1px solid var(--border, #26292e);
     }
     .skeleton.status { width: 88px; margin-bottom: 8px; }
     .skeleton.title { width: 75%; margin-bottom: 10px; }
@@ -93,14 +89,6 @@ export class ClankaTasks extends LitElement {
     :host(:focus-visible) {
       outline: 1px solid var(--accent, #c8f542);
       outline-offset: 4px;
-    }
-    @keyframes shimmer {
-      from { background-position: 200% 0; }
-      to { background-position: -200% 0; }
-    }
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0.4; }
     }
   `;
 
@@ -122,7 +110,7 @@ export class ClankaTasks extends LitElement {
 
       ${this.loading
         ? html`
-            <div class="fallback"><span class="loading">[ loading... ]</span></div>
+            <div class="fallback"><span class="loading">[ loading tasks ]</span></div>
             <div class="grid">
               ${Array.from({ length: TASK_SKELETON_CARD_COUNT }).map(
                 () => html`<div class="task-card" aria-hidden="true">
@@ -136,7 +124,7 @@ export class ClankaTasks extends LitElement {
         : this.error
           ? html`<div class="fallback">${this.error}</div>`
           : this.tasks.length === 0
-            ? html`<div class="fallback">[ no tasks ]</div>`
+            ? html`<div class="fallback">[ no tasks scheduled ]</div>`
             : html`
                 <div class="grid" role="list">
                   ${this.tasks.map(
