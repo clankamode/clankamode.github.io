@@ -29,15 +29,15 @@ export class ClankaPresence extends LitElement {
       align-items: baseline;
       justify-content: space-between;
       border-bottom: 1px solid var(--border, #26292e);
-      padding-bottom: 24px;
-      margin-bottom: 64px;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
     }
     .hd-name {
       font-size: 11px;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: var(--accent);
-      font-weight: bold;
+      color: var(--text, #d4d4d4);
+      font-weight: 500;
     }
     .hd-status {
       font-size: 11px;
@@ -50,31 +50,26 @@ export class ClankaPresence extends LitElement {
       width: 6px;
       height: 6px;
       border-radius: 2px;
-      background: var(--accent);
+      background: var(--border-strong, #3a3a3a);
       display: inline-block;
     }
     .presence-block {
-      margin-top: 32px;
-      font-size: 11px;
+      margin-top: 0;
+      font-size: 12px;
       color: var(--muted);
     }
     .presence-label {
-      color: var(--dim);
+      color: var(--muted);
     }
     .loading,
     .error {
       color: var(--muted);
     }
     .error {
-      color: var(--dim);
+      color: var(--muted);
     }
     .skeleton {
-      height: 12px;
-      margin-top: 6px;
-      width: min(380px, 80%);
-      border-radius: 2px;
-      background: var(--attention-panel, var(--surface));
-      border: 1px solid var(--border, #26292e);
+      display: none;
     }
     :host(:focus-visible) {
       outline: 1px solid var(--accent);

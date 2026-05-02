@@ -4,8 +4,8 @@
   --overlay: #222222;
   --border: #2a2a2a;
   --border-strong: #3a3a3a;
-  --dim: #6b6b6b;
-  --muted: #9a9a9a;
+  --dim: #777777;
+  --muted: #a6a6a6;
   --text: #d4d4d4;
   --bright: #d4d4d4;
   --accent: #c8f542;
@@ -19,8 +19,8 @@
   --overlay: #e0e0e4;
   --border: #c8c8cc;
   --border-strong: #b0b0b8;
-  --dim: #5c5c62;
-  --muted: #4a4a52;
+  --dim: #55555c;
+  --muted: #3f3f46;
   --text: #2a2a30;
   --bright: #242428;
   --accent: #4a6a18;
@@ -78,17 +78,15 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 48px 48px;
+  border-left: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.22;
+  opacity: 0.55;
 }
 
 :root[data-theme='light'] body::before {
-  opacity: 0.14;
+  opacity: 0.45;
 }
 
 /* STATUS BAR */
@@ -123,7 +121,7 @@ body::before {
 .status-live-dot {
   width: 6px;
   height: 6px;
-  background: var(--accent);
+  background: var(--border-strong);
   border-radius: var(--radius);
 }
 
@@ -148,7 +146,7 @@ body::before {
 #theme-toggle:hover,
 #theme-toggle:focus-visible {
   color: var(--accent);
-  border-color: var(--accent);
+  border-color: var(--text);
 }
 
 main {
@@ -161,7 +159,7 @@ main {
 }
 
 .command-plate.hero {
-  margin-bottom: 48px;
+  margin-bottom: 16px;
   padding: 24px 24px 20px;
   border: 1px solid var(--border);
   background: var(--surface);
@@ -223,6 +221,23 @@ main {
   letter-spacing: 0.06em;
 }
 
+.sync-band {
+  margin-bottom: 48px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+.sync-band-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
 .home-primary-nav {
   margin-top: 20px;
   padding-top: 16px;
@@ -270,8 +285,8 @@ main {
 
 .logs-ledger {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
   align-items: start;
 }
 
@@ -287,7 +302,7 @@ main {
   line-height: 1.1;
   letter-spacing: -0.02em;
   font-family: var(--mono);
-  font-weight: 700;
+  font-weight: 600;
   max-width: 700px;
   text-wrap: balance;
   min-height: 2.2em;
@@ -295,7 +310,7 @@ main {
 }
 
 .hero-statement em {
-  color: var(--accent);
+  color: var(--text);
   font-style: normal;
 }
 
@@ -305,13 +320,11 @@ main {
 }
 
 .cursor {
-  color: var(--accent);
-  display: inline-block;
-  margin-top: 4px;
+  display: none;
 }
 
 .cursor--animate {
-  animation: cursorLife 0.9s steps(2, start) infinite;
+  opacity: 1;
 }
 
 @keyframes cursorBlink {
@@ -930,14 +943,14 @@ a:hover { color: var(--accent); border-color: var(--accent); }
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: var(--dim);
+  color: var(--muted);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 6px 10px;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s, opacity 0.3s;
-  opacity: 0.72;
+  opacity: 0.9;
 }
 
 .cmdk-hint:hover {
@@ -969,16 +982,15 @@ a:hover { color: var(--accent); border-color: var(--accent); }
   font-family: var(--mono);
   font-size: 14px;
   cursor: pointer;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
-  opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 #scroll-top.visible {
-  opacity: 1;
+  display: flex;
   pointer-events: auto;
 }
 
@@ -1036,8 +1048,8 @@ a:hover { color: var(--accent); border-color: var(--accent); }
 }
 
 .project-badge--active {
-  color: var(--accent);
-  border-color: var(--accent);
+  color: var(--muted);
+  border-color: var(--border);
   background: transparent;
 }
 
@@ -1093,7 +1105,7 @@ a:hover { color: var(--accent); border-color: var(--accent); }
   display: inline-block;
   width: 6px;
   height: 6px;
-  background: var(--accent);
+  background: var(--border-strong);
   border-radius: var(--radius);
 }
 
@@ -1165,49 +1177,29 @@ a:hover { color: var(--accent); border-color: var(--accent); }
   text-transform: lowercase;
   padding: 2px 8px;
   border-radius: var(--radius);
-  border: 1px solid;
+  border: 1px solid var(--border);
   letter-spacing: 0.06em;
+  color: var(--muted);
+  background: var(--surface);
 }
 
 .commit-tag--feat {
-  color: #c8f542;
-  border-color: rgba(200, 245, 66, 0.45);
-  background: rgba(200, 245, 66, 0.12);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
-.commit-tag--fix {
-  color: #f54242;
-  border-color: rgba(245, 66, 66, 0.45);
-  background: rgba(245, 66, 66, 0.12);
-}
-
-.commit-tag--chore {
-  color: #888;
-  border-color: rgba(136, 136, 136, 0.45);
-  background: rgba(136, 136, 136, 0.12);
-}
-
-.commit-tag--docs {
-  color: #42c8f5;
-  border-color: rgba(66, 200, 245, 0.45);
-  background: rgba(66, 200, 245, 0.12);
-}
-
-.commit-tag--test {
-  color: #c542f5;
-  border-color: rgba(197, 66, 245, 0.45);
-  background: rgba(197, 66, 245, 0.12);
-}
-
+.commit-tag--fix,
+.commit-tag--chore,
+.commit-tag--docs,
+.commit-tag--test,
 .commit-tag--default,
 .commit-tag--refactor,
 .commit-tag--ci,
 .commit-tag--build,
 .commit-tag--style,
 .commit-tag--push {
-  color: #666;
-  border-color: rgba(102, 102, 102, 0.45);
-  background: rgba(102, 102, 102, 0.12);
+  color: var(--muted);
+  border-color: var(--border);
 }
 
 .commit-count {
