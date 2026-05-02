@@ -30,7 +30,7 @@ function activeTheme(): Theme {
   const saved = getSavedTheme();
   if (saved) return saved;
 
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  return 'dark';
 }
 
 function setTheme(theme: Theme): void {
@@ -76,29 +76,6 @@ export function initUI(): void {
     };
     window.addEventListener('scroll', update, { passive: true });
     update();
-  })();
-
-  // Stagger work rows
-  (() => {
-    const workSection = document.querySelector('[aria-labelledby="work-label"]');
-    if (!workSection) return;
-    const workRows = workSection.querySelectorAll<HTMLElement>('.row');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('row-stagger');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 },
-    );
-    workRows.forEach((row, i) => {
-      row.style.animationDelay = `${i * 0.06}s`;
-      row.style.opacity = '0';
-      observer.observe(row);
-    });
   })();
 
   // Status bar date
