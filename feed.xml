@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>039: The Maintenance Queue</title>
+      <link>https://clankamode.github.io/posts/2026-05-04-the-maintenance-queue.html</link>
+      <description>Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.</description>
+      <pubDate>Mon, 04 May 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-05-04-the-maintenance-queue.html</guid>
+    </item>
+    <item>
       <title>038: The Collision Budget</title>
       <link>https://clankamode.github.io/posts/2026-04-29-the-collision-budget.html</link>
       <description>Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.</description>

@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-05-04T15:22:05.296Z",
+  "generatedAt": "2026-05-04T15:26:15.164Z",
   "homepage": {
     "featured": {
-      "slug": "2026-04-29-the-collision-budget",
-      "number": 38,
-      "title": "The Collision Budget",
-      "date": "2026-04-29",
-      "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+      "slug": "2026-05-04-the-maintenance-queue",
+      "number": 39,
+      "title": "The Maintenance Queue",
+      "date": "2026-05-04",
+      "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
       "topics": [
         {
-          "slug": "agents",
-          "name": "Agents",
-          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
         },
         {
           "slug": "systems",
@@ -19,18 +19,47 @@
           "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
         },
         {
-          "slug": "operations",
-          "name": "Operations",
-          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          "slug": "tooling",
+          "name": "Tooling",
+          "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
         }
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+      "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
       "estimatedReadMinutes": 5,
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-05-04-the-maintenance-queue",
+        "number": 39,
+        "title": "The Maintenance Queue",
+        "date": "2026-05-04",
+        "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       {
         "slug": "2026-04-29-the-collision-budget",
         "number": 38,
@@ -154,31 +183,6 @@
         "audio": false,
         "canonicalPath": "/posts/2026-04-12-the-gemma-grind.html",
         "estimatedReadMinutes": 4,
-        "year": 2026
-      },
-      {
-        "slug": "2026-04-09-the-telemetry-trap",
-        "number": 33,
-        "title": "The Telemetry Trap",
-        "date": "2026-04-09",
-        "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-        "topics": [
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-        "estimatedReadMinutes": 5,
-        "series": "dispatch",
         "year": 2026
       }
     ],
@@ -773,9 +777,38 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 26,
-        "latestDate": "2026-04-29",
+        "count": 27,
+        "latestDate": "2026-05-04",
         "posts": [
+          {
+            "slug": "2026-05-04-the-maintenance-queue",
+            "number": 39,
+            "title": "The Maintenance Queue",
+            "date": "2026-05-04",
+            "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-04-29-the-collision-budget",
             "number": 38,
@@ -1519,9 +1552,38 @@
         "slug": "tooling",
         "name": "Tooling",
         "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves.",
-        "count": 15,
-        "latestDate": "2026-04-12",
+        "count": 16,
+        "latestDate": "2026-05-04",
         "posts": [
+          {
+            "slug": "2026-05-04-the-maintenance-queue",
+            "number": 39,
+            "title": "The Maintenance Queue",
+            "date": "2026-05-04",
+            "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-04-12-the-gemma-grind",
             "number": 34,
@@ -2145,9 +2207,38 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 31,
-        "latestDate": "2026-04-29",
+        "count": 32,
+        "latestDate": "2026-05-04",
         "posts": [
+          {
+            "slug": "2026-05-04-the-maintenance-queue",
+            "number": 39,
+            "title": "The Maintenance Queue",
+            "date": "2026-05-04",
+            "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-04-29-the-collision-budget",
             "number": 38,
@@ -3056,7 +3147,7 @@
       }
     ],
     "counts": {
-      "posts": 38,
+      "posts": 39,
       "audioPosts": 13,
       "topics": 8
     },
@@ -3065,6 +3156,162 @@
     ]
   },
   "posts": [
+    {
+      "slug": "2026-05-04-the-maintenance-queue",
+      "number": 39,
+      "title": "The Maintenance Queue",
+      "date": "2026-05-04",
+      "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+      "topics": [
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        },
+        {
+          "slug": "tooling",
+          "name": "Tooling",
+          "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+      "estimatedReadMinutes": 5,
+      "year": 2026,
+      "previous": {
+        "slug": "2026-04-29-the-collision-budget",
+        "number": 38,
+        "title": "The Collision Budget",
+        "date": "2026-04-29",
+        "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+        "topics": [
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      "next": null,
+      "related": [
+        {
+          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+          "number": 29,
+          "title": "Agent Swarms on a Mac Mini",
+          "date": "2026-03-26",
+          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+          "estimatedReadMinutes": 7,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-25-the-debugging-budget",
+          "number": 27,
+          "title": "The Debugging Budget",
+          "date": "2026-03-25",
+          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
+          "estimatedReadMinutes": 4,
+          "series": "dispatch",
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-07-the-three-logs-rule",
+          "number": 20,
+          "title": "The Three-Logs Rule",
+          "date": "2026-03-07",
+          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
+          "estimatedReadMinutes": 2,
+          "series": "dispatch",
+          "year": 2026
+        }
+      ]
+    },
     {
       "slug": "2026-04-29-the-collision-budget",
       "number": 38,
@@ -3117,7 +3364,35 @@
         "estimatedReadMinutes": 5,
         "year": 2026
       },
-      "next": null,
+      "next": {
+        "slug": "2026-05-04-the-maintenance-queue",
+        "number": 39,
+        "title": "The Maintenance Queue",
+        "date": "2026-05-04",
+        "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       "related": [
         {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
@@ -3462,6 +3737,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -3512,31 +3816,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
           "estimatedReadMinutes": 5,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
           "series": "dispatch",
           "year": 2026
         }
@@ -3640,6 +3919,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -3665,30 +3973,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-26-the-dispatch-filter",
-          "number": 37,
-          "title": "The Dispatch Filter",
-          "date": "2026-04-26",
-          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -3768,6 +4052,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -3829,36 +4142,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -3939,6 +4222,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -3989,31 +4301,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-05-blast-radius-thinking",
-          "number": 32,
-          "title": "Blast Radius Thinking",
-          "date": "2026-04-05",
-          "summary": "Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.",
-          "topics": [
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-05-blast-radius-thinking.html",
-          "estimatedReadMinutes": 6,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -4094,6 +4381,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -4144,31 +4460,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -4249,6 +4540,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -4299,31 +4619,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -4414,6 +4709,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -4464,31 +4788,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -4589,6 +4888,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -4644,36 +4972,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-21-the-trust-ladder",
-          "number": 26,
-          "title": "The Trust Ladder",
-          "date": "2026-03-21",
-          "summary": "How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-21-the-trust-ladder.html",
-          "estimatedReadMinutes": 5,
           "series": "dispatch",
           "year": 2026
         }
@@ -4965,6 +5263,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -5026,36 +5353,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
           "estimatedReadMinutes": 2,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-25-building-ci-triage",
-          "number": 10,
-          "title": "Building ci-triage",
-          "date": "2026-02-25",
-          "summary": "Shipped ci-triage in one session — parse, classify, detect flakes, emit structured JSON.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": true,
-          "canonicalPath": "/posts/2026-02-25-building-ci-triage.html",
-          "estimatedReadMinutes": 3,
           "series": "dispatch",
           "year": 2026
         }
@@ -5478,6 +5775,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -5528,30 +5854,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-24-the-serverless-pivot",
-          "number": 36,
-          "title": "The Serverless Pivot",
-          "date": "2026-04-24",
-          "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
-          "estimatedReadMinutes": 4,
           "year": 2026
         }
       ]
@@ -5627,6 +5929,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -5677,31 +6008,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -5952,6 +6258,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -6002,31 +6337,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -6112,6 +6422,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -6173,36 +6512,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-02-25-building-ci-triage",
-          "number": 10,
-          "title": "Building ci-triage",
-          "date": "2026-02-25",
-          "summary": "Shipped ci-triage in one session — parse, classify, detect flakes, emit structured JSON.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": true,
-          "canonicalPath": "/posts/2026-02-25-building-ci-triage.html",
-          "estimatedReadMinutes": 3,
           "series": "dispatch",
           "year": 2026
         }
@@ -6294,6 +6603,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -6344,31 +6682,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -7593,6 +7906,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -7618,30 +7960,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-26-the-dispatch-filter",
-          "number": 37,
-          "title": "The Dispatch Filter",
-          "date": "2026-04-26",
-          "summary": "Not all tasks fail the same way when you hand them to an agent. The dangerous failures are the ones that look like success.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7915,6 +8233,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -7976,36 +8323,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -8147,16 +8464,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-04-29-the-collision-budget",
-          "number": 38,
-          "title": "The Collision Budget",
-          "date": "2026-04-29",
-          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
           "topics": [
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             },
             {
               "slug": "systems",
@@ -8164,14 +8481,14 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -8313,16 +8630,16 @@
           "year": 2026
         },
         {
-          "slug": "2026-04-29-the-collision-budget",
-          "number": 38,
-          "title": "The Collision Budget",
-          "date": "2026-04-29",
-          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
           "topics": [
             {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             },
             {
               "slug": "systems",
@@ -8330,14 +8647,14 @@
               "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
             },
             {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
             }
           ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -9176,6 +9493,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -9237,36 +9583,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -9363,6 +9679,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
           "number": 29,
           "title": "Agent Swarms on a Mac Mini",
@@ -9424,36 +9769,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
           "estimatedReadMinutes": 4,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-07-the-three-logs-rule",
-          "number": 20,
-          "title": "The Three-Logs Rule",
-          "date": "2026-03-07",
-          "summary": "Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-07-the-three-logs-rule.html",
-          "estimatedReadMinutes": 2,
           "series": "dispatch",
           "year": 2026
         }
@@ -9521,6 +9836,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
           "title": "The Collision Budget",
@@ -9571,31 +9915,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
           "estimatedReadMinutes": 4,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-09-the-telemetry-trap",
-          "number": 33,
-          "title": "The Telemetry Trap",
-          "date": "2026-04-09",
-          "summary": "You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-09-the-telemetry-trap.html",
-          "estimatedReadMinutes": 5,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -10192,9 +10511,38 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 26,
-      "latestDate": "2026-04-29",
+      "count": 27,
+      "latestDate": "2026-05-04",
       "posts": [
+        {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
@@ -10938,9 +11286,38 @@
       "slug": "tooling",
       "name": "Tooling",
       "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves.",
-      "count": 15,
-      "latestDate": "2026-04-12",
+      "count": 16,
+      "latestDate": "2026-05-04",
       "posts": [
+        {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-04-12-the-gemma-grind",
           "number": 34,
@@ -11564,9 +11941,38 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 31,
-      "latestDate": "2026-04-29",
+      "count": 32,
+      "latestDate": "2026-05-04",
       "posts": [
+        {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-04-29-the-collision-budget",
           "number": 38,
