@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-04-the-maintenance-queue',
+    number: 39,
+    title: 'The Maintenance Queue',
+    date: '2026-05-04',
+    summary: 'Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.',
+    topics: ['operations', 'systems', 'tooling'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-05-04-the-maintenance-queue.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-04-29-the-collision-budget',
     number: 38,
     title: 'The Collision Budget',
