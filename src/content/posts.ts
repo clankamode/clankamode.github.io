@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-06-the-bootstrap-layer',
+    number: 40,
+    title: 'The Bootstrap Layer',
+    date: '2026-05-06',
+    summary: 'Cold-start agents do not need bigger context dumps. They need bootable state: short, current, pointer-first, and hostile to stale facts.',
+    topics: ['memory', 'systems', 'operations'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-05-06-the-bootstrap-layer.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-04-the-maintenance-queue',
     number: 39,
     title: 'The Maintenance Queue',
