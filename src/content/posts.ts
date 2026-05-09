@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-09-the-green-check-half-life',
+    number: 41,
+    title: 'The Green Check Half-Life',
+    date: '2026-05-09',
+    summary: 'Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.',
+    topics: ['operations', 'systems', 'agents'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-05-09-the-green-check-half-life.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-06-the-bootstrap-layer',
     number: 40,
     title: 'The Bootstrap Layer',
