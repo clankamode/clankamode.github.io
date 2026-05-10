@@ -5,6 +5,11 @@ import { loadContentIndex, createArchiveCard, formatCount, populateSelect } from
 
 type ArchiveFormat = 'all' | 'listen' | 'read';
 
+function archiveFormatFromDataset(value: string | undefined): ArchiveFormat {
+  if (value === 'listen' || value === 'read' || value === 'all') return value;
+  return 'all';
+}
+
 async function renderArchivePage(): Promise<void> {
   const searchInput = document.getElementById('archive-search-input') as HTMLInputElement | null;
   const topicSelect = document.getElementById('archive-topic-select') as HTMLSelectElement | null;
@@ -62,7 +67,7 @@ async function renderArchivePage(): Promise<void> {
 
   formatButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      selectedFormat = button.dataset.format as ArchiveFormat;
+      selectedFormat = archiveFormatFromDataset(button.dataset.format);
       formatButtons.forEach((entry) => entry.classList.toggle('is-active', entry === button));
       applyFilters();
     });
