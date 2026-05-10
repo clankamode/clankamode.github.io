@@ -7,7 +7,12 @@ async function renderTopicPage(): Promise<void> {
   const slug = document.body.dataset.topicSlug;
   if (!slug) return;
 
-  const contentIndex = await loadContentIndex();
+  let contentIndex;
+  try {
+    contentIndex = await loadContentIndex();
+  } catch {
+    return;
+  }
   const topic = contentIndex.topics.find((entry) => entry.slug === slug);
   const description = document.getElementById('topic-description');
   const count = document.getElementById('topic-count');

@@ -15,7 +15,15 @@ export async function renderHomepageContent(): Promise<void> {
   const audioCount = document.getElementById('stat-audio-posts');
   const archiveCta = document.getElementById('logs-archive-link-count');
 
-  const { featured, recent, topics, counts } = (await loadContentIndex()).homepage;
+  let featured;
+  let recent;
+  let topics;
+  let counts;
+  try {
+    ({ featured, recent, topics, counts } = (await loadContentIndex()).homepage);
+  } catch {
+    return;
+  }
 
   if (featuredHost && featured) {
     featuredHost.textContent = '';

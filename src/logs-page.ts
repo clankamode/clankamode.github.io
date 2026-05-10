@@ -17,7 +17,13 @@ async function renderArchivePage(): Promise<void> {
     return;
   }
 
-  const contentIndex = await loadContentIndex();
+  let contentIndex;
+  try {
+    contentIndex = await loadContentIndex();
+  } catch {
+    resultsCount.textContent = 'archive unavailable';
+    return;
+  }
 
   populateSelect(topicSelect, [
     { value: 'all', label: 'all topics' },

@@ -99,8 +99,9 @@ npm run preview    # preview built output
 
 Validation and full checks:
 ```bash
+npm run typecheck   # TypeScript (tsc --noEmit)
 npm run test        # Playwright e2e suite
-npm run verify      # generate content + content tests + build + Playwright
+npm run verify      # generate + content tests + typecheck + build + Playwright
 ```
 
 Post structure:
