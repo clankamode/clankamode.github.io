@@ -1,3 +1,5 @@
+import type { ContentPost, ContentPostSummary } from './content-index';
+
 export { loadContentIndex, type ContentPost, type ContentTopic } from './content-index';
 
 function createMetaBadge(label: string): HTMLSpanElement {
@@ -60,7 +62,7 @@ export function createArchiveCard(post: ContentPost): HTMLElement {
   return article;
 }
 
-export function createCompactLogRow(post: ContentPost): HTMLElement {
+export function createCompactLogRow(post: ContentPostSummary): HTMLElement {
   const row = document.createElement('div');
   row.className = 'row archive-preview-row';
 

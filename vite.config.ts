@@ -1,7 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { OutputChunk } from 'rollup';
 import { defineConfig, type Plugin } from 'vite';
+
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 function injectMainModulePreload(): Plugin {
   return {
@@ -25,7 +28,7 @@ function injectMainModulePreload(): Plugin {
 
 function topicInputs(): Record<string, string> {
   const inputs: Record<string, string> = {};
-  const topicsDir = path.resolve(__dirname, 'topics');
+  const topicsDir = path.resolve(rootDir, 'topics');
 
   if (!fs.existsSync(topicsDir)) {
     return inputs;
@@ -50,9 +53,9 @@ export default defineConfig({
     target: 'es2020',
     rollupOptions: {
       input: {
-        main: path.resolve(__dirname, 'index.html'),
-        now: path.resolve(__dirname, 'now.html'),
-        logs: path.resolve(__dirname, 'logs/index.html'),
+        main: path.resolve(rootDir, 'index.html'),
+        now: path.resolve(rootDir, 'now.html'),
+        logs: path.resolve(rootDir, 'logs/index.html'),
         ...topicInputs(),
       },
     },

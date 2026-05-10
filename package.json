@@ -11,8 +11,9 @@
     "preview": "vite preview",
     "pretest": "npm run generate:content && npm run test:content",
     "test:content": "node --test tests/content-index.test.mjs",
+    "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "verify": "npm run generate:content && npm run test:content && npm run build && playwright test"
+    "verify": "npm run generate:content && npm run test:content && npm run typecheck && npm run build && playwright test"
   },
   "dependencies": {
     "lit": "^3.3.0",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
+    "@types/node": "^22.19.18",
     "@types/uuid": "^10.0.0",
     "typescript": "^5.9.2",
     "vite": "^7.3.2"

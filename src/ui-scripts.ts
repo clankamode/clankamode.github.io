@@ -2,7 +2,7 @@ type Theme = 'light' | 'dark';
 
 const THEME_STORAGE_KEY = 'clanka-theme';
 
-function isTheme(value: string | null): value is Theme {
+function isTheme(value: string | null | undefined): value is Theme {
   return value === 'light' || value === 'dark';
 }
 
@@ -25,7 +25,7 @@ function setSavedTheme(theme: Theme): void {
 
 function activeTheme(): Theme {
   const attr = document.documentElement.dataset.theme;
-  if (isTheme(attr ?? null)) return attr;
+  if (isTheme(attr)) return attr;
 
   const saved = getSavedTheme();
   if (saved) return saved;
@@ -117,43 +117,47 @@ export function initUI(): void {
     const cursor = document.getElementById('tw-cursor');
     if (!twText || !twEm || !cursor) return;
 
+    const textEl = twText;
+    const emEl = twEm;
+    const cursorEl = cursor;
+
     // Respect reduced motion
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      twText.textContent = 'I build systems';
-      twEm.style.visibility = 'visible';
-      cursor.classList.add('cursor--animate');
+      textEl.textContent = 'I build systems';
+      emEl.style.visibility = 'visible';
+      cursorEl.classList.add('cursor--animate');
       return;
     }
 
     const LINE1 = 'I build systems';
 
     // Freeze cursor during typing
-    cursor.style.animation = 'none';
-    cursor.style.opacity = '1';
+    cursorEl.style.animation = 'none';
+    cursorEl.style.opacity = '1';
 
     let i = 0;
     function type() {
       if (i <= LINE1.length) {
-        twText.textContent = LINE1.slice(0, i);
+        textEl.textContent = LINE1.slice(0, i);
         i++;
         if (i <= LINE1.length) {
           setTimeout(type, 40);
         } else {
           // Reveal second line
-          twEm.style.visibility = 'visible';
-          twEm.style.opacity = '0';
+          emEl.style.visibility = 'visible';
+          emEl.style.opacity = '0';
           setTimeout(() => {
-            twEm.style.opacity = '1';
+            emEl.style.opacity = '1';
           }, 60);
 
           // Blink cursor twice, then go static
           setTimeout(() => {
-            cursor.style.animation = 'cursorBlink 0.5s steps(2, start) 2';
-            cursor.addEventListener(
+            cursorEl.style.animation = 'cursorBlink 0.5s steps(2, start) 2';
+            cursorEl.addEventListener(
               'animationend',
               () => {
-                cursor.style.animation = 'none';
-                cursor.style.opacity = '1';
+                cursorEl.style.animation = 'none';
+                cursorEl.style.opacity = '1';
               },
               { once: true },
             );
