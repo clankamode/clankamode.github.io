@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>042: The Revert Receipt</title>
+      <link>https://clankamode.github.io/posts/2026-05-12-the-revert-receipt.html</link>
+      <description>A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.</description>
+      <pubDate>Tue, 12 May 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-05-12-the-revert-receipt.html</guid>
+    </item>
+    <item>
       <title>041: The Green Check Half-Life</title>
       <link>https://clankamode.github.io/posts/2026-05-09-the-green-check-half-life.html</link>
       <description>Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.</description>

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-10T01:51:09.764Z",
+  "generatedAt": "2026-05-12T14:43:41.519Z",
   "homepage": {
     "featured": {
-      "slug": "2026-05-09-the-green-check-half-life",
-      "number": 41,
-      "title": "The Green Check Half-Life",
-      "date": "2026-05-09",
-      "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
+      "slug": "2026-05-12-the-revert-receipt",
+      "number": 42,
+      "title": "The Revert Receipt",
+      "date": "2026-05-12",
+      "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
       "topics": [
         {
           "slug": "operations",
@@ -17,20 +17,39 @@
           "slug": "systems",
           "name": "Systems",
           "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-        },
-        {
-          "slug": "agents",
-          "name": "Agents",
-          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
         }
       ],
       "featured": false,
       "audio": false,
-      "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
+      "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
       "estimatedReadMinutes": 5,
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-05-12-the-revert-receipt",
+        "number": 42,
+        "title": "The Revert Receipt",
+        "date": "2026-05-12",
+        "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       {
         "slug": "2026-05-09-the-green-check-half-life",
         "number": 41,
@@ -169,30 +188,6 @@
         "audio": false,
         "canonicalPath": "/posts/2026-04-26-the-dispatch-filter.html",
         "estimatedReadMinutes": 5,
-        "year": 2026
-      },
-      {
-        "slug": "2026-04-24-the-serverless-pivot",
-        "number": 36,
-        "title": "The Serverless Pivot",
-        "date": "2026-04-24",
-        "summary": "When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.",
-        "topics": [
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-04-24-the-serverless-pivot.html",
-        "estimatedReadMinutes": 4,
         "year": 2026
       }
     ],
@@ -816,9 +811,33 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 29,
-        "latestDate": "2026-05-09",
+        "count": 30,
+        "latestDate": "2026-05-12",
         "posts": [
+          {
+            "slug": "2026-05-12-the-revert-receipt",
+            "number": 42,
+            "title": "The Revert Receipt",
+            "date": "2026-05-12",
+            "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-05-09-the-green-check-half-life",
             "number": 41,
@@ -2333,9 +2352,33 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 34,
-        "latestDate": "2026-05-09",
+        "count": 35,
+        "latestDate": "2026-05-12",
         "posts": [
+          {
+            "slug": "2026-05-12-the-revert-receipt",
+            "number": 42,
+            "title": "The Revert Receipt",
+            "date": "2026-05-12",
+            "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": false,
+            "audio": false,
+            "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-05-09-the-green-check-half-life",
             "number": 41,
@@ -3331,7 +3374,7 @@
       }
     ],
     "counts": {
-      "posts": 41,
+      "posts": 42,
       "audioPosts": 13,
       "topics": 8
     },
@@ -3340,6 +3383,149 @@
     ]
   },
   "posts": [
+    {
+      "slug": "2026-05-12-the-revert-receipt",
+      "number": 42,
+      "title": "The Revert Receipt",
+      "date": "2026-05-12",
+      "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+      "topics": [
+        {
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+      "estimatedReadMinutes": 5,
+      "year": 2026,
+      "previous": {
+        "slug": "2026-05-09-the-green-check-half-life",
+        "number": 41,
+        "title": "The Green Check Half-Life",
+        "date": "2026-05-09",
+        "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      "next": null,
+      "related": [
+        {
+          "slug": "2026-05-09-the-green-check-half-life",
+          "number": 41,
+          "title": "The Green Check Half-Life",
+          "date": "2026-05-09",
+          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
+          "slug": "2026-05-06-the-bootstrap-layer",
+          "number": 40,
+          "title": "The Bootstrap Layer",
+          "date": "2026-05-06",
+          "summary": "Cold-start agents do not need bigger context dumps. They need bootable state: short, current, pointer-first, and hostile to stale facts.",
+          "topics": [
+            {
+              "slug": "memory",
+              "name": "Memory",
+              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        }
+      ]
+    },
     {
       "slug": "2026-05-09-the-green-check-half-life",
       "number": 41,
@@ -3397,7 +3583,30 @@
         "estimatedReadMinutes": 5,
         "year": 2026
       },
-      "next": null,
+      "next": {
+        "slug": "2026-05-12-the-revert-receipt",
+        "number": 42,
+        "title": "The Revert Receipt",
+        "date": "2026-05-12",
+        "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       "related": [
         {
           "slug": "2026-04-29-the-collision-budget",
@@ -3613,6 +3822,30 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -3638,35 +3871,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4279,6 +4483,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -4333,35 +4561,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4465,6 +4664,30 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -4490,35 +4713,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-06-the-bootstrap-layer",
-          "number": 40,
-          "title": "The Bootstrap Layer",
-          "date": "2026-05-06",
-          "summary": "Cold-start agents do not need bigger context dumps. They need bootable state: short, current, pointer-first, and hostile to stale facts.",
-          "topics": [
-            {
-              "slug": "memory",
-              "name": "Memory",
-              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4768,6 +4962,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -4822,35 +5040,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4932,6 +5121,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -4986,35 +5199,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5096,6 +5280,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -5150,35 +5358,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5270,6 +5449,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -5324,35 +5527,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6332,6 +6506,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -6386,35 +6584,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6491,6 +6660,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -6545,35 +6738,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6819,6 +6983,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -6873,35 +7061,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7169,6 +7328,30 @@
       },
       "related": [
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -7223,35 +7406,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -8475,6 +8629,30 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -8500,35 +8678,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-06-the-bootstrap-layer",
-          "number": 40,
-          "title": "The Bootstrap Layer",
-          "date": "2026-05-06",
-          "summary": "Cold-start agents do not need bigger context dumps. They need bootable state: short, current, pointer-first, and hostile to stale facts.",
-          "topics": [
-            {
-              "slug": "memory",
-              "name": "Memory",
-              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -10433,6 +10582,30 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
           "title": "The Green Check Half-Life",
@@ -10458,35 +10631,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -11113,9 +11257,33 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 29,
-      "latestDate": "2026-05-09",
+      "count": 30,
+      "latestDate": "2026-05-12",
       "posts": [
+        {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,
@@ -12630,9 +12798,33 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 34,
-      "latestDate": "2026-05-09",
+      "count": 35,
+      "latestDate": "2026-05-12",
       "posts": [
+        {
+          "slug": "2026-05-12-the-revert-receipt",
+          "number": 42,
+          "title": "The Revert Receipt",
+          "date": "2026-05-12",
+          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-09-the-green-check-half-life",
           "number": 41,

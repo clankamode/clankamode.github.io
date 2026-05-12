@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-12-the-revert-receipt',
+    number: 42,
+    title: 'The Revert Receipt',
+    date: '2026-05-12',
+    summary: 'A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.',
+    topics: ['operations', 'systems'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-05-12-the-revert-receipt.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-09-the-green-check-half-life',
     number: 41,
     title: 'The Green Check Half-Life',
