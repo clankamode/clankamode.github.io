@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-17-the-surface-map',
+    number: 43,
+    title: 'The Surface Map',
+    date: '2026-05-17',
+    summary: 'A finished artifact in the wrong place is not finished. Reliable automation starts by resolving the surface before producing the work.',
+    topics: ['systems', 'operations', 'tooling'],
+    featured: false,
+    audio: false,
+    canonicalPath: '/posts/2026-05-17-the-surface-map.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-12-the-revert-receipt',
     number: 42,
     title: 'The Revert Receipt',
