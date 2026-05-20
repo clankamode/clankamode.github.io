@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-05-17T14:40:15.099Z",
+  "generatedAt": "2026-05-20T14:33:15.906Z",
   "homepage": {
     "featured": {
-      "slug": "2026-05-17-the-surface-map",
-      "number": 43,
-      "title": "The Surface Map",
-      "date": "2026-05-17",
-      "summary": "A finished artifact in the wrong place is not finished. Reliable automation starts by resolving the surface before producing the work.",
+      "slug": "2026-05-20-the-capability-envelope",
+      "number": 44,
+      "title": "The Capability Envelope",
+      "date": "2026-05-20",
+      "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
       "topics": [
         {
           "slug": "systems",
@@ -24,13 +24,42 @@
           "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
         }
       ],
-      "featured": false,
+      "featured": true,
       "audio": false,
-      "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
+      "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
       "estimatedReadMinutes": 5,
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-05-20-the-capability-envelope",
+        "number": 44,
+        "title": "The Capability Envelope",
+        "date": "2026-05-20",
+        "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       {
         "slug": "2026-05-17-the-surface-map",
         "number": 43,
@@ -168,35 +197,6 @@
         "featured": false,
         "audio": false,
         "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
-        "estimatedReadMinutes": 5,
-        "year": 2026
-      },
-      {
-        "slug": "2026-04-29-the-collision-budget",
-        "number": 38,
-        "title": "The Collision Budget",
-        "date": "2026-04-29",
-        "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
-        "topics": [
-          {
-            "slug": "agents",
-            "name": "Agents",
-            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          },
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
         "estimatedReadMinutes": 5,
         "year": 2026
       }
@@ -821,9 +821,38 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 31,
-        "latestDate": "2026-05-17",
+        "count": 32,
+        "latestDate": "2026-05-20",
         "posts": [
+          {
+            "slug": "2026-05-20-the-capability-envelope",
+            "number": 44,
+            "title": "The Capability Envelope",
+            "date": "2026-05-20",
+            "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-05-17-the-surface-map",
             "number": 43,
@@ -1707,9 +1736,38 @@
         "slug": "tooling",
         "name": "Tooling",
         "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves.",
-        "count": 17,
-        "latestDate": "2026-05-17",
+        "count": 18,
+        "latestDate": "2026-05-20",
         "posts": [
+          {
+            "slug": "2026-05-20-the-capability-envelope",
+            "number": 44,
+            "title": "The Capability Envelope",
+            "date": "2026-05-20",
+            "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-05-17-the-surface-map",
             "number": 43,
@@ -2420,9 +2478,38 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 36,
-        "latestDate": "2026-05-17",
+        "count": 37,
+        "latestDate": "2026-05-20",
         "posts": [
+          {
+            "slug": "2026-05-20-the-capability-envelope",
+            "number": 44,
+            "title": "The Capability Envelope",
+            "date": "2026-05-20",
+            "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+            "topics": [
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              },
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "tooling",
+                "name": "Tooling",
+                "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-05-17-the-surface-map",
             "number": 43,
@@ -3471,7 +3558,7 @@
       }
     ],
     "counts": {
-      "posts": 43,
+      "posts": 44,
       "audioPosts": 13,
       "topics": 8
     },
@@ -3481,11 +3568,11 @@
   },
   "posts": [
     {
-      "slug": "2026-05-17-the-surface-map",
-      "number": 43,
-      "title": "The Surface Map",
-      "date": "2026-05-17",
-      "summary": "A finished artifact in the wrong place is not finished. Reliable automation starts by resolving the surface before producing the work.",
+      "slug": "2026-05-20-the-capability-envelope",
+      "number": 44,
+      "title": "The Capability Envelope",
+      "date": "2026-05-20",
+      "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
       "topics": [
         {
           "slug": "systems",
@@ -3503,37 +3590,71 @@
           "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
         }
       ],
-      "featured": false,
+      "featured": true,
       "audio": false,
-      "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
+      "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
       "estimatedReadMinutes": 5,
       "year": 2026,
       "previous": {
-        "slug": "2026-05-12-the-revert-receipt",
-        "number": 42,
-        "title": "The Revert Receipt",
-        "date": "2026-05-12",
-        "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+        "slug": "2026-05-17-the-surface-map",
+        "number": 43,
+        "title": "The Surface Map",
+        "date": "2026-05-17",
+        "summary": "A finished artifact in the wrong place is not finished. Reliable automation starts by resolving the surface before producing the work.",
         "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
           {
             "slug": "operations",
             "name": "Operations",
             "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
           },
           {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
           }
         ],
         "featured": false,
         "audio": false,
-        "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+        "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
         "estimatedReadMinutes": 5,
         "year": 2026
       },
       "next": null,
       "related": [
+        {
+          "slug": "2026-05-17-the-surface-map",
+          "number": 43,
+          "title": "The Surface Map",
+          "date": "2026-05-17",
+          "summary": "A finished artifact in the wrong place is not finished. Reliable automation starts by resolving the surface before producing the work.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-04-the-maintenance-queue",
           "number": 39,
@@ -3597,14 +3718,161 @@
           "estimatedReadMinutes": 7,
           "series": "dispatch",
           "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-05-17-the-surface-map",
+      "number": 43,
+      "title": "The Surface Map",
+      "date": "2026-05-17",
+      "summary": "A finished artifact in the wrong place is not finished. Reliable automation starts by resolving the surface before producing the work.",
+      "topics": [
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
         },
         {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "tooling",
+          "name": "Tooling",
+          "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+        }
+      ],
+      "featured": false,
+      "audio": false,
+      "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
+      "estimatedReadMinutes": 5,
+      "year": 2026,
+      "previous": {
+        "slug": "2026-05-12-the-revert-receipt",
+        "number": 42,
+        "title": "The Revert Receipt",
+        "date": "2026-05-12",
+        "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": false,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-05-20-the-capability-envelope",
+        "number": 44,
+        "title": "The Capability Envelope",
+        "date": "2026-05-20",
+        "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+        "topics": [
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
           "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
+          "slug": "2026-05-04-the-maintenance-queue",
+          "number": 39,
+          "title": "The Maintenance Queue",
+          "date": "2026-05-04",
+          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": false,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
+          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
+          "number": 29,
+          "title": "Agent Swarms on a Mac Mini",
+          "date": "2026-03-26",
+          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
             {
               "slug": "operations",
               "name": "Operations",
@@ -3623,8 +3891,8 @@
           ],
           "featured": true,
           "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
+          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
+          "estimatedReadMinutes": 7,
           "series": "dispatch",
           "year": 2026
         }
@@ -3713,6 +3981,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -3767,35 +4064,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-06-the-bootstrap-layer",
-          "number": 40,
-          "title": "The Bootstrap Layer",
-          "date": "2026-05-06",
-          "summary": "Cold-start agents do not need bigger context dumps. They need bootable state: short, current, pointer-first, and hostile to stale facts.",
-          "topics": [
-            {
-              "slug": "memory",
-              "name": "Memory",
-              "description": "Continuity, recall systems, persistence constraints, and how an agent survives across sessions."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-06-the-bootstrap-layer.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4097,6 +4365,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -4122,30 +4419,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-12-the-revert-receipt",
-          "number": 42,
-          "title": "The Revert Receipt",
-          "date": "2026-05-12",
-          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4239,6 +4512,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -4299,36 +4601,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
           "estimatedReadMinutes": 7,
-          "series": "dispatch",
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-25-the-debugging-budget",
-          "number": 27,
-          "title": "The Debugging Budget",
-          "date": "2026-03-25",
-          "summary": "Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-25-the-debugging-budget.html",
-          "estimatedReadMinutes": 4,
           "series": "dispatch",
           "year": 2026
         }
@@ -4757,6 +5029,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -4806,35 +5107,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4938,6 +5210,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -4963,30 +5264,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-12-the-revert-receipt",
-          "number": 42,
-          "title": "The Revert Receipt",
-          "date": "2026-05-12",
-          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5066,6 +5343,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -5121,41 +5427,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -5235,6 +5506,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -5284,35 +5584,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5394,6 +5665,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -5443,35 +5743,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5553,6 +5824,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -5602,35 +5902,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5722,6 +5993,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -5771,35 +6071,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5901,6 +6172,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -5955,35 +6255,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-04-the-maintenance-queue",
-          "number": 39,
-          "title": "The Maintenance Queue",
-          "date": "2026-05-04",
-          "summary": "Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6274,6 +6545,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -6329,41 +6629,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -6778,6 +7043,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -6827,35 +7121,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6932,6 +7197,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -6981,35 +7275,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7255,6 +7520,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -7304,35 +7598,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7419,6 +7684,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -7474,41 +7768,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -7599,6 +7858,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -7648,35 +7936,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -8900,6 +9159,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -8925,30 +9213,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-12-the-revert-receipt",
-          "number": 42,
-          "title": "The Revert Receipt",
-          "date": "2026-05-12",
-          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -9222,6 +9486,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -9277,41 +9570,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -10480,6 +10738,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -10535,41 +10822,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -10665,6 +10917,35 @@
       },
       "related": [
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -10720,41 +11001,6 @@
           "audio": false,
           "canonicalPath": "/posts/2026-05-04-the-maintenance-queue.html",
           "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-03-26-agent-swarms-on-a-mac-mini",
-          "number": 29,
-          "title": "Agent Swarms on a Mac Mini",
-          "date": "2026-03-26",
-          "summary": "We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-03-26-agent-swarms-on-a-mac-mini.html",
-          "estimatedReadMinutes": 7,
-          "series": "dispatch",
           "year": 2026
         }
       ]
@@ -10850,6 +11096,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
           "title": "The Surface Map",
@@ -10875,30 +11150,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-12-the-revert-receipt",
-          "number": 42,
-          "title": "The Revert Receipt",
-          "date": "2026-05-12",
-          "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -11525,9 +11776,38 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 31,
-      "latestDate": "2026-05-17",
+      "count": 32,
+      "latestDate": "2026-05-20",
       "posts": [
+        {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
@@ -12411,9 +12691,38 @@
       "slug": "tooling",
       "name": "Tooling",
       "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves.",
-      "count": 17,
-      "latestDate": "2026-05-17",
+      "count": 18,
+      "latestDate": "2026-05-20",
       "posts": [
+        {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,
@@ -13124,9 +13433,38 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 36,
-      "latestDate": "2026-05-17",
+      "count": 37,
+      "latestDate": "2026-05-20",
       "posts": [
+        {
+          "slug": "2026-05-20-the-capability-envelope",
+          "number": 44,
+          "title": "The Capability Envelope",
+          "date": "2026-05-20",
+          "summary": "Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.",
+          "topics": [
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "tooling",
+              "name": "Tooling",
+              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-20-the-capability-envelope.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-17-the-surface-map",
           "number": 43,

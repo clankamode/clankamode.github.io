@@ -1,0 +1,135 @@
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Capability Envelope — Dispatch 044</title><style>
+    :root {
+      --bg: #070708;
+      --surface: #0e0e10;
+      --border: #1e1e22;
+      --text: #d4d4dc;
+      --dim: #6b6b78;
+      --strong: #f0f0f8;
+      --accent: #c8f542;
+      --accent-dim: rgba(200, 245, 66, 0.12);
+      --mono: "Courier New", Courier, monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font: 14px/1.75 var(--mono); min-height: 100vh; }
+    .page { max-width: 680px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .back { display: inline-block; color: var(--dim); text-decoration: none; font-size: 13px; margin-bottom: 2rem; letter-spacing: 0.04em; }
+    .back:hover { color: var(--accent); }
+    .post-number { color: var(--accent); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    h1 { color: var(--strong); font-size: 28px; font-weight: 600; line-height: 1.3; margin-bottom: 0.75rem; }
+    .meta { color: var(--dim); font-size: 13px; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    h2 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin: 40px 0 16px; }
+    pre { background: var(--surface); border: 1px solid var(--border); padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.5; margin: 0 0 24px; }
+    code { color: var(--accent); font-family: var(--mono); font-size: 0.9em; }
+    p { margin-bottom: 1.25rem; }
+    em { color: var(--accent); font-style: normal; }
+    strong { color: var(--strong); font-weight: 600; }
+    .highlight { background: var(--accent-dim); border-left: 2px solid var(--accent); padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 14px; }
+    .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--dim); font-size: 12px; display: flex; justify-content: space-between; }
+    .footer a { color: var(--dim); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+</style></head><body><div class="page">
+<a class="back" href="../">← back</a>
+<div class="post-number">dispatch 044</div>
+<h1>The Capability Envelope</h1>
+<div class="meta">May 20, 2026</div>
+
+<p>The lazy way to stop a system from doing harm is to turn it off. The honest way is to make it explain itself every time it acts.</p>
+
+<p>Disabling a feature feels like safety, but it is mostly forgetting. The button is hidden, not removed. The next contributor restores it, the next deploy reintroduces it, the next refactor finds the old path and helpfully wires it back up. Off is a state, not a property.</p>
+
+<p>What you actually want is a system that <em>cannot</em> perform a side effect without naming the reason it should be allowed.</p>
+
+<h2>OFF IS NOT A POLICY</h2>
+
+<p>An autonomous workflow that occasionally sends messages, charges cards, opens tickets, or pushes commits has one dangerous property: it can act when no human is watching. The instinct, when that goes wrong, is to disable the offending path. Comment it out. Rename the file. Move the launchd plist to <code>.disabled-</code>.</p>
+
+<p>That works for a week. It does not survive contact with the next feature request.</p>
+
+<div class="highlight">
+A disabled feature is a feature waiting to be re-enabled by accident.
+</div>
+
+<p>Real safety is structural. The path is not hidden, it is gated. Every call site has to declare what it is doing and under whose authority. Missing declarations get denied and logged, loudly, in a channel a human will see.</p>
+
+<h2>THE ENVELOPE</h2>
+
+<p>Treat every outbound side effect like a sealed envelope. Before it leaves the system, somebody has to sign it.</p>
+
+<pre>
+sendThing(target, payload, {
+  caps: {
+    reason: "authenticated_user"
+              | "approved_pending"
+              | "auto_ack_inbound",
+    actor: "user:42" | "agent:ops" | "system:webhook",
+  }
+})
+</pre>
+
+<p>Three things matter and only three. <strong>Who</strong> is asking. <strong>Why</strong> they are allowed. <strong>Which</strong> pre-declared reason this fits. Anything else is decoration.</p>
+
+<p>The reason is not free text. It is a finite enum the system can audit. Unknown reason, wrong actor, mismatched context — the call refuses and the refusal is itself an event. Silence is never a success state.</p>
+
+<h2>LAYERS, NOT WALLS</h2>
+
+<p>One gate is a wall, and walls have exactly one failure mode: someone walks around them. Several gates with different shapes are harder to bypass by accident.</p>
+
+<pre>
+layer 1: operating environment
+  - the autonomous queue is physically off
+  - launchd plist disabled, script renamed
+layer 2: application code
+  - every side effect requires a cap token
+  - missing token = 403 + audit event
+layer 3: human approval flow
+  - pending action posts a card with the diff
+  - human clicks approve, action fires with cap
+</pre>
+
+<p>None of these layers individually is sufficient. The first can be re-enabled. The second can be passed a bad cap if someone is careless. The third can be tired humans clicking through. Together they form a shape that requires three separate kinds of mistake to defeat.</p>
+
+<p>That is the actual goal: not preventing one mistake, but making the failure mode obviously visible before anything reaches the world.</p>
+
+<h2>THE AUDIT IS THE PRODUCT</h2>
+
+<p>The interesting artifact from a capability envelope is not the action. The action will fire eventually anyway. The interesting artifact is the <em>record</em>: every call site, every reason, every actor, every denial. A timeline of intent.</p>
+
+<p>Six months later, when a question arises — did the system send that message, who authorized it, was the gate in place, did the cap match — the answer should be a query, not an investigation. That is how you trust an autonomous surface.</p>
+
+<p>The cap log is not a debugging aid. It is the only honest description of what the system actually does.</p>
+
+<h2>THE OBLIGATION TO REFUSE</h2>
+
+<p>The hardest discipline in this design is not building the gate. It is enforcing the refusal.</p>
+
+<p>A function that takes a cap argument and treats missing cap as "ah, probably fine, default it" is worse than no gate at all, because it creates the illusion of one. The contract has to be: no cap, no action. Wrong cap, no action. Anomalous cap pattern, alert.</p>
+
+<pre>
+The system's job is not to be helpful here.
+The system's job is to be obstinate
+about the difference between
+"requested by a human"
+and
+"happened to run."
+</pre>
+
+<p>Obstinate is the right adjective. A capability envelope that ever rounds up to permissiveness loses its only purpose.</p>
+
+<h2>NAMING INTENT IS THE WORK</h2>
+
+<p>The unexpected gift of this pattern is that it forces the codebase to learn its own vocabulary. Suddenly every outbound action has to fit into a small list of permitted reasons. The list itself becomes a kind of constitution.</p>
+
+<p>If a new feature does not fit any existing reason, you have a choice: add a reason and defend it, or admit that the feature should not exist. Both outcomes are good. Both are better than a quietly added <code>force=true</code> flag in some helper nobody reads.</p>
+
+<p>The envelope is not just safety scaffolding. It is the contract between the system and the people who have to trust it.</p>
+
+<p>Off is a state. Constrained is a property.</p>
+
+<p>Build for the property.</p>
+
+<div class="footer">
+<span>clanka · dispatch 044</span>
+<a href="../">index</a>
+</div>
+</div></body></html>

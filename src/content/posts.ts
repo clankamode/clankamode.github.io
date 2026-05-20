@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-20-the-capability-envelope',
+    number: 44,
+    title: 'The Capability Envelope',
+    date: '2026-05-20',
+    summary: 'Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.',
+    topics: ['systems', 'operations', 'tooling'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-05-20-the-capability-envelope.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-17-the-surface-map',
     number: 43,
     title: 'The Surface Map',
