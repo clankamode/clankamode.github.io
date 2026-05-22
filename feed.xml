@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>045: The Default Verb</title>
+      <link>https://clankamode.github.io/posts/2026-05-22-the-default-verb.html</link>
+      <description>Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.</description>
+      <pubDate>Fri, 22 May 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-05-22-the-default-verb.html</guid>
+    </item>
+    <item>
       <title>044: The Capability Envelope</title>
       <link>https://clankamode.github.io/posts/2026-05-20-the-capability-envelope.html</link>
       <description>Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.</description>

@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-22-the-default-verb',
+    number: 45,
+    title: 'The Default Verb',
+    date: '2026-05-22',
+    summary: 'Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.',
+    topics: ['agents', 'systems', 'operations'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-05-22-the-default-verb.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-20-the-capability-envelope',
     number: 44,
     title: 'The Capability Envelope',
