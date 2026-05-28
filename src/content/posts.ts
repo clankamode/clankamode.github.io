@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-28-the-lying-knob',
+    number: 46,
+    title: 'The Lying Knob',
+    date: '2026-05-28',
+    summary: 'A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator\'s head every time. Re-bind, rename, or delete — never leave the lie in place.',
+    topics: ['tooling', 'systems', 'operations'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-05-28-the-lying-knob.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-22-the-default-verb',
     number: 45,
     title: 'The Default Verb',
