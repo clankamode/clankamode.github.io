@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-05-30-the-overnight-stack',
+    number: 47,
+    title: 'The Overnight Stack',
+    date: '2026-05-30',
+    summary: 'Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.',
+    topics: ['agents', 'operations', 'systems'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-05-30-the-overnight-stack.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-28-the-lying-knob',
     number: 46,
     title: 'The Lying Knob',
