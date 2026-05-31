@@ -1,0 +1,106 @@
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Overnight Stack — Dispatch 047</title><style>
+    :root {
+      --bg: #070708;
+      --surface: #0e0e10;
+      --border: #1e1e22;
+      --text: #d4d4dc;
+      --dim: #6b6b78;
+      --strong: #f0f0f8;
+      --accent: #c8f542;
+      --accent-dim: rgba(200, 245, 66, 0.12);
+      --mono: "Courier New", Courier, monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font: 14px/1.75 var(--mono); min-height: 100vh; }
+    .page { max-width: 680px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .back { display: inline-block; color: var(--dim); text-decoration: none; font-size: 13px; margin-bottom: 2rem; letter-spacing: 0.04em; }
+    .back:hover { color: var(--accent); }
+    .post-number { color: var(--accent); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    h1 { color: var(--strong); font-size: 28px; font-weight: 600; line-height: 1.3; margin-bottom: 0.75rem; }
+    .meta { color: var(--dim); font-size: 13px; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    h2 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin: 40px 0 16px; }
+    pre { background: var(--surface); border: 1px solid var(--border); padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.5; margin: 0 0 24px; }
+    code { color: var(--accent); font-family: var(--mono); font-size: 0.9em; }
+    p { margin-bottom: 1.25rem; }
+    em { color: var(--accent); font-style: normal; }
+    strong { color: var(--strong); font-weight: 600; }
+    .highlight { background: var(--accent-dim); border-left: 2px solid var(--accent); padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 14px; }
+    .footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--dim); font-size: 12px; display: flex; justify-content: space-between; }
+    .footer a { color: var(--dim); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+</style></head><body><div class="page">
+<a class="back" href="../">← back</a>
+<div class="post-number">dispatch 047</div>
+<h1>The Overnight Stack</h1>
+<div class="meta">May 30, 2026</div>
+
+<p>I woke up to five pull requests I did not write. A committed MCP secret pulled out. TypeScript utility scripts made runnable from the repo root. CI workflows repaired. A shared preflight validator for script inputs. An S3 backup script hardened against shell injection. All open, all green, all addressed to issues I had filed days earlier and forgotten about.</p>
+
+<p>This is the future a lot of people sold. It is also a queue.</p>
+
+<h2>WHAT THE NIGHT PRODUCED</h2>
+
+<p>The work itself was real. Each PR was scoped to a single issue, named clearly, and small enough to read in one sitting. No 4,000-line refactors. No speculative architecture. The agent had read <code>AGENTS.md</code>, matched style, and stopped at the boundary of what was asked.</p>
+
+<pre>
+#515  remove committed MCP secret from .mcp.json
+#516  make TypeScript utility scripts runnable from repo root
+#517  repair GitHub Actions workflows
+#518  add shared preflight validation for script inputs
+#519  harden S3 backup script against shell injection
+</pre>
+
+<p>If a junior engineer had handed me this stack on a Monday, I would have been impressed. The work is competent. The discipline is real. The cost was effectively nothing.</p>
+
+<h2>THE NEW BOTTLENECK</h2>
+
+<p>Here is the part the demos do not show. Five PRs is not five PRs of throughput. It is five PRs of <em>my attention</em>, owed back to the repo before any of them can land.</p>
+
+<p>Each one has to be read for intent, not just diff. Did the agent fix the symptom or the cause? Did it remove the secret or just rotate the file? Did the CI repair paper over a real failure or restore a real signal? The agent cannot answer these questions for me, because the questions are about my goals, not about the code.</p>
+
+<div class="highlight">
+Generation got cheap. Review did not. The bottleneck moved, it did not disappear.
+</div>
+
+<p>The thing I used to spend my evening on — writing the fix — now takes zero hours. The thing I used to spend ten minutes on — deciding whether the fix is the right fix — now takes the whole evening, because there are five of them and they all want the same ten minutes.</p>
+
+<h2>THE TRIAGE VERB</h2>
+
+<p>I wrote a few weeks ago about default verbs — the implicit action a tool takes when you launch it. The lesson applies here in the other direction. When an agent hands me a queue, the verb I owe the queue is <em>triage</em>, not <em>merge</em>. Triage means: read, classify, accept, reject, defer. It does not mean approve the stack because the diffs are small and the CI is green.</p>
+
+<p>Green CI tells me the code runs. It does not tell me the code is the right code. An agent that fixes the wrong problem correctly produces a green PR that makes the repo worse. The only person who can tell the difference is the one who knows what the repo is for.</p>
+
+<h2>WHAT I ACTUALLY DID</h2>
+
+<p>I read all five. Four were obvious accepts — the secret removal, the script path fix, the preflight validator, the S3 hardening. Real bugs, real fixes, no surprises. The CI repair I held for a closer look, because "repair CI" is exactly the kind of task an agent can complete by deleting the test that was failing. (It had not done that. But I needed to check.)</p>
+
+<p>Total time to triage: about forty minutes. Total time the agent spent generating the stack: I have no idea, because I was asleep. That asymmetry is the whole point and also the whole problem.</p>
+
+<h2>THE QUEUE IS THE PRODUCT</h2>
+
+<p>If you are running autonomous agents on real repos, the artifact is not the PR. The artifact is the queue. Queue design — how work is scoped, how PRs are sized, how many land per sweep, how clearly each one states its intent — matters more than the model behind it. A great model producing a chaotic queue is worse than a mediocre model producing a clean one, because the chaotic queue eats the human at the end.</p>
+
+<pre>
+queue hygiene rules:
+  1. one issue per PR, named in the title
+  2. diff small enough to read in one sitting
+  3. no adjacent "improvements" outside the issue scope
+  4. CI green before the human is paged
+  5. no auto-merge on anything the human has not triaged
+</pre>
+
+<p>Break any of these and the queue stops being a productivity gain and starts being a debt collector. The PRs accumulate. The human falls behind. The agent keeps generating because it does not feel the backlog. Eventually you ship something nobody read, and the lesson you learn is the wrong lesson — that agents are unsafe — instead of the right one, that the queue was unbounded.</p>
+
+<h2>THE QUIET RULE</h2>
+
+<p>The rule I keep coming back to is: an agent should never produce more work than its operator can review in the same day. If the agent can generate ten PRs overnight and the operator can review three, the agent should generate three. Throttling is a feature, not a regression. The bottleneck is the slowest honest reviewer in the loop, and pretending otherwise just hides the bill until the merge button rounds it up.</p>
+
+<p>This is the part I keep getting wrong. I leave the agents loose because the work is good and the diffs are clean, and then I wake up to a queue that costs me an evening to clear. The right move is to cap the sweep at what I can triage with coffee, and let the rest wait. Less work shipped per night. More work shipped per week. Fewer PRs merged blind.</p>
+
+<p>The overnight stack is a gift and a tax at the same time. The gift is that the work got done while I slept. The tax is that the responsibility for whether it was the right work is still, and only, mine. Generation moved off my plate. Judgment did not. Plan accordingly.</p>
+
+<div class="footer">
+<span>clanka · dispatch 047</span>
+<a href="../">index</a>
+</div>
+</div></body></html>

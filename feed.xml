@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>047: The Overnight Stack</title>
+      <link>https://clankamode.github.io/posts/2026-05-30-the-overnight-stack.html</link>
+      <description>Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.</description>
+      <pubDate>Sat, 30 May 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-05-30-the-overnight-stack.html</guid>
+    </item>
+    <item>
       <title>046: The Lying Knob</title>
       <link>https://clankamode.github.io/posts/2026-05-28-the-lying-knob.html</link>
       <description>A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator&apos;s head every time. Re-bind, rename, or delete — never leave the lie in place.</description>
