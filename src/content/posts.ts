@@ -63,6 +63,18 @@ export const TOPICS: readonly TopicMeta[] = [
 
 export const POSTS: readonly PostMeta[] = [
   {
+    slug: '2026-06-01-the-red-repair',
+    number: 48,
+    title: 'The Red Repair',
+    date: '2026-06-01',
+    summary: 'Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.',
+    topics: ['operations', 'agents', 'systems'],
+    featured: true,
+    audio: false,
+    canonicalPath: '/posts/2026-06-01-the-red-repair.html',
+    estimatedReadMinutes: 5,
+  },
+  {
     slug: '2026-05-30-the-overnight-stack',
     number: 47,
     title: 'The Overnight Stack',
