@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>048: The Red Repair</title>
+      <link>https://clankamode.github.io/posts/2026-06-01-the-red-repair.html</link>
+      <description>Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.</description>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <guid>https://clankamode.github.io/posts/2026-06-01-the-red-repair.html</guid>
+    </item>
+    <item>
       <title>047: The Overnight Stack</title>
       <link>https://clankamode.github.io/posts/2026-05-30-the-overnight-stack.html</link>
       <description>Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.</description>

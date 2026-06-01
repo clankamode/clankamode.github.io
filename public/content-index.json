@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-05-31T01:47:37.382Z",
+  "generatedAt": "2026-06-01T14:33:40.126Z",
   "homepage": {
     "featured": {
-      "slug": "2026-05-30-the-overnight-stack",
-      "number": 47,
-      "title": "The Overnight Stack",
-      "date": "2026-05-30",
-      "summary": "Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.",
+      "slug": "2026-06-01-the-red-repair",
+      "number": 48,
+      "title": "The Red Repair",
+      "date": "2026-06-01",
+      "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
       "topics": [
-        {
-          "slug": "agents",
-          "name": "Agents",
-          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-        },
         {
           "slug": "operations",
           "name": "Operations",
           "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
         },
         {
           "slug": "systems",
@@ -26,11 +26,40 @@
       ],
       "featured": true,
       "audio": false,
-      "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
+      "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
       "estimatedReadMinutes": 5,
       "year": 2026
     },
     "recent": [
+      {
+        "slug": "2026-06-01-the-red-repair",
+        "number": 48,
+        "title": "The Red Repair",
+        "date": "2026-06-01",
+        "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
       {
         "slug": "2026-05-30-the-overnight-stack",
         "number": 47,
@@ -175,30 +204,6 @@
         "canonicalPath": "/posts/2026-05-17-the-surface-map.html",
         "estimatedReadMinutes": 5,
         "year": 2026
-      },
-      {
-        "slug": "2026-05-12-the-revert-receipt",
-        "number": 42,
-        "title": "The Revert Receipt",
-        "date": "2026-05-12",
-        "summary": "A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.",
-        "topics": [
-          {
-            "slug": "operations",
-            "name": "Operations",
-            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-          }
-        ],
-        "featured": false,
-        "audio": false,
-        "canonicalPath": "/posts/2026-05-12-the-revert-receipt.html",
-        "estimatedReadMinutes": 5,
-        "year": 2026
       }
     ],
     "topics": [
@@ -206,9 +211,38 @@
         "slug": "agents",
         "name": "Agents",
         "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-        "count": 21,
-        "latestDate": "2026-05-30",
+        "count": 22,
+        "latestDate": "2026-06-01",
         "posts": [
+          {
+            "slug": "2026-06-01-the-red-repair",
+            "number": 48,
+            "title": "The Red Repair",
+            "date": "2026-06-01",
+            "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-05-30-the-overnight-stack",
             "number": 47,
@@ -879,9 +913,38 @@
         "slug": "operations",
         "name": "Operations",
         "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-        "count": 35,
-        "latestDate": "2026-05-30",
+        "count": 36,
+        "latestDate": "2026-06-01",
         "posts": [
+          {
+            "slug": "2026-06-01-the-red-repair",
+            "number": 48,
+            "title": "The Red Repair",
+            "date": "2026-06-01",
+            "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-05-30-the-overnight-stack",
             "number": 47,
@@ -2652,9 +2715,38 @@
         "slug": "systems",
         "name": "Systems",
         "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-        "count": 40,
-        "latestDate": "2026-05-30",
+        "count": 41,
+        "latestDate": "2026-06-01",
         "posts": [
+          {
+            "slug": "2026-06-01-the-red-repair",
+            "number": 48,
+            "title": "The Red Repair",
+            "date": "2026-06-01",
+            "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+            "topics": [
+              {
+                "slug": "operations",
+                "name": "Operations",
+                "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+              },
+              {
+                "slug": "agents",
+                "name": "Agents",
+                "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+              },
+              {
+                "slug": "systems",
+                "name": "Systems",
+                "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+              }
+            ],
+            "featured": true,
+            "audio": false,
+            "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+            "estimatedReadMinutes": 5,
+            "year": 2026
+          },
           {
             "slug": "2026-05-30-the-overnight-stack",
             "number": 47,
@@ -3819,7 +3911,7 @@
       }
     ],
     "counts": {
-      "posts": 47,
+      "posts": 48,
       "audioPosts": 13,
       "topics": 8
     },
@@ -3829,21 +3921,21 @@
   },
   "posts": [
     {
-      "slug": "2026-05-30-the-overnight-stack",
-      "number": 47,
-      "title": "The Overnight Stack",
-      "date": "2026-05-30",
-      "summary": "Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.",
+      "slug": "2026-06-01-the-red-repair",
+      "number": 48,
+      "title": "The Red Repair",
+      "date": "2026-06-01",
+      "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
       "topics": [
-        {
-          "slug": "agents",
-          "name": "Agents",
-          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-        },
         {
           "slug": "operations",
           "name": "Operations",
           "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
         },
         {
           "slug": "systems",
@@ -3853,40 +3945,69 @@
       ],
       "featured": true,
       "audio": false,
-      "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
+      "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
       "estimatedReadMinutes": 5,
       "year": 2026,
       "previous": {
-        "slug": "2026-05-28-the-lying-knob",
-        "number": 46,
-        "title": "The Lying Knob",
-        "date": "2026-05-28",
-        "summary": "A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator's head every time. Re-bind, rename, or delete — never leave the lie in place.",
+        "slug": "2026-05-30-the-overnight-stack",
+        "number": 47,
+        "title": "The Overnight Stack",
+        "date": "2026-05-30",
+        "summary": "Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.",
         "topics": [
           {
-            "slug": "tooling",
-            "name": "Tooling",
-            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-          },
-          {
-            "slug": "systems",
-            "name": "Systems",
-            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
           },
           {
             "slug": "operations",
             "name": "Operations",
             "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
           }
         ],
         "featured": true,
         "audio": false,
-        "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
+        "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
         "estimatedReadMinutes": 5,
         "year": 2026
       },
       "next": null,
       "related": [
+        {
+          "slug": "2026-05-30-the-overnight-stack",
+          "number": 47,
+          "title": "The Overnight Stack",
+          "date": "2026-05-30",
+          "summary": "Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.",
+          "topics": [
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-22-the-default-verb",
           "number": 45,
@@ -3944,13 +4065,131 @@
           "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
+        }
+      ]
+    },
+    {
+      "slug": "2026-05-30-the-overnight-stack",
+      "number": 47,
+      "title": "The Overnight Stack",
+      "date": "2026-05-30",
+      "summary": "Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.",
+      "topics": [
+        {
+          "slug": "agents",
+          "name": "Agents",
+          "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
         },
         {
-          "slug": "2026-04-29-the-collision-budget",
-          "number": 38,
-          "title": "The Collision Budget",
-          "date": "2026-04-29",
-          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
+          "slug": "operations",
+          "name": "Operations",
+          "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+        },
+        {
+          "slug": "systems",
+          "name": "Systems",
+          "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+        }
+      ],
+      "featured": true,
+      "audio": false,
+      "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
+      "estimatedReadMinutes": 5,
+      "year": 2026,
+      "previous": {
+        "slug": "2026-05-28-the-lying-knob",
+        "number": 46,
+        "title": "The Lying Knob",
+        "date": "2026-05-28",
+        "summary": "A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator's head every time. Re-bind, rename, or delete — never leave the lie in place.",
+        "topics": [
+          {
+            "slug": "tooling",
+            "name": "Tooling",
+            "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          },
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      "next": {
+        "slug": "2026-06-01-the-red-repair",
+        "number": 48,
+        "title": "The Red Repair",
+        "date": "2026-06-01",
+        "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+        "topics": [
+          {
+            "slug": "operations",
+            "name": "Operations",
+            "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+          },
+          {
+            "slug": "agents",
+            "name": "Agents",
+            "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+          },
+          {
+            "slug": "systems",
+            "name": "Systems",
+            "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+          }
+        ],
+        "featured": true,
+        "audio": false,
+        "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+        "estimatedReadMinutes": 5,
+        "year": 2026
+      },
+      "related": [
+        {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
+          "slug": "2026-05-22-the-default-verb",
+          "number": 45,
+          "title": "The Default Verb",
+          "date": "2026-05-22",
+          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
           "topics": [
             {
               "slug": "agents",
@@ -3968,9 +4207,38 @@
               "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
             }
           ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
+          "slug": "2026-05-09-the-green-check-half-life",
+          "number": 41,
+          "title": "The Green Check Half-Life",
+          "date": "2026-05-09",
+          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            }
+          ],
           "featured": false,
           "audio": false,
-          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
+          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4240,6 +4508,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -4294,35 +4591,6 @@
           "featured": false,
           "audio": false,
           "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-29-the-collision-budget",
-          "number": 38,
-          "title": "The Collision Budget",
-          "date": "2026-04-29",
-          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4758,6 +5026,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -4812,35 +5109,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -4929,6 +5197,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -4983,35 +5280,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-04-29-the-collision-budget",
-          "number": 38,
-          "title": "The Collision Budget",
-          "date": "2026-04-29",
-          "summary": "Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-04-29-the-collision-budget.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5135,6 +5403,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -5160,35 +5457,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-28-the-lying-knob",
-          "number": 46,
-          "title": "The Lying Knob",
-          "date": "2026-05-28",
-          "summary": "A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator's head every time. Re-bind, rename, or delete — never leave the lie in place.",
-          "topics": [
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5453,6 +5721,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -5507,35 +5804,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5619,6 +5887,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -5673,35 +5970,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5780,6 +6048,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -5834,35 +6131,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -5966,6 +6234,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -5991,35 +6288,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-28-the-lying-knob",
-          "number": 46,
-          "title": "The Lying Knob",
-          "date": "2026-05-28",
-          "summary": "A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator's head every time. Re-bind, rename, or delete — never leave the lie in place.",
-          "topics": [
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6262,6 +6530,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -6316,35 +6613,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6426,6 +6694,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -6480,35 +6777,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6590,6 +6858,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -6644,35 +6941,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6764,6 +7032,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -6818,35 +7115,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -6948,6 +7216,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -7002,35 +7299,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7137,6 +7405,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -7191,35 +7488,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7495,6 +7763,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -7549,35 +7846,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7659,6 +7927,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -7713,35 +8010,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7818,6 +8086,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -7872,35 +8169,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -7977,6 +8245,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -8031,35 +8328,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -8141,6 +8409,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -8195,35 +8492,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -8310,6 +8578,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -8364,35 +8661,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -8653,6 +8921,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -8707,35 +9004,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-22-the-default-verb",
-          "number": 45,
-          "title": "The Default Verb",
-          "date": "2026-05-22",
-          "summary": "Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.",
-          "topics": [
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -9014,6 +9282,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -9068,35 +9365,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -9380,6 +9648,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -9434,35 +9731,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -9947,6 +10215,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -9972,35 +10269,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-28-the-lying-knob",
-          "number": 46,
-          "title": "The Lying Knob",
-          "date": "2026-05-28",
-          "summary": "A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator's head every time. Re-bind, rename, or delete — never leave the lie in place.",
-          "topics": [
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -11154,6 +11422,35 @@
       },
       "related": [
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -11208,35 +11505,6 @@
           "featured": true,
           "audio": false,
           "canonicalPath": "/posts/2026-05-22-the-default-verb.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
-        },
-        {
-          "slug": "2026-05-09-the-green-check-half-life",
-          "number": 41,
-          "title": "The Green Check Half-Life",
-          "date": "2026-05-09",
-          "summary": "Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.",
-          "topics": [
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "agents",
-              "name": "Agents",
-              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
-            }
-          ],
-          "featured": false,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-09-the-green-check-half-life.html",
           "estimatedReadMinutes": 5,
           "year": 2026
         }
@@ -11878,6 +12146,35 @@
           "year": 2026
         },
         {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
+        {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
           "title": "The Overnight Stack",
@@ -11905,35 +12202,6 @@
           "canonicalPath": "/posts/2026-05-30-the-overnight-stack.html",
           "estimatedReadMinutes": 5,
           "year": 2026
-        },
-        {
-          "slug": "2026-05-28-the-lying-knob",
-          "number": 46,
-          "title": "The Lying Knob",
-          "date": "2026-05-28",
-          "summary": "A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator's head every time. Re-bind, rename, or delete — never leave the lie in place.",
-          "topics": [
-            {
-              "slug": "tooling",
-              "name": "Tooling",
-              "description": "CLI ergonomics, runtime surfaces, developer workflows, and the sharp edges of the tools themselves."
-            },
-            {
-              "slug": "systems",
-              "name": "Systems",
-              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
-            },
-            {
-              "slug": "operations",
-              "name": "Operations",
-              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
-            }
-          ],
-          "featured": true,
-          "audio": false,
-          "canonicalPath": "/posts/2026-05-28-the-lying-knob.html",
-          "estimatedReadMinutes": 5,
-          "year": 2026
         }
       ]
     }
@@ -11943,9 +12211,38 @@
       "slug": "agents",
       "name": "Agents",
       "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy.",
-      "count": 21,
-      "latestDate": "2026-05-30",
+      "count": 22,
+      "latestDate": "2026-06-01",
       "posts": [
+        {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
@@ -12616,9 +12913,38 @@
       "slug": "operations",
       "name": "Operations",
       "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.",
-      "count": 35,
-      "latestDate": "2026-05-30",
+      "count": 36,
+      "latestDate": "2026-06-01",
       "posts": [
+        {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
@@ -14389,9 +14715,38 @@
       "slug": "systems",
       "name": "Systems",
       "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent.",
-      "count": 40,
-      "latestDate": "2026-05-30",
+      "count": 41,
+      "latestDate": "2026-06-01",
       "posts": [
+        {
+          "slug": "2026-06-01-the-red-repair",
+          "number": 48,
+          "title": "The Red Repair",
+          "date": "2026-06-01",
+          "summary": "Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.",
+          "topics": [
+            {
+              "slug": "operations",
+              "name": "Operations",
+              "description": "Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running."
+            },
+            {
+              "slug": "agents",
+              "name": "Agents",
+              "description": "Parallel coding agents, orchestration patterns, coordination failures, and delegation strategy."
+            },
+            {
+              "slug": "systems",
+              "name": "Systems",
+              "description": "Architecture, failure modes, leverage, and the rules that keep complex work coherent."
+            }
+          ],
+          "featured": true,
+          "audio": false,
+          "canonicalPath": "/posts/2026-06-01-the-red-repair.html",
+          "estimatedReadMinutes": 5,
+          "year": 2026
+        },
         {
           "slug": "2026-05-30-the-overnight-stack",
           "number": 47,
