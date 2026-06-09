@@ -7,6 +7,12 @@ function createFeaturedMeta(label: string): HTMLSpanElement {
   return item;
 }
 
+function showArchiveUnavailable(host: HTMLElement | null): void {
+  if (!host) return;
+  host.textContent = '';
+  host.textContent = '// archive unavailable';
+}
+
 export async function renderHomepageContent(): Promise<void> {
   const featuredHost = document.getElementById('homepage-featured-log');
   const previewHost = document.getElementById('homepage-log-preview');
@@ -22,61 +28,94 @@ export async function renderHomepageContent(): Promise<void> {
   try {
     ({ featured, recent, topics, counts } = (await loadContentIndex()).homepage);
   } catch {
+    showArchiveUnavailable(featuredHost);
+    showArchiveUnavailable(previewHost);
     return;
   }
 
-  if (featuredHost && featured) {
+  if (featuredHost) {
     featuredHost.textContent = '';
-    const featuredLink = document.createElement('a');
-    featuredLink.className = 'featured-log';
-    featuredLink.href = featured.canonicalPath;
+    if (!featured) {
+      featuredHost.textContent = '// no featured dispatch';
+    } else {
+      try {
+        const card = document.createElement('div');
+        card.className = 'card';
 
-    const kicker = document.createElement('span');
-    kicker.className = 'featured-kicker';
-    kicker.textContent = `latest dispatch · ${featured.date}`;
+        const featuredLink = document.createElement('a');
+        featuredLink.className = 'featured-log';
+        featuredLink.href = featured.canonicalPath;
 
-    const title = document.createElement('span');
-    title.className = 'featured-title';
-    title.textContent = `${String(featured.number).padStart(3, '0')}: ${featured.title}`;
+        const kicker = document.createElement('span');
+        kicker.className = 'featured-kicker';
+        kicker.textContent = `latest dispatch · ${featured.date}`;
 
-    const meta = document.createElement('div');
-    meta.className = 'featured-meta';
-    meta.append(
-      createFeaturedMeta(`${featured.estimatedReadMinutes} min read`),
-      createFeaturedMeta(featured.audio ? 'audio available' : 'text only'),
-      createFeaturedMeta(`${featured.topics.length} topic lanes`),
-    );
+        const postNumber = typeof featured.number === 'number'
+          ? String(featured.number).padStart(3, '0')
+          : '---';
+        const title = document.createElement('span');
+        title.className = 'featured-title';
+        title.textContent = `${postNumber}: ${featured.title}`;
 
-    const snippet = document.createElement('span');
-    snippet.className = 'featured-snippet';
-    snippet.textContent = featured.summary;
+        const featuredTopics = Array.isArray(featured.topics) ? featured.topics : [];
+        const readMinutes = typeof featured.estimatedReadMinutes === 'number'
+          ? featured.estimatedReadMinutes
+          : null;
 
-    const topics = document.createElement('div');
-    topics.className = 'topic-chip-row featured-topic-row';
-    featured.topics.slice(0, 3).forEach((topic) => {
-      topics.append(createTopicChip(topic));
-    });
+        const meta = document.createElement('div');
+        meta.className = 'featured-meta';
+        meta.append(
+          createFeaturedMeta(readMinutes !== null ? `${readMinutes} min read` : 'read time unknown'),
+          createFeaturedMeta(featured.audio ? 'audio available' : 'text only'),
+          createFeaturedMeta(`${featuredTopics.length} topic lanes`),
+        );
 
-    const read = document.createElement('span');
-    read.className = 'featured-read';
-    read.textContent = 'open dispatch';
+        const snippet = document.createElement('span');
+        snippet.className = 'featured-snippet';
+        snippet.textContent = featured.summary;
 
-    featuredLink.append(kicker, title, meta, snippet, topics, read);
-    featuredHost.append(featuredLink);
+        const read = document.createElement('span');
+        read.className = 'featured-read';
+        read.textContent = 'open dispatch';
+
+        featuredLink.append(kicker, title, meta, snippet, read);
+
+        const topicRow = document.createElement('div');
+        topicRow.className = 'topic-chip-row featured-topic-row';
+        featuredTopics.slice(0, 3).forEach((topic) => {
+          topicRow.append(createTopicChip(topic));
+        });
+
+        card.append(featuredLink, topicRow);
+        featuredHost.append(card);
+      } catch {
+        showArchiveUnavailable(featuredHost);
+      }
+    }
   }
 
   if (previewHost) {
-    previewHost.textContent = '';
-    recent.filter((post) => post.slug !== featured?.slug).slice(0, 5).forEach((post) => {
-      previewHost.append(createCompactLogRow(post));
-    });
+    try {
+      previewHost.textContent = '';
+      const sortedRecent = [...recent].sort((left, right) => right.date.localeCompare(left.date));
+      sortedRecent.filter((post) => post.slug !== featured?.slug).slice(0, 5).forEach((post) => {
+        previewHost.append(createCompactLogRow(post));
+      });
+    } catch {
+      showArchiveUnavailable(previewHost);
+    }
   }
 
   if (topicsHost) {
-    topicsHost.textContent = '';
-    topics.slice(0, 6).forEach((topic) => {
-      topicsHost.append(createTopicChip(topic));
-    });
+    try {
+      topicsHost.textContent = '';
+      const sortedTopics = [...topics].sort((left, right) => right.count - left.count);
+      sortedTopics.slice(0, 6).forEach((topic) => {
+        topicsHost.append(createTopicChip(topic));
+      });
+    } catch {
+      topicsHost.textContent = '';
+    }
   }
 
   if (postsCount) {

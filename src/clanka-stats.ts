@@ -45,7 +45,7 @@ function relativeTime(then: number): string {
 
 function uptimeDays(): number {
   const diffMs = Date.now() - SITE_LAUNCH.getTime();
-  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
 }
 
 function setText(id: string, value: string): void {
@@ -57,23 +57,30 @@ export async function loadLiveStats(): Promise<void> {
   // Always update uptime — no network needed
   setText('stat-uptime', `// ${uptimeDays()}d online`);
 
+  let timeoutId = 0;
+
   try {
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+    timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
     const response = await fetch(`${API_BASE}/github/stats`, {
       headers: { Accept: 'application/json' },
       signal: controller.signal,
     });
 
-    window.clearTimeout(timeoutId);
-
     if (!response.ok) throw new Error(`API ${response.status}`);
 
     const data = (await response.json()) as GithubStats;
 
-    setText('stat-repos', `${data.repoCount} repos`);
-    setText('stat-stars', `${data.totalStars} stars`);
+    const repoCount = Number(data.repoCount);
+    if (Number.isFinite(repoCount)) {
+      setText('stat-repos', `${repoCount} repos`);
+    }
+
+    const totalStars = Number(data.totalStars);
+    if (Number.isFinite(totalStars)) {
+      setText('stat-stars', `${totalStars} stars`);
+    }
     const pushedAt = parsePushedAt(data.lastPushedAt);
     const pushedRepo = typeof data.lastPushedRepo === 'string' ? data.lastPushedRepo.trim() : '';
     if (pushedAt === null) {
@@ -98,8 +105,10 @@ export async function loadLiveStats(): Promise<void> {
 
       const fleetData = (await fleetResponse.json()) as FleetSummary;
       const total = Number(fleetData.totalRepos);
-      if (Number.isFinite(total) && total > 0) {
+      if (Number.isFinite(total) && total >= 0) {
         setText('stat-fleet-score', `fleet: ${total} repos`);
+      } else {
+        setText('stat-fleet-score', 'fleet: unavailable');
       }
     } catch {
       // Leave existing fallback text as-is — graceful degradation
@@ -108,5 +117,7 @@ export async function loadLiveStats(): Promise<void> {
     }
   } catch {
     // Leave existing fallback text as-is — graceful degradation
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 }

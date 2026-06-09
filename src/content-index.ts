@@ -50,6 +50,26 @@ export type ContentIndex = {
 
 let contentIndexPromise: Promise<ContentIndex> | null = null;
 
+function isTopicRef(value: unknown): value is ContentTopicRef {
+  if (!value || typeof value !== 'object') return false;
+
+  const topic = value as Partial<ContentTopicRef>;
+  return typeof topic.slug === 'string' && typeof topic.name === 'string';
+}
+
+function isPostSummary(value: unknown): value is ContentPostSummary {
+  if (!value || typeof value !== 'object') return false;
+
+  const post = value as Partial<ContentPostSummary>;
+  return (
+    typeof post.slug === 'string' &&
+    typeof post.title === 'string' &&
+    typeof post.canonicalPath === 'string' &&
+    Array.isArray(post.topics) &&
+    post.topics.every(isTopicRef)
+  );
+}
+
 function isContentIndex(value: unknown): value is ContentIndex {
   if (!value || typeof value !== 'object') return false;
 
@@ -57,6 +77,7 @@ function isContentIndex(value: unknown): value is ContentIndex {
   return (
     typeof candidate.generatedAt === 'string' &&
     Array.isArray(candidate.posts) &&
+    candidate.posts.every(isPostSummary) &&
     Array.isArray(candidate.topics) &&
     !!candidate.homepage &&
     Array.isArray(candidate.homepage.recent) &&
@@ -69,6 +90,7 @@ function isContentIndex(value: unknown): value is ContentIndex {
 export async function loadContentIndex(): Promise<ContentIndex> {
   if (!contentIndexPromise) {
     contentIndexPromise = fetch('/content-index.json', {
+      cache: 'no-store',
       headers: { Accept: 'application/json' },
     })
       .then(async (response) => {

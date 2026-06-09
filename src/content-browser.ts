@@ -2,6 +2,32 @@ import type { ContentPost, ContentPostSummary } from './content-index';
 
 export { loadContentIndex, type ContentPost, type ContentTopic } from './content-index';
 
+function safeHref(path: string): string {
+  const trimmed = path.trim();
+  const lower = trimmed.toLowerCase();
+  if (lower.startsWith('javascript:') || lower.startsWith('data:')) {
+    return '#';
+  }
+  if (trimmed.startsWith('/') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  return '#';
+}
+
+function formatDispatchNumber(number: unknown): string {
+  if (typeof number === 'number' && Number.isFinite(number) && number >= 0) {
+    return String(Math.floor(number)).padStart(3, '0');
+  }
+  return '—';
+}
+
+function formatReadMinutes(minutes: unknown): string {
+  if (typeof minutes === 'number' && Number.isFinite(minutes) && minutes > 0) {
+    return `${Math.ceil(minutes)} min read`;
+  }
+  return 'quick read';
+}
+
 function createMetaBadge(label: string): HTMLSpanElement {
   const badge = document.createElement('span');
   badge.className = 'archive-meta-badge';
@@ -10,12 +36,13 @@ function createMetaBadge(label: string): HTMLSpanElement {
 }
 
 export function formatCount(value: number, singular: string, plural = `${singular}s`): string {
+  const safeValue = Number.isFinite(value) && value >= 0 ? Math.floor(value) : 0;
   const resolvedPlural = plural === `${singular}s` && singular.endsWith('ch') ? `${singular}es` : plural;
-  return `${value} ${value === 1 ? singular : resolvedPlural}`;
+  return `${safeValue} ${safeValue === 1 ? singular : resolvedPlural}`;
 }
 
 export function topicHref(topicSlug: string): string {
-  return `/topics/${topicSlug}/`;
+  return safeHref(`/topics/${topicSlug}/`);
 }
 
 export function createTopicChip(topic: { slug: string; name: string }): HTMLAnchorElement {
@@ -32,12 +59,12 @@ export function createArchiveCard(post: ContentPost): HTMLElement {
 
   const kicker = document.createElement('div');
   kicker.className = 'archive-card-kicker';
-  kicker.textContent = `dispatch ${String(post.number).padStart(3, '0')} · ${post.date}`;
+  kicker.textContent = `dispatch ${formatDispatchNumber(post.number)} · ${post.date}`;
 
   const title = document.createElement('h2');
   title.className = 'archive-card-title';
   const link = document.createElement('a');
-  link.href = post.canonicalPath;
+  link.href = safeHref(post.canonicalPath);
   link.textContent = post.title;
   title.append(link);
 
@@ -48,15 +75,17 @@ export function createArchiveCard(post: ContentPost): HTMLElement {
   const meta = document.createElement('div');
   meta.className = 'archive-card-meta';
   meta.append(
-    createMetaBadge(`${post.estimatedReadMinutes} min read`),
+    createMetaBadge(formatReadMinutes(post.estimatedReadMinutes)),
     createMetaBadge(post.audio ? 'listen available' : 'read only'),
   );
 
   const topics = document.createElement('div');
   topics.className = 'topic-chip-row';
-  post.topics.forEach((topic) => {
-    topics.append(createTopicChip(topic));
-  });
+  if (Array.isArray(post.topics)) {
+    post.topics.forEach((topic) => {
+      topics.append(createTopicChip(topic));
+    });
+  }
 
   article.append(kicker, title, summary, meta, topics);
   return article;
@@ -72,8 +101,8 @@ export function createCompactLogRow(post: ContentPostSummary): HTMLElement {
   const title = document.createElement('span');
   title.className = 'row-name';
   const link = document.createElement('a');
-  link.href = post.canonicalPath;
-  link.textContent = `${String(post.number).padStart(3, '0')}: ${post.title}`;
+  link.href = safeHref(post.canonicalPath);
+  link.textContent = `${formatDispatchNumber(post.number)}: ${post.title}`;
   title.append(link);
 
   const excerpt = document.createElement('span');

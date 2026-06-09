@@ -21,17 +21,20 @@
   const skipBackSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/><text x="12" y="16" text-anchor="middle" font-size="8" font-family="monospace" fill="currentColor" stroke="none">15</text></svg>`;
   const skipFwdSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/><text x="12" y="16" text-anchor="middle" font-size="8" font-family="monospace" fill="currentColor" stroke="none">15</text></svg>`;
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
+
   // --- Build Player UI ---
   container.innerHTML = `
     <button class="ap-play" aria-label="Play audio narration">${playSvg}</button>
-    <button class="ap-skip" data-skip="-15" aria-label="Back 15s">${skipBackSvg}</button>
-    <div class="ap-progress-wrap">
+    <button class="ap-skip" data-skip="-15" aria-label="Back 15 seconds">${skipBackSvg}</button>
+    <div class="ap-progress-wrap" role="slider" tabindex="0" aria-label="Playback position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0:00">
       <div class="ap-progress"></div>
       <canvas class="ap-waveform"></canvas>
     </div>
-    <button class="ap-skip" data-skip="15" aria-label="Forward 15s">${skipFwdSvg}</button>
+    <button class="ap-skip" data-skip="15" aria-label="Forward 15 seconds">${skipFwdSvg}</button>
     <button class="ap-speed" aria-label="Playback speed">1×</button>
-    <span class="ap-time">0:00</span>
+    <span class="ap-time" aria-hidden="true">0:00</span>
   `;
 
   const btn = container.querySelector('.ap-play');
@@ -169,7 +172,7 @@
 
         // Auto-scroll — always on paragraph change
         if (activeIdx > -1) {
-          contentEls[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          contentEls[activeIdx].scrollIntoView({ behavior: scrollBehavior, block: 'center' });
         }
       }
     }
@@ -182,16 +185,21 @@
     return `${m}:${sec.toString().padStart(2, '0')}`;
   }
 
+  function setPlayState(playing) {
+    btn.innerHTML = playing ? pauseSvg : playSvg;
+    btn.setAttribute('aria-label', playing ? 'Pause audio narration' : 'Play audio narration');
+  }
+
   btn.addEventListener('click', () => {
     initAudio();
     if (audio.paused) {
       if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
       audio.play();
-      btn.innerHTML = pauseSvg;
+      setPlayState(true);
       enterListenMode();
     } else {
       audio.pause();
-      btn.innerHTML = playSvg;
+      setPlayState(false);
     }
   });
 
@@ -208,10 +216,24 @@
     speedBtn.textContent = speed === 1 ? '1×' : `${speed}×`;
   });
 
+  function updateProgressAria() {
+    if (!audio.duration) return;
+    const pct = Math.round((audio.currentTime / audio.duration) * 100);
+    progressWrap.setAttribute('aria-valuenow', String(pct));
+    progressWrap.setAttribute('aria-valuetext', formatTime(audio.currentTime));
+  }
+
+  function seekToRatio(ratio) {
+    if (!audio.duration) return;
+    audio.currentTime = Math.max(0, Math.min(audio.duration, ratio * audio.duration));
+    updateProgressAria();
+  }
+
   audio.addEventListener('timeupdate', () => {
     if (!audio.duration) return;
     progress.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
     time.textContent = formatTime(audio.currentTime);
+    updateProgressAria();
   });
 
   audio.addEventListener('loadedmetadata', () => {
@@ -219,15 +241,36 @@
   });
 
   audio.addEventListener('ended', () => {
-    btn.innerHTML = playSvg;
+    setPlayState(false);
     progress.style.width = '0%';
+    progressWrap.setAttribute('aria-valuenow', '0');
+    progressWrap.setAttribute('aria-valuetext', '0:00');
     exitListenMode();
   });
 
   progressWrap.addEventListener('click', (e) => {
     if (!audio.duration) return;
     const rect = progressWrap.getBoundingClientRect();
-    audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+    seekToRatio((e.clientX - rect.left) / rect.width);
+  });
+
+  progressWrap.addEventListener('keydown', (e) => {
+    if (!audio.duration) return;
+    const step = e.shiftKey ? 0.1 : 0.05;
+    let ratio = audio.currentTime / audio.duration;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      seekToRatio(ratio + step);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      seekToRatio(ratio - step);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      seekToRatio(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      seekToRatio(1);
+    }
   });
 
   window.addEventListener('resize', () => { if (listenMode) sizeCanvas(); });

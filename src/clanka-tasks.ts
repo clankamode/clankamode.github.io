@@ -75,6 +75,13 @@ export class ClankaTasks extends LitElement {
       color: var(--accent, #c8f542);
       animation: blink 1s steps(2, start) infinite;
     }
+    .refresh-indicator {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted, #6b6b78);
+      opacity: 0.7;
+    }
     .skeleton {
       height: 11px;
       border-radius: 2px;
@@ -113,33 +120,43 @@ export class ClankaTasks extends LitElement {
     }
   }
 
+  private get safeTasks(): TaskItem[] {
+    return Array.isArray(this.tasks) ? this.tasks : [];
+  }
+
   render() {
+    const tasks = this.safeTasks;
+    const hasTasks = tasks.length > 0;
+
     return html`
       <div class="sec-header">
         <span class="sec-label">tasks_board</span>
+        ${this.loading && hasTasks
+          ? html`<span class="refresh-indicator loading" aria-live="polite">[ refreshing ]</span>`
+          : ''}
         <div class="sec-line"></div>
       </div>
 
-      ${this.loading
-        ? html`
-            <div class="fallback"><span class="loading">[ loading... ]</span></div>
-            <div class="grid">
-              ${Array.from({ length: TASK_SKELETON_CARD_COUNT }).map(
-                () => html`<div class="task-card" aria-hidden="true">
-                  <div class="skeleton status"></div>
-                  <div class="skeleton title"></div>
-                  <div class="skeleton meta"></div>
-                </div>`,
-              )}
-            </div>
-          `
-        : this.error
-          ? html`<div class="fallback">${this.error}</div>`
-          : this.tasks.length === 0
+      ${this.error
+        ? html`<div class="fallback" role="alert" aria-live="assertive">${this.error}</div>`
+        : this.loading && !hasTasks
+          ? html`
+              <div class="fallback"><span class="loading">[ loading... ]</span></div>
+              <div class="grid">
+                ${Array.from({ length: TASK_SKELETON_CARD_COUNT }).map(
+                  () => html`<div class="task-card" aria-hidden="true">
+                    <div class="skeleton status"></div>
+                    <div class="skeleton title"></div>
+                    <div class="skeleton meta"></div>
+                  </div>`,
+                )}
+              </div>
+            `
+          : !hasTasks
             ? html`<div class="fallback">[ no tasks ]</div>`
             : html`
                 <div class="grid" role="list">
-                  ${this.tasks.map(
+                  ${tasks.map(
                     (task) => {
                       const display = getTaskDisplay(task);
                       return html`

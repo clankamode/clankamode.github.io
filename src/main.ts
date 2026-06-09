@@ -13,28 +13,19 @@ import './clanka-cmdk';
 import { renderHomepageContent } from './homepage-content';
 import { runWhenNearViewport } from './lazy-near-viewport';
 
-type SyncState = {
-  loading: boolean;
-  error: string;
-};
-
 type SyncPayload = {
-  history?: unknown[];
   team?: Record<string, unknown>;
   tasks?: unknown[];
   agents_active?: number;
 };
 
 const presence = document.getElementById('presence') as HTMLElement | null;
-const activity = document.getElementById('activity') as (HTMLElement & { loading?: boolean; error?: string; history?: unknown[] }) | null;
-const terminal = document.getElementById('terminal') as (HTMLElement & {
+const tasks = document.getElementById('tasks') as (HTMLElement & { loading?: boolean; error?: string; tasks?: unknown[] }) | null;
+const agents = document.getElementById('agents') as (HTMLElement & {
   loading?: boolean;
   error?: string;
   team?: Record<string, unknown>;
-  recentActivity?: unknown[];
 }) | null;
-const agents = document.getElementById('agents') as (HTMLElement & { team?: Record<string, unknown> }) | null;
-const tasks = document.getElementById('tasks') as (HTMLElement & { loading?: boolean; error?: string; tasks?: unknown[] }) | null;
 
 const setText = (id: string, value: string): void => {
   const el = document.getElementById(id);
@@ -73,57 +64,30 @@ const resolveActiveAgents = (data: SyncPayload): number | null => {
   return countActiveFromTeam(data.team);
 };
 
-const setDependentsState = ({ loading, error }: SyncState): void => {
-  if (activity) {
-    activity.loading = loading;
-    activity.error = error || '';
-  }
-  if (terminal) {
-    terminal.loading = loading;
-    terminal.error = error || '';
-  }
-  if (tasks) {
-    tasks.loading = loading;
-    tasks.error = error || '';
-  }
-};
-
-setDependentsState({ loading: true, error: '' });
-
 if (presence) {
-  presence.addEventListener('sync-state', (event: Event) => {
-    const customEvent = event as CustomEvent<SyncState>;
-    const state = customEvent.detail || { loading: false, error: '[ api unreachable ]' };
-    setDependentsState(state);
-  });
-
   presence.addEventListener('sync-updated', (event: Event) => {
     const customEvent = event as CustomEvent<SyncPayload>;
     const data = customEvent.detail || {};
 
-    if (activity) activity.history = data.history || [];
-
-    if (terminal) {
-      terminal.team = data.team || {};
-      terminal.recentActivity = data.history || [];
-    }
-
-    if (agents) agents.team = data.team || {};
     if (tasks) tasks.tasks = data.tasks || [];
+    if (agents) {
+      agents.team = data.team ?? {};
+      agents.loading = false;
+      agents.error = '';
+    }
 
     const activeAgents = resolveActiveAgents(data);
     if (activeAgents !== null) {
       setText('stat-active-agents', `agents: ${activeAgents} active`);
     }
-
-    setDependentsState({ loading: false, error: '' });
   });
 
-  presence.addEventListener('sync-error', (event: Event) => {
-    const customEvent = event as CustomEvent<{ error?: string }>;
-    const error = customEvent.detail?.error || '[ api unreachable ]';
+  presence.addEventListener('sync-error', () => {
+    if (agents) {
+      agents.loading = false;
+      agents.error = '[ api unreachable ]';
+    }
     setText('stat-active-agents', 'agents: offline');
-    setDependentsState({ loading: false, error });
   });
 }
 

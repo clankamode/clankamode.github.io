@@ -38,12 +38,6 @@ function setTheme(theme: Theme): void {
   setSavedTheme(theme);
 }
 
-function isEditableTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  const tag = target.tagName;
-  return target.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
-}
-
 export function initUI(): void {
   // Theme toggle
   (() => {
@@ -75,6 +69,7 @@ export function initUI(): void {
       bar.style.width = h > 0 ? `${(window.scrollY / h) * 100}%` : '0%';
     };
     window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
     update();
   })();
 
@@ -94,9 +89,12 @@ export function initUI(): void {
       },
       { threshold: 0.1 },
     );
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     workRows.forEach((row, i) => {
       row.style.animationDelay = `${i * 0.06}s`;
-      row.style.opacity = '0';
+      if (!prefersReducedMotion) {
+        row.style.opacity = '0';
+      }
       observer.observe(row);
     });
   })();
@@ -125,7 +123,6 @@ export function initUI(): void {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       textEl.textContent = 'I build systems';
       emEl.style.visibility = 'visible';
-      cursorEl.classList.add('cursor--animate');
       return;
     }
 
@@ -180,140 +177,24 @@ export function initUI(): void {
       },
       { passive: true },
     );
-    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-  })();
-
-  // Search/filter logs + keyboard navigation
-  (() => {
-    type SearchItem = { row: HTMLElement; link: HTMLAnchorElement; text: string };
-
-    const input = document.getElementById('posts-search-input') as HTMLInputElement | null;
-    const countEl = document.getElementById('posts-search-count');
-    const featured = document.querySelector('.logs-section .featured-log') as HTMLAnchorElement | null;
-    const rows = Array.from(document.querySelectorAll<HTMLElement>('#logs-list .row'));
-
-    if (!input || !countEl || rows.length === 0) return;
-
-    const items: SearchItem[] = rows
-      .map((row) => {
-        const link = row.querySelector('.row-name a') as HTMLAnchorElement | null;
-        if (!link) return null;
-
-        const title = link.textContent ?? '';
-        const excerpt = row.querySelector('.row-excerpt')?.textContent ?? '';
-        const date = row.querySelector('.row-meta')?.textContent ?? '';
-
-        return {
-          row,
-          link,
-          text: `${title} ${excerpt} ${date}`.toLowerCase(),
-        };
-      })
-      .filter((item): item is SearchItem => item !== null);
-
-    const featuredText = (featured?.textContent ?? '').toLowerCase();
-    let visibleItems = items;
-
-    const updateCount = (count: number, query: string): void => {
-      if (!query) {
-        countEl.textContent = `${count} logs`;
-        return;
-      }
-
-      if (count === 0) {
-        countEl.textContent = 'no matches';
-        return;
-      }
-
-      countEl.textContent = `${count} match${count === 1 ? '' : 'es'}`;
-    };
-
-    const applyFilter = (): void => {
-      const query = input.value.trim().toLowerCase();
-      const filtered: SearchItem[] = [];
-
-      let featuredVisible = false;
-      if (featured) {
-        featuredVisible = query.length === 0 || featuredText.includes(query);
-        featured.hidden = !featuredVisible;
-      }
-
-      items.forEach((item) => {
-        const visible = query.length === 0 || item.text.includes(query);
-        item.row.hidden = !visible;
-        item.link.tabIndex = visible ? 0 : -1;
-        if (visible) {
-          filtered.push(item);
-        }
-      });
-
-      visibleItems = filtered;
-      updateCount(visibleItems.length + (featuredVisible ? 1 : 0), query);
-    };
-
-    const focusVisibleByOffset = (step: number): void => {
-      if (!visibleItems.length) return;
-
-      const links = visibleItems.map((item) => item.link);
-      const active = document.activeElement;
-      const currentIndex = active instanceof HTMLAnchorElement ? links.indexOf(active) : -1;
-      const startIndex = step > 0 ? -1 : links.length;
-      const nextIndex = Math.max(0, Math.min(links.length - 1, (currentIndex === -1 ? startIndex : currentIndex) + step));
-      links[nextIndex]?.focus();
-    };
-
-    input.addEventListener('input', applyFilter);
-
-    input.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        focusVisibleByOffset(1);
-      } else if (event.key === 'Escape') {
-        if (input.value) {
-          input.value = '';
-          applyFilter();
-        } else {
-          input.blur();
-        }
-      }
+    btn.addEventListener('click', () => {
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? ('instant' as ScrollBehavior)
+        : 'smooth';
+      window.scrollTo({ top: 0, behavior });
     });
-
-    rows.forEach((row) => {
-      const link = row.querySelector('.row-name a') as HTMLAnchorElement | null;
-      if (!link) return;
-
-      link.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowDown') {
-          event.preventDefault();
-          focusVisibleByOffset(1);
-        } else if (event.key === 'ArrowUp') {
-          event.preventDefault();
-          const links = visibleItems.map((item) => item.link);
-          const index = links.indexOf(link);
-          if (index <= 0) {
-            input.focus();
-            return;
-          }
-          links[index - 1]?.focus();
-        }
-      });
-    });
-
-    window.addEventListener('keydown', (event) => {
-      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
-      if (isEditableTarget(event.target)) return;
-      event.preventDefault();
-      input.focus();
-      input.select();
-    });
-
-    applyFilter();
   })();
 
   // Section reveal on scroll
   (() => {
     const sections = document.querySelectorAll('.section-reveal');
     if (!sections.length) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      sections.forEach((s) => s.classList.add('is-visible'));
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

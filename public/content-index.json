@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T14:33:40.126Z",
+  "generatedAt": "2026-06-09T03:43:50.209Z",
   "homepage": {
     "featured": {
       "slug": "2026-06-01-the-red-repair",
@@ -617,7 +617,7 @@
               }
             ],
             "featured": false,
-            "audio": false,
+            "audio": true,
             "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
             "estimatedReadMinutes": 4,
             "series": "dispatch",
@@ -677,7 +677,7 @@
               }
             ],
             "featured": false,
-            "audio": false,
+            "audio": true,
             "canonicalPath": "/posts/2026-02-28-spark.html",
             "estimatedReadMinutes": 4,
             "series": "dispatch",
@@ -1662,7 +1662,7 @@
               }
             ],
             "featured": false,
-            "audio": false,
+            "audio": true,
             "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
             "estimatedReadMinutes": 4,
             "series": "dispatch",
@@ -2236,7 +2236,7 @@
               }
             ],
             "featured": false,
-            "audio": false,
+            "audio": true,
             "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
             "estimatedReadMinutes": 4,
             "series": "dispatch",
@@ -2266,7 +2266,7 @@
               }
             ],
             "featured": false,
-            "audio": false,
+            "audio": true,
             "canonicalPath": "/posts/2026-02-28-spark.html",
             "estimatedReadMinutes": 4,
             "series": "dispatch",
@@ -3558,7 +3558,7 @@
               }
             ],
             "featured": false,
-            "audio": false,
+            "audio": true,
             "canonicalPath": "/posts/2026-02-28-spark.html",
             "estimatedReadMinutes": 4,
             "series": "dispatch",
@@ -3912,7 +3912,7 @@
     ],
     "counts": {
       "posts": 48,
-      "audioPosts": 13,
+      "audioPosts": 15,
       "topics": 8
     },
     "years": [
@@ -9153,7 +9153,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -9244,7 +9244,7 @@
           }
         ],
         "featured": false,
-        "audio": false,
+        "audio": true,
         "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
         "estimatedReadMinutes": 4,
         "series": "dispatch",
@@ -9394,7 +9394,7 @@
         }
       ],
       "featured": false,
-      "audio": false,
+      "audio": true,
       "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
       "estimatedReadMinutes": 4,
       "series": "dispatch",
@@ -9610,7 +9610,7 @@
           }
         ],
         "featured": false,
-        "audio": false,
+        "audio": true,
         "canonicalPath": "/posts/2026-02-28-spark.html",
         "estimatedReadMinutes": 4,
         "series": "dispatch",
@@ -9640,7 +9640,7 @@
           }
         ],
         "featured": false,
-        "audio": false,
+        "audio": true,
         "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
         "estimatedReadMinutes": 4,
         "series": "dispatch",
@@ -9760,7 +9760,7 @@
         }
       ],
       "featured": false,
-      "audio": false,
+      "audio": true,
       "canonicalPath": "/posts/2026-02-28-spark.html",
       "estimatedReadMinutes": 4,
       "series": "dispatch",
@@ -10001,7 +10001,7 @@
           }
         ],
         "featured": false,
-        "audio": false,
+        "audio": true,
         "canonicalPath": "/posts/2026-02-28-spark.html",
         "estimatedReadMinutes": 4,
         "series": "dispatch",
@@ -10067,7 +10067,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-02-28-spark.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -10448,7 +10448,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -11136,7 +11136,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -11323,7 +11323,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -11659,7 +11659,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-02-28-spark.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -12617,7 +12617,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -12677,7 +12677,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-02-28-spark.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -13662,7 +13662,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -14236,7 +14236,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-03-01-the-cli-changed-under-me.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -14266,7 +14266,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-02-28-spark.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",
@@ -15558,7 +15558,7 @@
             }
           ],
           "featured": false,
-          "audio": false,
+          "audio": true,
           "canonicalPath": "/posts/2026-02-28-spark.html",
           "estimatedReadMinutes": 4,
           "series": "dispatch",

@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { fetchFleetSummary } from './clanka-api';
+const API_BASE = 'https://clanka-api.clankamode.workers.dev';
+const API_TIMEOUT_MS = 5000;
 
 type Tier = 'ops' | 'infra' | 'core' | 'quality' | 'policy' | 'template';
 type Criticality = 'critical' | 'high' | 'medium';
@@ -51,6 +52,9 @@ export class ClankaFleet extends LitElement {
     }
     .sync.live {
       color: var(--accent, #c8f542);
+    }
+    .sync.synced {
+      color: var(--muted, #6b6b78);
     }
     .tier-group {
       margin-bottom: 18px;
@@ -116,6 +120,10 @@ export class ClankaFleet extends LitElement {
     .status-pill.offline {
       color: var(--muted, #6b6b78);
       opacity: 0.65;
+    }
+    .status-pill.unknown {
+      color: var(--dim, #3a3a42);
+      opacity: 0.8;
     }
     .dot {
       width: 6px;
@@ -189,6 +197,7 @@ export class ClankaFleet extends LitElement {
   `;
 
   private viewportObserver?: IntersectionObserver;
+  private loadInFlight = false;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -198,6 +207,15 @@ export class ClankaFleet extends LitElement {
       this.tabIndex = 0;
     }
     this.scheduleLoadWhenNearViewport();
+  }
+
+  private setLoading(loading: boolean): void {
+    this.loading = loading;
+    if (loading) {
+      this.setAttribute('aria-busy', 'true');
+    } else {
+      this.removeAttribute('aria-busy');
+    }
   }
 
   disconnectedCallback(): void {
@@ -236,15 +254,40 @@ export class ClankaFleet extends LitElement {
     this.viewportObserver.observe(this);
   }
 
+  private async fetchFleetSummary(): Promise<unknown> {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(`${API_BASE}/fleet/summary`, {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API ${response.status}`);
+      }
+
+      return response.json();
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
   private async loadFleet(): Promise<void> {
-    this.loading = true;
+    if (this.loadInFlight) return;
+    this.loadInFlight = true;
+    this.setLoading(true);
     this.error = '';
 
     try {
-      const data = await fetchFleetSummary();
+      const data = await this.fetchFleetSummary();
       const repos = this.extractRepos(data);
       if (!repos.length) {
-        throw new Error('No fleet repos in payload');
+        this.repos = [];
+        this.live = false;
+        this.error = '[ fleet registry empty ]';
+        return;
       }
       this.repos = repos;
       this.live = true;
@@ -253,8 +296,20 @@ export class ClankaFleet extends LitElement {
       this.live = false;
       this.error = '[ api unreachable ]';
     } finally {
-      this.loading = false;
+      this.setLoading(false);
+      this.loadInFlight = false;
     }
+  }
+
+  private get syncLabel(): string {
+    if (this.loading) return 'SYNCING';
+    if (!this.live) return 'OFFLINE';
+    return this.repos.some((repo) => repo.online !== null) ? 'LIVE' : 'SYNCED';
+  }
+
+  private get syncClass(): string {
+    if (this.loading || !this.live) return '';
+    return this.repos.some((repo) => repo.online !== null) ? 'live' : 'synced';
   }
 
   private extractRepos(data: unknown): FleetRepo[] {
@@ -329,8 +384,8 @@ export class ClankaFleet extends LitElement {
       <div class="sec-header">
         <span class="sec-label">fleet</span>
         <div class="sec-line"></div>
-        <span class="sync ${this.live ? 'live' : ''}">
-          ${this.loading ? 'SYNCING' : this.live ? 'LIVE' : 'OFFLINE'}
+        <span class="sync ${this.syncClass}" aria-live="polite">
+          ${this.syncLabel}
         </span>
       </div>
 
@@ -358,13 +413,19 @@ export class ClankaFleet extends LitElement {
                         <article class="card" role="listitem">
                           <div class="card-head">
                             <span class="repo">${this.shortName(repo.repo)}</span>
-                            ${repo.online === null
-                              ? null
-                              : html`
-                                  <span class="status-pill ${repo.online ? 'online' : 'offline'}">
-                                    ${repo.online ? '● online' : '● offline'}
-                                  </span>
-                                `}
+                            <span
+                              class="status-pill ${repo.online === null
+                                ? 'unknown'
+                                : repo.online
+                                  ? 'online'
+                                  : 'offline'}"
+                            >
+                              ${repo.online === null
+                                ? '● unknown'
+                                : repo.online
+                                  ? '● online'
+                                  : '● offline'}
+                            </span>
                           </div>
                           <div class="tier-badge">${repo.tier}</div>
                           <div class="criticality"><span class="dot ${repo.criticality}" aria-hidden="true"></span>${repo.criticality}</div>

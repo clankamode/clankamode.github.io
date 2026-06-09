@@ -1,5 +1,6 @@
 const API_BASE = 'https://clanka-api.clankamode.workers.dev';
 const DEFAULT_TTL_MS = 15_000;
+const FETCH_TIMEOUT_MS = 5_000;
 
 type CacheEntry = {
   expiresAt: number;
@@ -28,14 +29,23 @@ async function fetchJson(path: string, ttlMs = DEFAULT_TTL_MS): Promise<unknown>
   }
 
   const request = (async () => {
-    const response = await fetch(url, { headers: { Accept: 'application/json' } });
-    if (!response.ok) {
-      throw new Error(`API ${response.status}`);
-    }
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: 'application/json' },
+        signal: ctrl.signal,
+      });
+      if (!response.ok) {
+        throw new Error(`API ${response.status}`);
+      }
 
-    const data = await response.json();
-    responseCache.set(url, { data, expiresAt: Date.now() + ttlMs });
-    return data;
+      const data = await response.json();
+      responseCache.set(url, { data, expiresAt: Date.now() + ttlMs });
+      return data;
+    } finally {
+      clearTimeout(timer);
+    }
   })();
 
   inFlight.set(url, request);

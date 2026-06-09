@@ -18,6 +18,8 @@ export class ClankaPresence extends LitElement {
   @state() private loading = true;
   @state() private error = '';
   private pollId?: number;
+  private hasSyncedOnce = false;
+  private updateInFlight = false;
 
   static styles = css`
     :host {
@@ -113,34 +115,49 @@ export class ClankaPresence extends LitElement {
   disconnectedCallback(): void {
     if (this.pollId) {
       window.clearInterval(this.pollId);
+      this.pollId = undefined;
     }
     super.disconnectedCallback();
   }
 
   async firstUpdated() {
     await this.updatePresence();
-    this.pollId = window.setInterval(() => this.updatePresence(), 30000);
+    if (!this.isConnected) return;
+    this.pollId = window.setInterval(() => void this.updatePresence(), 30000);
   }
 
   async updatePresence() {
-    this.loading = true;
-    this.error = '';
-    this.dispatchEvent(new CustomEvent('sync-state', { detail: { loading: true, error: '' } }));
+    if (this.updateInFlight) return;
+    this.updateInFlight = true;
+
+    const isInitialLoad = !this.hasSyncedOnce;
+    if (isInitialLoad) {
+      this.loading = true;
+      this.error = '';
+    }
 
     try {
       const data = (await fetchNow()) as PresencePayload;
+      if (!this.isConnected) return;
+
       this.current = typeof data.current === 'string' ? data.current : 'active';
       this.status = typeof data.status === 'string' ? data.status : 'operational';
       this.history = Array.isArray(data.history) ? data.history : [];
+      this.error = '';
+      this.hasSyncedOnce = true;
       this.dispatchEvent(new CustomEvent('sync-updated', { detail: data }));
-    } catch (e) {
+    } catch {
+      if (!this.isConnected) return;
+
       this.error = '[ api unreachable ]';
       this.current = '[ offline ]';
       this.status = 'offline';
       this.dispatchEvent(new CustomEvent('sync-error', { detail: { error: this.error } }));
     } finally {
-      this.loading = false;
-      this.dispatchEvent(new CustomEvent('sync-state', { detail: { loading: false, error: this.error } }));
+      this.updateInFlight = false;
+      if (this.isConnected) {
+        this.loading = false;
+      }
     }
   }
 

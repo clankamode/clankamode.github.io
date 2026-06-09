@@ -20,15 +20,6 @@ async function mockApiResponses(page: Page): Promise<void> {
       return;
     }
 
-    if (pathname === '/fleet/score') {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ score: 92 }),
-      });
-      return;
-    }
-
     if (pathname === '/now') {
       await route.fulfill({
         status: 200,
@@ -50,6 +41,7 @@ async function mockApiResponses(page: Page): Promise<void> {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
+          totalRepos: 42,
           repos: [
             { repo: 'clankamode/ci-failure-triager', tier: 'ops', criticality: 'critical', online: true },
             { repo: 'clankamode/clanka-api', tier: 'core', criticality: 'high', online: true },
@@ -118,6 +110,8 @@ test('theme toggle persists after reload', async ({ page }) => {
   await page.waitForSelector('#homepage-featured-log .featured-log');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('#theme-toggle')).toHaveText('theme: light');
+
+  await page.evaluate(() => window.localStorage.setItem('clanka-theme', 'dark'));
 });
 
 test('homepage logs section links into archive and renders generated topic chips', async ({ page }) => {
@@ -132,6 +126,11 @@ test('homepage logs section links into archive and renders generated topic chips
 
 test('active agent stat is populated from live now payload', async ({ page }) => {
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 7 active');
+});
+
+test('homepage repo stats are populated from mocked API responses', async ({ page }) => {
+  await expect(page.locator('#stat-repos')).toHaveText('16 repos');
+  await expect(page.locator('#stat-fleet-score')).toHaveText('fleet: 42 repos');
 });
 
 test('homepage commit feed renders recent GitHub activity', async ({ page }) => {

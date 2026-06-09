@@ -26,22 +26,47 @@ async function loadSourceContent() {
   return loadTsModule('src/content/posts.ts');
 }
 
+async function audioFileExists(slug) {
+  try {
+    await fs.access(path.join(ROOT, 'audio', `${slug}.mp3`));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 test('generated content index stays aligned with canonical source content', async () => {
-  const [{ POSTS, TOPICS }, generatedRaw, feedXml, logsPage] = await Promise.all([
+  const [{ POSTS, TOPICS }, generatedRaw, feedXml, logsPage, topicPage, generatorSource] = await Promise.all([
     loadSourceContent(),
     fs.readFile(path.join(ROOT, 'public/content-index.json'), 'utf8'),
     fs.readFile(path.join(ROOT, 'feed.xml'), 'utf8'),
     fs.readFile(path.join(ROOT, 'logs/index.html'), 'utf8'),
+    fs.readFile(path.join(ROOT, 'topics', 'systems', 'index.html'), 'utf8'),
+    fs.readFile(path.join(ROOT, 'scripts/generate-site-content.mjs'), 'utf8'),
   ]);
 
   const generated = JSON.parse(generatedRaw);
+  const generatedBySlug = new Map(generated.posts.map((post) => [post.slug, post]));
 
   assert.equal(generated.posts.length, POSTS.length);
   assert.equal(generated.topics.length, TOPICS.length);
   assert.match(logsPage, /archive-search-input/);
+  assert.match(logsPage, /class="skip-link" href="#main-content"/);
+  assert.match(logsPage, /<main id="main-content"/);
+  assert.match(logsPage, /<button type="button" class="cmdk-hint"/);
+  assert.match(topicPage, /class="skip-link" href="#main-content"/);
+  assert.match(topicPage, /<main id="main-content"/);
+  assert.match(topicPage, /<button type="button" class="cmdk-hint"/);
+  assert.match(generatorSource, /post-enhance\.js/);
 
   const slugSet = new Set();
   const numberSet = new Set();
+  const featuredPosts = POSTS.filter((post) => post.featured);
+  const expectedFeaturedSlug = featuredPosts.length > 0
+    ? [...featuredPosts].sort((a, b) => b.date.localeCompare(a.date) || b.number - a.number)[0].slug
+    : [...POSTS].sort((a, b) => b.date.localeCompare(a.date) || b.number - a.number)[0].slug;
+
+  assert.equal(generated.homepage.featured?.slug, expectedFeaturedSlug);
 
   for (const post of POSTS) {
     assert.ok(post.summary.length > 0, `missing summary for ${post.slug}`);
@@ -51,12 +76,24 @@ test('generated content index stays aligned with canonical source content', asyn
     slugSet.add(post.slug);
     numberSet.add(post.number);
 
+    const expectedCanonicalPath = `/posts/${post.slug}.html`;
+    assert.equal(post.canonicalPath, expectedCanonicalPath, `canonicalPath mismatch for ${post.slug}`);
+
     const postFile = path.join(ROOT, post.canonicalPath.replace(/^\//, ''));
     await fs.access(postFile);
 
-    if (post.audio) {
-      await fs.access(path.join(ROOT, 'audio', `${post.slug}.mp3`));
-    }
+    const hasAudio = await audioFileExists(post.slug);
+    assert.equal(post.audio, hasAudio, `audio flag mismatch for ${post.slug}`);
+
+    const indexedPost = generatedBySlug.get(post.slug);
+    assert.ok(indexedPost, `missing generated post for ${post.slug}`);
+    assert.equal(indexedPost.canonicalPath, expectedCanonicalPath);
+    assert.equal(indexedPost.audio, hasAudio);
+    assert.equal(indexedPost.title, post.title);
+    assert.ok(
+      indexedPost.topics.every((topic) => typeof topic.slug === 'string' && typeof topic.name === 'string'),
+      `invalid topic refs on ${post.slug}`,
+    );
 
     assert.match(feedXml, new RegExp(post.canonicalPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }

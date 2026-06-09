@@ -79,13 +79,17 @@ export class ClankaActivity extends LitElement {
   }
 
   private async loadData(): Promise<void> {
-    const events = await fetchEvents();
-    if (events.length === 0) {
-      this.error = '[ activity unavailable ]';
-    } else {
-      this.events = events;
+    try {
+      const events = await fetchEvents();
+      if (events.length === 0) {
+        this.error = '[ activity unavailable ]';
+      } else {
+        this.error = '';
+        this.events = events;
+      }
+    } finally {
+      this.loading = false;
     }
-    this.loading = false;
   }
 
   render() {

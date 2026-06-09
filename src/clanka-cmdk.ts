@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { loadContentIndex } from './content-index';
 
 interface CmdItem {
   label: string;
@@ -13,7 +14,9 @@ export class ClankaCmdk extends LitElement {
   @state() private open = false;
   @state() private query = '';
   @state() private activeIndex = 0;
-  private items: CmdItem[] = [];
+  @state() private items: CmdItem[] = [];
+  private previousActiveElement: HTMLElement | null = null;
+  private previousBodyOverflow = '';
 
   static styles = css`
     :host {
@@ -192,6 +195,9 @@ export class ClankaCmdk extends LitElement {
   disconnectedCallback(): void {
     super.disconnectedCallback();
     window.removeEventListener('keydown', this.handleGlobalKey);
+    if (this.open) {
+      document.body.style.overflow = this.previousBodyOverflow;
+    }
   }
 
   private handleGlobalKey = (e: KeyboardEvent): void => {
@@ -205,19 +211,31 @@ export class ClankaCmdk extends LitElement {
   };
 
   private toggle(): void {
-    this.open = !this.open;
     if (this.open) {
-      this.query = '';
-      this.activeIndex = 0;
-      this.updateComplete.then(() => {
-        this.shadowRoot?.querySelector('input')?.focus();
-      });
+      this.close();
+    } else {
+      this.openPalette();
     }
+  }
+
+  private openPalette(): void {
+    this.previousActiveElement = document.activeElement as HTMLElement | null;
+    this.previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    this.open = true;
+    this.query = '';
+    this.activeIndex = 0;
+    this.updateComplete.then(() => {
+      this.shadowRoot?.querySelector('input')?.focus();
+    });
   }
 
   private close(): void {
     this.open = false;
     this.query = '';
+    document.body.style.overflow = this.previousBodyOverflow;
+    this.previousActiveElement?.focus();
+    this.previousActiveElement = null;
   }
 
   private async buildItems(): Promise<void> {
@@ -232,18 +250,7 @@ export class ClankaCmdk extends LitElement {
     items.push({ label: 'Archive', hint: 'all dispatches', href: '/logs/', section: 'logs' });
 
     try {
-      const response = await fetch('/content-index.json', {
-        headers: { Accept: 'application/json' },
-      });
-
-      if (!response.ok) {
-        throw new Error(`content index ${response.status}`);
-      }
-
-      const data = (await response.json()) as {
-        posts?: Array<{ title?: string; canonicalPath?: string }>;
-        topics?: Array<{ name?: string; slug?: string }>;
-      };
+      const data = await loadContentIndex();
 
       data.posts?.forEach((post) => {
         if (!post.title || !post.canonicalPath) return;
@@ -273,6 +280,7 @@ export class ClankaCmdk extends LitElement {
     items.push({ label: 'RSS Feed', hint: 'subscribe', href: '/feed.xml', section: 'links' });
 
     this.items = items.filter((item, index, all) => all.findIndex((candidate) => candidate.href === item.href) === index);
+    this.activeIndex = 0;
   }
 
   private get filtered(): CmdItem[] {
@@ -299,10 +307,57 @@ export class ClankaCmdk extends LitElement {
     this.activeIndex = 0;
   }
 
+  private clampActiveIndex(): void {
+    const len = this.filtered.length;
+    if (len === 0) {
+      this.activeIndex = 0;
+    } else if (this.activeIndex >= len) {
+      this.activeIndex = len - 1;
+    }
+  }
+
+  private getFocusableElements(): HTMLElement[] {
+    const palette = this.shadowRoot?.querySelector('.palette');
+    if (!palette) return [];
+
+    const selector =
+      'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    return Array.from(palette.querySelectorAll<HTMLElement>(selector)).filter(
+      (el) => el.tabIndex !== -1 && !el.hasAttribute('disabled')
+    );
+  }
+
   private handleKeydown(e: KeyboardEvent): void {
+    if (e.key === 'Tab') {
+      const focusable = this.getFocusableElements();
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = this.shadowRoot?.activeElement;
+
+      const activeInPalette = active instanceof Node && this.shadowRoot?.contains(active);
+
+      if (e.shiftKey) {
+        if (active === first || !activeInPalette) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (active === last || !activeInPalette) {
+        e.preventDefault();
+        first.focus();
+      }
+      return;
+    }
+
     const items = this.filtered;
+    this.clampActiveIndex();
     if (e.key === 'ArrowDown') {
       e.preventDefault();
+      if (items.length === 0) {
+        this.activeIndex = 0;
+        return;
+      }
       this.activeIndex = Math.min(this.activeIndex + 1, items.length - 1);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
@@ -363,12 +418,19 @@ export class ClankaCmdk extends LitElement {
 
     return html`
       <div class="backdrop" @click=${this.close}></div>
-      <div class="palette" @keydown=${this.handleKeydown}>
+      <div
+        class="palette"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
+        @keydown=${this.handleKeydown}
+      >
         <div class="input-row">
           <span class="input-icon">❯</span>
           <input
             type="text"
             placeholder="navigate to..."
+            aria-label="Search commands"
             .value=${this.query}
             @input=${this.handleInput}
             spellcheck="false"

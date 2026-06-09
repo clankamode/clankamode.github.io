@@ -25,9 +25,16 @@ export async function loadNpmBadge(): Promise<void> {
     const data = (await response.json()) as NpmDownloads;
     const downloads = typeof data.downloads === 'number' ? data.downloads : null;
 
-    if (downloads === null) throw new Error('Malformed downloads payload');
+    if (
+      downloads === null ||
+      !Number.isFinite(downloads) ||
+      downloads < 0 ||
+      !Number.isInteger(downloads)
+    ) {
+      throw new Error('Malformed downloads payload');
+    }
 
-    badge.textContent = `${downloads} dl/mo`;
+    badge.textContent = `${downloads.toLocaleString()} dl/mo`;
   } catch {
     badge.textContent = '–';
   } finally {

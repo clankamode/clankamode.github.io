@@ -57,13 +57,17 @@ export class ClankaTerminal extends LitElement {
   }
 
   private async loadData(): Promise<void> {
-    const events = await fetchEvents();
-    if (events.length === 0) {
-      this.error = '[ offline — activity unavailable ]';
-    } else {
-      this.events = events.slice(0, 8);
+    try {
+      const events = await fetchEvents();
+      if (events.length === 0) {
+        this.error = '[ offline — activity unavailable ]';
+      } else {
+        this.error = '';
+        this.events = events.slice(0, 8);
+      }
+    } finally {
+      this.loading = false;
     }
-    this.loading = false;
   }
 
   render() {

@@ -68,6 +68,31 @@ test('archive supports text and format filtering', async ({ page }) => {
   await expect(page.locator('#archive-results')).not.toContainText(firstReadOnlyPost.title);
 });
 
+test('archive topic filter narrows results to matching dispatches', async ({ page }) => {
+  const contentIndex = await loadContentIndex(page);
+  const topic = requireValue(
+    contentIndex.topics.find((entry) => entry.slug === 'philosophy'),
+    'expected generated content for the philosophy topic',
+  );
+
+  await page.goto('/logs/');
+  await page.waitForSelector('#archive-topic-select');
+
+  await page.locator('#archive-topic-select').selectOption('philosophy');
+  await expect(page.locator('#archive-results-count')).toHaveText(formatDispatchCount(topic.count) + ' shown');
+  await expect(page.locator('#archive-results .archive-card')).toHaveCount(topic.count);
+});
+
+test('archive search with no matches shows an empty state message', async ({ page }) => {
+  await page.goto('/logs/');
+  await page.waitForSelector('#archive-search-input');
+
+  await page.locator('#archive-search-input').fill('zzznomatchzzz');
+  await expect(page.locator('#archive-results-count')).toHaveText('0 dispatches shown');
+  await expect(page.locator('#archive-results')).toHaveText('no dispatches match these filters');
+  await expect(page.locator('#archive-results .archive-card')).toHaveCount(0);
+});
+
 test('topic pages show derived counts and matching posts', async ({ page }) => {
   const contentIndex = await loadContentIndex(page);
   const topic = requireValue(

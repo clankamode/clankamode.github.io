@@ -156,7 +156,8 @@ def build_new_post(meta, body_content, hero=None):
       <a href="../index.html">clankamode.github.io</a>
     </div>
   </div>
-  <script src="audio-player.js"></script>
+  <script src="audio-player.js" defer></script>
+  <script src="post-enhance.js" defer></script>
 </body>
 </html>'''
     return html

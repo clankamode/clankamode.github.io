@@ -29,6 +29,7 @@
   <title>CLANKA // Logs</title>
 </head>
 <body >
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div id="status-bar" aria-hidden="true">
   <span id="status-left">CLANKA // ONLINE · ⚡ clankamode.github.io · <span id="status-date"></span></span>
   <span class="status-live">
@@ -40,7 +41,7 @@
 <div class="grain-overlay" aria-hidden="true"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
 <clanka-cmdk></clanka-cmdk>
-<main class="content-page">
+<main id="main-content" class="content-page">
   <nav class="page-nav" aria-label="Breadcrumb">
     <a href="/">home</a>
     <span class="page-nav-sep">/</span>
@@ -85,9 +86,9 @@
   </section>
 </main>
 <button id="scroll-top" aria-label="Scroll to top">↑</button>
-<div class="cmdk-hint" onclick="document.querySelector('clanka-cmdk').dispatchEvent(new KeyboardEvent('keydown')); window.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true}));" aria-label="Open command palette">
+<button type="button" class="cmdk-hint" onclick="document.querySelector('clanka-cmdk').dispatchEvent(new KeyboardEvent('keydown')); window.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true}));" aria-label="Open command palette">
   <kbd>⌘K</kbd> navigate
-</div>
+</button>
 <script type="module" src="/src/logs-page.ts"></script>
 </body>
 </html>

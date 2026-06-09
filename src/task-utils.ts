@@ -15,8 +15,8 @@ export type TaskDisplay = {
 
 export const TASK_SKELETON_CARD_COUNT = 3;
 
-export function normalizeTaskStatus(value: string | undefined): TaskDisplay['statusClass'] {
-  switch ((value ?? 'todo').trim().toLowerCase()) {
+export function normalizeTaskStatus(value: unknown): TaskDisplay['statusClass'] {
+  switch (String(value ?? 'todo').trim().toLowerCase()) {
     case 'doing':
       return 'doing';
     case 'done':
@@ -30,7 +30,19 @@ function stringifyTaskValue(value: string | number | undefined, fallback: string
   return String(value ?? fallback);
 }
 
-export function getTaskDisplay(task: TaskItem): TaskDisplay {
+const FALLBACK_TASK_DISPLAY: TaskDisplay = {
+  statusClass: 'todo',
+  statusLabel: 'TODO',
+  title: 'untitled',
+  assignee: 'unassigned',
+  priority: '?',
+};
+
+export function getTaskDisplay(task: TaskItem | null | undefined): TaskDisplay {
+  if (task == null) {
+    return FALLBACK_TASK_DISPLAY;
+  }
+
   return {
     statusClass: normalizeTaskStatus(task.status),
     statusLabel: stringifyTaskValue(task.status, 'TODO'),

@@ -26,6 +26,8 @@ async function renderArchivePage(): Promise<void> {
   try {
     contentIndex = await loadContentIndex();
   } catch {
+    populateSelect(topicSelect, [{ value: 'all', label: 'all topics' }]);
+    populateSelect(yearSelect, [{ value: 'all', label: 'all years' }]);
     resultsCount.textContent = 'archive unavailable';
     return;
   }
@@ -47,33 +49,58 @@ async function renderArchivePage(): Promise<void> {
     const year = yearSelect.value;
 
     const filtered = contentIndex.posts.filter((post) => {
-      if (topic !== 'all' && !post.topics.some((entry) => entry.slug === topic)) return false;
+      const postTopics = Array.isArray(post.topics) ? post.topics : [];
+      if (topic !== 'all' && !postTopics.some((entry) => entry.slug === topic)) return false;
       if (year !== 'all' && String(post.year) !== year) return false;
       if (selectedFormat === 'listen' && !post.audio) return false;
       if (selectedFormat === 'read' && post.audio) return false;
       if (!query) return true;
 
-      const haystack = `${post.title} ${post.summary} ${post.topics.map((entry) => entry.name).join(' ')}`.toLowerCase();
+      const haystack = `${post.title} ${post.summary} ${postTopics.map((entry) => entry.name).join(' ')}`.toLowerCase();
       return haystack.includes(query);
     });
 
     resultsHost.textContent = '';
-    filtered.forEach((post) => {
-      resultsHost.append(createArchiveCard(post));
-    });
+    if (filtered.length === 0) {
+      const empty = document.createElement('p');
+      empty.textContent = 'no dispatches match these filters';
+      resultsHost.append(empty);
+    } else {
+      filtered.forEach((post) => {
+        resultsHost.append(createArchiveCard(post));
+      });
+    }
 
     resultsCount.textContent = `${formatCount(filtered.length, 'dispatch')} shown`;
   };
 
+  const setFormatButtonState = (activeButton: HTMLButtonElement): void => {
+    formatButtons.forEach((entry) => {
+      const isActive = entry === activeButton;
+      entry.classList.toggle('is-active', isActive);
+      entry.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  };
+
   formatButtons.forEach((button) => {
+    button.setAttribute('aria-pressed', button.classList.contains('is-active') ? 'true' : 'false');
     button.addEventListener('click', () => {
       selectedFormat = archiveFormatFromDataset(button.dataset.format);
-      formatButtons.forEach((entry) => entry.classList.toggle('is-active', entry === button));
+      setFormatButtonState(button);
       applyFilters();
     });
   });
 
   searchInput.addEventListener('input', applyFilters);
+  searchInput.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    if (searchInput.value) {
+      searchInput.value = '';
+      applyFilters();
+    } else {
+      searchInput.blur();
+    }
+  });
   topicSelect.addEventListener('change', applyFilters);
   yearSelect.addEventListener('change', applyFilters);
 
