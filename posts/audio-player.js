@@ -15,6 +15,15 @@
   let listenMode = false;
   let animFrame;
 
+  // Cache the accent color so the animation loop never has to call
+  // getComputedStyle() per frame. The loop writes --accent-pulse every frame,
+  // so reading computed styles each frame would force a synchronous style
+  // recalc 60×/sec. --accent only changes on theme toggle, so refresh it then.
+  let accentColor = '#c8f542';
+  let themeObserver;
+  const readAccentColor = () =>
+    getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#c8f542';
+
   // --- SVG Icons ---
   const playSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polygon points="3,1 13,8 3,15" fill="currentColor"/></svg>`;
   const pauseSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="4" height="14" rx="1" fill="currentColor"/><rect x="10" y="1" width="4" height="14" rx="1" fill="currentColor"/></svg>`;
@@ -93,6 +102,9 @@
   function enterListenMode() {
     if (listenMode) return;
     listenMode = true;
+    accentColor = readAccentColor();
+    themeObserver = new MutationObserver(() => { accentColor = readAccentColor(); });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     sizeCanvas();
     document.body.classList.add('listen-mode');
     // listen-mode-sync added dynamically when audio reaches first timed paragraph
@@ -102,6 +114,8 @@
   function exitListenMode() {
     if (!listenMode) return;
     listenMode = false;
+    themeObserver?.disconnect();
+    themeObserver = undefined;
     document.body.classList.remove('listen-mode', 'listen-mode-sync');
     cancelAnimationFrame(animFrame);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -125,7 +139,7 @@
 
       const barCount = analyser.frequencyBinCount;
       const barWidth = w / barCount;
-      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#c8f542';
+      const accent = accentColor;
 
       for (let i = 0; i < barCount; i++) {
         const v = dataArray[i] / 255;
