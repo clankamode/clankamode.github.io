@@ -30,13 +30,10 @@ for fname in sorted(os.listdir(posts_dir)):
         if match:
             if has_mp3:
                 player_html = f'    <div class="audio-player" data-src="../audio/{slug}.mp3">\n      <span class="ap-label">▶ Listen to this post</span>\n    </div>\n'
-            else:
-                player_html = f'    <div class="audio-player">\n      <span class="ap-label">Audio coming soon</span>\n    </div>\n'
-            
-            insert_pos = match.end()
-            html = html[:insert_pos] + '\n' + player_html + '\n' + html[insert_pos:]
-            changed = True
-            print(f'  ADD player: {slug} (mp3={"yes" if has_mp3 else "no"})')
+                insert_pos = match.end()
+                html = html[:insert_pos] + '\n' + player_html + '\n' + html[insert_pos:]
+                changed = True
+                print(f'  ADD player: {slug} (mp3=yes)')
     else:
         # Player div exists — check if it needs data-src wired up
         if has_mp3 and 'Audio coming soon' in html:

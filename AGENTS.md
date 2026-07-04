@@ -38,6 +38,7 @@ CI uses **Node.js 24**. The update script installs it via nvm and sets it as the
 All scripts are documented in `README.md` → "Development" section and in `package.json`.
 - `npm run dev` — Vite dev server on port 3000
 - `npm run verify` — full CI pipeline: content generation → content tests → typecheck → build → Playwright e2e
+- `npm run setup` — install Playwright Chromium (required before `npm test` on a fresh clone)
 - `npm run typecheck` — TypeScript strict checking (`tsc --noEmit`)
 - `npm run test` — Playwright e2e tests (auto-starts Vite on port 8080)
 - `npm run test:content` — Node.js built-in test runner for content index validation

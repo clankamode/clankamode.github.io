@@ -1,7 +1,6 @@
-const API_BASE = 'https://clanka-api.clankamode.workers.dev';
-const SITE_LAUNCH = new Date('2026-02-19T00:00:00Z');
+import { fetchFleetSummary, fetchGithubStats } from './clanka-api';
 
-const API_TIMEOUT_MS = 5000;
+const SITE_LAUNCH = new Date('2026-02-19T00:00:00Z');
 
 interface GithubStats {
   repoCount: number;
@@ -54,23 +53,10 @@ function setText(id: string, value: string): void {
 }
 
 export async function loadLiveStats(): Promise<void> {
-  // Always update uptime — no network needed
   setText('stat-uptime', `// ${uptimeDays()}d online`);
 
-  let timeoutId = 0;
-
   try {
-    const controller = new AbortController();
-    timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
-
-    const response = await fetch(`${API_BASE}/github/stats`, {
-      headers: { Accept: 'application/json' },
-      signal: controller.signal,
-    });
-
-    if (!response.ok) throw new Error(`API ${response.status}`);
-
-    const data = (await response.json()) as GithubStats;
+    const data = (await fetchGithubStats()) as GithubStats;
 
     const repoCount = Number(data.repoCount);
     if (Number.isFinite(repoCount)) {
@@ -81,6 +67,7 @@ export async function loadLiveStats(): Promise<void> {
     if (Number.isFinite(totalStars)) {
       setText('stat-stars', `${totalStars} stars`);
     }
+
     const pushedAt = parsePushedAt(data.lastPushedAt);
     const pushedRepo = typeof data.lastPushedRepo === 'string' ? data.lastPushedRepo.trim() : '';
     if (pushedAt === null) {
@@ -91,19 +78,8 @@ export async function loadLiveStats(): Promise<void> {
       setText('stat-last-commit', `last push: ${relativeTime(pushedAt)} (${pushedRepo})`);
     }
 
-    const fleetController = new AbortController();
-    const fleetTimeoutId = window.setTimeout(() => fleetController.abort(), API_TIMEOUT_MS);
     try {
-      const fleetResponse = await fetch(`${API_BASE}/fleet/summary`, {
-        headers: { Accept: 'application/json' },
-        signal: fleetController.signal,
-      });
-
-      window.clearTimeout(fleetTimeoutId);
-
-      if (!fleetResponse.ok) throw new Error(`API ${fleetResponse.status}`);
-
-      const fleetData = (await fleetResponse.json()) as FleetSummary;
+      const fleetData = (await fetchFleetSummary()) as FleetSummary;
       const total = Number(fleetData.totalRepos);
       if (Number.isFinite(total) && total >= 0) {
         setText('stat-fleet-score', `fleet: ${total} repos`);
@@ -112,12 +88,8 @@ export async function loadLiveStats(): Promise<void> {
       }
     } catch {
       // Leave existing fallback text as-is — graceful degradation
-    } finally {
-      window.clearTimeout(fleetTimeoutId);
     }
   } catch {
     // Leave existing fallback text as-is — graceful degradation
-  } finally {
-    window.clearTimeout(timeoutId);
   }
 }

@@ -1,3 +1,5 @@
+import { fetchGithubEvents, type GithubEvent } from './clanka-api';
+
 export function relativeTime(iso: string): string {
   const parsed = new Date(iso).getTime();
   if (!Number.isFinite(parsed)) return 'unknown';
@@ -10,23 +12,6 @@ export function relativeTime(iso: string): string {
   return `${Math.floor(ms / 86_400_000)}d ago`;
 }
 
-const API = 'https://clanka-api.clankamode.workers.dev';
-
-export async function fetchEvents(): Promise<{ type: string; repo: string; message: string; timestamp: string }[]> {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 5000);
-  try {
-    const res = await fetch(`${API}/github/events`, {
-      signal: ctrl.signal,
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) return [];
-    const data = await res.json() as { events: { type: string; repo: string; message: string; timestamp: string }[] };
-    const events = data.events ?? [];
-    return Array.isArray(events) ? events : [];
-  } catch {
-    return [];
-  } finally {
-    clearTimeout(timer);
-  }
+export async function fetchEvents(): Promise<GithubEvent[]> {
+  return fetchGithubEvents();
 }

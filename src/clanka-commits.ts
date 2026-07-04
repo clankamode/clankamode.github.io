@@ -1,21 +1,6 @@
-const GITHUB_EVENTS_ENDPOINT =
-  'https://clanka-api.clankamode.workers.dev/github/events';
-const COMMIT_TIMEOUT_MS = 5000;
+import { fetchGithubEvents, type GithubEvent } from './clanka-api';
 
 const COMMIT_TYPES = ['feat', 'fix', 'chore', 'docs', 'test', 'refactor', 'ci', 'build', 'style'] as const;
-
-interface ApiEvent {
-  type: string;
-  repo: string;
-  message: string;
-  timestamp: string;
-}
-
-interface GithubEventsResponse {
-  events: ApiEvent[];
-}
-
-type GithubEventsPayload = GithubEventsResponse | ApiEvent[];
 
 function relativeTime(isoString: string): string {
   const then = new Date(isoString).getTime();
@@ -53,14 +38,6 @@ function detectCommitType(message: string): string {
   return COMMIT_TYPES.includes(tag as (typeof COMMIT_TYPES)[number]) ? tag : 'push';
 }
 
-function parseEvents(payload: GithubEventsPayload): ApiEvent[] {
-  if (Array.isArray(payload)) {
-    return payload;
-  }
-
-  return Array.isArray(payload.events) ? payload.events : [];
-}
-
 function setFeedText(message: string): void {
   const feed = document.getElementById('commit-feed');
   if (!feed) return;
@@ -80,27 +57,15 @@ export async function loadCommitFeed(): Promise<void> {
   commitFeedLoadInFlight = true;
 
   try {
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), COMMIT_TIMEOUT_MS);
+    const events = await fetchGithubEvents();
 
-    try {
-      const response = await fetch(GITHUB_EVENTS_ENDPOINT, {
-        headers: { Accept: 'application/json' },
-        signal: controller.signal,
-      });
+    if (events.length === 0) {
+      setFeedText('// no recent activity');
+      return;
+    }
 
-      if (!response.ok) throw new Error(`GitHub events API ${response.status}`);
-
-      const data = (await response.json()) as GithubEventsPayload;
-      const events = parseEvents(data);
-
-      if (!Array.isArray(events) || events.length === 0) {
-        setFeedText('// no recent activity');
-        return;
-      }
-
-      commitFeed.textContent = '';
-      events.slice(0, 8).forEach((event) => {
+    commitFeed.textContent = '';
+    events.slice(0, 8).forEach((event: GithubEvent) => {
         const repo = stripRepoPrefix(event.repo || 'unknown');
         const message = event.message || '';
         const commitType = detectCommitType(message);
@@ -130,9 +95,6 @@ export async function loadCommitFeed(): Promise<void> {
         item.append(repoEl, tagEl, messageEl, timeEl);
         commitFeed.append(item);
       });
-    } finally {
-      window.clearTimeout(timeoutId);
-    }
   } catch {
     setFeedText('// activity unavailable');
   } finally {

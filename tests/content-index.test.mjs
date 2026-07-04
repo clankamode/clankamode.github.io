@@ -173,3 +173,18 @@ test('task display helpers normalize status and preserve labels', async () => {
     },
   );
 });
+
+test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
+  const { parseGithubEvents } = await loadTsModule('src/clanka-api.ts');
+  const sample = {
+    type: 'PushEvent',
+    repo: 'clankamode/site',
+    message: 'feat: test',
+    timestamp: '2026-03-03T03:40:00.000Z',
+  };
+
+  assert.deepEqual(parseGithubEvents({ events: [sample] }), [sample]);
+  assert.deepEqual(parseGithubEvents([sample]), [sample]);
+  assert.deepEqual(parseGithubEvents({ events: 'invalid' }), []);
+  assert.deepEqual(parseGithubEvents(null), []);
+});

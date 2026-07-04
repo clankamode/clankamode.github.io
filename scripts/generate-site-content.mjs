@@ -110,6 +110,28 @@ async function validateInputs(posts, topics) {
     if (post.audio !== hasAudio) {
       throw new Error(`audio flag mismatch for ${post.slug}: audio=${post.audio}, mp3 exists=${hasAudio}`);
     }
+
+    const postHtml = await fs.readFile(postFile, 'utf8');
+    if (!post.audio && postHtml.includes('Audio coming soon')) {
+      throw new Error(
+        `Misleading audio placeholder in ${post.slug}. Remove the "Audio coming soon" block or run scripts/strip-placeholder-audio.py.`,
+      );
+    }
+    if (post.audio && !postHtml.includes('data-src=')) {
+      throw new Error(`Missing audio data-src for ${post.slug} (audio=true in posts.ts)`);
+    }
+  }
+
+  const registeredSlugs = new Set(posts.map((post) => post.slug));
+  const postFiles = await fs.readdir(POSTS_DIR);
+
+  for (const entry of postFiles) {
+    if (!entry.endsWith('.html')) continue;
+
+    const slug = entry.replace(/\.html$/, '');
+    if (!registeredSlugs.has(slug)) {
+      throw new Error(`Orphan post file "${entry}" is not registered in src/content/posts.ts`);
+    }
   }
 }
 
@@ -263,32 +285,19 @@ ${POST_ENHANCE_SCRIPT}
 `;
 }
 
-async function ensurePostEnhanceScripts() {
+async function validatePostEnhanceScripts() {
   const entries = await fs.readdir(POSTS_DIR);
-  let patched = 0;
 
   for (const entry of entries) {
     if (!entry.endsWith('.html')) continue;
 
     const postPath = path.join(POSTS_DIR, entry);
     const html = await fs.readFile(postPath, 'utf8');
-    if (html.includes('post-enhance.js')) continue;
-
-    const patchedHtml = html.replace(
-      /(\s*)<\/body>/i,
-      `\n${POST_ENHANCE_SCRIPT}\n</body>`,
-    );
-
-    if (patchedHtml === html) {
-      throw new Error(`Could not inject post-enhance.js into ${entry}`);
+    if (!html.includes('post-enhance.js')) {
+      throw new Error(
+        `Missing post-enhance.js in posts/${entry}. Add ${POST_ENHANCE_SCRIPT.trim()} before </body>, or run scripts/migrate-posts.py.`,
+      );
     }
-
-    await fs.writeFile(postPath, patchedHtml);
-    patched += 1;
-  }
-
-  if (patched > 0) {
-    process.stdout.write(`patched ${patched} post(s) with post-enhance.js\n`);
   }
 }
 
@@ -466,7 +475,7 @@ async function main() {
   const topics = [...module.TOPICS];
 
   await validateInputs(posts, topics);
-  await ensurePostEnhanceScripts();
+  await validatePostEnhanceScripts();
 
   const contentIndex = deriveContentIndex(posts, topics);
 

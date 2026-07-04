@@ -57,8 +57,54 @@ async function fetchJson(path: string, ttlMs = DEFAULT_TTL_MS): Promise<unknown>
   }
 }
 
+export type GithubEvent = {
+  type: string;
+  repo: string;
+  message: string;
+  timestamp: string;
+};
+
+function isGithubEvent(value: unknown): value is GithubEvent {
+  if (!value || typeof value !== 'object') return false;
+
+  const event = value as Partial<GithubEvent>;
+  return (
+    typeof event.type === 'string' &&
+    typeof event.repo === 'string' &&
+    typeof event.message === 'string' &&
+    typeof event.timestamp === 'string'
+  );
+}
+
+/** Accepts both `{ events: [...] }` and bare array payloads from clanka-api. */
+export function parseGithubEvents(payload: unknown): GithubEvent[] {
+  if (Array.isArray(payload)) {
+    return payload.filter(isGithubEvent);
+  }
+
+  if (payload && typeof payload === 'object' && 'events' in payload) {
+    const events = (payload as { events: unknown }).events;
+    return Array.isArray(events) ? events.filter(isGithubEvent) : [];
+  }
+
+  return [];
+}
+
+export async function fetchGithubEvents(): Promise<GithubEvent[]> {
+  try {
+    const data = await fetchJson('/github/events');
+    return parseGithubEvents(data);
+  } catch {
+    return [];
+  }
+}
+
 export function fetchNow(): Promise<unknown> {
   return fetchJson('/now');
+}
+
+export function fetchGithubStats(): Promise<unknown> {
+  return fetchJson('/github/stats');
 }
 
 export function fetchFleetSummary(): Promise<unknown> {
