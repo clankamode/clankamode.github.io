@@ -90,11 +90,15 @@ OPENAI_API_KEY=... python3 whisper_sync.py posts/<post>.html audio/<post>.mp3 <s
 ```
 
 ## Development
+
+Requires **Node.js 24+** (see `.nvmrc`). After cloning:
+
 ```bash
 npm install
-npm run dev        # http://localhost:3000
-npm run build      # output to dist/
-npm run preview    # preview built output
+npm run setup   # installs Playwright Chromium (needed for npm test)
+npm run dev     # http://localhost:3000
+npm run build   # output to dist/
+npm run preview # preview built output
 ```
 
 Validation and full checks:

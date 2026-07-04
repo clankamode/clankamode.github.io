@@ -69,7 +69,11 @@ if (presence) {
     const customEvent = event as CustomEvent<SyncPayload>;
     const data = customEvent.detail || {};
 
-    if (tasks) tasks.tasks = data.tasks || [];
+    if (tasks) {
+      tasks.tasks = data.tasks || [];
+      tasks.loading = false;
+      tasks.error = '';
+    }
     if (agents) {
       agents.team = data.team ?? {};
       agents.loading = false;
@@ -86,6 +90,10 @@ if (presence) {
     if (agents) {
       agents.loading = false;
       agents.error = '[ api unreachable ]';
+    }
+    if (tasks) {
+      tasks.loading = false;
+      tasks.error = '[ api unreachable ]';
     }
     setText('stat-active-agents', 'agents: offline');
   });

@@ -1,7 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-const API_BASE = 'https://clanka-api.clankamode.workers.dev';
-const API_TIMEOUT_MS = 5000;
+import { fetchFleetSummary } from './clanka-api';
 
 type Tier = 'ops' | 'infra' | 'core' | 'quality' | 'policy' | 'template';
 type Criticality = 'critical' | 'high' | 'medium';
@@ -254,26 +253,6 @@ export class ClankaFleet extends LitElement {
     this.viewportObserver.observe(this);
   }
 
-  private async fetchFleetSummary(): Promise<unknown> {
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
-
-    try {
-      const response = await fetch(`${API_BASE}/fleet/summary`, {
-        headers: { Accept: 'application/json' },
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        throw new Error(`API ${response.status}`);
-      }
-
-      return response.json();
-    } finally {
-      window.clearTimeout(timeoutId);
-    }
-  }
-
   private async loadFleet(): Promise<void> {
     if (this.loadInFlight) return;
     this.loadInFlight = true;
@@ -281,7 +260,7 @@ export class ClankaFleet extends LitElement {
     this.error = '';
 
     try {
-      const data = await this.fetchFleetSummary();
+      const data = await fetchFleetSummary();
       const repos = this.extractRepos(data);
       if (!repos.length) {
         this.repos = [];
