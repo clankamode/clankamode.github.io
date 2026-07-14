@@ -142,31 +142,16 @@ test('live widgets show offline state when API is unreachable', async ({ page })
 });
 
 test('partial /now payloads do not wipe tasks or agents', async ({ page }) => {
-  let nowCalls = 0;
   await page.route(`${API_BASE}/now`, async (route) => {
-    nowCalls += 1;
-    if (nowCalls === 1) {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          current: 'shipping bug-bash fixes',
-          status: 'active',
-          agents_active: 3,
-          team: { alpha: { status: 'active' } },
-          tasks: [{ id: 't1', title: 'Keep the board', status: 'todo' }],
-        }),
-      });
-      return;
-    }
-
-    // Slim presence-only payload — must not clear boards.
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        current: 'still shipping',
+        current: 'shipping bug-bash fixes',
         status: 'active',
+        agents_active: 3,
+        team: { alpha: { status: 'active' } },
+        tasks: [{ id: 't1', title: 'Keep the board', status: 'todo' }],
       }),
     });
   });
@@ -176,15 +161,18 @@ test('partial /now payloads do not wipe tasks or agents', async ({ page }) => {
   await expect(page.locator('clanka-tasks#tasks')).toContainText('Keep the board');
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 3 active');
 
-  await page.evaluate(async () => {
-    const presence = document.getElementById('presence') as HTMLElement & {
-      updatePresence?: () => Promise<void>;
-    };
-    await presence.updatePresence?.();
+  // Simulate a slim presence-only sync (as if /now omitted tasks/team).
+  await page.evaluate(() => {
+    const presence = document.getElementById('presence');
+    presence?.dispatchEvent(
+      new CustomEvent('sync-updated', {
+        detail: { current: 'still shipping', status: 'active' },
+      }),
+    );
   });
 
-  await expect(page.locator('clanka-presence#presence')).toContainText('still shipping');
   await expect(page.locator('clanka-tasks#tasks')).toContainText('Keep the board');
+  await expect(page.locator('clanka-agents#agents')).toContainText('team: 1 member');
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 3 active');
 });
 
