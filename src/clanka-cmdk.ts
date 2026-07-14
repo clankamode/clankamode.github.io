@@ -400,7 +400,10 @@ export class ClankaCmdk extends LitElement {
         const idx = flatIdx++;
         result.push(html`
           <div
+            id="cmdk-option-${idx}"
             class="item ${idx === this.activeIndex ? 'active' : ''}"
+            role="option"
+            aria-selected=${idx === this.activeIndex ? 'true' : 'false'}
             @click=${() => this.navigate(item)}
             @mouseenter=${() => { this.activeIndex = idx; }}
           >
@@ -416,6 +419,9 @@ export class ClankaCmdk extends LitElement {
   render(): unknown {
     if (!this.open) return html``;
 
+    this.clampActiveIndex();
+    const activeId = this.filtered.length > 0 ? `cmdk-option-${this.activeIndex}` : undefined;
+
     return html`
       <div class="backdrop" @click=${this.close}></div>
       <div
@@ -430,7 +436,12 @@ export class ClankaCmdk extends LitElement {
           <input
             type="text"
             placeholder="navigate to..."
+            role="combobox"
             aria-label="Search commands"
+            aria-autocomplete="list"
+            aria-expanded="true"
+            aria-controls="cmdk-listbox"
+            aria-activedescendant=${activeId ?? ''}
             .value=${this.query}
             @input=${this.handleInput}
             spellcheck="false"
@@ -438,7 +449,9 @@ export class ClankaCmdk extends LitElement {
           />
           <span class="kbd">esc</span>
         </div>
-        <div class="results">${this.renderItems()}</div>
+        <div class="results" id="cmdk-listbox" role="listbox" aria-label="Commands">
+          ${this.renderItems()}
+        </div>
         <div class="footer">
           <span class="footer-key"><kbd>↑↓</kbd> navigate</span>
           <span class="footer-key"><kbd>↵</kbd> open</span>

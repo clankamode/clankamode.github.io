@@ -188,3 +188,37 @@ test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
   assert.deepEqual(parseGithubEvents({ events: 'invalid' }), []);
   assert.deepEqual(parseGithubEvents(null), []);
 });
+
+test('parseNowPayload rejects invalid shapes and preserves optional fields', async () => {
+  const { parseNowPayload } = await loadTsModule('src/clanka-api.ts');
+
+  assert.equal(parseNowPayload(null), null);
+  assert.equal(parseNowPayload({}), null);
+  assert.equal(parseNowPayload({ current: 1 }), null);
+  assert.equal(parseNowPayload({ tasks: 'nope' }), null);
+  assert.equal(parseNowPayload({ team: [] }), null);
+
+  assert.deepEqual(parseNowPayload({ current: 'building', status: 'active' }), {
+    current: 'building',
+    status: 'active',
+  });
+
+  assert.deepEqual(
+    parseNowPayload({
+      current: 'building',
+      status: 'active',
+      tasks: [{ id: '1' }],
+      team: { alpha: { status: 'active' } },
+      agents_active: 2,
+      history: [],
+    }),
+    {
+      current: 'building',
+      status: 'active',
+      tasks: [{ id: '1' }],
+      team: { alpha: { status: 'active' } },
+      agents_active: 2,
+      history: [],
+    },
+  );
+});

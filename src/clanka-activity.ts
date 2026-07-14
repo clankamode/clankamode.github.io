@@ -80,12 +80,13 @@ export class ClankaActivity extends LitElement {
 
   private async loadData(): Promise<void> {
     try {
-      const events = await fetchEvents();
-      if (events.length === 0) {
+      const result = await fetchEvents();
+      if (!result.ok) {
         this.error = '[ activity unavailable ]';
+        this.events = [];
       } else {
         this.error = '';
-        this.events = events;
+        this.events = result.events;
       }
     } finally {
       this.loading = false;
@@ -102,12 +103,16 @@ export class ClankaActivity extends LitElement {
         ? html`<div class="status-fallback"><span class="loading-text">[ loading... ]</span></div>`
         : this.error
           ? html`<div class="status-fallback">${this.error}</div>`
-          : this.events.map(e => html`
-            <div class="row" role="listitem">
-              <span class="row-name"><span class="tag">[${e.type}]</span> ${e.repo}: ${e.message}</span>
-              <span class="row-meta">${relativeTime(e.timestamp)}</span>
-            </div>
-          `)}
+          : this.events.length === 0
+            ? html`<div class="status-fallback">[ no recent activity ]</div>`
+            : html`<div role="list">
+              ${this.events.map(e => html`
+                <div class="row" role="listitem">
+                  <span class="row-name"><span class="tag">[${e.type}]</span> ${e.repo}: ${e.message}</span>
+                  <span class="row-meta">${relativeTime(e.timestamp)}</span>
+                </div>
+              `)}
+            </div>`}
     `;
   }
 }

@@ -1,4 +1,4 @@
-import { fetchGithubEvents, type GithubEvent } from './clanka-api';
+import { fetchGithubEvents, type GithubEventsResult } from './clanka-api';
 
 export function relativeTime(iso: string): string {
   const parsed = new Date(iso).getTime();
@@ -12,6 +12,6 @@ export function relativeTime(iso: string): string {
   return `${Math.floor(ms / 86_400_000)}d ago`;
 }
 
-export async function fetchEvents(): Promise<GithubEvent[]> {
+export async function fetchEvents(): Promise<GithubEventsResult> {
   return fetchGithubEvents();
 }

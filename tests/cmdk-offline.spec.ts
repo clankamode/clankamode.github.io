@@ -135,4 +135,64 @@ test('live widgets show offline state when API is unreachable', async ({ page })
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: offline');
   await expect(page.locator('clanka-agents#agents')).toContainText('[ api unreachable ]');
   await expect(page.locator('clanka-tasks#tasks')).toContainText('[ api unreachable ]');
+  await expect(page.locator('clanka-terminal#terminal')).toContainText('[ offline — activity unavailable ]');
+
+  await page.locator('#commit-feed').scrollIntoViewIfNeeded();
+  await expect(page.locator('#commit-feed')).toContainText('// activity unavailable');
+});
+
+test('partial /now payloads do not wipe tasks or agents', async ({ page }) => {
+  let nowCalls = 0;
+  await page.route(`${API_BASE}/now`, async (route) => {
+    nowCalls += 1;
+    if (nowCalls === 1) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          current: 'shipping bug-bash fixes',
+          status: 'active',
+          agents_active: 3,
+          team: { alpha: { status: 'active' } },
+          tasks: [{ id: 't1', title: 'Keep the board', status: 'todo' }],
+        }),
+      });
+      return;
+    }
+
+    // Slim presence-only payload — must not clear boards.
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: 'still shipping',
+        status: 'active',
+      }),
+    });
+  });
+
+  await page.reload();
+  await page.waitForSelector('clanka-tasks#tasks');
+  await expect(page.locator('clanka-tasks#tasks')).toContainText('Keep the board');
+  await expect(page.locator('#stat-active-agents')).toHaveText('agents: 3 active');
+
+  await page.evaluate(async () => {
+    const presence = document.getElementById('presence') as HTMLElement & {
+      updatePresence?: () => Promise<void>;
+    };
+    await presence.updatePresence?.();
+  });
+
+  await expect(page.locator('clanka-presence#presence')).toContainText('still shipping');
+  await expect(page.locator('clanka-tasks#tasks')).toContainText('Keep the board');
+  await expect(page.locator('#stat-active-agents')).toHaveText('agents: 3 active');
+});
+
+test('command palette exposes listbox semantics for results', async ({ page }) => {
+  await page.keyboard.press('Meta+k');
+  const palette = page.locator('clanka-cmdk .palette');
+  await expect(palette).toBeVisible();
+  await expect(palette.locator('#cmdk-listbox')).toHaveAttribute('role', 'listbox');
+  await expect(palette.locator('[role="option"]').first()).toBeVisible();
+  await expect(palette.locator('input')).toHaveAttribute('aria-controls', 'cmdk-listbox');
 });

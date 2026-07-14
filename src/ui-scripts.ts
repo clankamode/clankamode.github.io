@@ -46,7 +46,9 @@ export function initUI(): void {
 
     const setButtonState = (theme: Theme): void => {
       button.textContent = `theme: ${theme}`;
-      button.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+      // Pressed reflects dark mode being active (the primary "on" state of the toggle).
+      button.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+      button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
     };
 
     let theme = activeTheme();

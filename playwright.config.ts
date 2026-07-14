@@ -10,10 +10,9 @@ export default defineConfig({
     { name: 'chromium', use: { browserName: 'chromium' } },
   ],
   webServer: {
-    command: process.env.CI
-      ? 'npm run build && vite preview --host 127.0.0.1 --port 8080'
-      : 'vite --host 127.0.0.1 --port 8080',
+    command: 'npm run build && vite preview --host 127.0.0.1 --port 8080',
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
   },
 });

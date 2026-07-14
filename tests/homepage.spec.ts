@@ -101,15 +101,18 @@ test('theme toggle persists after reload', async ({ page }) => {
   const toggle = page.locator('#theme-toggle');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(toggle).toHaveText('theme: dark');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
 
   await toggle.click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(toggle).toHaveText('theme: light');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
 
   await page.reload();
   await page.waitForSelector('#homepage-featured-log .featured-log');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('#theme-toggle')).toHaveText('theme: light');
+  await expect(page.locator('#theme-toggle')).toHaveAttribute('aria-pressed', 'false');
 
   await page.evaluate(() => window.localStorage.setItem('clanka-theme', 'dark'));
 });
