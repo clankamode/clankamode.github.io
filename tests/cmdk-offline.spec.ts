@@ -176,6 +176,59 @@ test('partial /now payloads do not wipe tasks or agents', async ({ page }) => {
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 3 active');
 });
 
+test('transient sync-error after a successful sync keeps task boards visible', async ({ page }) => {
+  await page.route(`${API_BASE}/now`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: 'stable',
+        status: 'active',
+        agents_active: 2,
+        team: { alpha: { status: 'active' } },
+        tasks: [{ id: 't1', title: 'Stay visible', status: 'todo' }],
+      }),
+    });
+  });
+
+  await page.reload();
+  await expect(page.locator('clanka-tasks#tasks')).toContainText('Stay visible');
+
+  await page.evaluate(() => {
+    const presence = document.getElementById('presence');
+    presence?.dispatchEvent(
+      new CustomEvent('sync-error', {
+        detail: { error: '[ api unreachable ]', hadSync: true },
+      }),
+    );
+  });
+
+  await expect(page.locator('clanka-tasks#tasks')).toContainText('Stay visible');
+  await expect(page.locator('clanka-tasks#tasks')).not.toContainText('[ api unreachable ]');
+  await expect(page.locator('#stat-active-agents')).toHaveText('agents: 2 active');
+});
+
+test('slim sync after offline clears latched agent offline state', async ({ page }) => {
+  await page.route(`${API_BASE}/**`, async (route) => {
+    await route.abort('failed');
+  });
+  await page.reload();
+  await expect(page.locator('#stat-active-agents')).toHaveText('agents: offline');
+
+  await page.unroute(`${API_BASE}/**`);
+  await page.evaluate(() => {
+    const presence = document.getElementById('presence');
+    presence?.dispatchEvent(
+      new CustomEvent('sync-updated', {
+        detail: { current: 'recovered', status: 'active' },
+      }),
+    );
+  });
+
+  await expect(page.locator('#stat-active-agents')).toHaveText('agents: —');
+  await expect(page.locator('clanka-tasks#tasks')).not.toContainText('[ api unreachable ]');
+});
+
 test('command palette exposes listbox semantics for results', async ({ page }) => {
   await page.keyboard.press('Meta+k');
   const palette = page.locator('clanka-cmdk .palette');

@@ -107,10 +107,12 @@
   window.addEventListener('scroll', updateBar, { passive: true });
   updateBar();
 
-  // 2. Estimated reading time
-  const content = document.querySelector('.page');
-  if (content) {
-    const words = content.textContent?.split(/\s+/).length || 0;
+  // 2. Estimated reading time (article body only — exclude footer/nav chrome)
+  const readingRoot = document.querySelector('article') || document.querySelector('.page');
+  if (readingRoot) {
+    const clone = readingRoot.cloneNode(true);
+    clone.querySelectorAll('.audio-player, .footer, .post-nav, .post-nav-enhanced, .meta, .post-number, script, style').forEach((el) => el.remove());
+    const words = (clone.textContent || '').trim().split(/\s+/).filter(Boolean).length;
     const mins = Math.max(1, Math.ceil(words / 220));
     const meta = document.querySelector('.meta');
     if (meta && !/\bmin read\b/i.test(meta.textContent || '')) {
@@ -118,14 +120,15 @@
     }
   }
 
-  // 3. Keyboard navigation: j/k for prev/next (resolved at keydown so async
-  //    content-index nav enhancements stay in sync with on-screen links)
+  // 3. Keyboard navigation: j/k for prev/next. Prefer data-nav from content-index
+  //    enhancement; fall back to legacy static nav only after enhance settles.
+  let navEnhanceSettled = false;
   const resolveNavHref = (which) => {
     const nav = document.querySelector('.post-nav-enhanced') || document.querySelector('.post-nav');
     if (!nav) return null;
     const marked = nav.querySelector(`a[data-nav="${which}"]`);
     if (marked) return marked.getAttribute('href');
-    // Fallback for static legacy nav: first link = older/prev, second = newer/next
+    if (!navEnhanceSettled) return null;
     const links = nav.querySelectorAll('a[href]');
     if (which === 'prev') return links[0]?.getAttribute('href') || null;
     return links.length > 1 ? links[1].getAttribute('href') : null;
@@ -153,7 +156,10 @@
     injectStyles();
 
     const slug = window.location.pathname.split('/').pop()?.replace(/\.html$/, '');
-    if (!slug) return;
+    if (!slug) {
+      navEnhanceSettled = true;
+      return;
+    }
 
     try {
       const response = await fetch(CONTENT_INDEX_URL, {
@@ -254,6 +260,8 @@
       }
     } catch {
       // Best-effort enhancement only.
+    } finally {
+      navEnhanceSettled = true;
     }
   })();
 })();

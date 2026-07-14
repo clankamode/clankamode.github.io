@@ -1,4 +1,5 @@
 import { fetchGithubEvents, type GithubEvent } from './clanka-api';
+import { withResultRetries } from './retry';
 
 const COMMIT_TYPES = ['feat', 'fix', 'chore', 'docs', 'test', 'refactor', 'ci', 'build', 'style'] as const;
 
@@ -57,7 +58,7 @@ export async function loadCommitFeed(): Promise<void> {
   commitFeedLoadInFlight = true;
 
   try {
-    const result = await fetchGithubEvents();
+    const result = await withResultRetries(() => fetchGithubEvents());
 
     if (!result.ok) {
       setFeedText('// activity unavailable');

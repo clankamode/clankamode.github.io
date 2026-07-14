@@ -74,26 +74,43 @@ if (presence) {
     const customEvent = event as CustomEvent<SyncPayload>;
     const data = customEvent.detail || {};
 
-    // Only replace tasks/team when the payload includes those keys. Slim /now
-    // responses (presence-only) must not wipe previously loaded boards.
-    if (tasks && 'tasks' in data) {
-      tasks.tasks = Array.isArray(data.tasks) ? data.tasks : [];
+    // Always clear latched errors on any successful presence sync.
+    if (tasks) {
       tasks.loading = false;
       tasks.error = '';
+      if ('tasks' in data) {
+        tasks.tasks = Array.isArray(data.tasks) ? data.tasks : [];
+      }
     }
-    if (agents && 'team' in data) {
-      agents.team = data.team && typeof data.team === 'object' ? data.team : {};
+    if (agents) {
       agents.loading = false;
       agents.error = '';
+      if ('team' in data) {
+        agents.team = data.team && typeof data.team === 'object' ? data.team : {};
+      }
     }
 
     const activeAgents = resolveActiveAgents(data);
     if (activeAgents !== null) {
       setText('stat-active-agents', `agents: ${activeAgents} active`);
+    } else {
+      const el = document.getElementById('stat-active-agents');
+      if (el?.textContent === 'agents: offline') {
+        setText('stat-active-agents', 'agents: —');
+      }
     }
   });
 
-  presence.addEventListener('sync-error', () => {
+  presence.addEventListener('sync-error', (event: Event) => {
+    const hadSync = Boolean((event as CustomEvent<{ hadSync?: boolean }>).detail?.hadSync);
+
+    // After a successful sync, keep last-good boards visible through transient blips.
+    if (hadSync) {
+      if (agents) agents.loading = false;
+      if (tasks) tasks.loading = false;
+      return;
+    }
+
     if (agents) {
       agents.loading = false;
       agents.error = '[ api unreachable ]';

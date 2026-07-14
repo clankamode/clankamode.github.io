@@ -8,6 +8,7 @@ export class ClankaPresence extends LitElement {
   @state() private status: string = 'OPERATIONAL';
   @state() private loading = true;
   @state() private error = '';
+  @state() private stale = false;
   private pollId?: number;
   private hasSyncedOnce = false;
   private updateInFlight = false;
@@ -142,15 +143,25 @@ export class ClankaPresence extends LitElement {
         this.status = 'operational';
       }
       this.error = '';
+      this.stale = false;
       this.hasSyncedOnce = true;
       this.dispatchEvent(new CustomEvent('sync-updated', { detail: data }));
     } catch {
       if (!this.isConnected) return;
 
-      this.error = '[ api unreachable ]';
-      this.current = '[ offline ]';
-      this.status = 'offline';
-      this.dispatchEvent(new CustomEvent('sync-error', { detail: { error: this.error } }));
+      if (!this.hasSyncedOnce) {
+        this.error = '[ api unreachable ]';
+        this.current = '[ offline ]';
+        this.status = 'offline';
+        this.stale = false;
+      } else {
+        // Keep last-good presence text; mark chrome as stale instead of wiping.
+        this.error = '';
+        this.stale = true;
+      }
+      this.dispatchEvent(new CustomEvent('sync-error', {
+        detail: { error: '[ api unreachable ]', hadSync: this.hasSyncedOnce },
+      }));
     } finally {
       this.updateInFlight = false;
       if (this.isConnected) {
@@ -163,13 +174,18 @@ export class ClankaPresence extends LitElement {
     const normalizedStatus = this.status.toLowerCase();
     const showThinking = normalizedStatus === 'thinking';
     const showOffline = normalizedStatus === 'offline';
+    const statusLabel = this.loading
+      ? 'SYNCING'
+      : this.stale
+        ? 'STALE'
+        : this.status.toUpperCase();
 
     return html`
       <div class="hd">
         <span class="hd-name">CLANKA ⚡</span>
         <span class="hd-status">
-          <span class="dot ${showThinking ? 'thinking' : ''}" style=${showOffline ? 'opacity:.4' : ''}></span>
-          ${this.loading ? 'SYNCING' : this.status.toUpperCase()}
+          <span class="dot ${showThinking ? 'thinking' : ''}" style=${showOffline || this.stale ? 'opacity:.4' : ''}></span>
+          ${statusLabel}
         </span>
       </div>
       <div class="presence-block">
@@ -178,7 +194,7 @@ export class ClankaPresence extends LitElement {
           ? html`<span class="loading"> [ loading... ]</span><div class="skeleton" aria-hidden="true"></div>`
           : this.error
             ? html`<span class="error"> ${this.error}</span>`
-            : html` ${this.current}`}
+            : html` ${this.current}${this.stale ? html`<span class="error"> [ reconnecting… ]</span>` : ''}`}
       </div>
     `;
   }

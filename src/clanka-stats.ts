@@ -1,4 +1,5 @@
 import { fetchFleetSummary, fetchGithubStats } from './clanka-api';
+import { withRetries } from './retry';
 
 const SITE_LAUNCH = new Date('2026-02-19T00:00:00Z');
 
@@ -7,10 +8,6 @@ interface GithubStats {
   totalStars: number;
   lastPushedAt: string;
   lastPushedRepo: string;
-}
-
-interface FleetSummary {
-  totalRepos?: number;
 }
 
 const MIN_VALID_PUSHED_AT_MS = Date.parse('2008-01-01T00:00:00Z');
@@ -52,11 +49,38 @@ function setText(id: string, value: string): void {
   if (el) el.textContent = value;
 }
 
+function resolveFleetTotal(data: unknown): number | null {
+  if (!data || typeof data !== 'object') return null;
+
+  const root = data as Record<string, unknown>;
+  const candidates: unknown[] = [root.totalRepos];
+
+  if (root.summary && typeof root.summary === 'object') {
+    candidates.push((root.summary as Record<string, unknown>).totalRepos);
+  }
+
+  if (Array.isArray(root.repos)) candidates.push(root.repos.length);
+  if (Array.isArray(root.fleet)) candidates.push(root.fleet.length);
+
+  if (root.summary && typeof root.summary === 'object') {
+    const summary = root.summary as Record<string, unknown>;
+    if (Array.isArray(summary.repos)) candidates.push(summary.repos.length);
+    if (Array.isArray(summary.fleet)) candidates.push(summary.fleet.length);
+  }
+
+  for (const candidate of candidates) {
+    const total = Number(candidate);
+    if (Number.isFinite(total) && total >= 0) return total;
+  }
+
+  return null;
+}
+
 export async function loadLiveStats(): Promise<void> {
   setText('stat-uptime', `// ${uptimeDays()}d online`);
 
   try {
-    const data = (await fetchGithubStats()) as GithubStats;
+    const data = (await withRetries(() => fetchGithubStats())) as GithubStats;
 
     const repoCount = Number(data.repoCount);
     if (Number.isFinite(repoCount)) {
@@ -79,9 +103,9 @@ export async function loadLiveStats(): Promise<void> {
     }
 
     try {
-      const fleetData = (await fetchFleetSummary()) as FleetSummary;
-      const total = Number(fleetData.totalRepos);
-      if (Number.isFinite(total) && total >= 0) {
+      const fleetData = await withRetries(() => fetchFleetSummary());
+      const total = resolveFleetTotal(fleetData);
+      if (total !== null) {
         setText('stat-fleet-score', `fleet: ${total} repos`);
       } else {
         setText('stat-fleet-score', 'fleet: unavailable');
