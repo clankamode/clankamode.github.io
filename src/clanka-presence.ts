@@ -2,19 +2,10 @@ import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { fetchNow } from './clanka-api';
 
-type PresencePayload = {
-  current?: string;
-  status?: string;
-  history?: unknown[];
-  team?: Record<string, unknown>;
-  tasks?: unknown[];
-};
-
 @customElement('clanka-presence')
 export class ClankaPresence extends LitElement {
   @state() private current: string = '[ loading... ]';
   @state() private status: string = 'OPERATIONAL';
-  @state() private history: unknown[] = [];
   @state() private loading = true;
   @state() private error = '';
   private pollId?: number;
@@ -137,12 +128,19 @@ export class ClankaPresence extends LitElement {
     }
 
     try {
-      const data = (await fetchNow()) as PresencePayload;
+      const data = await fetchNow();
       if (!this.isConnected) return;
 
-      this.current = typeof data.current === 'string' ? data.current : 'active';
-      this.status = typeof data.status === 'string' ? data.status : 'operational';
-      this.history = Array.isArray(data.history) ? data.history : [];
+      if (typeof data.current === 'string') {
+        this.current = data.current;
+      } else if (!this.hasSyncedOnce) {
+        this.current = 'active';
+      }
+      if (typeof data.status === 'string') {
+        this.status = data.status;
+      } else if (!this.hasSyncedOnce) {
+        this.status = 'operational';
+      }
       this.error = '';
       this.hasSyncedOnce = true;
       this.dispatchEvent(new CustomEvent('sync-updated', { detail: data }));

@@ -52,8 +52,9 @@ const countActiveFromTeam = (team?: Record<string, unknown>): number | null => {
     }
   });
 
-  if (withState > 0) return active;
-  return members.length;
+  // Only count members with an explicit status — missing state must not inflate "active".
+  if (withState === 0) return null;
+  return active;
 };
 
 const resolveActiveAgents = (data: SyncPayload): number | null => {
@@ -61,7 +62,11 @@ const resolveActiveAgents = (data: SyncPayload): number | null => {
     return Math.floor(data.agents_active);
   }
 
-  return countActiveFromTeam(data.team);
+  if ('team' in data) {
+    return countActiveFromTeam(data.team);
+  }
+
+  return null;
 };
 
 if (presence) {
@@ -69,13 +74,15 @@ if (presence) {
     const customEvent = event as CustomEvent<SyncPayload>;
     const data = customEvent.detail || {};
 
-    if (tasks) {
-      tasks.tasks = data.tasks || [];
+    // Only replace tasks/team when the payload includes those keys. Slim /now
+    // responses (presence-only) must not wipe previously loaded boards.
+    if (tasks && 'tasks' in data) {
+      tasks.tasks = Array.isArray(data.tasks) ? data.tasks : [];
       tasks.loading = false;
       tasks.error = '';
     }
-    if (agents) {
-      agents.team = data.team ?? {};
+    if (agents && 'team' in data) {
+      agents.team = data.team && typeof data.team === 'object' ? data.team : {};
       agents.loading = false;
       agents.error = '';
     }

@@ -120,6 +120,11 @@ async function validateInputs(posts, topics) {
     if (post.audio && !postHtml.includes('data-src=')) {
       throw new Error(`Missing audio data-src for ${post.slug} (audio=true in posts.ts)`);
     }
+    if (post.audio && !/<script\b[^>]*\bid=["']audio-timings["']/.test(postHtml)) {
+      throw new Error(
+        `Missing #audio-timings for ${post.slug} (audio=true). Embed Whisper timings or run whisper_sync.py.`,
+      );
+    }
   }
 
   const registeredSlugs = new Set(posts.map((post) => post.slug));

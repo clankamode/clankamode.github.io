@@ -58,12 +58,16 @@ export class ClankaTerminal extends LitElement {
 
   private async loadData(): Promise<void> {
     try {
-      const events = await fetchEvents();
-      if (events.length === 0) {
+      const result = await fetchEvents();
+      if (!result.ok) {
         this.error = '[ offline — activity unavailable ]';
+        this.events = [];
+      } else if (result.events.length === 0) {
+        this.error = '';
+        this.events = [];
       } else {
         this.error = '';
-        this.events = events.slice(0, 8);
+        this.events = result.events.slice(0, 8);
       }
     } finally {
       this.loading = false;
@@ -82,7 +86,9 @@ export class ClankaTerminal extends LitElement {
           ? html`<div class="line dim">[ fetching activity... ]<span class="cursor"></span></div>`
           : this.error
             ? html`<div class="line dim">${this.error}</div>`
-            : this.events.map(e => html`
+            : this.events.length === 0
+              ? html`<div class="line dim">[ no recent activity ]</div>`
+              : this.events.map(e => html`
               <div class="line"><span class="tag">[${e.type}]</span> <span class="repo">${e.repo}:</span> <span class="msg">"${e.message}"</span>  <span class="ts">· ${relativeTime(e.timestamp)}</span></div>
             `)}
         ${!this.loading ? html`<div class="line prompt">clanka@fleet:~$ <span class="cursor"></span></div>` : ''}

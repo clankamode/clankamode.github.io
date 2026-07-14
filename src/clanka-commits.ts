@@ -57,15 +57,20 @@ export async function loadCommitFeed(): Promise<void> {
   commitFeedLoadInFlight = true;
 
   try {
-    const events = await fetchGithubEvents();
+    const result = await fetchGithubEvents();
 
-    if (events.length === 0) {
+    if (!result.ok) {
+      setFeedText('// activity unavailable');
+      return;
+    }
+
+    if (result.events.length === 0) {
       setFeedText('// no recent activity');
       return;
     }
 
     commitFeed.textContent = '';
-    events.slice(0, 8).forEach((event: GithubEvent) => {
+    result.events.slice(0, 8).forEach((event: GithubEvent) => {
         const repo = stripRepoPrefix(event.repo || 'unknown');
         const message = event.message || '';
         const commitType = detectCommitType(message);
@@ -77,7 +82,8 @@ export async function loadCommitFeed(): Promise<void> {
         const repoEl = document.createElement('a');
         repoEl.className = 'commit-repo';
         repoEl.href = `https://github.com/${event.repo || 'unknown'}`;
-        repoEl.rel = 'noopener';
+        repoEl.rel = 'noopener noreferrer';
+        repoEl.target = '_blank';
         repoEl.textContent = repo;
 
         const tagEl = document.createElement('span');

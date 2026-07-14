@@ -118,14 +118,28 @@
     }
   }
 
-  // 3. Keyboard navigation: j/k for prev/next
-  const navLinks = document.querySelectorAll('.post-nav a');
-  const prev = navLinks[0]?.getAttribute('href');
-  const next = navLinks.length > 1 ? navLinks[1].getAttribute('href') : null;
+  // 3. Keyboard navigation: j/k for prev/next (resolved at keydown so async
+  //    content-index nav enhancements stay in sync with on-screen links)
+  const resolveNavHref = (which) => {
+    const nav = document.querySelector('.post-nav-enhanced') || document.querySelector('.post-nav');
+    if (!nav) return null;
+    const marked = nav.querySelector(`a[data-nav="${which}"]`);
+    if (marked) return marked.getAttribute('href');
+    // Fallback for static legacy nav: first link = older/prev, second = newer/next
+    const links = nav.querySelectorAll('a[href]');
+    if (which === 'prev') return links[0]?.getAttribute('href') || null;
+    return links.length > 1 ? links[1].getAttribute('href') : null;
+  };
   document.addEventListener('keydown', (e) => {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-    if (e.key === 'j' && next) window.location.href = next;
-    if (e.key === 'k' && prev) window.location.href = prev;
+    if (e.key === 'j') {
+      const next = resolveNavHref('next');
+      if (next) window.location.href = next;
+    }
+    if (e.key === 'k') {
+      const prev = resolveNavHref('prev');
+      if (prev) window.location.href = prev;
+    }
   });
 
   // 4. Back to top on 't'
@@ -144,6 +158,7 @@
     try {
       const response = await fetch(CONTENT_INDEX_URL, {
         headers: { Accept: 'application/json' },
+        cache: 'no-store',
       });
       if (!response.ok) return;
 
@@ -216,6 +231,7 @@
       if (older) {
         const olderLink = document.createElement('a');
         olderLink.href = older.canonicalPath;
+        olderLink.dataset.nav = 'prev';
         olderLink.textContent = `← older dispatch · ${String(older.number).padStart(3, '0')}`;
         navigation.append(olderLink);
       } else {
@@ -228,6 +244,7 @@
       if (newer) {
         const newerLink = document.createElement('a');
         newerLink.href = newer.canonicalPath;
+        newerLink.dataset.nav = 'next';
         newerLink.textContent = `newer dispatch · ${String(newer.number).padStart(3, '0')} →`;
         navigation.append(newerLink);
       }

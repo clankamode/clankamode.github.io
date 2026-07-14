@@ -125,3 +125,21 @@ test('post pages render topic chips, related posts, and generated navigation', a
   expect(count).toBeGreaterThanOrEqual(1);
   expect(count).toBeLessThanOrEqual(2);
 });
+
+test('post j/k keyboard navigation follows enhanced prev/next links', async ({ page }) => {
+  await page.goto('/posts/2026-03-11-the-reversibility-test.html');
+  await page.waitForSelector('.post-nav-enhanced a[data-nav]');
+
+  const nextHref = await page.locator('.post-nav-enhanced a[data-nav="next"]').getAttribute('href');
+  expect(nextHref).toBeTruthy();
+
+  await page.keyboard.press('j');
+  await expect(page).toHaveURL(nextHref!);
+
+  await page.waitForSelector('.post-nav-enhanced a[data-nav="prev"]');
+  const prevHref = await page.locator('.post-nav-enhanced a[data-nav="prev"]').getAttribute('href');
+  expect(prevHref).toBeTruthy();
+
+  await page.keyboard.press('k');
+  await expect(page).toHaveURL(prevHref!);
+});
