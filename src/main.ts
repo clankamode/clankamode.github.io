@@ -4,13 +4,12 @@ import { loadLiveStats } from './clanka-stats';
 import { loadNpmBadge } from './clanka-npm';
 import { loadCommitFeed } from './clanka-commits';
 import './clanka-presence';
-import './clanka-activity';
 import './clanka-fleet';
 import './clanka-terminal';
 import './clanka-agents';
 import './clanka-tasks';
 import './clanka-cmdk';
-import { renderHomepageContent } from './homepage-content';
+import { renderHomepageContent, renderHomepageStats } from './homepage-content';
 import { runWhenNearViewport } from './lazy-near-viewport';
 
 type SyncPayload = {
@@ -124,6 +123,7 @@ if (presence) {
 }
 
 initUI();
+void renderHomepageStats();
 runWhenNearViewport('.logs-section', () => void renderHomepageContent());
 void loadLiveStats();
 void loadNpmBadge();

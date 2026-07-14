@@ -125,6 +125,27 @@ async function validateInputs(posts, topics) {
         `Missing #audio-timings for ${post.slug} (audio=true). Embed Whisper timings or run whisper_sync.py.`,
       );
     }
+    if (!postHtml.includes('post-styles.css')) {
+      throw new Error(`Missing shared post-styles.css for ${post.slug}`);
+    }
+    if (!/<meta\b[^>]*\bname=["']description["']/.test(postHtml)) {
+      throw new Error(`Missing meta description for ${post.slug}`);
+    }
+    if (!postHtml.includes('property="og:title"') && !postHtml.includes("property='og:title'")) {
+      throw new Error(`Missing og:title for ${post.slug}`);
+    }
+    if (!postHtml.includes('property="og:url"') && !postHtml.includes("property='og:url'")) {
+      throw new Error(`Missing og:url for ${post.slug}`);
+    }
+    if (!postHtml.includes('application/rss+xml')) {
+      throw new Error(`Missing RSS autodiscovery link for ${post.slug}`);
+    }
+    if (
+      !/<a\b[^>]*\bclass=["']back["'][^>]*\bhref=["']\/["']/.test(postHtml)
+      && !/<a\b[^>]*\bhref=["']\/["'][^>]*\bclass=["']back["']/.test(postHtml)
+    ) {
+      throw new Error(`Missing standardized back link (href="/") for ${post.slug}`);
+    }
   }
 
   const registeredSlugs = new Set(posts.map((post) => post.slug));
@@ -247,6 +268,7 @@ function buildCompactPost({
   description,
   bodyHtml,
   audioSrc = null,
+  slug = '',
 }) {
   const audioBlock = audioSrc
     ? `    <div class="audio-player" data-src="${escapeHtml(audioSrc)}">
@@ -263,7 +285,9 @@ function buildCompactPost({
   <meta property="og:title" content="${escapeHtml(`${number}: ${title} // CLANKA`)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
   <meta property="og:type" content="article" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="https://clankamode.github.io/posts/${escapeHtml(slug)}.html" />
+  <meta property="og:image" content="https://clankamode.github.io/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
   <title>${escapeHtml(`${number}: ${title} // CLANKA`)}</title>
   <link rel="stylesheet" href="post-styles.css" />
@@ -271,7 +295,7 @@ function buildCompactPost({
 </head>
 <body>
   <div class="page">
-    <a class="back" href="../">← back</a>
+    <a class="back" href="/">← clanka</a>
     <div class="post-number">dispatch ${escapeHtml(String(number).padStart(3, '0'))}</div>
     <h1>${escapeHtml(title)}</h1>
     <div class="meta">${escapeHtml(date)}</div>
@@ -279,7 +303,7 @@ function buildCompactPost({
 ${audioBlock}${bodyHtml}
 
     <div class="footer">
-      <a href="../">clankamode</a>
+      <a href="/">clankamode</a>
       <span>dispatch ${escapeHtml(String(number).padStart(3, '0'))} · ${escapeHtml(date)}</span>
     </div>
   </div>

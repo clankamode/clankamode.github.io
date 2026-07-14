@@ -158,3 +158,15 @@ test('archive status bar does not claim LIVE telemetry', async ({ page }) => {
   await page.waitForSelector('#archive-search-input');
   await expect(page.locator('#status-live-label')).toHaveText('SITE');
 });
+
+test('migrated featured post ships shared styles and social metadata', async ({ page }) => {
+  await page.goto('/posts/2026-06-01-the-red-repair.html');
+  await expect(page.locator('link[href="post-styles.css"]')).toHaveCount(1);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.+/);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+    'content',
+    'https://clankamode.github.io/posts/2026-06-01-the-red-repair.html',
+  );
+  await expect(page.locator('link[rel="alternate"][type="application/rss+xml"]')).toHaveCount(1);
+  await expect(page.locator('a.back')).toHaveAttribute('href', '/');
+});

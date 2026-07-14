@@ -13,13 +13,46 @@ function showArchiveUnavailable(host: HTMLElement | null): void {
   host.textContent = '// archive unavailable';
 }
 
+function applyHomepageCounts(
+  counts: { posts: number; audioPosts: number } | null,
+  unavailable = false,
+): void {
+  const postsCount = document.getElementById('stat-posts');
+  const audioCount = document.getElementById('stat-audio-posts');
+  const archiveCta = document.getElementById('logs-archive-link-count');
+
+  if (unavailable || !counts) {
+    if (postsCount) postsCount.textContent = 'archive unavailable';
+    if (audioCount) audioCount.textContent = 'audio unavailable';
+    if (archiveCta) archiveCta.textContent = 'archive unavailable';
+    return;
+  }
+
+  if (postsCount) {
+    postsCount.textContent = `${String(counts.posts).padStart(3, '0')} posts`;
+  }
+  if (audioCount) {
+    audioCount.textContent = `${String(counts.audioPosts).padStart(3, '0')} with audio`;
+  }
+  if (archiveCta) {
+    archiveCta.textContent = `browse all ${counts.posts} dispatches`;
+  }
+}
+
+/** Eagerly hydrate homepage post counts (not gated on logs-section scroll). */
+export async function renderHomepageStats(): Promise<void> {
+  try {
+    const { counts } = (await loadContentIndex()).homepage;
+    applyHomepageCounts(counts);
+  } catch {
+    applyHomepageCounts(null, true);
+  }
+}
+
 export async function renderHomepageContent(): Promise<void> {
   const featuredHost = document.getElementById('homepage-featured-log');
   const previewHost = document.getElementById('homepage-log-preview');
   const topicsHost = document.getElementById('homepage-topic-preview');
-  const postsCount = document.getElementById('stat-posts');
-  const audioCount = document.getElementById('stat-audio-posts');
-  const archiveCta = document.getElementById('logs-archive-link-count');
 
   let featured;
   let recent;
@@ -31,11 +64,11 @@ export async function renderHomepageContent(): Promise<void> {
     showArchiveUnavailable(featuredHost);
     showArchiveUnavailable(previewHost);
     if (topicsHost) topicsHost.textContent = '';
-    if (postsCount) postsCount.textContent = 'archive unavailable';
-    if (audioCount) audioCount.textContent = 'audio unavailable';
-    if (archiveCta) archiveCta.textContent = 'archive unavailable';
+    applyHomepageCounts(null, true);
     return;
   }
+
+  applyHomepageCounts(counts);
 
   if (featuredHost) {
     featuredHost.textContent = '';
@@ -120,17 +153,5 @@ export async function renderHomepageContent(): Promise<void> {
     } catch {
       topicsHost.textContent = '';
     }
-  }
-
-  if (postsCount) {
-    postsCount.textContent = `${String(counts.posts).padStart(3, '0')} posts`;
-  }
-
-  if (audioCount) {
-    audioCount.textContent = `${String(counts.audioPosts).padStart(3, '0')} with audio`;
-  }
-
-  if (archiveCta) {
-    archiveCta.textContent = `browse all ${counts.posts} dispatches`;
   }
 }

@@ -118,6 +118,8 @@ test('theme toggle persists after reload', async ({ page }) => {
 });
 
 test('homepage logs section links into archive and renders generated topic chips', async ({ page }) => {
+  await expect(page.locator('#stat-posts')).not.toHaveText('... posts');
+  await expect(page.locator('#stat-posts')).toContainText('posts');
   await expect(page.locator('#homepage-log-preview .row')).toHaveCount(5);
   await expect(page.locator('#homepage-topic-preview .topic-chip')).toHaveCount(6);
   await expect(page.locator('#logs-archive-link-count')).toContainText('dispatches');
@@ -125,6 +127,11 @@ test('homepage logs section links into archive and renders generated topic chips
   await page.locator('.archive-cta').click();
   await expect(page).toHaveURL('/logs/');
   await expect(page.locator('#archive-search-input')).toBeVisible();
+});
+
+test('homepage does not mount a duplicate activity widget', async ({ page }) => {
+  await expect(page.locator('clanka-activity')).toHaveCount(0);
+  await expect(page.locator('#commit-feed')).toBeVisible();
 });
 
 test('active agent stat is populated from live now payload', async ({ page }) => {

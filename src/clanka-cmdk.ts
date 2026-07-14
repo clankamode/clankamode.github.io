@@ -197,6 +197,7 @@ export class ClankaCmdk extends LitElement {
     window.removeEventListener('keydown', this.handleGlobalKey);
     if (this.open) {
       document.body.style.overflow = this.previousBodyOverflow;
+      this.setBackgroundInert(false);
     }
   }
 
@@ -222,6 +223,7 @@ export class ClankaCmdk extends LitElement {
     this.previousActiveElement = document.activeElement as HTMLElement | null;
     this.previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    this.setBackgroundInert(true);
     this.open = true;
     this.query = '';
     this.activeIndex = 0;
@@ -234,8 +236,37 @@ export class ClankaCmdk extends LitElement {
     this.open = false;
     this.query = '';
     document.body.style.overflow = this.previousBodyOverflow;
+    this.setBackgroundInert(false);
     this.previousActiveElement?.focus();
     this.previousActiveElement = null;
+  }
+
+  private setBackgroundInert(inert: boolean): void {
+    const targets = [
+      document.getElementById('main-content'),
+      document.getElementById('theme-toggle'),
+      document.querySelector('.skip-link'),
+      document.getElementById('scroll-top'),
+      document.querySelector('.cmdk-hint'),
+    ];
+    targets.forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+      if (inert) {
+        el.setAttribute('inert', '');
+        if (el.hasAttribute('tabindex')) {
+          el.dataset.cmdkPrevTabindex = el.getAttribute('tabindex') || '';
+        }
+        el.tabIndex = -1;
+      } else {
+        el.removeAttribute('inert');
+        if ('cmdkPrevTabindex' in el.dataset) {
+          el.setAttribute('tabindex', el.dataset.cmdkPrevTabindex || '0');
+          delete el.dataset.cmdkPrevTabindex;
+        } else if (el.id === 'theme-toggle' || el.classList.contains('cmdk-hint') || el.id === 'scroll-top') {
+          el.removeAttribute('tabindex');
+        }
+      }
+    });
   }
 
   private async buildItems(): Promise<void> {
