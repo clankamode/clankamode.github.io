@@ -143,3 +143,18 @@ test('post j/k keyboard navigation follows enhanced prev/next links', async ({ p
   await page.keyboard.press('k');
   await expect(page).toHaveURL(prevHref!);
 });
+
+test('404 page is a dedicated not-found shell', async ({ page }) => {
+  await page.goto('/404.html');
+  await expect(page.locator('h1')).toHaveText('404');
+  await expect(page.locator('main')).toContainText('No dispatch at this path');
+  await expect(page.locator('body')).not.toContainText('I build systems');
+  await expect(page.getByRole('link', { name: 'home' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'archive' })).toBeVisible();
+});
+
+test('archive status bar does not claim LIVE telemetry', async ({ page }) => {
+  await page.goto('/logs/');
+  await page.waitForSelector('#archive-search-input');
+  await expect(page.locator('#status-live-label')).toHaveText('SITE');
+});

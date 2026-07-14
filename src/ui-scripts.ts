@@ -101,13 +101,53 @@ export function initUI(): void {
     });
   })();
 
-  // Status bar date
+  // Status bar date + live/site honesty
   (() => {
     const el = document.getElementById('status-date');
-    if (!el) return;
-    const d = new Date();
-    const pad = (n: number) => String(n).padStart(2, '0');
-    el.textContent = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    if (el) {
+      const d = new Date();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      el.textContent = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    const liveLabel = document.getElementById('status-live-label');
+    const liveDot = document.getElementById('status-live-dot') as HTMLElement | null;
+    if (!liveLabel) return;
+
+    const setLiveState = (label: string, offline: boolean): void => {
+      liveLabel.textContent = label;
+      if (liveDot) {
+        liveDot.style.opacity = offline ? '0.35' : '';
+      }
+    };
+
+    const presence = document.getElementById('presence');
+    if (!presence) {
+      // Archive/topic shells have no telemetry presence widget.
+      if (liveLabel.textContent === 'SYNCING' || liveLabel.textContent === 'LIVE') {
+        setLiveState('SITE', false);
+      }
+      return;
+    }
+
+    presence.addEventListener('sync-updated', () => {
+      setLiveState('LIVE', false);
+    });
+    presence.addEventListener('sync-error', () => {
+      setLiveState('OFFLINE', true);
+    });
+  })();
+
+  // Platform-aware command palette hint (⌘K vs Ctrl+K)
+  (() => {
+    const hintKeys = document.querySelectorAll('.cmdk-hint-keys');
+    if (!hintKeys.length) return;
+    const isApple = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || '')
+      || /Mac OS X/i.test(navigator.userAgent || '');
+    const label = isApple ? '⌘K' : 'Ctrl+K';
+    hintKeys.forEach((el) => {
+      el.textContent = label;
+    });
   })();
 
   // Typewriter hero

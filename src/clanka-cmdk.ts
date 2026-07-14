@@ -359,13 +359,20 @@ export class ClankaCmdk extends LitElement {
         return;
       }
       this.activeIndex = Math.min(this.activeIndex + 1, items.length - 1);
+      this.scrollActiveIntoView();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       this.activeIndex = Math.max(this.activeIndex - 1, 0);
+      this.scrollActiveIntoView();
     } else if (e.key === 'Enter' && items[this.activeIndex]) {
       e.preventDefault();
       this.navigate(items[this.activeIndex]);
     }
+  }
+
+  private scrollActiveIntoView(): void {
+    const option = this.shadowRoot?.getElementById(`cmdk-option-${this.activeIndex}`);
+    option?.scrollIntoView({ block: 'nearest' });
   }
 
   private highlightMatch(text: string): unknown {
@@ -395,10 +402,10 @@ export class ClankaCmdk extends LitElement {
     const result: unknown[] = [];
     let flatIdx = 0;
     for (const [section, sectionItems] of grouped) {
-      result.push(html`<div class="section-label">${section}</div>`);
-      for (const item of sectionItems) {
+      const groupId = `cmdk-group-${section}`;
+      const options = sectionItems.map((item) => {
         const idx = flatIdx++;
-        result.push(html`
+        return html`
           <div
             id="cmdk-option-${idx}"
             class="item ${idx === this.activeIndex ? 'active' : ''}"
@@ -410,8 +417,15 @@ export class ClankaCmdk extends LitElement {
             <span class="item-label">${this.highlightMatch(item.label)}</span>
             <span class="item-hint">${item.hint}</span>
           </div>
-        `);
-      }
+        `;
+      });
+
+      result.push(html`
+        <div role="group" aria-labelledby=${groupId}>
+          <div class="section-label" id=${groupId}>${section}</div>
+          ${options}
+        </div>
+      `);
     }
     return result;
   }

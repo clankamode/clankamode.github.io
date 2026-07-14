@@ -47,6 +47,8 @@
     .ap-skip:hover { border-color: var(--accent); color: var(--accent); }
     .ap-speed { background: none; border: 1px solid var(--border); color: var(--dim); font-size: 11px; font-family: var(--font, 'SF Mono', monospace); padding: 4px 8px; border-radius: 4px; cursor: pointer; flex-shrink: 0; transition: border-color 0.2s, color 0.2s; letter-spacing: 0.02em; }
     .ap-speed:hover { border-color: var(--accent); color: var(--accent); }
+    .ap-error { color: var(--dim); font-size: 11px; letter-spacing: 0.04em; }
+    .audio-player[data-audio-error="1"] { opacity: 0.85; }
     /* Waveform canvas */
     .ap-waveform { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; border-radius: 2px; }
     .ap-progress-wrap { position: relative; }

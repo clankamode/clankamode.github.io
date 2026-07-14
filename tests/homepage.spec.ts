@@ -129,6 +129,7 @@ test('homepage logs section links into archive and renders generated topic chips
 
 test('active agent stat is populated from live now payload', async ({ page }) => {
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 7 active');
+  await expect(page.locator('#status-live-label')).toHaveText('LIVE');
 });
 
 test('homepage repo stats are populated from mocked API responses', async ({ page }) => {
@@ -143,4 +144,17 @@ test('homepage commit feed renders recent GitHub activity', async ({ page }) => 
   await expect(commitFeed.locator('.commit-repo')).toHaveText('site');
   await expect(commitFeed.locator('.commit-tag')).toHaveText('feat');
   await expect(commitFeed).not.toContainText('// no activity data');
+});
+
+test('homepage archive stats show unavailable when content-index fails', async ({ page }) => {
+  await page.route('**/content-index.json', async (route) => {
+    await route.fulfill({ status: 500, contentType: 'text/plain', body: 'boom' });
+  });
+
+  await page.reload();
+  await page.locator('.logs-section').scrollIntoViewIfNeeded();
+  await expect(page.locator('#homepage-featured-log')).toContainText('archive unavailable');
+  await expect(page.locator('#stat-posts')).toHaveText('archive unavailable');
+  await expect(page.locator('#stat-audio-posts')).toHaveText('audio unavailable');
+  await expect(page.locator('#logs-archive-link-count')).toHaveText('archive unavailable');
 });

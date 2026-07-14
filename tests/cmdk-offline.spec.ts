@@ -133,6 +133,7 @@ test('live widgets show offline state when API is unreachable', async ({ page })
   await page.waitForSelector('#stat-active-agents');
 
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: offline');
+  await expect(page.locator('#status-live-label')).toHaveText('OFFLINE');
   await expect(page.locator('clanka-agents#agents')).toContainText('[ api unreachable ]');
   await expect(page.locator('clanka-tasks#tasks')).toContainText('[ api unreachable ]');
   await expect(page.locator('clanka-terminal#terminal')).toContainText('[ offline — activity unavailable ]');

@@ -254,6 +254,25 @@
     time.textContent = formatTime(audio.duration);
   });
 
+  audio.addEventListener('error', () => {
+    setPlayState(false);
+    exitListenMode();
+    btn.disabled = true;
+    skips.forEach((s) => { s.disabled = true; });
+    speedBtn.disabled = true;
+    progressWrap.setAttribute('aria-disabled', 'true');
+    progressWrap.removeAttribute('tabindex');
+    time.textContent = 'unavailable';
+    container.setAttribute('data-audio-error', '1');
+    if (!container.querySelector('.ap-error')) {
+      const err = document.createElement('span');
+      err.className = 'ap-error';
+      err.setAttribute('role', 'status');
+      err.textContent = 'audio unavailable';
+      container.append(err);
+    }
+  });
+
   audio.addEventListener('ended', () => {
     setPlayState(false);
     progress.style.width = '0%';

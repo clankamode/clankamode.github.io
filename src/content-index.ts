@@ -74,6 +74,16 @@ function isContentIndex(value: unknown): value is ContentIndex {
   if (!value || typeof value !== 'object') return false;
 
   const candidate = value as Partial<ContentIndex>;
+  const counts = candidate.homepage?.counts;
+  const countsOk =
+    !!counts &&
+    typeof counts.posts === 'number' &&
+    Number.isFinite(counts.posts) &&
+    typeof counts.audioPosts === 'number' &&
+    Number.isFinite(counts.audioPosts) &&
+    typeof counts.topics === 'number' &&
+    Number.isFinite(counts.topics);
+
   return (
     typeof candidate.generatedAt === 'string' &&
     Array.isArray(candidate.posts) &&
@@ -82,7 +92,7 @@ function isContentIndex(value: unknown): value is ContentIndex {
     !!candidate.homepage &&
     Array.isArray(candidate.homepage.recent) &&
     Array.isArray(candidate.homepage.topics) &&
-    !!candidate.homepage.counts &&
+    countsOk &&
     Array.isArray(candidate.homepage.years)
   );
 }

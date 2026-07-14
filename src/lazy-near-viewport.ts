@@ -24,6 +24,8 @@ export function runWhenNearViewport(
 
   const nearEnough = (): boolean => {
     const r = el.getBoundingClientRect();
+    // Zero-size targets are often not laid out yet — treat as "not near" and
+    // keep observing / retrying rather than permanently skipping.
     if (r.height <= 0 && r.width <= 0) return false;
     const vh = window.innerHeight;
     return r.top < vh + prefetchPx && r.bottom > -prefetchPx;
@@ -39,15 +41,36 @@ export function runWhenNearViewport(
     return noop;
   }
 
+  let resizeObserver: ResizeObserver | undefined;
+  const runOnce = (): void => {
+    observer.disconnect();
+    resizeObserver?.disconnect();
+    fn();
+  };
+
   const observer = new IntersectionObserver(
     (entries) => {
       if (!entries.some((e) => e.isIntersecting)) return;
-      observer.disconnect();
-      fn();
+      runOnce();
     },
     { root: null, rootMargin: `0px 0px ${prefetchPx}px 0px`, threshold: 0 },
   );
   observer.observe(el);
 
-  return () => observer.disconnect();
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(() => {
+      if (nearEnough()) runOnce();
+    });
+    resizeObserver.observe(el);
+  }
+
+  // Retry once after layout for initially zero-size targets.
+  window.requestAnimationFrame(() => {
+    if (nearEnough()) runOnce();
+  });
+
+  return () => {
+    observer.disconnect();
+    resizeObserver?.disconnect();
+  };
 }
