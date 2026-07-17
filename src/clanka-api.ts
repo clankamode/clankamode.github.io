@@ -116,37 +116,37 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-/** Accept only well-shaped /now payloads so partial garbage never clears live UI. */
+/** Accept well-shaped /now payloads. Invalid optional fields are stripped, not fatal. */
 export function parseNowPayload(payload: unknown): NowPayload | null {
   if (!isPlainObject(payload)) return null;
 
   const result: NowPayload = {};
 
-  if ('current' in payload) {
-    if (typeof payload.current !== 'string') return null;
+  if ('current' in payload && typeof payload.current === 'string') {
     result.current = payload.current;
   }
-  if ('status' in payload) {
-    if (typeof payload.status !== 'string') return null;
+  if ('status' in payload && typeof payload.status === 'string') {
     result.status = payload.status;
   }
-  if ('history' in payload) {
-    if (!Array.isArray(payload.history)) return null;
+  if ('history' in payload && Array.isArray(payload.history)) {
     result.history = payload.history;
   }
-  if ('team' in payload) {
-    if (!isPlainObject(payload.team)) return null;
+  if ('team' in payload && isPlainObject(payload.team)) {
     result.team = payload.team;
   }
-  if ('tasks' in payload) {
-    if (!Array.isArray(payload.tasks)) return null;
+  if ('tasks' in payload && Array.isArray(payload.tasks)) {
     result.tasks = payload.tasks;
   }
   if ('agents_active' in payload) {
-    if (typeof payload.agents_active !== 'number' || !Number.isFinite(payload.agents_active)) {
-      return null;
+    const raw = payload.agents_active;
+    if (typeof raw === 'number' && Number.isFinite(raw) && raw >= 0) {
+      result.agents_active = Math.floor(raw);
+    } else if (typeof raw === 'string' && raw.trim() !== '') {
+      const parsed = Number(raw);
+      if (Number.isFinite(parsed) && parsed >= 0) {
+        result.agents_active = Math.floor(parsed);
+      }
     }
-    result.agents_active = payload.agents_active;
   }
 
   // Require at least one recognizable field so empty objects don't count as success.

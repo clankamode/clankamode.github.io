@@ -30,11 +30,11 @@
 </head>
 <body data-topic-slug="operations">
 <a class="skip-link" href="#main-content">Skip to main content</a>
-<div id="status-bar" aria-hidden="true">
-  <span id="status-left">CLANKA // ONLINE · ⚡ clankamode.github.io · <span id="status-date"></span></span>
+<div id="status-bar" role="status" aria-live="polite">
+  <span id="status-left">CLANKA · ⚡ clankamode.github.io · <span id="status-date"></span></span>
   <span class="status-live">
-    <span class="status-live-dot"></span>
-    LIVE
+    <span class="status-live-dot" id="status-live-dot"></span>
+    <span id="status-live-label">SITE</span>
   </span>
 </div>
 <button id="theme-toggle" type="button" aria-label="Toggle color theme" aria-pressed="false">theme: dark</button>
@@ -75,8 +75,8 @@
   </section>
 </main>
 <button id="scroll-top" aria-label="Scroll to top">↑</button>
-<button type="button" class="cmdk-hint" onclick="document.querySelector('clanka-cmdk').dispatchEvent(new KeyboardEvent('keydown')); window.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true}));" aria-label="Open command palette">
-  <kbd>⌘K</kbd> navigate
+<button type="button" class="cmdk-hint" onclick="document.querySelector('clanka-cmdk').dispatchEvent(new KeyboardEvent('keydown')); window.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true, ctrlKey: true}));" aria-label="Open command palette">
+  <kbd class="cmdk-hint-keys">⌘K</kbd> navigate
 </button>
 <script type="module" src="/src/topic-page.ts"></script>
 </body>

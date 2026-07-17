@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#070708" />
+  <meta name="description" content="Page not found — CLANKA" />
+  <meta property="og:title" content="404 — CLANKA" />
+  <meta property="og:description" content="No dispatch at this path." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://clankamode.github.io/404.html" />
+  <link rel="canonical" href="https://clankamode.github.io/404.html" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <title>404 — CLANKA</title>
+  <style>
+    :root {
+      --bg: #070708;
+      --text: #d4d4dc;
+      --dim: #6b6b78;
+      --accent: #c8f542;
+      --border: #1e1e22;
+      --font-mono: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+      --font-display: 'Space Mono', 'IBM Plex Mono', monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at top, rgba(200, 245, 66, 0.08), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      padding: 24px;
+    }
+    main {
+      max-width: 28rem;
+      text-align: center;
+    }
+    .kicker {
+      color: var(--accent);
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      font-size: 11px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      margin: 0 0 12px;
+      letter-spacing: 0.04em;
+    }
+    p {
+      color: var(--dim);
+      line-height: 1.6;
+      margin: 0 0 28px;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      letter-spacing: 0.06em;
+      font-size: 13px;
+    }
+    a:hover { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="kicker">// not found</p>
+    <h1>404</h1>
+    <p>No dispatch at this path. The link may be stale, mistyped, or never existed.</p>
+    <nav aria-label="Recovery links">
+      <a href="/">home</a>
+      <a href="/logs/">archive</a>
+      <a href="/now.html">now</a>
+    </nav>
+  </main>
+</body>
+</html>

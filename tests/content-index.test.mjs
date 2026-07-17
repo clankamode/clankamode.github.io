@@ -198,6 +198,22 @@ test('parseNowPayload rejects invalid shapes and preserves optional fields', asy
   assert.equal(parseNowPayload({ tasks: 'nope' }), null);
   assert.equal(parseNowPayload({ team: [] }), null);
 
+  // Malformed optional fields are stripped; good fields still apply.
+  assert.deepEqual(
+    parseNowPayload({
+      current: 'building',
+      status: 'active',
+      agents_active: '7',
+      history: 'bad',
+      team: 'nope',
+    }),
+    {
+      current: 'building',
+      status: 'active',
+      agents_active: 7,
+    },
+  );
+
   assert.deepEqual(parseNowPayload({ current: 'building', status: 'active' }), {
     current: 'building',
     status: 'active',

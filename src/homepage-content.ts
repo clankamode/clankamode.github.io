@@ -30,6 +30,10 @@ export async function renderHomepageContent(): Promise<void> {
   } catch {
     showArchiveUnavailable(featuredHost);
     showArchiveUnavailable(previewHost);
+    if (topicsHost) topicsHost.textContent = '';
+    if (postsCount) postsCount.textContent = 'archive unavailable';
+    if (audioCount) audioCount.textContent = 'audio unavailable';
+    if (archiveCta) archiveCta.textContent = 'archive unavailable';
     return;
   }
 

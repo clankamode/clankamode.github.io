@@ -55,6 +55,7 @@ export default defineConfig({
       input: {
         main: path.resolve(rootDir, 'index.html'),
         now: path.resolve(rootDir, 'now.html'),
+        notFound: path.resolve(rootDir, '404.html'),
         logs: path.resolve(rootDir, 'logs/index.html'),
         ...topicInputs(),
       },

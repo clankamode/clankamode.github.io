@@ -145,7 +145,12 @@
   // 4. Back to top on 't'
   document.addEventListener('keydown', (e) => {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-    if (e.key === 't') window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (e.key === 't') {
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth';
+      window.scrollTo({ top: 0, behavior });
+    }
   });
 
   // 5. Shared metadata-driven archive enhancements
