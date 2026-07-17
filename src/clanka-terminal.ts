@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { fetchEvents, relativeTime } from './time-utils';
+import { withResultRetries } from './retry';
 
 type EventItem = { type: string; repo: string; message: string; timestamp: string };
 
@@ -9,6 +10,7 @@ export class ClankaTerminal extends LitElement {
   @state() private events: EventItem[] = [];
   @state() private loading = true;
   @state() private error = '';
+  private loadInFlight = false;
 
   static styles = css`
     :host {
@@ -57,8 +59,11 @@ export class ClankaTerminal extends LitElement {
   }
 
   private async loadData(): Promise<void> {
+    if (this.loadInFlight) return;
+    this.loadInFlight = true;
+
     try {
-      const result = await fetchEvents();
+      const result = await withResultRetries(() => fetchEvents());
       if (!result.ok) {
         this.error = '[ offline — activity unavailable ]';
         this.events = [];
@@ -71,6 +76,7 @@ export class ClankaTerminal extends LitElement {
       }
     } finally {
       this.loading = false;
+      this.loadInFlight = false;
     }
   }
 

@@ -238,3 +238,24 @@ test('parseNowPayload rejects invalid shapes and preserves optional fields', asy
     },
   );
 });
+
+test('withRetries eventually succeeds and withResultRetries stops on ok', async () => {
+  const { withRetries, withResultRetries } = await loadTsModule('src/retry.ts');
+
+  let attempts = 0;
+  const value = await withRetries(async () => {
+    attempts += 1;
+    if (attempts < 3) throw new Error('fail');
+    return 'ok';
+  }, 3, 1);
+  assert.equal(value, 'ok');
+  assert.equal(attempts, 3);
+
+  let resultAttempts = 0;
+  const result = await withResultRetries(async () => {
+    resultAttempts += 1;
+    return resultAttempts === 2 ? { ok: true, n: resultAttempts } : { ok: false, n: resultAttempts };
+  }, 3, 1);
+  assert.deepEqual(result, { ok: true, n: 2 });
+  assert.equal(resultAttempts, 2);
+});

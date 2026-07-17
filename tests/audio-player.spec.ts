@@ -55,6 +55,13 @@ test('play adds listen-mode class to body', async ({ page }) => {
   await expect(page.locator('body')).toHaveClass(/listen-mode/);
 });
 
+test('pause exits listen-mode class on body', async ({ page }) => {
+  await page.click('.ap-play');
+  await expect(page.locator('body')).toHaveClass(/listen-mode/);
+  await page.click('.ap-play');
+  await expect(page.locator('body')).not.toHaveClass(/listen-mode/);
+});
+
 // ── 4. Paragraph sync ─────────────────────────────────────────────────────────
 
 test('paragraph sync — correct element gets lm-active', async ({ page }) => {

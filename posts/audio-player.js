@@ -130,8 +130,8 @@
     if (!listenMode) return;
     animFrame = requestAnimationFrame(animate);
 
-    // Waveform
-    if (analyser && dataArray) {
+    // Waveform + accent pulse (skip when the user prefers reduced motion)
+    if (!prefersReducedMotion && analyser && dataArray) {
       analyser.getByteFrequencyData(dataArray);
       const w = canvas.width;
       const h = canvas.height;
@@ -149,7 +149,6 @@
       }
       ctx.globalAlpha = 1;
 
-      // Accent breathing
       const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length / 255;
       document.documentElement.style.setProperty('--accent-pulse', `hsl(73, 89%, ${62 + avg * 15}%)`);
     }
@@ -208,12 +207,23 @@
     initAudio();
     if (audio.paused) {
       if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      audio.play();
-      setPlayState(true);
-      enterListenMode();
+      const playAttempt = audio.play();
+      if (playAttempt && typeof playAttempt.then === 'function') {
+        playAttempt.then(() => {
+          setPlayState(true);
+          enterListenMode();
+        }).catch(() => {
+          setPlayState(false);
+          exitListenMode();
+        });
+      } else {
+        setPlayState(true);
+        enterListenMode();
+      }
     } else {
       audio.pause();
       setPlayState(false);
+      exitListenMode();
     }
   });
 
@@ -223,12 +233,17 @@
   }));
 
   const speeds = [1, 1.25, 1.5, 1.75, 2];
+  const updateSpeedLabel = () => {
+    speedBtn.textContent = speed === 1 ? '1×' : `${speed}×`;
+    speedBtn.setAttribute('aria-label', `Playback speed, ${speed === 1 ? '1×' : `${speed}×`}`);
+  };
   speedBtn.addEventListener('click', () => {
     const idx = (speeds.indexOf(speed) + 1) % speeds.length;
     speed = speeds[idx];
     audio.playbackRate = speed;
-    speedBtn.textContent = speed === 1 ? '1×' : `${speed}×`;
+    updateSpeedLabel();
   });
+  updateSpeedLabel();
 
   function updateProgressAria() {
     if (!audio.duration) return;

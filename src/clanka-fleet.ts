@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { fetchFleetSummary } from './clanka-api';
+import { withRetries } from './retry';
 
 type Tier = 'ops' | 'infra' | 'core' | 'quality' | 'policy' | 'template';
 type Criticality = 'critical' | 'high' | 'medium';
@@ -260,16 +261,12 @@ export class ClankaFleet extends LitElement {
     this.error = '';
 
     try {
-      const data = await fetchFleetSummary();
+      const data = await withRetries(() => fetchFleetSummary());
       const repos = this.extractRepos(data);
-      if (!repos.length) {
-        this.repos = [];
-        this.live = false;
-        this.error = '[ fleet registry empty ]';
-        return;
-      }
       this.repos = repos;
+      // Valid empty registry is still a successful sync — not offline.
       this.live = true;
+      this.error = repos.length ? '' : '[ fleet registry empty ]';
     } catch {
       this.repos = [];
       this.live = false;
@@ -283,6 +280,7 @@ export class ClankaFleet extends LitElement {
   private get syncLabel(): string {
     if (this.loading) return 'SYNCING';
     if (!this.live) return 'OFFLINE';
+    if (!this.repos.length) return 'SYNCED';
     return this.repos.some((repo) => repo.online !== null) ? 'LIVE' : 'SYNCED';
   }
 
