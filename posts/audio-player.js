@@ -158,13 +158,34 @@
       const t = audio.currentTime;
       let activeIdx = -1;
 
-      // Find the last spoken element whose start time we've passed
-      // Spoken = duration > 0.5s
+      // Prefer the spoken interval that contains t (start <= t < end).
+      // Falling back to last-passed start freezes highlights across long silent gaps.
       const maxIdx = Math.min(timings.length, contentEls.length);
-      for (let i = maxIdx - 1; i >= 0; i--) {
-        const dur = timings[i].end - timings[i].start;
-        if (dur > 0.5 && t >= timings[i].start) {
+      for (let i = 0; i < maxIdx; i++) {
+        const start = timings[i].start;
+        const end = timings[i].end;
+        const dur = end - start;
+        if (dur > 0.5 && t >= start && t < end) {
           activeIdx = i;
+          break;
+        }
+      }
+      if (activeIdx === -1) {
+        // Within a short gap after a spoken block, keep that block until the next spoken start.
+        for (let i = maxIdx - 1; i >= 0; i--) {
+          const start = timings[i].start;
+          const end = timings[i].end;
+          const dur = end - start;
+          if (dur <= 0.5 || t < start) continue;
+          const nextSpoken = (() => {
+            for (let j = i + 1; j < maxIdx; j++) {
+              if (timings[j].end - timings[j].start > 0.5) return timings[j].start;
+            }
+            return Infinity;
+          })();
+          if (t < nextSpoken && t - end < 2) {
+            activeIdx = i;
+          }
           break;
         }
       }
@@ -252,17 +273,21 @@
     progressWrap.setAttribute('aria-valuetext', formatTime(audio.currentTime));
   }
 
-  function seekToRatio(ratio) {
-    if (!audio.duration) return;
-    audio.currentTime = Math.max(0, Math.min(audio.duration, ratio * audio.duration));
-    updateProgressAria();
-  }
-
-  audio.addEventListener('timeupdate', () => {
+  function paintProgress() {
     if (!audio.duration) return;
     progress.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
     time.textContent = formatTime(audio.currentTime);
     updateProgressAria();
+  }
+
+  function seekToRatio(ratio) {
+    if (!audio.duration) return;
+    audio.currentTime = Math.max(0, Math.min(audio.duration, ratio * audio.duration));
+    paintProgress();
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    paintProgress();
   });
 
   audio.addEventListener('loadedmetadata', () => {
@@ -290,7 +315,10 @@
 
   audio.addEventListener('ended', () => {
     setPlayState(false);
+    // Reset media position so replay works and UI matches currentTime.
+    audio.currentTime = 0;
     progress.style.width = '0%';
+    time.textContent = formatTime(0);
     progressWrap.setAttribute('aria-valuenow', '0');
     progressWrap.setAttribute('aria-valuetext', '0:00');
     exitListenMode();

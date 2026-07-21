@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { OutputChunk } from 'rolldown';
 import { defineConfig, type Plugin } from 'vite';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
@@ -14,10 +13,15 @@ function injectMainModulePreload(): Plugin {
       handler(html, ctx) {
         if (!ctx.bundle || !html.includes('home-page')) return html;
         const chunk = Object.values(ctx.bundle).find(
-          (item): item is OutputChunk =>
-            item.type === 'chunk' && item.isEntry && item.name === 'main',
+          (item) =>
+            item.type === 'chunk' &&
+            'isEntry' in item &&
+            item.isEntry &&
+            'name' in item &&
+            item.name === 'main' &&
+            'fileName' in item,
         );
-        if (!chunk) return html;
+        if (!chunk || chunk.type !== 'chunk' || !('fileName' in chunk)) return html;
         const href = `/${chunk.fileName}`;
         const link = `  <link rel="modulepreload" crossorigin href="${href}" />\n  `;
         return html.replace(/<title>/, `${link}<title>`);

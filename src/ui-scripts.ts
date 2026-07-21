@@ -133,8 +133,10 @@ export function initUI(): void {
     presence.addEventListener('sync-updated', () => {
       setLiveState('LIVE', false);
     });
-    presence.addEventListener('sync-error', () => {
-      setLiveState('OFFLINE', true);
+    presence.addEventListener('sync-error', (event: Event) => {
+      const hadSync = Boolean((event as CustomEvent<{ hadSync?: boolean }>).detail?.hadSync);
+      // Match presence chrome: keep last-good live data as STALE, not OFFLINE.
+      setLiveState(hadSync ? 'STALE' : 'OFFLINE', true);
     });
   })();
 

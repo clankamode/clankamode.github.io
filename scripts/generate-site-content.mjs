@@ -388,7 +388,7 @@ function buildPageShell({ title, description, scriptPath, pageLabel, heading, ki
 ${bodyContent}
 </main>
 <button id="scroll-top" aria-label="Scroll to top">↑</button>
-<button type="button" class="cmdk-hint" onclick="document.querySelector('clanka-cmdk').dispatchEvent(new KeyboardEvent('keydown')); window.dispatchEvent(new KeyboardEvent('keydown', {key: 'k', metaKey: true, ctrlKey: true}));" aria-label="Open command palette">
+<button type="button" class="cmdk-hint" onclick="document.querySelector('clanka-cmdk')?.openPalette?.()" aria-label="Open command palette">
   <kbd class="cmdk-hint-keys">⌘K</kbd> navigate
 </button>
 <script type="module" src="${scriptPath}"></script>

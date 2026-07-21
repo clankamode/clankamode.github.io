@@ -27,7 +27,9 @@ export function normalizeTaskStatus(value: unknown): TaskDisplay['statusClass'] 
 }
 
 function stringifyTaskValue(value: string | number | undefined, fallback: string): string {
-  return String(value ?? fallback);
+  if (value === undefined || value === null) return fallback;
+  const s = String(value).trim();
+  return s.length > 0 ? s : fallback;
 }
 
 const FALLBACK_TASK_DISPLAY: TaskDisplay = {
@@ -40,7 +42,8 @@ const FALLBACK_TASK_DISPLAY: TaskDisplay = {
 
 export function getTaskDisplay(task: TaskItem | null | undefined): TaskDisplay {
   if (task == null) {
-    return FALLBACK_TASK_DISPLAY;
+    // Fresh object so callers cannot mutate a shared singleton.
+    return { ...FALLBACK_TASK_DISPLAY };
   }
 
   return {

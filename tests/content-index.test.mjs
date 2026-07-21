@@ -90,12 +90,39 @@ test('generated content index stays aligned with canonical source content', asyn
     assert.equal(indexedPost.canonicalPath, expectedCanonicalPath);
     assert.equal(indexedPost.audio, hasAudio);
     assert.equal(indexedPost.title, post.title);
+    assert.equal(indexedPost.number, post.number);
+    assert.equal(indexedPost.date, post.date);
     assert.ok(
       indexedPost.topics.every((topic) => typeof topic.slug === 'string' && typeof topic.name === 'string'),
       `invalid topic refs on ${post.slug}`,
     );
 
     assert.match(feedXml, new RegExp(post.canonicalPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    const padded = String(post.number).padStart(3, '0');
+    assert.match(
+      feedXml,
+      new RegExp(`<title>${padded}: ${post.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</title>`),
+      `feed title mismatch for ${post.slug}`,
+    );
+
+    // HTML dispatch number/title must match the registry (catches renumber drift).
+    const postHtml = await fs.readFile(postFile, 'utf8');
+    const escapedTitle = post.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(
+      postHtml,
+      new RegExp(`<title>${padded}: ${escapedTitle} // CLANKA</title>`),
+      `HTML title number mismatch for ${post.slug}`,
+    );
+    const postNumber = postHtml.match(/class="post-number">([^<]+)</)?.[1]?.trim() ?? '';
+    assert.ok(
+      postNumber === padded || postNumber === `dispatch ${padded}`,
+      `HTML post-number mismatch for ${post.slug}: got "${postNumber}"`,
+    );
+    assert.match(
+      postHtml,
+      new RegExp(`<h1>${escapedTitle}</h1>`),
+      `HTML h1 mismatch for ${post.slug}`,
+    );
   }
 
   for (const topic of TOPICS) {
@@ -172,6 +199,27 @@ test('task display helpers normalize status and preserve labels', async () => {
       priority: '0',
     },
   );
+
+  // Empty strings should use fallbacks (?? alone keeps '').
+  assert.deepEqual(
+    getTaskDisplay({
+      status: '',
+      title: '   ',
+      assignee: '',
+      priority: '',
+    }),
+    {
+      statusClass: 'todo',
+      statusLabel: 'TODO',
+      title: 'untitled',
+      assignee: 'unassigned',
+      priority: '?',
+    },
+  );
+
+  const a = getTaskDisplay(null);
+  a.title = 'mutated';
+  assert.equal(getTaskDisplay(null).title, 'untitled');
 });
 
 test('parseGithubEvents accepts wrapped and bare array payloads', async () => {

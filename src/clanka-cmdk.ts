@@ -107,7 +107,9 @@ export class ClankaCmdk extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 16px;
+      gap: 12px;
+      min-height: 40px;
+      padding: 10px 16px;
       cursor: pointer;
       transition: background 0.08s ease;
     }
@@ -125,6 +127,8 @@ export class ClankaCmdk extends LitElement {
     .item-label {
       color: var(--text);
       font-size: 13px;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
 
     .item.active .item-label {
@@ -135,6 +139,10 @@ export class ClankaCmdk extends LitElement {
       color: var(--dim);
       font-size: 11px;
       flex-shrink: 0;
+      max-width: 42%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .empty {
@@ -152,6 +160,23 @@ export class ClankaCmdk extends LitElement {
       border-top: 1px solid var(--border);
       font-size: 10px;
       color: var(--dim);
+    }
+
+    @media (max-width: 680px) {
+      .palette {
+        top: max(12px, env(safe-area-inset-top));
+        width: calc(100% - 24px);
+        max-height: calc(100dvh - 24px);
+        display: flex;
+        flex-direction: column;
+      }
+      .results {
+        max-height: none;
+        flex: 1;
+        min-height: 0;
+      }
+      .item-hint { max-width: 36%; }
+      .footer { flex-wrap: wrap; gap: 8px 12px; }
     }
 
     .footer-key {
@@ -207,6 +232,7 @@ export class ClankaCmdk extends LitElement {
       this.toggle();
     }
     if (e.key === 'Escape' && this.open) {
+      e.preventDefault();
       this.close();
     }
   };
@@ -219,7 +245,8 @@ export class ClankaCmdk extends LitElement {
     }
   }
 
-  private openPalette(): void {
+  /** Public open path for UI buttons (avoids synthetic keyboard events). */
+  openPalette(): void {
     this.previousActiveElement = document.activeElement as HTMLElement | null;
     this.previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -232,12 +259,15 @@ export class ClankaCmdk extends LitElement {
     });
   }
 
-  private close(): void {
+  private close(options: { restoreFocus?: boolean } = {}): void {
+    const restoreFocus = options.restoreFocus !== false;
     this.open = false;
     this.query = '';
     document.body.style.overflow = this.previousBodyOverflow;
     this.setBackgroundInert(false);
-    this.previousActiveElement?.focus();
+    if (restoreFocus) {
+      this.previousActiveElement?.focus();
+    }
     this.previousActiveElement = null;
   }
 
@@ -262,24 +292,36 @@ export class ClankaCmdk extends LitElement {
         if ('cmdkPrevTabindex' in el.dataset) {
           el.setAttribute('tabindex', el.dataset.cmdkPrevTabindex || '0');
           delete el.dataset.cmdkPrevTabindex;
-        } else if (el.id === 'theme-toggle' || el.classList.contains('cmdk-hint') || el.id === 'scroll-top') {
+        } else {
+          // Always clear the tabindex we forced while open (skip-link, main, etc.).
           el.removeAttribute('tabindex');
         }
       }
     });
   }
 
+  private dedupeItems(items: CmdItem[]): CmdItem[] {
+    return items.filter((item, index, all) => all.findIndex((candidate) => candidate.href === item.href) === index);
+  }
+
   private async buildItems(): Promise<void> {
-    const items: CmdItem[] = [];
+    const baseItems: CmdItem[] = [
+      { label: 'Home', hint: 'homepage', href: '/', section: 'navigate' },
+      // Root-absolute hashes so subpages navigate home then scroll.
+      { label: 'Logs', hint: 'blog posts', href: '/#logs-label', section: 'navigate' },
+      { label: 'Work', hint: 'projects', href: '/#work-label', section: 'navigate' },
+      { label: 'About', hint: 'bio', href: '/#about-label', section: 'navigate' },
+      { label: 'Capabilities', hint: 'skills', href: '/#cap-label', section: 'navigate' },
+      { label: 'Archive', hint: 'all dispatches', href: '/logs/', section: 'logs' },
+      { label: 'GitHub', hint: 'github.com/clankamode', href: 'https://github.com/clankamode', section: 'links' },
+      { label: 'RSS Feed', hint: 'subscribe', href: '/feed.xml', section: 'links' },
+    ];
 
-    // Sections
-    items.push({ label: 'Logs', hint: 'blog posts', href: '#logs-label', section: 'navigate' });
-    items.push({ label: 'Work', hint: 'projects', href: '#work-label', section: 'navigate' });
-    items.push({ label: 'About', hint: 'bio', href: '#about-label', section: 'navigate' });
-    items.push({ label: 'Capabilities', hint: 'skills', href: '#cap-label', section: 'navigate' });
+    // Publish static nav immediately so the palette is usable before content-index loads.
+    this.items = this.dedupeItems(baseItems);
+    this.activeIndex = 0;
 
-    items.push({ label: 'Archive', hint: 'all dispatches', href: '/logs/', section: 'logs' });
-
+    const items = [...baseItems];
     try {
       const data = await loadContentIndex();
 
@@ -293,7 +335,9 @@ export class ClankaCmdk extends LitElement {
         items.push({ label: topic.name, hint: 'topic', href: `/topics/${topic.slug}/`, section: 'topics' });
       });
     } catch {
-      document.querySelectorAll('.featured-log, .row a').forEach((el) => {
+      document.querySelectorAll(
+        '.featured-log, .archive-card a, .archive-preview-row a, a[href*="/posts/"]',
+      ).forEach((el) => {
         const anchor = el as HTMLAnchorElement;
         const href = anchor.getAttribute('href');
         if (!href || !href.includes('/posts/')) return;
@@ -306,31 +350,56 @@ export class ClankaCmdk extends LitElement {
       });
     }
 
-    // External links
-    items.push({ label: 'GitHub', hint: 'github.com/clankamode', href: 'https://github.com/clankamode', section: 'links' });
-    items.push({ label: 'RSS Feed', hint: 'subscribe', href: '/feed.xml', section: 'links' });
-
-    this.items = items.filter((item, index, all) => all.findIndex((candidate) => candidate.href === item.href) === index);
+    this.items = this.dedupeItems(items);
     this.activeIndex = 0;
   }
 
   private get filtered(): CmdItem[] {
     if (!this.query) return this.items;
     const q = this.query.toLowerCase();
+    // Match label + hint only — section substring match flooded results (e.g. "s" → all topics).
     return this.items.filter(
-      (item) => item.label.toLowerCase().includes(q) || item.hint.toLowerCase().includes(q) || item.section.toLowerCase().includes(q)
+      (item) => item.label.toLowerCase().includes(q) || item.hint.toLowerCase().includes(q),
     );
   }
 
+  private isHomePath(): boolean {
+    const path = location.pathname;
+    return path === '/' || path === '/index.html';
+  }
+
   private navigate(item: CmdItem): void {
-    this.close();
+    const isHashNav = item.href.startsWith('#') || item.href.startsWith('/#');
+    // Avoid focus-restore fighting scrollIntoView for in-page targets.
+    this.close({ restoreFocus: !isHashNav });
+
     if (item.href.startsWith('http')) {
       window.open(item.href, '_blank', 'noopener,noreferrer');
-    } else if (item.href.startsWith('#')) {
-      document.getElementById(item.href.slice(1))?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.location.href = item.href;
+      return;
     }
+
+    if (item.href.startsWith('/#')) {
+      const id = item.href.slice(2);
+      if (this.isHomePath()) {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.location.href = item.href;
+      }
+      return;
+    }
+
+    if (item.href.startsWith('#')) {
+      const id = item.href.slice(1);
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.location.href = `/${item.href}`;
+      }
+      return;
+    }
+
+    window.location.href = item.href;
   }
 
   private handleInput(e: InputEvent): void {
