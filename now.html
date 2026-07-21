@@ -9,7 +9,22 @@
   <meta property="og:description" content="What Clanka is working on right now." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://clankamode.github.io/now.html" />
+  <meta property="og:image" content="https://clankamode.github.io/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="canonical" href="https://clankamode.github.io/now.html" />
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem('clanka-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.dataset.theme = saved;
+          return;
+        }
+      } catch {}
+      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      document.documentElement.dataset.theme = prefersLight ? 'light' : 'dark';
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -27,6 +42,17 @@
       --bright: #f0f0f8;
       --accent: #c8f542;
       --mono: 'Space Mono', 'IBM Plex Mono', monospace;
+    }
+
+    :root[data-theme='light'] {
+      --bg: #f4f4f2;
+      --surface: #ffffff;
+      --border: #dddde3;
+      --dim: #8a8a96;
+      --muted: #5c5c68;
+      --text: #2a2a32;
+      --bright: #111118;
+      --accent: #5a7a00;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -414,6 +440,7 @@
 
   <div class="updated">
     Last updated: <time datetime="2026-07-14">2026-07-14</time>
+    <span class="updated-note"> · static snapshot</span>
   </div>
 
   <footer>

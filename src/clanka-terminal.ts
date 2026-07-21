@@ -10,6 +10,7 @@ export class ClankaTerminal extends LitElement {
   @state() private events: EventItem[] = [];
   @state() private loading = true;
   @state() private error = '';
+  private viewportObserver?: IntersectionObserver;
   private loadInFlight = false;
 
   static styles = css`
@@ -55,7 +56,43 @@ export class ClankaTerminal extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.loadData();
+    this.scheduleLoadWhenNearViewport();
+  }
+
+  disconnectedCallback(): void {
+    this.viewportObserver?.disconnect();
+    this.viewportObserver = undefined;
+    super.disconnectedCallback();
+  }
+
+  private scheduleLoadWhenNearViewport(): void {
+    const prefetchPx = 900;
+    const nearEnough = (): boolean => {
+      const r = this.getBoundingClientRect();
+      const vh = window.innerHeight;
+      return r.top < vh + prefetchPx && r.bottom > -prefetchPx;
+    };
+
+    if (nearEnough()) {
+      void this.loadData();
+      return;
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      void this.loadData();
+      return;
+    }
+
+    this.viewportObserver = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        this.viewportObserver?.disconnect();
+        this.viewportObserver = undefined;
+        void this.loadData();
+      },
+      { rootMargin: `0px 0px ${prefetchPx}px 0px`, threshold: 0 },
+    );
+    this.viewportObserver.observe(this);
   }
 
   private async loadData(): Promise<void> {

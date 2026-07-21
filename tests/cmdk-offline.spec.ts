@@ -136,6 +136,8 @@ test('live widgets show offline state when API is unreachable', async ({ page })
   await expect(page.locator('#status-live-label')).toHaveText('OFFLINE');
   await expect(page.locator('clanka-agents#agents')).toContainText('[ api unreachable ]');
   await expect(page.locator('clanka-tasks#tasks')).toContainText('[ api unreachable ]');
+
+  await page.locator('clanka-terminal#terminal').scrollIntoViewIfNeeded();
   await expect(page.locator('clanka-terminal#terminal')).toContainText('[ offline — activity unavailable ]');
 
   await page.locator('#commit-feed').scrollIntoViewIfNeeded();
@@ -237,4 +239,15 @@ test('command palette exposes listbox semantics for results', async ({ page }) =
   await expect(palette.locator('#cmdk-listbox')).toHaveAttribute('role', 'listbox');
   await expect(palette.locator('[role="option"]').first()).toBeVisible();
   await expect(palette.locator('input')).toHaveAttribute('aria-controls', 'cmdk-listbox');
+});
+
+test('command palette marks page chrome inert while open', async ({ page }) => {
+  await page.keyboard.press('Meta+k');
+  await expect(page.locator('clanka-cmdk .palette')).toBeVisible();
+  await expect(page.locator('#main-content')).toHaveAttribute('inert', '');
+  await expect(page.locator('#theme-toggle')).toHaveAttribute('inert', '');
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('clanka-cmdk .palette')).toHaveCount(0);
+  await expect(page.locator('#main-content')).not.toHaveAttribute('inert');
 });

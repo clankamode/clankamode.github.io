@@ -29,6 +29,8 @@ async function renderArchivePage(): Promise<void> {
     populateSelect(topicSelect, [{ value: 'all', label: 'all topics' }]);
     populateSelect(yearSelect, [{ value: 'all', label: 'all years' }]);
     resultsCount.textContent = 'archive unavailable';
+    resultsHost.textContent = '';
+    resultsHost.textContent = 'archive unavailable';
     return;
   }
 
