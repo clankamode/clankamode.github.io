@@ -111,6 +111,45 @@ test('command palette opens with meta+k and navigates to archive', async ({ page
   await expect(page.locator('#archive-search-input')).toBeVisible();
 });
 
+test('command palette restores skip-link tab order after close', async ({ page }) => {
+  const skip = page.locator('.skip-link');
+  await expect(skip).toBeVisible();
+  await expect(skip).not.toHaveAttribute('tabindex', '-1');
+
+  await page.keyboard.press('Meta+k');
+  await expect(page.locator('clanka-cmdk .palette')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('clanka-cmdk .palette')).toHaveCount(0);
+
+  await expect(skip).not.toHaveAttribute('tabindex', '-1');
+  await expect(page.locator('#main-content')).not.toHaveAttribute('tabindex', '-1');
+});
+
+test('command palette Work nav from archive routes home', async ({ page }) => {
+  await page.goto('/logs/');
+  // Host is empty when closed; wait for attachment, not visibility.
+  await page.waitForSelector('clanka-cmdk', { state: 'attached' });
+
+  await page.keyboard.press('Meta+k');
+  const palette = page.locator('clanka-cmdk .palette');
+  await expect(palette).toBeVisible();
+
+  const input = palette.locator('input');
+  await input.fill('work');
+  // Prefer the section nav item (href /#work-label), not a post titled something with "work".
+  await page.evaluate(() => {
+    const host = document.querySelector('clanka-cmdk') as HTMLElement & {
+      shadowRoot: ShadowRoot | null;
+    };
+    const option = Array.from(host.shadowRoot?.querySelectorAll('.item') ?? []).find((el) =>
+      el.querySelector('.item-label')?.textContent?.trim() === 'Work',
+    ) as HTMLElement | undefined;
+    option?.click();
+  });
+
+  await expect(page).toHaveURL(/\/#work-label$/);
+});
+
 test('task board shows empty state when API returns no tasks', async ({ page }) => {
   const tasks = page.locator('clanka-tasks#tasks');
   await expect(tasks).toBeVisible();
@@ -209,6 +248,8 @@ test('transient sync-error after a successful sync keeps task boards visible', a
   await expect(page.locator('clanka-tasks#tasks')).toContainText('Stay visible');
   await expect(page.locator('clanka-tasks#tasks')).not.toContainText('[ api unreachable ]');
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 2 active');
+  // Status chrome should mirror presence STALE, not jump to OFFLINE after a prior sync.
+  await expect(page.locator('#status-live-label')).toHaveText('STALE');
 });
 
 test('slim sync after offline clears latched agent offline state', async ({ page }) => {

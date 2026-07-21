@@ -69,26 +69,38 @@ function resolveFleetTotal(data: unknown): number | null {
   }
 
   for (const candidate of candidates) {
-    const total = Number(candidate);
-    if (Number.isFinite(total) && total >= 0) return total;
+    // Require a real number — Number(null) === 0 would hide missing totals.
+    if (typeof candidate !== 'number' || !Number.isFinite(candidate) || candidate < 0) continue;
+    return candidate;
   }
 
   return null;
 }
 
+function asNonNegativeNumber(value: unknown): number | null {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) return null;
+  return value;
+}
+
 export async function loadLiveStats(): Promise<void> {
   setText('stat-uptime', `// ${uptimeDays()}d online`);
 
-  try {
-    const data = (await withRetries(() => fetchGithubStats())) as GithubStats;
+  // Independent endpoints — don't gate fleet on GitHub stats success.
+  const [statsResult, fleetResult] = await Promise.allSettled([
+    withRetries(() => fetchGithubStats()),
+    withRetries(() => fetchFleetSummary()),
+  ]);
 
-    const repoCount = Number(data.repoCount);
-    if (Number.isFinite(repoCount)) {
+  if (statsResult.status === 'fulfilled') {
+    const data = statsResult.value as GithubStats;
+
+    const repoCount = asNonNegativeNumber(data.repoCount);
+    if (repoCount !== null) {
       setText('stat-repos', `${repoCount} repos`);
     }
 
-    const totalStars = Number(data.totalStars);
-    if (Number.isFinite(totalStars)) {
+    const totalStars = asNonNegativeNumber(data.totalStars);
+    if (totalStars !== null) {
       setText('stat-stars', `${totalStars} stars`);
     }
 
@@ -101,19 +113,14 @@ export async function loadLiveStats(): Promise<void> {
     } else {
       setText('stat-last-commit', `last push: ${relativeTime(pushedAt)} (${pushedRepo})`);
     }
+  }
 
-    try {
-      const fleetData = await withRetries(() => fetchFleetSummary());
-      const total = resolveFleetTotal(fleetData);
-      if (total !== null) {
-        setText('stat-fleet-score', `fleet: ${total} repos`);
-      } else {
-        setText('stat-fleet-score', 'fleet: unavailable');
-      }
-    } catch {
-      // Leave existing fallback text as-is — graceful degradation
+  if (fleetResult.status === 'fulfilled') {
+    const total = resolveFleetTotal(fleetResult.value);
+    if (total !== null) {
+      setText('stat-fleet-score', `fleet: ${total} repos`);
+    } else {
+      setText('stat-fleet-score', 'fleet: unavailable');
     }
-  } catch {
-    // Leave existing fallback text as-is — graceful degradation
   }
 }

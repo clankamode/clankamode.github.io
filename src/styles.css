@@ -541,6 +541,11 @@ section {
   opacity: 1;
 }
 
+/* Touch devices have no hover — keep the CTA visible. */
+@media (hover: none) {
+  .featured-read { opacity: 1; }
+}
+
 .content-page {
   max-width: 980px;
 }
@@ -1252,8 +1257,29 @@ a:hover { color: var(--accent); border-color: var(--accent); }
 }
 
 @media (max-width: 680px) {
-  .cmdk-hint { display: none; }
+  /* Keep a compact command-palette affordance on touch (⌘K is unreliable on phones). */
+  .cmdk-hint {
+    display: flex;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    right: max(12px, env(safe-area-inset-right));
+    min-height: 40px;
+    padding: 8px 12px;
+  }
+  .cmdk-hint-keys { display: none; }
   #scroll-top { display: none; }
+  #status-bar {
+    height: auto;
+    min-height: 28px;
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+  #status-left {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
