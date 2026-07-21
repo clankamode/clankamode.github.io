@@ -102,6 +102,10 @@ export class ClankaPresence extends LitElement {
     if (!this.hasAttribute('tabindex')) {
       this.tabIndex = 0;
     }
+    // firstUpdated only runs once per instance — reconnect must re-arm polling
+    // and refresh so a mid-flight disconnect cannot leave the widget stuck.
+    this.ensurePolling();
+    void this.updatePresence();
   }
 
   disconnectedCallback(): void {
@@ -112,9 +116,8 @@ export class ClankaPresence extends LitElement {
     super.disconnectedCallback();
   }
 
-  async firstUpdated() {
-    await this.updatePresence();
-    if (!this.isConnected) return;
+  private ensurePolling(): void {
+    if (this.pollId !== undefined) return;
     this.pollId = window.setInterval(() => void this.updatePresence(), 30000);
   }
 

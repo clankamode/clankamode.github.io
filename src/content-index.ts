@@ -54,7 +54,11 @@ function isTopicRef(value: unknown): value is ContentTopicRef {
   if (!value || typeof value !== 'object') return false;
 
   const topic = value as Partial<ContentTopicRef>;
-  return typeof topic.slug === 'string' && typeof topic.name === 'string';
+  return (
+    typeof topic.slug === 'string' &&
+    typeof topic.name === 'string' &&
+    typeof topic.description === 'string'
+  );
 }
 
 function isPostSummary(value: unknown): value is ContentPostSummary {
@@ -64,9 +68,26 @@ function isPostSummary(value: unknown): value is ContentPostSummary {
   return (
     typeof post.slug === 'string' &&
     typeof post.title === 'string' &&
+    typeof post.date === 'string' &&
+    typeof post.summary === 'string' &&
     typeof post.canonicalPath === 'string' &&
+    typeof post.number === 'number' &&
+    Number.isFinite(post.number) &&
     Array.isArray(post.topics) &&
     post.topics.every(isTopicRef)
+  );
+}
+
+function isContentTopic(value: unknown): value is ContentTopic {
+  if (!isTopicRef(value)) return false;
+
+  const topic = value as Partial<ContentTopic>;
+  return (
+    typeof topic.count === 'number' &&
+    Number.isFinite(topic.count) &&
+    (topic.latestDate === null || typeof topic.latestDate === 'string') &&
+    Array.isArray(topic.posts) &&
+    topic.posts.every(isPostSummary)
   );
 }
 
@@ -89,11 +110,18 @@ function isContentIndex(value: unknown): value is ContentIndex {
     Array.isArray(candidate.posts) &&
     candidate.posts.every(isPostSummary) &&
     Array.isArray(candidate.topics) &&
+    candidate.topics.every(isContentTopic) &&
     !!candidate.homepage &&
+    (candidate.homepage.featured === null ||
+      candidate.homepage.featured === undefined ||
+      isPostSummary(candidate.homepage.featured)) &&
     Array.isArray(candidate.homepage.recent) &&
+    candidate.homepage.recent.every(isPostSummary) &&
     Array.isArray(candidate.homepage.topics) &&
+    candidate.homepage.topics.every(isContentTopic) &&
     countsOk &&
-    Array.isArray(candidate.homepage.years)
+    Array.isArray(candidate.homepage.years) &&
+    candidate.homepage.years.every((year) => typeof year === 'number' && Number.isFinite(year))
   );
 }
 

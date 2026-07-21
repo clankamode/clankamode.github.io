@@ -95,14 +95,10 @@ export async function loadLiveStats(): Promise<void> {
     const data = statsResult.value as GithubStats;
 
     const repoCount = asNonNegativeNumber(data.repoCount);
-    if (repoCount !== null) {
-      setText('stat-repos', `${repoCount} repos`);
-    }
+    setText('stat-repos', repoCount !== null ? `${repoCount} repos` : 'repos unavailable');
 
     const totalStars = asNonNegativeNumber(data.totalStars);
-    if (totalStars !== null) {
-      setText('stat-stars', `${totalStars} stars`);
-    }
+    setText('stat-stars', totalStars !== null ? `${totalStars} stars` : 'stars unavailable');
 
     const pushedAt = parsePushedAt(data.lastPushedAt);
     const pushedRepo = typeof data.lastPushedRepo === 'string' ? data.lastPushedRepo.trim() : '';
@@ -113,6 +109,10 @@ export async function loadLiveStats(): Promise<void> {
     } else {
       setText('stat-last-commit', `last push: ${relativeTime(pushedAt)} (${pushedRepo})`);
     }
+  } else {
+    setText('stat-repos', 'repos unavailable');
+    setText('stat-stars', 'stars unavailable');
+    setText('stat-last-commit', 'last push: unavailable');
   }
 
   if (fleetResult.status === 'fulfilled') {
@@ -122,5 +122,7 @@ export async function loadLiveStats(): Promise<void> {
     } else {
       setText('stat-fleet-score', 'fleet: unavailable');
     }
+  } else {
+    setText('stat-fleet-score', 'fleet: unavailable');
   }
 }

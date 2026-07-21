@@ -94,7 +94,9 @@ if (presence) {
       setText('stat-active-agents', `agents: ${activeAgents} active`);
     } else {
       const el = document.getElementById('stat-active-agents');
-      if (el?.textContent === 'agents: offline') {
+      const current = el?.textContent ?? '';
+      // Clear loading/offline placeholders; keep a previously resolved count on slim syncs.
+      if (current === 'agents: offline' || current === 'agents: ...' || current === '') {
         setText('stat-active-agents', 'agents: —');
       }
     }
