@@ -79,9 +79,22 @@
   let timings = null;
   const timingsEl = document.getElementById('audio-timings');
   if (timingsEl) {
-    try { timings = JSON.parse(timingsEl.textContent); } catch(e) {}
+    try {
+      const parsed = JSON.parse(timingsEl.textContent);
+      if (Array.isArray(parsed)) {
+        const normalized = [];
+        for (const entry of parsed) {
+          if (!entry || typeof entry !== 'object') continue;
+          const start = Number(entry.start);
+          const end = Number(entry.end);
+          if (!Number.isFinite(start) || !Number.isFinite(end)) continue;
+          normalized.push({ start, end });
+        }
+        if (normalized.length > 0) timings = normalized;
+      }
+    } catch (e) {}
   }
-  const hasTimings = timings && timings.length > 0;
+  const hasTimings = Array.isArray(timings) && timings.length > 0;
 
   // --- Web Audio Analyzer ---
   function initAudio() {

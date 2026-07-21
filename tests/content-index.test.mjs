@@ -307,3 +307,86 @@ test('withRetries eventually succeeds and withResultRetries stops on ok', async 
   assert.deepEqual(result, { ok: true, n: 2 });
   assert.equal(resultAttempts, 2);
 });
+
+test('post dates are valid YYYY-MM-DD and generator validates dates and audio timings', async () => {
+  const [{ POSTS }, generatorSource] = await Promise.all([
+    loadSourceContent(),
+    fs.readFile(path.join(ROOT, 'scripts/generate-site-content.mjs'), 'utf8'),
+  ]);
+
+  assert.match(generatorSource, /isValidPostDate/);
+  assert.match(generatorSource, /parseAudioTimingsJson/);
+
+  for (const post of POSTS) {
+    assert.match(post.date, /^\d{4}-\d{2}-\d{2}$/, `date shape for ${post.slug}`);
+    const parsed = Date.parse(`${post.date}T00:00:00Z`);
+    assert.ok(Number.isFinite(parsed), `date parse for ${post.slug}`);
+    const utc = new Date(parsed);
+    const yyyy = String(utc.getUTCFullYear()).padStart(4, '0');
+    const mm = String(utc.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(utc.getUTCDate()).padStart(2, '0');
+    assert.equal(`${yyyy}-${mm}-${dd}`, post.date, `date round-trip for ${post.slug}`);
+  }
+});
+
+test('loadContentIndex rejects malformed topic entries', async () => {
+  const { loadContentIndex } = await loadTsModule('src/content-index.ts');
+  const originalFetch = globalThis.fetch;
+
+  globalThis.fetch = async () => ({
+    ok: true,
+    async json() {
+      return {
+        generatedAt: '2026-03-18T00:00:00.000Z',
+        homepage: {
+          featured: null,
+          recent: [],
+          topics: [{ slug: 'ops' }],
+          counts: { posts: 0, audioPosts: 0, topics: 1 },
+          years: [],
+        },
+        posts: [],
+        topics: [{ slug: 'ops' }],
+      };
+    },
+  });
+
+  try {
+    await assert.rejects(loadContentIndex(), /invalid content index payload/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('fetchNow invalidates cache after rejecting a malformed payload', async () => {
+  const { fetchNow } = await loadTsModule('src/clanka-api.ts');
+  const originalFetch = globalThis.fetch;
+  let attempts = 0;
+
+  globalThis.fetch = async () => {
+    attempts += 1;
+    if (attempts === 1) {
+      return {
+        ok: true,
+        async json() {
+          return {};
+        },
+      };
+    }
+    return {
+      ok: true,
+      async json() {
+        return { current: 'recovered', status: 'active' };
+      },
+    };
+  };
+
+  try {
+    await assert.rejects(fetchNow(), /Invalid \/now payload/);
+    const recovered = await fetchNow();
+    assert.deepEqual(recovered, { current: 'recovered', status: 'active' });
+    assert.equal(attempts, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

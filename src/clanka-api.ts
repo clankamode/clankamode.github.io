@@ -14,6 +14,10 @@ function endpoint(path: string): string {
   return `${API_BASE}${path}`;
 }
 
+function invalidateEndpoint(path: string): void {
+  responseCache.delete(endpoint(path));
+}
+
 async function fetchJson(path: string, ttlMs = DEFAULT_TTL_MS): Promise<unknown> {
   const url = endpoint(path);
   const cached = responseCache.get(url);
@@ -168,6 +172,8 @@ export async function fetchNow(): Promise<NowPayload> {
   const data = await fetchJson('/now');
   const parsed = parseNowPayload(data);
   if (!parsed) {
+    // Don't keep a rejected shape in the shared TTL cache.
+    invalidateEndpoint('/now');
     throw new Error('Invalid /now payload');
   }
   return parsed;

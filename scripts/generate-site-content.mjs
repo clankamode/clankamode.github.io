@@ -51,8 +51,42 @@ function parsePublishedAt(date) {
   return Date.parse(`${date}T00:00:00Z`);
 }
 
+function isValidPostDate(date) {
+  if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+
+  const parsed = parsePublishedAt(date);
+  if (!Number.isFinite(parsed)) return false;
+
+  const utc = new Date(parsed);
+  const yyyy = String(utc.getUTCFullYear()).padStart(4, '0');
+  const mm = String(utc.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(utc.getUTCDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}` === date;
+}
+
 function formatPubDate(date) {
   return new Date(`${date}T00:00:00Z`).toUTCString();
+}
+
+function parseAudioTimingsJson(raw) {
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return null;
+  }
+
+  if (!Array.isArray(parsed) || parsed.length === 0) return null;
+
+  for (const entry of parsed) {
+    if (!entry || typeof entry !== 'object') return null;
+    const start = entry.start;
+    const end = entry.end;
+    if (typeof start !== 'number' || !Number.isFinite(start) || start < 0) return null;
+    if (typeof end !== 'number' || !Number.isFinite(end) || end < start) return null;
+  }
+
+  return parsed;
 }
 
 function filePathFromCanonical(canonicalPath) {
@@ -86,6 +120,10 @@ async function validateInputs(posts, topics) {
 
     if (!post.summary?.trim()) {
       throw new Error(`Missing summary for ${post.slug}`);
+    }
+
+    if (!isValidPostDate(post.date)) {
+      throw new Error(`Invalid post date for ${post.slug}: expected YYYY-MM-DD, got ${post.date}`);
     }
 
     if (!Array.isArray(post.topics) || post.topics.length === 0) {
@@ -124,6 +162,15 @@ async function validateInputs(posts, topics) {
       throw new Error(
         `Missing #audio-timings for ${post.slug} (audio=true). Embed Whisper timings or run whisper_sync.py.`,
       );
+    }
+    if (post.audio) {
+      const timingsMatch = postHtml.match(/<script\b[^>]*\bid=["']audio-timings["'][^>]*>([\s\S]*?)<\/script>/i);
+      const timings = timingsMatch ? parseAudioTimingsJson(timingsMatch[1].trim()) : null;
+      if (!timings) {
+        throw new Error(
+          `Invalid #audio-timings JSON for ${post.slug}: expected a non-empty array of {start,end} numbers.`,
+        );
+      }
     }
     if (!postHtml.includes('post-styles.css')) {
       throw new Error(`Missing shared post-styles.css for ${post.slug}`);

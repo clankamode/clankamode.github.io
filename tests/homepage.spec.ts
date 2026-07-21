@@ -165,3 +165,35 @@ test('homepage archive stats show unavailable when content-index fails', async (
   await expect(page.locator('#stat-audio-posts')).toHaveText('audio unavailable');
   await expect(page.locator('#logs-archive-link-count')).toHaveText('archive unavailable');
 });
+
+test('homepage repo stats show unavailable when live APIs fail', async ({ page }) => {
+  await page.route(`${API_BASE}/github/stats`, async (route) => {
+    await route.abort('failed');
+  });
+  await page.route(`${API_BASE}/fleet/summary`, async (route) => {
+    await route.abort('failed');
+  });
+
+  await page.reload();
+  await expect(page.locator('#stat-repos')).toHaveText('repos unavailable');
+  await expect(page.locator('#stat-stars')).toHaveText('stars unavailable');
+  await expect(page.locator('#stat-last-commit')).toHaveText('last push: unavailable');
+  await expect(page.locator('#stat-fleet-score')).toHaveText('fleet: unavailable');
+});
+
+test('slim initial /now without agent count clears agents placeholder', async ({ page }) => {
+  await page.route(`${API_BASE}/now`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: 'presence only',
+        status: 'active',
+      }),
+    });
+  });
+
+  await page.reload();
+  await expect(page.locator('#stat-active-agents')).toHaveText('agents: —');
+  await expect(page.locator('#status-live-label')).toHaveText('LIVE');
+});
