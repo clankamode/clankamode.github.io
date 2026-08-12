@@ -144,6 +144,18 @@ test('post j/k keyboard navigation follows enhanced prev/next links', async ({ p
   await expect(page).toHaveURL(prevHref!);
 });
 
+test('now page exposes skip link and heading outline', async ({ page }) => {
+  await page.goto('/now.html');
+  const skip = page.locator('.skip-link');
+  await expect(skip).toHaveAttribute('href', '#main-content');
+  await expect(page.locator('#main-content')).toHaveAttribute('tabindex', '-1');
+  await expect(page.getByRole('heading', { level: 1, name: /Current\s+signal/i })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'current projects' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'current thinking' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'reading' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toBeVisible();
+});
+
 test('404 page is a dedicated not-found shell', async ({ page }) => {
   await page.goto('/404.html');
   await expect(page.locator('h1')).toHaveText('404');
