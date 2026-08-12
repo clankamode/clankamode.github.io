@@ -29,8 +29,18 @@ async function renderArchivePage(): Promise<void> {
     populateSelect(topicSelect, [{ value: 'all', label: 'all topics' }]);
     populateSelect(yearSelect, [{ value: 'all', label: 'all years' }]);
     resultsCount.textContent = 'archive unavailable';
-    resultsHost.textContent = '';
-    resultsHost.textContent = 'archive unavailable';
+    resultsHost.replaceChildren();
+    const unavailable = document.createElement('p');
+    unavailable.className = 'archive-empty';
+    unavailable.setAttribute('role', 'status');
+    unavailable.textContent = 'archive unavailable';
+    resultsHost.append(unavailable);
+    formatButtons.forEach((button) => {
+      button.disabled = true;
+    });
+    searchInput.disabled = true;
+    topicSelect.disabled = true;
+    yearSelect.disabled = true;
     return;
   }
 
@@ -62,9 +72,11 @@ async function renderArchivePage(): Promise<void> {
       return haystack.includes(query);
     });
 
-    resultsHost.textContent = '';
+    resultsHost.replaceChildren();
     if (filtered.length === 0) {
       const empty = document.createElement('p');
+      empty.className = 'archive-empty';
+      empty.setAttribute('role', 'status');
       empty.textContent = 'no dispatches match these filters';
       resultsHost.append(empty);
     } else {
