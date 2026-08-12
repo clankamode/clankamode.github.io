@@ -419,7 +419,7 @@ function buildPageShell({ title, description, scriptPath, pageLabel, heading, ki
 </div>
 <button id="theme-toggle" type="button" aria-label="Toggle color theme" aria-pressed="false">theme: dark</button>
 <div class="grain-overlay" aria-hidden="true"></div>
-<div class="scroll-progress" id="scrollProgress"></div>
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 <clanka-cmdk></clanka-cmdk>
 <main id="main-content" class="content-page">
   <nav class="page-nav" aria-label="Breadcrumb">
