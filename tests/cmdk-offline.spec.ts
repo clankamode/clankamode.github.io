@@ -122,7 +122,8 @@ test('command palette restores skip-link tab order after close', async ({ page }
   await expect(page.locator('clanka-cmdk .palette')).toHaveCount(0);
 
   await expect(skip).not.toHaveAttribute('tabindex', '-1');
-  await expect(page.locator('#main-content')).not.toHaveAttribute('tabindex', '-1');
+  // Permanent skip-link target must be restored after cmdk clears inert chrome.
+  await expect(page.locator('#main-content')).toHaveAttribute('tabindex', '-1');
 });
 
 test('command palette Work nav from archive routes home', async ({ page }) => {
