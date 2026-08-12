@@ -13,6 +13,7 @@
   let speed = 1;
   let audioCtx, analyser, dataArray, sourceNode;
   let listenMode = false;
+  let playbackSession = false;
   let animFrame;
 
   // Cache the accent color so the animation loop never has to call
@@ -115,6 +116,7 @@
   function enterListenMode() {
     if (listenMode) return;
     listenMode = true;
+    playbackSession = true;
     accentColor = readAccentColor();
     themeObserver = new MutationObserver(() => { accentColor = readAccentColor(); });
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
@@ -237,7 +239,8 @@
     btn.setAttribute('aria-label', playing ? 'Pause audio narration' : 'Play audio narration');
   }
 
-  btn.addEventListener('click', () => {
+  function togglePlayback() {
+    if (container.getAttribute('data-audio-error') === '1' || btn.disabled) return;
     initAudio();
     if (audio.paused) {
       if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
@@ -259,6 +262,36 @@
       setPlayState(false);
       exitListenMode();
     }
+  }
+
+  btn.addEventListener('click', () => {
+    togglePlayback();
+  });
+
+  // Space / media keys pause-resume during listen mode (or while focused in the player)
+  // so the page does not scroll away from the active paragraph.
+  document.addEventListener('keydown', (e) => {
+    const isSpace = e.code === 'Space' || e.key === ' ';
+    const isMediaToggle = e.key === 'MediaPlayPause';
+    if (!isSpace && !isMediaToggle) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    const target = e.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) {
+      return;
+    }
+    if (target instanceof HTMLElement && (target.isContentEditable || target.closest('[contenteditable="true"]'))) {
+      return;
+    }
+
+    const inPlayer = target instanceof Element && Boolean(target.closest('.audio-player'));
+    // Keep Space bound after pause so resume does not require re-focusing the player.
+    if (!playbackSession && !listenMode && !inPlayer) return;
+    // Focused player buttons already activate via native Space — avoid double-toggle.
+    if (isSpace && target instanceof HTMLButtonElement) return;
+
+    e.preventDefault();
+    togglePlayback();
   });
 
   skips.forEach(s => s.addEventListener('click', () => {
