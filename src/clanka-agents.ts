@@ -72,7 +72,7 @@ export class ClankaAgents extends LitElement {
             : teamCount > 0
               ? html`// team: ${teamCount} member${teamCount === 1 ? '' : 's'}${active !== null ? html`<br>// ${active} active` : ''}<br>
                   // check <a href="https://github.com/clankamode" target="_blank" rel="noopener noreferrer">github.com/clankamode</a> for shipped work`
-              : active !== null && active > 0
+              : active !== null
                 ? html`// ${active} active · roster unavailable<br>
                     // check <a href="https://github.com/clankamode" target="_blank" rel="noopener noreferrer">github.com/clankamode</a> for shipped work`
                 : html`// agent orchestration is internal<br>
