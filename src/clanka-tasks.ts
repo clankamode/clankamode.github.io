@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { getTaskDisplay, TASK_SKELETON_CARD_COUNT, type TaskItem } from './task-utils';
+import { getTaskDisplay, isTaskItem, TASK_SKELETON_CARD_COUNT, type TaskItem } from './task-utils';
 
 @customElement('clanka-tasks')
 export class ClankaTasks extends LitElement {
@@ -121,7 +121,7 @@ export class ClankaTasks extends LitElement {
   }
 
   private get safeTasks(): TaskItem[] {
-    return Array.isArray(this.tasks) ? this.tasks : [];
+    return Array.isArray(this.tasks) ? this.tasks.filter(isTaskItem) : [];
   }
 
   render() {

@@ -10,6 +10,7 @@ import './clanka-tasks';
 import './clanka-cmdk';
 import { renderHomepageContent, renderHomepageStats } from './homepage-content';
 import { runWhenNearViewport } from './lazy-near-viewport';
+import { normalizeTasks } from './task-utils';
 
 type SyncPayload = {
   team?: Record<string, unknown>;
@@ -77,7 +78,7 @@ if (presence) {
       tasks.loading = false;
       tasks.error = '';
       if ('tasks' in data) {
-        tasks.tasks = Array.isArray(data.tasks) ? data.tasks : [];
+        tasks.tasks = normalizeTasks(data.tasks);
       }
     }
     if (agents) {
