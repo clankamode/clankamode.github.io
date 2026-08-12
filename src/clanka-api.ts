@@ -139,10 +139,13 @@ export function parseNowPayload(payload: unknown): NowPayload | null {
   const result: NowPayload = {};
 
   if ('current' in payload && typeof payload.current === 'string') {
-    result.current = payload.current;
+    const current = payload.current.trim();
+    // Blank strings are not presence signal — treat as omitted.
+    if (current.length > 0) result.current = current;
   }
   if ('status' in payload && typeof payload.status === 'string') {
-    result.status = payload.status;
+    const status = payload.status.trim();
+    if (status.length > 0) result.status = status;
   }
   if ('history' in payload && Array.isArray(payload.history)) {
     result.history = payload.history;

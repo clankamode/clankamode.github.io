@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { fetchNow } from './clanka-api';
+import { withRetries } from './retry';
 
 @customElement('clanka-presence')
 export class ClankaPresence extends LitElement {
@@ -132,16 +133,19 @@ export class ClankaPresence extends LitElement {
     }
 
     try {
-      const data = await fetchNow();
+      // Match other live widgets: absorb a single transient blip before going offline.
+      const data = await withRetries(() => fetchNow());
       if (!this.isConnected) return;
 
-      if (typeof data.current === 'string') {
-        this.current = data.current;
+      const current = typeof data.current === 'string' ? data.current.trim() : '';
+      if (current.length > 0) {
+        this.current = current;
       } else if (!this.hasSyncedOnce) {
         this.current = 'active';
       }
-      if (typeof data.status === 'string') {
-        this.status = data.status;
+      const status = typeof data.status === 'string' ? data.status.trim() : '';
+      if (status.length > 0) {
+        this.status = status;
       } else if (!this.hasSyncedOnce) {
         this.status = 'operational';
       }
@@ -186,12 +190,12 @@ export class ClankaPresence extends LitElement {
     return html`
       <div class="hd">
         <span class="hd-name">CLANKA ⚡</span>
-        <span class="hd-status">
+        <span class="hd-status" aria-live="polite">
           <span class="dot ${showThinking ? 'thinking' : ''}" style=${showOffline || this.stale ? 'opacity:.4' : ''}></span>
           ${statusLabel}
         </span>
       </div>
-      <div class="presence-block">
+      <div class="presence-block" aria-live="polite">
         <span class="presence-label">// currently:</span>
         ${this.loading
           ? html`<span class="loading"> [ loading... ]</span><div class="skeleton" aria-hidden="true"></div>`
