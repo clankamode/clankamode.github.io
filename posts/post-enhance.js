@@ -133,8 +133,22 @@
     if (which === 'prev') return links[0]?.getAttribute('href') || null;
     return links.length > 1 ? links[1].getAttribute('href') : null;
   };
+  const shouldIgnorePostShortcut = (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return true;
+    const target = e.target;
+    if (!(target instanceof Element)) return false;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) {
+      return true;
+    }
+    if (target.isContentEditable || target.closest('[contenteditable="true"]')) return true;
+    // Never eject listeners mid-playback / while focusing the player chrome.
+    if (document.body.classList.contains('listen-mode')) return true;
+    if (target.closest('.audio-player')) return true;
+    return false;
+  };
+
   document.addEventListener('keydown', (e) => {
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    if (shouldIgnorePostShortcut(e)) return;
     if (e.key === 'j') {
       const next = resolveNavHref('next');
       if (next) window.location.href = next;
@@ -147,7 +161,7 @@
 
   // 4. Back to top on 't'
   document.addEventListener('keydown', (e) => {
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    if (shouldIgnorePostShortcut(e)) return;
     if (e.key === 't') {
       const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         ? 'auto'
