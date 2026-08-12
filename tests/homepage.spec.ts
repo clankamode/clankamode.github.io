@@ -147,6 +147,7 @@ test('homepage does not mount a duplicate activity widget', async ({ page }) => 
 test('active agent stat is populated from live now payload', async ({ page }) => {
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 7 active');
   await expect(page.locator('#status-live-label')).toHaveText('LIVE');
+  await expect(page.locator('#status-live-dot')).toHaveAttribute('data-state', 'live');
 });
 
 test('homepage repo stats are populated from mocked API responses', async ({ page }) => {

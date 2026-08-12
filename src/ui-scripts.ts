@@ -121,29 +121,33 @@ export function initUI(): void {
     const liveDot = document.getElementById('status-live-dot') as HTMLElement | null;
     if (!liveLabel) return;
 
-    const setLiveState = (label: string, offline: boolean): void => {
+    const setLiveState = (label: string): void => {
       liveLabel.textContent = label;
       if (liveDot) {
-        liveDot.style.opacity = offline ? '0.35' : '';
+        liveDot.dataset.state = label.toLowerCase();
       }
     };
+
+    // Apply chrome for the HTML-seeded label immediately (SITE on archive/topic shells).
+    const seeded = (liveLabel.textContent || 'SITE').trim().toUpperCase();
+    setLiveState(seeded || 'SITE');
 
     const presence = document.getElementById('presence');
     if (!presence) {
       // Archive/topic shells have no telemetry presence widget.
-      if (liveLabel.textContent === 'SYNCING' || liveLabel.textContent === 'LIVE') {
-        setLiveState('SITE', false);
+      if (seeded === 'SYNCING' || seeded === 'LIVE') {
+        setLiveState('SITE');
       }
       return;
     }
 
     presence.addEventListener('sync-updated', () => {
-      setLiveState('LIVE', false);
+      setLiveState('LIVE');
     });
     presence.addEventListener('sync-error', (event: Event) => {
       const hadSync = Boolean((event as CustomEvent<{ hadSync?: boolean }>).detail?.hadSync);
       // Match presence chrome: keep last-good live data as STALE, not OFFLINE.
-      setLiveState(hadSync ? 'STALE' : 'OFFLINE', true);
+      setLiveState(hadSync ? 'STALE' : 'OFFLINE');
     });
   })();
 
