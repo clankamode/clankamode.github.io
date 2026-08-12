@@ -4,9 +4,12 @@ export default defineConfig({
   testDir: './tests',
   testIgnore: /.*\.test\.mjs$/,
   forbidOnly: !!process.env.CI,
-  reporter: 'list',
+  retries: process.env.CI ? 2 : 0,
+  reporter: process.env.CI ? [['list'], ['github']] : 'list',
   use: {
     baseURL: 'http://127.0.0.1:8080',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
   },
   projects: [
     { name: 'chromium', use: { browserName: 'chromium' } },
