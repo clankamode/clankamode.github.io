@@ -24,6 +24,7 @@ const agents = document.getElementById('agents') as (HTMLElement & {
   loading?: boolean;
   error?: string;
   team?: Record<string, unknown>;
+  agentsActive?: number | null;
 }) | null;
 
 const setText = (id: string, value: string): void => {
@@ -90,6 +91,9 @@ if (presence) {
     }
 
     const activeAgents = resolveActiveAgents(data);
+    if (agents && activeAgents !== null) {
+      agents.agentsActive = activeAgents;
+    }
     if (activeAgents !== null) {
       setText('stat-active-agents', `agents: ${activeAgents} active`);
     } else {
