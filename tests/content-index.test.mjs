@@ -223,7 +223,9 @@ test('task display helpers normalize status and preserve labels', async () => {
 });
 
 test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
-  const { parseGithubEvents } = await loadTsModule('src/clanka-api.ts');
+  const { parseGithubEvents, isGithubEventsPayload, isFleetSummaryPayload } = await loadTsModule(
+    'src/clanka-api.ts',
+  );
   const sample = {
     type: 'PushEvent',
     repo: 'clankamode/site',
@@ -235,6 +237,18 @@ test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
   assert.deepEqual(parseGithubEvents([sample]), [sample]);
   assert.deepEqual(parseGithubEvents({ events: 'invalid' }), []);
   assert.deepEqual(parseGithubEvents(null), []);
+
+  assert.equal(isGithubEventsPayload({ events: [] }), true);
+  assert.equal(isGithubEventsPayload([sample]), true);
+  assert.equal(isGithubEventsPayload({ error: 'token expired' }), false);
+  assert.equal(isGithubEventsPayload({ events: 'invalid' }), false);
+  assert.equal(isGithubEventsPayload(null), false);
+
+  assert.equal(isFleetSummaryPayload({ repos: [], totalRepos: 0 }), true);
+  assert.equal(isFleetSummaryPayload({ fleet: [] }), true);
+  assert.equal(isFleetSummaryPayload({ summary: { repos: [] } }), true);
+  assert.equal(isFleetSummaryPayload({ message: 'no registry' }), false);
+  assert.equal(isFleetSummaryPayload(null), false);
 });
 
 test('parseNowPayload rejects invalid shapes and preserves optional fields', async () => {

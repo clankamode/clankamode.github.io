@@ -161,6 +161,49 @@ test('fleet widget renders mocked repo cards', async ({ page }) => {
   await fleet.scrollIntoViewIfNeeded();
   await expect(fleet.locator('.repo')).toHaveCount(2);
   await expect(fleet.locator('.sync.live')).toBeVisible();
+  await expect(fleet.locator('.status-pill.online')).toHaveCount(2);
+});
+
+test('fleet hides status pill when API omits online state', async ({ page }) => {
+  await page.route(`${API_BASE}/fleet/summary`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        totalRepos: 2,
+        repos: [
+          { repo: 'clankamode/ci-failure-triager', tier: 'ops', criticality: 'critical' },
+          { repo: 'clankamode/clanka-api', tier: 'core', criticality: 'high' },
+        ],
+      }),
+    });
+  });
+
+  await page.reload();
+  const fleet = page.locator('clanka-fleet#fleet');
+  await fleet.scrollIntoViewIfNeeded();
+  await expect(fleet.locator('.repo')).toHaveCount(2);
+  await expect(fleet.locator('.status-pill')).toHaveCount(0);
+  await expect(fleet.locator('.sync.synced')).toBeVisible();
+});
+
+test('malformed github events show unavailable instead of empty activity', async ({ page }) => {
+  await page.route(`${API_BASE}/github/events`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'token expired' }),
+    });
+  });
+
+  await page.reload();
+  await page.locator('#commit-feed').scrollIntoViewIfNeeded();
+  await expect(page.locator('#commit-feed')).toContainText('// activity unavailable');
+
+  await page.locator('clanka-terminal#terminal').scrollIntoViewIfNeeded();
+  await expect(page.locator('clanka-terminal#terminal')).toContainText(
+    '[ offline — activity unavailable ]',
+  );
 });
 
 test('live widgets show offline state when API is unreachable', async ({ page }) => {

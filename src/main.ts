@@ -1,7 +1,6 @@
 import './styles.css';
 import { initUI } from './ui-scripts';
 import { loadLiveStats } from './clanka-stats';
-import { loadNpmBadge } from './clanka-npm';
 import { loadCommitFeed } from './clanka-commits';
 import './clanka-presence';
 import './clanka-fleet';
@@ -128,5 +127,4 @@ initUI();
 void renderHomepageStats();
 runWhenNearViewport('.logs-section', () => void renderHomepageContent());
 void loadLiveStats();
-void loadNpmBadge();
 runWhenNearViewport('[aria-labelledby="activity-label"]', () => void loadCommitFeed());

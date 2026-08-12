@@ -31,12 +31,18 @@ function stripRepoPrefix(repoName: string): string {
   return repoName.replace(/^clankamode\//, '');
 }
 
-function detectCommitType(message: string): string {
-  const trimmed = message.trim().toLowerCase();
-  const match = trimmed.match(/^([a-z]+)/);
+function detectCommitType(event: GithubEvent): string {
+  const trimmed = event.message.trim().toLowerCase();
+  const match = trimmed.match(/^([a-z]+)(?:\b|[(!:])/);
   const tag = match ? match[1] : '';
+  if (COMMIT_TYPES.includes(tag as (typeof COMMIT_TYPES)[number])) return tag;
 
-  return COMMIT_TYPES.includes(tag as (typeof COMMIT_TYPES)[number]) ? tag : 'push';
+  // Live API emits short types (PR/CREATE/PUSH); older payloads used *Event names.
+  const type = event.type.trim().toUpperCase();
+  if (type === 'PR' || type === 'PULL_REQUEST' || type === 'PULLREQUESTEVENT') return 'pr';
+  if (type === 'CREATE' || type === 'CREATEEVENT') return 'create';
+  if (type === 'PUSH' || type === 'PUSHEVENT') return 'push';
+  return 'push';
 }
 
 function setFeedText(message: string): void {
@@ -74,8 +80,7 @@ export async function loadCommitFeed(): Promise<void> {
     result.events.slice(0, 8).forEach((event: GithubEvent) => {
         const repo = stripRepoPrefix(event.repo || 'unknown');
         const message = event.message || '';
-        const commitType = detectCommitType(message);
-        const tagClass = COMMIT_TYPES.includes(commitType as (typeof COMMIT_TYPES)[number]) ? commitType : 'push';
+        const commitType = detectCommitType(event);
 
         const item = document.createElement('div');
         item.className = 'commit-item';
@@ -88,7 +93,7 @@ export async function loadCommitFeed(): Promise<void> {
         repoEl.textContent = repo;
 
         const tagEl = document.createElement('span');
-        tagEl.className = `commit-tag commit-tag--${tagClass}`;
+        tagEl.className = `commit-tag commit-tag--${commitType}`;
         tagEl.textContent = commitType;
 
         const messageEl = document.createElement('span');
