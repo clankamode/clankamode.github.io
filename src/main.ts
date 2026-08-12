@@ -19,7 +19,12 @@ type SyncPayload = {
 };
 
 const presence = document.getElementById('presence') as HTMLElement | null;
-const tasks = document.getElementById('tasks') as (HTMLElement & { loading?: boolean; error?: string; tasks?: unknown[] }) | null;
+const tasks = document.getElementById('tasks') as (HTMLElement & {
+  loading?: boolean;
+  error?: string;
+  tasks?: unknown[];
+  hasTasksSignal?: boolean;
+}) | null;
 const agents = document.getElementById('agents') as (HTMLElement & {
   loading?: boolean;
   error?: string;
@@ -79,6 +84,7 @@ if (presence) {
       tasks.error = '';
       if ('tasks' in data) {
         tasks.tasks = normalizeTasks(data.tasks);
+        tasks.hasTasksSignal = true;
       }
     }
     if (agents) {

@@ -5,6 +5,8 @@ import { getTaskDisplay, isTaskItem, TASK_SKELETON_CARD_COUNT, type TaskItem } f
 @customElement('clanka-tasks')
 export class ClankaTasks extends LitElement {
   @property({ type: Array }) tasks: TaskItem[] = [];
+  /** True once /now has included a tasks field (empty array counts). */
+  @property({ type: Boolean }) hasTasksSignal = false;
   @property({ type: Boolean }) loading = true;
   @property({ type: String }) error = '';
 
@@ -152,8 +154,10 @@ export class ClankaTasks extends LitElement {
                 )}
               </div>
             `
-          : !hasTasks
-            ? html`<div class="fallback">[ no tasks ]</div>`
+          : !this.hasTasksSignal
+            ? html`<div class="fallback" role="status">[ tasks unavailable ]</div>`
+            : !hasTasks
+            ? html`<div class="fallback" role="status">[ no tasks ]</div>`
             : html`
                 <div class="grid" role="list">
                   ${tasks.map(

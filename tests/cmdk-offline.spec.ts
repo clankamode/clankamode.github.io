@@ -151,6 +151,28 @@ test('command palette Work nav from archive routes home', async ({ page }) => {
   await expect(page).toHaveURL(/\/#work-label$/);
 });
 
+
+test('tasks board distinguishes omitted tasks from an empty list', async ({ page }) => {
+  await page.route(`${API_BASE}/now`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: 'shipping',
+        status: 'operational',
+        agents_active: 1,
+        // tasks intentionally omitted
+      }),
+    });
+  });
+
+  await page.reload();
+  const tasks = page.locator('clanka-tasks#tasks');
+  await expect(tasks).toBeVisible();
+  await expect(tasks).toContainText('[ tasks unavailable ]');
+  await expect(tasks).not.toContainText('[ no tasks ]');
+});
+
 test('task board shows empty state when API returns no tasks', async ({ page }) => {
   const tasks = page.locator('clanka-tasks#tasks');
   await expect(tasks).toBeVisible();
@@ -468,6 +490,8 @@ test('slim sync after offline clears latched agent offline state', async ({ page
 
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: —');
   await expect(page.locator('clanka-tasks#tasks')).not.toContainText('[ api unreachable ]');
+  // Slim recovery without a tasks field must not pretend the board is empty.
+  await expect(page.locator('clanka-tasks#tasks')).toContainText('[ tasks unavailable ]');
 });
 
 test('command palette exposes listbox semantics for results', async ({ page }) => {
