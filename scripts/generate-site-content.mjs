@@ -871,7 +871,59 @@ function buildLogsPage() {
   });
 }
 
+function formatDispatchCount(count) {
+  const safe = Number.isFinite(count) && count >= 0 ? Math.floor(count) : 0;
+  return `${safe} ${safe === 1 ? 'dispatch' : 'dispatches'}`;
+}
+
+function formatDurationMinutes(minutes, audio = false) {
+  if (typeof minutes === 'number' && Number.isFinite(minutes) && minutes > 0) {
+    return `${Math.ceil(minutes)} min ${audio ? 'listen' : 'read'}`;
+  }
+  return audio ? 'quick listen' : 'quick read';
+}
+
+function buildArchiveCardHtml(post, { featured = false } = {}) {
+  const number =
+    typeof post.number === 'number' && Number.isFinite(post.number) && post.number >= 0
+      ? String(Math.floor(post.number)).padStart(3, '0')
+      : '—';
+  const topics = Array.isArray(post.topics) ? post.topics.filter(Boolean) : [];
+  const topicChips = topics
+    .map(
+      (topic) =>
+        `      <a class="topic-chip" href="/topics/${escapeHtml(topic.slug)}/">${escapeHtml(topic.name)}</a>`,
+    )
+    .join('\n');
+  const featuredClass = featured ? ' archive-card--featured' : '';
+
+  return `    <article class="archive-card${featuredClass}">
+      <div class="archive-card-kicker">dispatch ${escapeHtml(number)} · ${escapeHtml(post.date)}</div>
+      <h2 class="archive-card-title"><a href="${escapeHtml(post.canonicalPath)}">${escapeHtml(post.title)}</a></h2>
+      <p class="archive-card-summary">${escapeHtml(post.summary)}</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">${escapeHtml(formatDurationMinutes(post.estimatedReadMinutes, Boolean(post.audio)))}</span>
+        <span class="archive-meta-badge">${post.audio ? 'listen available' : 'read only'}</span>
+      </div>
+      <div class="topic-chip-row">
+${topicChips}
+      </div>
+    </article>`;
+}
+
+function buildTopicPostsHtml(topic) {
+  const posts = Array.isArray(topic.posts) ? topic.posts : [];
+  if (posts.length === 0) {
+    return `    <p class="archive-empty" role="status">no dispatches for this topic</p>`;
+  }
+
+  return posts.map((post, index) => buildArchiveCardHtml(post, { featured: index === 0 })).join('\n');
+}
+
 function buildTopicPage(topic) {
+  const countLabel = formatDispatchCount(topic.count);
+  const latestLabel = topic.latestDate ? `last dispatch · ${topic.latestDate}` : 'last dispatch · n/a';
+
   return buildPageShell({
     title: `CLANKA // ${topic.name}`,
     description: topic.description,
@@ -879,18 +931,18 @@ function buildTopicPage(topic) {
     pageLabel: 'topics',
     heading: topic.name,
     kicker: `// ${topic.slug}`,
-    bodyAttrs: `data-topic-slug="${topic.slug}"`,
+    bodyAttrs: `data-topic-slug="${escapeHtml(topic.slug)}"`,
     bodyContent: `  <section class="section-reveal" aria-labelledby="topic-summary-label">
     <div class="sec-header">
       <span id="topic-summary-label" class="sec-label">topic brief</span>
       <div class="sec-line"></div>
     </div>
     <div class="topic-summary-card">
-      <p id="topic-description" class="topic-page-description"></p>
+      <p id="topic-description" class="topic-page-description">${escapeHtml(topic.description)}</p>
       <div class="topic-stats">
-        <span id="topic-count"></span>
+        <span id="topic-count">${escapeHtml(countLabel)}</span>
         <span class="stats-sep">·</span>
-        <span id="topic-latest"></span>
+        <span id="topic-latest">${escapeHtml(latestLabel)}</span>
       </div>
     </div>
   </section>
@@ -899,7 +951,9 @@ function buildTopicPage(topic) {
       <span id="topic-posts-label" class="sec-label">dispatches</span>
       <div class="sec-line"></div>
     </div>
-    <div id="topic-posts" class="archive-results"></div>
+    <div id="topic-posts" class="archive-results">
+${buildTopicPostsHtml(topic)}
+    </div>
   </section>`,
   });
 }
@@ -924,7 +978,20 @@ async function writeOutputs(contentIndex) {
 async function validateOutputs(contentIndex) {
   await fs.access(LOGS_PAGE_PATH);
   for (const topic of contentIndex.topics) {
-    await fs.access(path.join(TOPICS_DIR, topic.slug, 'index.html'));
+    const topicPath = path.join(TOPICS_DIR, topic.slug, 'index.html');
+    await fs.access(topicPath);
+    const html = await fs.readFile(topicPath, 'utf8');
+    if (!html.includes(`id="topic-description"`) || !html.includes(topic.description)) {
+      throw new Error(`Topic page missing static description for ${topic.slug}`);
+    }
+    if (!html.includes(`>${formatDispatchCount(topic.count)}<`)) {
+      throw new Error(`Topic page missing static count for ${topic.slug}`);
+    }
+    for (const post of topic.posts) {
+      if (!html.includes(`href="${post.canonicalPath}"`)) {
+        throw new Error(`Topic page ${topic.slug} missing static card for ${post.slug}`);
+      }
+    }
   }
   await fs.access(FEED_PATH);
 
