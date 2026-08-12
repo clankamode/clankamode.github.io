@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 @customElement('clanka-agents')
 export class ClankaAgents extends LitElement {
   @property({ attribute: false }) team: Record<string, unknown> = {};
+  @property({ type: Number }) agentsActive: number | null = null;
   @property({ type: Boolean }) loading = true;
   @property({ type: String }) error = '';
 
@@ -53,22 +54,29 @@ export class ClankaAgents extends LitElement {
 
   render() {
     const teamCount = this.teamCount;
+    const active =
+      typeof this.agentsActive === 'number' && Number.isFinite(this.agentsActive)
+        ? Math.max(0, Math.floor(this.agentsActive))
+        : null;
 
     return html`
       <div class="sec-header">
         <span class="sec-label">agents</span>
         <div class="sec-line"></div>
       </div>
-      <div class="note">
+      <div class="note" aria-live="polite">
         ${this.loading
           ? html`<span class="loading">[ loading... ]</span>`
           : this.error
             ? html`<span class="error">${this.error}</span>`
             : teamCount > 0
-              ? html`// team: ${teamCount} member${teamCount === 1 ? '' : 's'}<br>
+              ? html`// team: ${teamCount} member${teamCount === 1 ? '' : 's'}${active !== null ? html`<br>// ${active} active` : ''}<br>
                   // check <a href="https://github.com/clankamode" target="_blank" rel="noopener noreferrer">github.com/clankamode</a> for shipped work`
-              : html`// agent orchestration is internal<br>
-                  // check <a href="https://github.com/clankamode" target="_blank" rel="noopener noreferrer">github.com/clankamode</a> for shipped work`}
+              : active !== null && active > 0
+                ? html`// ${active} active · roster unavailable<br>
+                    // check <a href="https://github.com/clankamode" target="_blank" rel="noopener noreferrer">github.com/clankamode</a> for shipped work`
+                : html`// agent orchestration is internal<br>
+                    // check <a href="https://github.com/clankamode" target="_blank" rel="noopener noreferrer">github.com/clankamode</a> for shipped work`}
       </div>
     `;
   }

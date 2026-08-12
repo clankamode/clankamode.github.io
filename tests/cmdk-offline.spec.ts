@@ -357,6 +357,27 @@ test('github events offline path coalesces retries across terminal and commit fe
   expect(eventsHits).toBeLessThanOrEqual(3);
 });
 
+test('agents widget shows agents_active when roster is empty', async ({ page }) => {
+  await page.route(`${API_BASE}/now`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: 'shipping',
+        status: 'operational',
+        agents_active: 3,
+        team: {},
+      }),
+    });
+  });
+
+  await page.goto('/');
+  const agents = page.locator('clanka-agents#agents');
+  await expect(agents).toBeVisible();
+  await expect(agents.locator('.note')).toContainText('3 active · roster unavailable');
+  await expect(page.locator('#stat-active-agents')).toHaveText('agents: 3 active');
+});
+
 test('partial /now payloads do not wipe tasks or agents', async ({ page }) => {
   await page.route(`${API_BASE}/now`, async (route) => {
     await route.fulfill({
