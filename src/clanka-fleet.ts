@@ -390,19 +390,11 @@ export class ClankaFleet extends LitElement {
                         <article class="card" role="listitem">
                           <div class="card-head">
                             <span class="repo">${this.shortName(repo.repo)}</span>
-                            <span
-                              class="status-pill ${repo.online === null
-                                ? 'unknown'
-                                : repo.online
-                                  ? 'online'
-                                  : 'offline'}"
-                            >
-                              ${repo.online === null
-                                ? '● unknown'
-                                : repo.online
-                                  ? '● online'
-                                  : '● offline'}
-                            </span>
+                            ${repo.online === null
+                              ? ''
+                              : html`<span class="status-pill ${repo.online ? 'online' : 'offline'}">
+                                  ${repo.online ? '● online' : '● offline'}
+                                </span>`}
                           </div>
                           <div class="tier-badge">${repo.tier}</div>
                           <div class="criticality"><span class="dot ${repo.criticality}" aria-hidden="true"></span>${repo.criticality}</div>

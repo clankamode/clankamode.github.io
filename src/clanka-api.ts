@@ -80,6 +80,13 @@ function isGithubEvent(value: unknown): value is GithubEvent {
   );
 }
 
+/** True when the payload is a recognized events envelope (including empty). */
+export function isGithubEventsPayload(payload: unknown): boolean {
+  if (Array.isArray(payload)) return true;
+  if (!isPlainObject(payload)) return false;
+  return Array.isArray(payload.events);
+}
+
 /** Accepts both `{ events: [...] }` and bare array payloads from clanka-api. */
 export function parseGithubEvents(payload: unknown): GithubEvent[] {
   if (Array.isArray(payload)) {
@@ -101,6 +108,11 @@ export type GithubEventsResult =
 export async function fetchGithubEvents(): Promise<GithubEventsResult> {
   try {
     const data = await fetchJson('/github/events');
+    if (!isGithubEventsPayload(data)) {
+      // Don't TTL-cache error objects as a successful empty feed.
+      invalidateEndpoint('/github/events');
+      return { ok: false, reason: 'offline' };
+    }
     return { ok: true, events: parseGithubEvents(data) };
   } catch {
     return { ok: false, reason: 'offline' };
@@ -183,6 +195,27 @@ export function fetchGithubStats(): Promise<unknown> {
   return fetchJson('/github/stats');
 }
 
-export function fetchFleetSummary(): Promise<unknown> {
-  return fetchJson('/fleet/summary');
+/** True when the payload is a recognized fleet summary envelope (including empty). */
+export function isFleetSummaryPayload(payload: unknown): boolean {
+  if (Array.isArray(payload)) return true;
+  if (!isPlainObject(payload)) return false;
+
+  if (Array.isArray(payload.repos) || Array.isArray(payload.fleet)) return true;
+
+  if (isPlainObject(payload.summary)) {
+    const summary = payload.summary;
+    if (Array.isArray(summary.repos) || Array.isArray(summary.fleet)) return true;
+  }
+
+  return false;
+}
+
+export async function fetchFleetSummary(): Promise<unknown> {
+  const data = await fetchJson('/fleet/summary');
+  if (!isFleetSummaryPayload(data)) {
+    // Don't TTL-cache `{ message: '…' }` as a successful empty registry.
+    invalidateEndpoint('/fleet/summary');
+    throw new Error('Invalid /fleet/summary payload');
+  }
+  return data;
 }

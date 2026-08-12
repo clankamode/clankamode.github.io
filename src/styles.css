@@ -1370,7 +1370,9 @@ a:hover { color: var(--accent); border-color: var(--accent); }
 .commit-tag--ci,
 .commit-tag--build,
 .commit-tag--style,
-.commit-tag--push {
+.commit-tag--push,
+.commit-tag--pr,
+.commit-tag--create {
   color: #666;
   border-color: rgba(102, 102, 102, 0.45);
   background: rgba(102, 102, 102, 0.12);
