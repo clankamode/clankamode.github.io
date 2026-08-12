@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#070708" />
+  <meta name="robots" content="noindex" />
   <meta name="description" content="Page not found — CLANKA" />
   <meta property="og:title" content="404 — CLANKA" />
   <meta property="og:description" content="No dispatch at this path." />
@@ -25,6 +26,15 @@
       --font-mono: 'IBM Plex Mono', 'Courier New', Courier, monospace;
       --font-display: 'Space Mono', 'IBM Plex Mono', monospace;
     }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f4f6f8;
+        --text: #223042;
+        --dim: #455062;
+        --accent: #3f7f19;
+        --border: #d4d9df;
+      }
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -37,6 +47,13 @@
       color: var(--text);
       font-family: var(--font-mono);
       padding: 24px;
+    }
+    @media (prefers-color-scheme: light) {
+      body {
+        background:
+          radial-gradient(ellipse at top, rgba(63, 127, 25, 0.12), transparent 55%),
+          var(--bg);
+      }
     }
     main {
       max-width: 28rem;
@@ -58,7 +75,19 @@
     p {
       color: var(--dim);
       line-height: 1.6;
+      margin: 0 0 16px;
+    }
+    .path-line {
       margin: 0 0 28px;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    .path-line[hidden] {
+      display: none;
+    }
+    .path-line code {
+      color: var(--text);
+      font-family: var(--font-mono);
     }
     nav {
       display: flex;
@@ -75,18 +104,43 @@
       font-size: 13px;
     }
     a:hover { color: var(--accent); border-color: var(--accent); }
+    a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
   </style>
 </head>
 <body>
-  <main>
+  <main id="main-content">
     <p class="kicker">// not found</p>
     <h1>404</h1>
     <p>No dispatch at this path. The link may be stale, mistyped, or never existed.</p>
+    <p class="path-line" id="path-line" hidden>
+      Requested path: <code id="requested-path"></code>
+    </p>
     <nav aria-label="Recovery links">
       <a href="/">home</a>
       <a href="/logs/">archive</a>
       <a href="/now.html">now</a>
+      <a href="/feed.xml">rss</a>
     </nav>
   </main>
+  <script>
+    (() => {
+      const path = `${location.pathname}${location.search}`;
+      const el = document.getElementById('requested-path');
+      const line = document.getElementById('path-line');
+      if (!el || !line) return;
+      // Direct visits to the 404 document itself are not a missing route.
+      if (path === '/404.html' || path === '/404') return;
+      el.textContent = path;
+      line.hidden = false;
+    })();
+  </script>
 </body>
 </html>
