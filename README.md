@@ -91,7 +91,7 @@ OPENAI_API_KEY=... python3 whisper_sync.py posts/<post>.html audio/<post>.mp3 <s
 
 ## Development
 
-Requires **Node.js 24+** (see `.nvmrc`). After cloning:
+Requires **Node.js 24** (see `.nvmrc`; `engines` is `^24` with `engine-strict`). After cloning:
 
 ```bash
 npm install
