@@ -443,6 +443,59 @@ test('post HTML meta and og descriptions stay aligned with posts.ts summaries', 
   }
 });
 
+test('RSS feed includes build date, permalink guids, categories, and audio enclosures', async () => {
+  const [{ POSTS }, feedXml, generatedRaw] = await Promise.all([
+    loadSourceContent(),
+    fs.readFile(path.join(ROOT, 'feed.xml'), 'utf8'),
+    fs.readFile(path.join(ROOT, 'public/content-index.json'), 'utf8'),
+  ]);
+
+  const generated = JSON.parse(generatedRaw);
+  const generatedBySlug = new Map(generated.posts.map((post) => [post.slug, post]));
+
+  assert.match(feedXml, /<lastBuildDate>[^<]+<\/lastBuildDate>/);
+
+  const items = [...feedXml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((match) => match[0]);
+  assert.equal(items.length, POSTS.length);
+
+  for (const post of POSTS) {
+    const permalink = `https://clankamode.github.io${post.canonicalPath}`;
+    const item = items.find((entry) => entry.includes(`<link>${permalink}</link>`));
+    assert.ok(item, `missing feed item for ${post.slug}`);
+
+    assert.ok(
+      item.includes(`<guid isPermaLink="true">${permalink}</guid>`),
+      `missing permalink guid for ${post.slug}`,
+    );
+    assert.ok(
+      item.includes(`<pubDate>${new Date(`${post.date}T00:00:00Z`).toUTCString()}</pubDate>`),
+      `pubDate mismatch for ${post.slug}`,
+    );
+
+    const indexed = generatedBySlug.get(post.slug);
+    assert.ok(indexed, `missing generated post for ${post.slug}`);
+    for (const topic of indexed.topics) {
+      assert.ok(
+        item.includes(`<category>${topic.name}</category>`),
+        `missing category ${topic.name} for ${post.slug}`,
+      );
+    }
+
+    if (post.audio) {
+      const audioPath = path.join(ROOT, 'audio', `${post.slug}.mp3`);
+      const size = (await fs.stat(audioPath)).size;
+      assert.ok(
+        item.includes(
+          `<enclosure url="https://clankamode.github.io/audio/${post.slug}.mp3" length="${size}" type="audio/mpeg" />`,
+        ),
+        `missing audio enclosure for ${post.slug}`,
+      );
+    } else {
+      assert.equal(item.includes('<enclosure'), false, `unexpected enclosure for ${post.slug}`);
+    }
+  }
+});
+
 test('post dates are valid YYYY-MM-DD and generator validates dates and audio timings', async () => {
   const [{ POSTS }, generatorSource] = await Promise.all([
     loadSourceContent(),
