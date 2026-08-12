@@ -62,13 +62,20 @@ export function initUI(): void {
     });
   })();
 
-  // Scroll progress bar
+  // Scroll progress bar (decorative visual chrome)
   (() => {
     const bar = document.getElementById('scrollProgress');
     if (!bar) return;
+    bar.setAttribute('aria-hidden', 'true');
     const update = () => {
       const h = document.documentElement.scrollHeight - window.innerHeight;
-      bar.style.width = h > 0 ? `${(window.scrollY / h) * 100}%` : '0%';
+      if (h <= 0) {
+        bar.style.width = '0%';
+        return;
+      }
+      // Clamp: rubber-band / overscroll can push scrollY outside [0, h].
+      const pct = Math.min(100, Math.max(0, (window.scrollY / h) * 100));
+      bar.style.width = `${pct}%`;
     };
     window.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update, { passive: true });

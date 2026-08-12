@@ -197,3 +197,21 @@ test('slim initial /now without agent count clears agents placeholder', async ({
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: —');
   await expect(page.locator('#status-live-label')).toHaveText('LIVE');
 });
+
+test('reading progress bar stays decorative and clamped at scroll extremes', async ({ page }) => {
+  const bar = page.locator('#scrollProgress');
+  await expect(bar).toHaveAttribute('aria-hidden', 'true');
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(async () => page.locator('#scrollProgress').evaluate((el) => el.style.width)).toBe('0%');
+
+  await page.evaluate(() => {
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    window.scrollTo(0, max + 400);
+  });
+  await expect.poll(async () => {
+    const width = await page.locator('#scrollProgress').evaluate((el) => el.style.width);
+    const value = Number.parseFloat(width);
+    return Number.isFinite(value) && value >= 0 && value <= 100;
+  }).toBe(true);
+});

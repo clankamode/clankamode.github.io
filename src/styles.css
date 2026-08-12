@@ -1016,10 +1016,12 @@ a:hover { color: var(--accent); border-color: var(--accent); }
   left: 0;
   height: 2px;
   width: 0%;
+  max-width: 100%;
   background: linear-gradient(90deg, var(--accent), rgba(200, 245, 66, 0.4));
   z-index: 9990;
   transition: width 60ms linear;
   box-shadow: 0 0 8px rgba(200, 245, 66, 0.4);
+  pointer-events: none;
 }
 
 .cmdk-hint {
@@ -1300,6 +1302,9 @@ a:hover { color: var(--accent); border-color: var(--accent); }
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
+  }
+  .scroll-progress {
+    transition: none !important;
   }
 }
 
