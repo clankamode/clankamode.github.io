@@ -357,6 +357,19 @@ test('parseNowPayload rejects invalid shapes and preserves optional fields', asy
   );
 });
 
+test('event display helpers normalize types and blank messages', async () => {
+  const { normalizeEventType, displayEventMessage } = await loadTsModule('src/event-display.ts');
+
+  assert.equal(normalizeEventType('PUSH'), 'push');
+  assert.equal(normalizeEventType('PushEvent'), 'push');
+  assert.equal(normalizeEventType('PR'), 'pr');
+  assert.equal(normalizeEventType('CREATE'), 'create');
+  assert.equal(normalizeEventType(''), 'push');
+  assert.equal(displayEventMessage('  feat: x  '), 'feat: x');
+  assert.equal(displayEventMessage('   '), '—');
+  assert.equal(displayEventMessage(''), '—');
+});
+
 test('withRetries eventually succeeds and withResultRetries stops on ok', async () => {
   const { withRetries, withResultRetries } = await loadTsModule('src/retry.ts');
 

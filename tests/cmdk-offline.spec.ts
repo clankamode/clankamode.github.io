@@ -239,6 +239,39 @@ test('fleet hides status pill when API omits online state', async ({ page }) => 
   await expect(fleet.locator('.sync.synced')).toBeVisible();
 });
 
+test('terminal normalizes event types and blank messages', async ({ page }) => {
+  await page.route(`${API_BASE}/github/events`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        events: [
+          {
+            type: 'PR',
+            repo: 'clankamode/site',
+            message: '   ',
+            timestamp: '2026-03-03T03:40:00.000Z',
+          },
+          {
+            type: 'PUSH',
+            repo: 'clankamode/api',
+            message: 'ship it',
+            timestamp: '2026-03-03T03:41:00.000Z',
+          },
+        ],
+      }),
+    });
+  });
+
+  await page.reload();
+  const terminal = page.locator('clanka-terminal#terminal');
+  await terminal.scrollIntoViewIfNeeded();
+  await expect(terminal.locator('.tag').first()).toHaveText('[pr]');
+  await expect(terminal.locator('.msg').first()).toHaveText('"—"');
+  await expect(terminal.locator('.tag').nth(1)).toHaveText('[push]');
+  await expect(terminal.locator('.terminal')).toHaveAttribute('aria-busy', 'false');
+});
+
 test('malformed github events show unavailable instead of empty activity', async ({ page }) => {
   await page.route(`${API_BASE}/github/events`, async (route) => {
     await route.fulfill({

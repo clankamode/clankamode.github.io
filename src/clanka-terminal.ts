@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { displayEventMessage, normalizeEventType } from './event-display';
 import { fetchEvents, relativeTime } from './time-utils';
 
 type EventItem = { type: string; repo: string; message: string; timestamp: string };
@@ -122,17 +123,21 @@ export class ClankaTerminal extends LitElement {
         <span class="sec-label">terminal</span>
         <div class="sec-line"></div>
       </div>
-      <div class="terminal" role="log" aria-label="Terminal output">
+      <div class="terminal" role="log" aria-label="Terminal output" aria-busy=${this.loading ? 'true' : 'false'}>
         <div class="line prompt">clanka@fleet:~$ git log --oneline --all-repos</div>
         ${this.loading
           ? html`<div class="line dim">[ fetching activity... ]<span class="cursor"></span></div>`
           : this.error
-            ? html`<div class="line dim">${this.error}</div>`
+            ? html`<div class="line dim" role="status" aria-live="polite">${this.error}</div>`
             : this.events.length === 0
-              ? html`<div class="line dim">[ no recent activity ]</div>`
-              : this.events.map(e => html`
-              <div class="line"><span class="tag">[${e.type}]</span> <span class="repo">${e.repo}:</span> <span class="msg">"${e.message}"</span>  <span class="ts">· ${relativeTime(e.timestamp)}</span></div>
-            `)}
+              ? html`<div class="line dim" role="status" aria-live="polite">[ no recent activity ]</div>`
+              : this.events.map((e) => {
+                  const type = normalizeEventType(e.type);
+                  const message = displayEventMessage(e.message);
+                  return html`
+              <div class="line"><span class="tag">[${type}]</span> <span class="repo">${e.repo}:</span> <span class="msg">"${message}"</span>  <span class="ts">· ${relativeTime(e.timestamp)}</span></div>
+            `;
+                })}
         ${!this.loading ? html`<div class="line prompt">clanka@fleet:~$ <span class="cursor"></span></div>` : ''}
       </div>
     `;
