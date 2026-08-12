@@ -52,6 +52,7 @@ export class ClankaTasks extends LitElement {
     .status-todo { color: var(--muted, #6b6b78); }
     .status-doing { color: var(--accent, #c8f542); }
     .status-done { color: #42f59e; opacity: 0.6; }
+    .status-blocked { color: #f5a142; }
     .task-title {
       font-size: 13px;
       color: var(--bright, #f0f0f8);
