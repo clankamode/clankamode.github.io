@@ -515,6 +515,24 @@ test('topic pages ship static dispatch cards from the content index', async () =
   }
 });
 
+test('post .meta duration stays aligned with posts.ts read/listen estimates', async () => {
+  const { POSTS } = await loadSourceContent();
+
+  for (const post of POSTS) {
+    const postHtml = await fs.readFile(path.join(ROOT, 'posts', `${post.slug}.html`), 'utf8');
+    const meta = postHtml.match(/<div class="meta\b[^"]*"[^>]*>([\s\S]*?)<\/div>/)?.[1]?.trim();
+    assert.ok(meta, `missing .meta for ${post.slug}`);
+
+    const minutes = Math.max(1, Math.ceil(Number(post.estimatedReadMinutes) || 1));
+    const unit = post.audio ? 'listen' : 'read';
+    assert.equal(meta, `${post.date} · ${minutes} min ${unit}`, `meta duration drift for ${post.slug}`);
+
+    if (post.audio) {
+      assert.equal(/\bmin read\b/i.test(meta), false, `audio post ${post.slug} should not say min read`);
+    }
+  }
+});
+
 test('post HTML meta and og descriptions stay aligned with posts.ts summaries', async () => {
   const { POSTS } = await loadSourceContent();
 

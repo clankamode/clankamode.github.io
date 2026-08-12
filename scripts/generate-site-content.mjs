@@ -594,6 +594,53 @@ async function validatePostSummariesInHtml(posts) {
   }
 }
 
+function buildPostMetaLine(post) {
+  const minutes = Math.max(1, Math.ceil(Number(post.estimatedReadMinutes) || 1));
+  const unit = post.audio ? 'listen' : 'read';
+  return `${post.date} · ${minutes} min ${unit}`;
+}
+
+async function syncPostMetaDuration(posts) {
+  for (const post of posts) {
+    const postPath = filePathFromCanonical(post.canonicalPath);
+    const html = await fs.readFile(postPath, 'utf8');
+    const metaLine = buildPostMetaLine(post);
+
+    if (!/<div class="meta\b[^"]*"[^>]*>[\s\S]*?<\/div>/.test(html)) {
+      throw new Error(`Missing .meta for ${post.slug}; cannot sync duration.`);
+    }
+
+    const nextHtml = html.replace(
+      /(<div class="meta\b[^"]*"[^>]*>)[\s\S]*?(<\/div>)/,
+      `$1${escapeHtml(metaLine)}$2`,
+    );
+
+    if (nextHtml !== html) {
+      await fs.writeFile(postPath, nextHtml);
+    }
+  }
+}
+
+async function validatePostMetaDuration(posts) {
+  for (const post of posts) {
+    const html = await fs.readFile(filePathFromCanonical(post.canonicalPath), 'utf8');
+    const match = html.match(/<div class="meta\b[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+    if (!match) {
+      throw new Error(`Missing .meta for ${post.slug}`);
+    }
+
+    const expected = buildPostMetaLine(post);
+    const actual = decodeHtmlEntities(match[1].trim());
+    if (actual !== expected) {
+      throw new Error(`Post meta drift for ${post.slug}: expected "${expected}", got "${actual}"`);
+    }
+
+    if (post.audio && /\bmin read\b/i.test(actual)) {
+      throw new Error(`Audio post ${post.slug} still advertises min read in .meta`);
+    }
+  }
+}
+
 function buildStaticTopicChips(post) {
   const topics = Array.isArray(post.topics) ? post.topics.filter(Boolean) : [];
   if (topics.length === 0) return '';
@@ -1033,6 +1080,8 @@ async function main() {
   await validatePostEnhanceScripts();
   await syncPostSummariesIntoHtml(posts);
   await validatePostSummariesInHtml(posts);
+  await syncPostMetaDuration(posts);
+  await validatePostMetaDuration(posts);
 
   const contentIndex = deriveContentIndex(posts, topics);
 
