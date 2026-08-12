@@ -65,8 +65,10 @@ test('archive supports text and format filtering', async ({ page }) => {
   await page.getByRole('button', { name: 'listen' }).click();
   await expect(page.locator('#archive-results-count')).toHaveText(`${formatDispatchCount(listenPosts.length)} shown`);
   await expect(results).toHaveCount(listenPosts.length);
+  await expect(results.first().locator('.archive-meta-badge').nth(0)).toContainText(/min listen/);
   await expect(results.first().locator('.archive-meta-badge').nth(1)).toContainText('listen available');
   await expect(page.locator('#archive-results')).not.toContainText(firstReadOnlyPost.title);
+  await expect(results.first()).not.toContainText(/min read/);
 });
 
 test('archive topic filter narrows results to matching dispatches', async ({ page }) => {

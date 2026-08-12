@@ -101,8 +101,11 @@ export async function renderHomepageContent(): Promise<void> {
 
         const meta = document.createElement('div');
         meta.className = 'featured-meta';
+        const durationLabel = readMinutes !== null
+          ? `${readMinutes} min ${featured.audio ? 'listen' : 'read'}`
+          : (featured.audio ? 'listen time unknown' : 'read time unknown');
         meta.append(
-          createFeaturedMeta(readMinutes !== null ? `${readMinutes} min read` : 'read time unknown'),
+          createFeaturedMeta(durationLabel),
           createFeaturedMeta(featured.audio ? 'audio available' : 'text only'),
           createFeaturedMeta(`${featuredTopics.length} topic lanes`),
         );

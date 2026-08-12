@@ -21,11 +21,11 @@ function formatDispatchNumber(number: unknown): string {
   return '—';
 }
 
-function formatReadMinutes(minutes: unknown): string {
+function formatDurationMinutes(minutes: unknown, audio = false): string {
   if (typeof minutes === 'number' && Number.isFinite(minutes) && minutes > 0) {
-    return `${Math.ceil(minutes)} min read`;
+    return `${Math.ceil(minutes)} min ${audio ? 'listen' : 'read'}`;
   }
-  return 'quick read';
+  return audio ? 'quick listen' : 'quick read';
 }
 
 function createMetaBadge(label: string): HTMLSpanElement {
@@ -75,7 +75,7 @@ export function createArchiveCard(post: ContentPost): HTMLElement {
   const meta = document.createElement('div');
   meta.className = 'archive-card-meta';
   meta.append(
-    createMetaBadge(formatReadMinutes(post.estimatedReadMinutes)),
+    createMetaBadge(formatDurationMinutes(post.estimatedReadMinutes, Boolean(post.audio))),
     createMetaBadge(post.audio ? 'listen available' : 'read only'),
   );
 
