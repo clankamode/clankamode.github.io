@@ -192,6 +192,30 @@ test('fleet widget renders mocked repo cards', async ({ page }) => {
   await expect(fleet.locator('.status-pill.online')).toHaveCount(2);
 });
 
+test('fleet treats all-invalid repo entries as unavailable not empty', async ({ page }) => {
+  await page.route(`${API_BASE}/fleet/summary`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        repos: [
+          { repo: 'clankamode/broken', tier: 'not-a-tier', criticality: 'critical' },
+          { name: '', tier: 'ops', criticality: 'high' },
+          null,
+        ],
+      }),
+    });
+  });
+
+  await page.reload();
+  const fleet = page.locator('clanka-fleet#fleet');
+  await fleet.scrollIntoViewIfNeeded();
+  await expect(fleet.locator('.fallback')).toHaveText('[ fleet unavailable ]');
+  await expect(fleet.locator('.sync')).toHaveText('OFFLINE');
+  await expect(fleet.locator('.repo')).toHaveCount(0);
+  await expect(fleet).not.toContainText('[ fleet registry empty ]');
+});
+
 test('fleet hides status pill when API omits online state', async ({ page }) => {
   await page.route(`${API_BASE}/fleet/summary`, async (route) => {
     await route.fulfill({
