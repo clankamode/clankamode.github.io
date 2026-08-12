@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { fetchEvents, relativeTime } from './time-utils';
+import { displayEventMessage, fetchEvents, normalizeEventType, relativeTime } from './time-utils';
 import { withResultRetries } from './retry';
 
 type EventItem = { type: string; repo: string; message: string; timestamp: string };
@@ -106,18 +106,22 @@ export class ClankaActivity extends LitElement {
         <div class="sec-line"></div>
       </div>
       ${this.loading
-        ? html`<div class="status-fallback"><span class="loading-text">[ loading... ]</span></div>`
+        ? html`<div class="status-fallback" aria-busy="true"><span class="loading-text">[ loading... ]</span></div>`
         : this.error
-          ? html`<div class="status-fallback">${this.error}</div>`
+          ? html`<div class="status-fallback" role="status" aria-live="polite">${this.error}</div>`
           : this.events.length === 0
-            ? html`<div class="status-fallback">[ no recent activity ]</div>`
+            ? html`<div class="status-fallback" role="status" aria-live="polite">[ no recent activity ]</div>`
             : html`<div role="list">
-              ${this.events.map(e => html`
+              ${this.events.map((e) => {
+                const type = normalizeEventType(e.type);
+                const message = displayEventMessage(e.message);
+                return html`
                 <div class="row" role="listitem">
-                  <span class="row-name"><span class="tag">[${e.type}]</span> ${e.repo}: ${e.message}</span>
+                  <span class="row-name"><span class="tag">[${type}]</span> ${e.repo}: ${message}</span>
                   <span class="row-meta">${relativeTime(e.timestamp)}</span>
                 </div>
-              `)}
+              `;
+              })}
             </div>`}
     `;
   }
