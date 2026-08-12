@@ -426,6 +426,41 @@ test('transient sync-error after a successful sync keeps task boards visible', a
   await expect(page.locator('#status-live-label')).toHaveText('STALE');
 });
 
+
+test('presence pauses polling while the tab is hidden', async ({ page }) => {
+  let nowHits = 0;
+  await page.route(`${API_BASE}/now`, async (route) => {
+    nowHits += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: 'shipping',
+        status: 'operational',
+        agents_active: 1,
+      }),
+    });
+  });
+
+  await page.goto('/');
+  await expect(page.locator('clanka-presence#presence')).toBeVisible();
+  await expect.poll(() => nowHits).toBeGreaterThan(0);
+  const hitsAfterLoad = nowHits;
+
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await page.waitForTimeout(500);
+  expect(nowHits).toBe(hitsAfterLoad);
+
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await expect.poll(() => nowHits).toBeGreaterThan(hitsAfterLoad);
+});
+
 test('presence announces status via aria-live and rejects blank current', async ({ page }) => {
   await page.route(`${API_BASE}/now`, async (route) => {
     await route.fulfill({
