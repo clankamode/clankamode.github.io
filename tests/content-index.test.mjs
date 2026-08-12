@@ -237,6 +237,8 @@ test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
   assert.deepEqual(parseGithubEvents([sample]), [sample]);
   assert.deepEqual(parseGithubEvents({ events: 'invalid' }), []);
   assert.deepEqual(parseGithubEvents(null), []);
+  assert.deepEqual(parseGithubEvents({ events: [sample, sample, { type: 1 }] }), [sample]);
+  assert.deepEqual(parseGithubEvents([{ type: '', repo: 'x', message: 'm', timestamp: 't' }]), []);
 
   assert.equal(isGithubEventsPayload({ events: [] }), true);
   assert.equal(isGithubEventsPayload([sample]), true);
@@ -367,6 +369,52 @@ test('loadContentIndex rejects malformed topic entries', async () => {
 
   try {
     await assert.rejects(loadContentIndex(), /invalid content index payload/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('fetchGithubEvents treats all-invalid items as offline and dedupes', async () => {
+  const { fetchGithubEvents, parseGithubEvents } = await loadTsModule('src/clanka-api.ts');
+  const originalFetch = globalThis.fetch;
+  let attempts = 0;
+
+  const sample = {
+    type: 'PushEvent',
+    repo: 'clankamode/site',
+    message: 'feat: test',
+    timestamp: '2026-03-03T03:40:00.000Z',
+  };
+
+  globalThis.fetch = async () => {
+    attempts += 1;
+    if (attempts === 1) {
+      return {
+        ok: true,
+        async json() {
+          return { events: [{ type: '', repo: 'x', message: 'm', timestamp: 't' }, { bad: true }] };
+        },
+      };
+    }
+    return {
+      ok: true,
+      async json() {
+        return { events: [sample, sample] };
+      },
+    };
+  };
+
+  try {
+    const offline = await fetchGithubEvents();
+    assert.deepEqual(offline, { ok: false, reason: 'offline' });
+
+    const recovered = await fetchGithubEvents();
+    assert.equal(recovered.ok, true);
+    if (recovered.ok) {
+      assert.deepEqual(recovered.events, [sample]);
+    }
+    assert.equal(attempts, 2);
+    assert.deepEqual(parseGithubEvents({ events: [sample, { ...sample }, sample] }), [sample]);
   } finally {
     globalThis.fetch = originalFetch;
   }

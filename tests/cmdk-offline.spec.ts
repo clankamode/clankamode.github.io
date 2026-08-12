@@ -206,6 +206,32 @@ test('malformed github events show unavailable instead of empty activity', async
   );
 });
 
+test('all-invalid github event items show unavailable instead of empty activity', async ({ page }) => {
+  await page.route(`${API_BASE}/github/events`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        events: [
+          { type: 'PUSH', repo: '', message: 'push', timestamp: '2026-08-06T23:07:47Z' },
+          { foo: 'bar' },
+        ],
+      }),
+    });
+  });
+
+  await page.reload();
+  await page.locator('#commit-feed').scrollIntoViewIfNeeded();
+  await expect(page.locator('#commit-feed')).toContainText('// activity unavailable');
+  await expect(page.locator('#commit-feed')).not.toContainText('// no recent activity');
+
+  await page.locator('clanka-terminal#terminal').scrollIntoViewIfNeeded();
+  await expect(page.locator('clanka-terminal#terminal')).toContainText(
+    '[ offline — activity unavailable ]',
+  );
+  await expect(page.locator('clanka-terminal#terminal')).not.toContainText('[ no recent activity ]');
+});
+
 test('live widgets show offline state when API is unreachable', async ({ page }) => {
   await page.route(`${API_BASE}/**`, async (route) => {
     await route.abort('failed');

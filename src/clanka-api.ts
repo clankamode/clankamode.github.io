@@ -74,10 +74,31 @@ function isGithubEvent(value: unknown): value is GithubEvent {
   const event = value as Partial<GithubEvent>;
   return (
     typeof event.type === 'string' &&
+    event.type.trim().length > 0 &&
     typeof event.repo === 'string' &&
+    event.repo.trim().length > 0 &&
     typeof event.message === 'string' &&
-    typeof event.timestamp === 'string'
+    typeof event.timestamp === 'string' &&
+    event.timestamp.trim().length > 0
   );
+}
+
+function rawGithubEventArray(payload: unknown): unknown[] | null {
+  if (Array.isArray(payload)) return payload;
+  if (isPlainObject(payload) && Array.isArray(payload.events)) return payload.events;
+  return null;
+}
+
+function dedupeGithubEvents(events: GithubEvent[]): GithubEvent[] {
+  const seen = new Set<string>();
+  const out: GithubEvent[] = [];
+  for (const event of events) {
+    const key = `${event.type}\0${event.repo}\0${event.message}\0${event.timestamp}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(event);
+  }
+  return out;
 }
 
 /** True when the payload is a recognized events envelope (including empty). */
@@ -89,16 +110,9 @@ export function isGithubEventsPayload(payload: unknown): boolean {
 
 /** Accepts both `{ events: [...] }` and bare array payloads from clanka-api. */
 export function parseGithubEvents(payload: unknown): GithubEvent[] {
-  if (Array.isArray(payload)) {
-    return payload.filter(isGithubEvent);
-  }
-
-  if (payload && typeof payload === 'object' && 'events' in payload) {
-    const events = (payload as { events: unknown }).events;
-    return Array.isArray(events) ? events.filter(isGithubEvent) : [];
-  }
-
-  return [];
+  const raw = rawGithubEventArray(payload);
+  if (!raw) return [];
+  return dedupeGithubEvents(raw.filter(isGithubEvent));
 }
 
 export type GithubEventsResult =
@@ -113,7 +127,16 @@ export async function fetchGithubEvents(): Promise<GithubEventsResult> {
       invalidateEndpoint('/github/events');
       return { ok: false, reason: 'offline' };
     }
-    return { ok: true, events: parseGithubEvents(data) };
+
+    const raw = rawGithubEventArray(data) ?? [];
+    const events = parseGithubEvents(data);
+    // Entries present but none parseable → unavailable, not a honest empty feed.
+    if (raw.length > 0 && events.length === 0) {
+      invalidateEndpoint('/github/events');
+      return { ok: false, reason: 'offline' };
+    }
+
+    return { ok: true, events };
   } catch {
     return { ok: false, reason: 'offline' };
   }
