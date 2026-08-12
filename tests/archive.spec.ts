@@ -149,8 +149,30 @@ test('404 page is a dedicated not-found shell', async ({ page }) => {
   await expect(page.locator('h1')).toHaveText('404');
   await expect(page.locator('main')).toContainText('No dispatch at this path');
   await expect(page.locator('body')).not.toContainText('I build systems');
+  await expect(page.locator('#path-line')).toBeHidden();
   await expect(page.getByRole('link', { name: 'home' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'archive' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'now' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'rss' })).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+});
+
+test('404 page surfaces the requested path for missing routes', async ({ page }) => {
+  // Mimic GitHub Pages: serve the 404 document at the missing URL so the
+  // inline script can echo location.pathname.
+  await page.route('**/missing-dispatch**', async (route) => {
+    const response = await route.fetch({ url: 'http://127.0.0.1:8080/404.html' });
+    await route.fulfill({
+      status: 404,
+      contentType: 'text/html',
+      body: await response.text(),
+    });
+  });
+
+  await page.goto('/missing-dispatch/?from=test');
+  await expect(page.locator('h1')).toHaveText('404');
+  await expect(page.locator('#path-line')).toBeVisible();
+  await expect(page.locator('#requested-path')).toHaveText('/missing-dispatch/?from=test');
 });
 
 test('archive status bar does not claim LIVE telemetry', async ({ page }) => {
