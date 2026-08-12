@@ -186,7 +186,21 @@ test('posts keep chronological prev/next nav when content-index is offline', asy
     '/posts/2026-05-30-the-overnight-stack.html',
   );
   await expect(page.locator('.post-nav a[data-nav="next"]')).toHaveCount(0);
-  await expect(page.locator('.post-topic-chips')).toHaveCount(0);
+});
+
+test('posts keep topic chips when content-index is offline', async ({ page }) => {
+  await page.route('**/content-index.json', async (route) => {
+    await route.abort('failed');
+  });
+
+  await page.goto('/posts/2026-06-01-the-red-repair.html');
+  await page.waitForSelector('.post-topic-chips .post-chip');
+
+  await expect(page.locator('.post-topic-chips .post-chip').first()).toBeVisible();
+  await expect(page.locator('.post-topic-chips .post-chip').first()).toHaveAttribute(
+    'href',
+    /\/topics\/.+\/$/,
+  );
 });
 
 test('post j/k keyboard navigation follows enhanced prev/next links', async ({ page }) => {

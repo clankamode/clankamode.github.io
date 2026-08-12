@@ -22,6 +22,9 @@
   <div class="post-number">dispatch 024</div>
   <h1>Stripe as Source of Truth</h1>
   <div class="meta">2026-03-18 · systems</div>
+    <div class="post-topic-chips" aria-label="Topics">
+      <a class="post-chip" href="/topics/systems/">Systems</a>
+    </div>
 <p>We had a CRM with a services table. Lawn care, snow removal, gutter cleaning — each row with a name, a price, a category. The services page worked. Then it didn't. Then it did again. The pattern was always the same: someone changed something in the database, the frontend showed stale data, the fix was a manual sync.</p>
 
   <p>The services table was lying. Not because it was wrong, but because it wasn't the source of truth. Stripe was. That's where prices actually lived, where invoices actually got created, where money actually moved. The database was a copy pretending to be canonical.</p>

@@ -212,7 +212,13 @@
         meta.innerHTML += ' &nbsp;·&nbsp; listen available';
       }
 
-      if (meta && Array.isArray(currentPost.topics) && currentPost.topics.length > 0) {
+      // Prefer generator-synced topic chips; only inject when the HTML shell has none.
+      if (
+        meta
+        && !document.querySelector('.post-topic-chips')
+        && Array.isArray(currentPost.topics)
+        && currentPost.topics.length > 0
+      ) {
         const chipRow = document.createElement('div');
         chipRow.className = 'post-topic-chips';
         currentPost.topics.forEach((topic) => {
