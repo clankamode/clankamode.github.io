@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { displayEventMessage, fetchEvents, normalizeEventType, relativeTime } from './time-utils';
+import { displayEventMessage, normalizeEventType } from './event-display';
+import { fetchEvents, relativeTime } from './time-utils';
 import { withResultRetries } from './retry';
 
 type EventItem = { type: string; repo: string; message: string; timestamp: string };

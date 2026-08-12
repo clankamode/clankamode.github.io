@@ -358,7 +358,7 @@ test('parseNowPayload rejects invalid shapes and preserves optional fields', asy
 });
 
 test('event display helpers normalize types and blank messages', async () => {
-  const { normalizeEventType, displayEventMessage } = await loadTsModule('src/time-utils.ts');
+  const { normalizeEventType, displayEventMessage } = await loadTsModule('src/event-display.ts');
 
   assert.equal(normalizeEventType('PUSH'), 'push');
   assert.equal(normalizeEventType('PushEvent'), 'push');
