@@ -223,9 +223,12 @@ test('task display helpers normalize status and preserve labels', async () => {
 });
 
 test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
-  const { parseGithubEvents, isGithubEventsPayload, isFleetSummaryPayload } = await loadTsModule(
-    'src/clanka-api.ts',
-  );
+  const {
+    parseGithubEvents,
+    isGithubEventsPayload,
+    isFleetSummaryPayload,
+    isGithubStatsPayload,
+  } = await loadTsModule('src/clanka-api.ts');
   const sample = {
     type: 'PushEvent',
     repo: 'clankamode/site',
@@ -249,6 +252,13 @@ test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
   assert.equal(isFleetSummaryPayload({ summary: { repos: [] } }), true);
   assert.equal(isFleetSummaryPayload({ message: 'no registry' }), false);
   assert.equal(isFleetSummaryPayload(null), false);
+
+  assert.equal(isGithubStatsPayload({ repoCount: 0, totalStars: 0 }), true);
+  assert.equal(isGithubStatsPayload({ lastPushedAt: '2026-08-02T02:03:12Z', lastPushedRepo: 'site' }), true);
+  assert.equal(isGithubStatsPayload({ error: 'token expired' }), false);
+  assert.equal(isGithubStatsPayload({ repoCount: null }), false);
+  assert.equal(isGithubStatsPayload({}), false);
+  assert.equal(isGithubStatsPayload(null), false);
 });
 
 test('parseNowPayload rejects invalid shapes and preserves optional fields', async () => {
@@ -445,6 +455,39 @@ test('fetchNow invalidates cache after rejecting a malformed payload', async () 
     await assert.rejects(fetchNow(), /Invalid \/now payload/);
     const recovered = await fetchNow();
     assert.deepEqual(recovered, { current: 'recovered', status: 'active' });
+    assert.equal(attempts, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('fetchGithubStats invalidates cache after rejecting a malformed payload', async () => {
+  const { fetchGithubStats } = await loadTsModule('src/clanka-api.ts');
+  const originalFetch = globalThis.fetch;
+  let attempts = 0;
+
+  globalThis.fetch = async () => {
+    attempts += 1;
+    if (attempts === 1) {
+      return {
+        ok: true,
+        async json() {
+          return { error: 'token expired' };
+        },
+      };
+    }
+    return {
+      ok: true,
+      async json() {
+        return { repoCount: 8, totalStars: 0 };
+      },
+    };
+  };
+
+  try {
+    await assert.rejects(fetchGithubStats(), /Invalid \/github\/stats payload/);
+    const recovered = await fetchGithubStats();
+    assert.deepEqual(recovered, { repoCount: 8, totalStars: 0 });
     assert.equal(attempts, 2);
   } finally {
     globalThis.fetch = originalFetch;
