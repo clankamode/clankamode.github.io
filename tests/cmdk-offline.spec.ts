@@ -295,6 +295,29 @@ test('transient sync-error after a successful sync keeps task boards visible', a
   await expect(page.locator('#status-live-label')).toHaveText('STALE');
 });
 
+test('presence announces status via aria-live and rejects blank current', async ({ page }) => {
+  await page.route(`${API_BASE}/now`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: '   ',
+        status: 'thinking',
+        agents_active: 1,
+      }),
+    });
+  });
+
+  await page.reload();
+  const presence = page.locator('clanka-presence#presence');
+  await expect(presence.locator('.hd-status')).toHaveAttribute('aria-live', 'polite');
+  await expect(presence.locator('.presence-block')).toHaveAttribute('aria-live', 'polite');
+  // Blank current falls back on first sync; status still applies.
+  await expect(presence.locator('.hd-status')).toContainText('THINKING');
+  await expect(presence.locator('.presence-block')).toContainText('active');
+  await expect(presence.locator('.presence-block')).not.toContainText('[ api unreachable ]');
+});
+
 test('slim sync after offline clears latched agent offline state', async ({ page }) => {
   await page.route(`${API_BASE}/**`, async (route) => {
     await route.abort('failed');

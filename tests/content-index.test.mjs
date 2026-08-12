@@ -257,8 +257,18 @@ test('parseNowPayload rejects invalid shapes and preserves optional fields', asy
   assert.equal(parseNowPayload(null), null);
   assert.equal(parseNowPayload({}), null);
   assert.equal(parseNowPayload({ current: 1 }), null);
+  assert.equal(parseNowPayload({ current: '' }), null);
+  assert.equal(parseNowPayload({ current: '   ', status: '  ' }), null);
   assert.equal(parseNowPayload({ tasks: 'nope' }), null);
   assert.equal(parseNowPayload({ team: [] }), null);
+
+  // Whitespace-only fields are stripped; sibling signal still counts.
+  assert.deepEqual(parseNowPayload({ current: '  building  ', status: '  ' }), {
+    current: 'building',
+  });
+  assert.deepEqual(parseNowPayload({ current: '', status: 'active' }), {
+    status: 'active',
+  });
 
   // Malformed optional fields are stripped; good fields still apply.
   assert.deepEqual(
