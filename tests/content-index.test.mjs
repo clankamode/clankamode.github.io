@@ -478,7 +478,8 @@ test('fetchGithubEvents treats all-invalid items as offline and dedupes', async 
 
   globalThis.fetch = async () => {
     attempts += 1;
-    if (attempts === 1) {
+    // Exhaust the shared retry budget (3) on unusable items, then recover.
+    if (attempts <= 3) {
       return {
         ok: true,
         async json() {
@@ -503,8 +504,40 @@ test('fetchGithubEvents treats all-invalid items as offline and dedupes', async 
     if (recovered.ok) {
       assert.deepEqual(recovered.events, [sample]);
     }
-    assert.equal(attempts, 2);
+    assert.equal(attempts, 4);
     assert.deepEqual(parseGithubEvents({ events: [sample, { ...sample }, sample] }), [sample]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('fetchGithubEvents coalesces concurrent callers through one retry chain', async () => {
+  const { fetchGithubEvents } = await loadTsModule('src/clanka-api.ts');
+  const originalFetch = globalThis.fetch;
+  let attempts = 0;
+
+  globalThis.fetch = async () => {
+    attempts += 1;
+    return {
+      ok: false,
+      status: 503,
+      async json() {
+        return { error: 'unavailable' };
+      },
+    };
+  };
+
+  try {
+    const first = fetchGithubEvents();
+    const second = fetchGithubEvents();
+    const third = fetchGithubEvents();
+    const results = await Promise.all([first, second, third]);
+
+    for (const result of results) {
+      assert.deepEqual(result, { ok: false, reason: 'offline' });
+    }
+    // Default withResultRetries budget is 3 — shared, not 3× callers.
+    assert.equal(attempts, 3);
   } finally {
     globalThis.fetch = originalFetch;
   }

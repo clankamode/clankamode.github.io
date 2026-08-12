@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { fetchEvents, relativeTime } from './time-utils';
-import { withResultRetries } from './retry';
 
 type EventItem = { type: string; repo: string; message: string; timestamp: string };
 
@@ -100,7 +99,7 @@ export class ClankaTerminal extends LitElement {
     this.loadInFlight = true;
 
     try {
-      const result = await withResultRetries(() => fetchEvents());
+      const result = await fetchEvents();
       if (!result.ok) {
         this.error = '[ offline — activity unavailable ]';
         this.events = [];

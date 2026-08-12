@@ -280,6 +280,26 @@ test('live widgets show offline state when API is unreachable', async ({ page })
   await expect(page.locator('#commit-feed')).toContainText('// activity unavailable');
 });
 
+test('github events offline path coalesces retries across terminal and commit feed', async ({ page }) => {
+  let eventsHits = 0;
+  await page.route(`${API_BASE}/github/events`, async (route) => {
+    eventsHits += 1;
+    await route.abort('failed');
+  });
+
+  await page.reload();
+  await page.locator('#commit-feed').scrollIntoViewIfNeeded();
+  await page.locator('clanka-terminal#terminal').scrollIntoViewIfNeeded();
+  await expect(page.locator('#commit-feed')).toContainText('// activity unavailable');
+  await expect(page.locator('clanka-terminal#terminal')).toContainText(
+    '[ offline — activity unavailable ]',
+  );
+
+  // One shared retry chain (≤3), not 3 attempts × each widget.
+  expect(eventsHits).toBeGreaterThan(0);
+  expect(eventsHits).toBeLessThanOrEqual(3);
+});
+
 test('partial /now payloads do not wipe tasks or agents', async ({ page }) => {
   await page.route(`${API_BASE}/now`, async (route) => {
     await route.fulfill({

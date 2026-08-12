@@ -1,3 +1,5 @@
+import { withResultRetries } from './retry';
+
 const API_BASE = 'https://clanka-api.clankamode.workers.dev';
 const DEFAULT_TTL_MS = 15_000;
 const FETCH_TIMEOUT_MS = 5_000;
@@ -119,7 +121,9 @@ export type GithubEventsResult =
   | { ok: true; events: GithubEvent[] }
   | { ok: false; reason: 'offline' };
 
-export async function fetchGithubEvents(): Promise<GithubEventsResult> {
+let githubEventsLoad: Promise<GithubEventsResult> | null = null;
+
+async function loadGithubEventsOnce(): Promise<GithubEventsResult> {
   try {
     const data = await fetchJson('/github/events');
     if (!isGithubEventsPayload(data)) {
@@ -140,6 +144,19 @@ export async function fetchGithubEvents(): Promise<GithubEventsResult> {
   } catch {
     return { ok: false, reason: 'offline' };
   }
+}
+
+/**
+ * Shared events load with bounded retries. Concurrent callers (terminal,
+ * commit feed, activity) share one retry chain instead of stampeding.
+ */
+export function fetchGithubEvents(): Promise<GithubEventsResult> {
+  if (!githubEventsLoad) {
+    githubEventsLoad = withResultRetries(() => loadGithubEventsOnce()).finally(() => {
+      githubEventsLoad = null;
+    });
+  }
+  return githubEventsLoad;
 }
 
 export type NowPayload = {
