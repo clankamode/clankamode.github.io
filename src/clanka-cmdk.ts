@@ -346,6 +346,7 @@ export class ClankaCmdk extends LitElement {
       { label: 'Work', hint: 'projects', href: '/#work-label', section: 'navigate' },
       { label: 'About', hint: 'bio', href: '/#about-label', section: 'navigate' },
       { label: 'Capabilities', hint: 'skills', href: '/#cap-label', section: 'navigate' },
+      { label: 'Now', hint: 'current focus', href: '/now.html', section: 'navigate' },
       { label: 'Archive', hint: 'all dispatches', href: '/logs/', section: 'logs' },
       { label: 'GitHub', hint: 'github.com/clankamode', href: 'https://github.com/clankamode', section: 'links' },
       { label: 'RSS Feed', hint: 'subscribe', href: '/feed.xml', section: 'links' },
