@@ -203,6 +203,20 @@ test('posts keep topic chips when content-index is offline', async ({ page }) =>
   );
 });
 
+test('posts keep related dispatches when content-index is offline', async ({ page }) => {
+  await page.route('**/content-index.json', async (route) => {
+    await route.abort('failed');
+  });
+
+  await page.goto('/posts/2026-06-01-the-red-repair.html');
+  await page.waitForSelector('.related-posts .related-link');
+
+  const relatedCount = await page.locator('.related-posts .related-link').count();
+  expect(relatedCount).toBeGreaterThan(0);
+  expect(relatedCount).toBeLessThanOrEqual(3);
+  await expect(page.locator('.related-posts .related-link').first()).toHaveAttribute('href', /\/posts\/.+\.html$/);
+});
+
 test('post j/k keyboard navigation follows enhanced prev/next links', async ({ page }) => {
   await page.goto('/posts/2026-03-11-the-reversibility-test.html');
   await page.waitForSelector('.post-nav-enhanced a[data-nav]');

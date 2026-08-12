@@ -232,7 +232,13 @@
       }
 
       const footer = document.querySelector('.footer');
-      if (footer && Array.isArray(currentPost.related) && currentPost.related.length > 0) {
+      // Prefer generator-synced related links; only inject when the HTML shell has none.
+      if (
+        footer &&
+        !document.querySelector('.related-posts') &&
+        Array.isArray(currentPost.related) &&
+        currentPost.related.length > 0
+      ) {
         const related = document.createElement('section');
         related.className = 'related-posts';
 

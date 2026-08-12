@@ -571,6 +571,33 @@ test('RSS feed includes build date, permalink guids, categories, and audio enclo
   }
 });
 
+test('every post with related dispatches ships a static related-posts section', async () => {
+  const generated = JSON.parse(
+    await fs.readFile(path.join(ROOT, 'public/content-index.json'), 'utf8'),
+  );
+
+  for (const post of generated.posts) {
+    const postHtml = await fs.readFile(path.join(ROOT, 'posts', `${post.slug}.html`), 'utf8');
+    const related = Array.isArray(post.related) ? post.related : [];
+    const sectionMatch = postHtml.match(
+      /<section class="related-posts\b[^"]*"[^>]*>([\s\S]*?)<\/section>/,
+    );
+
+    if (related.length === 0) {
+      assert.equal(sectionMatch, null, `unexpected related-posts on ${post.slug}`);
+      continue;
+    }
+
+    assert.ok(sectionMatch, `missing related-posts on ${post.slug}`);
+    for (const entry of related) {
+      assert.ok(
+        sectionMatch[1].includes(`href="${entry.canonicalPath}"`),
+        `related link missing for ${entry.slug} on ${post.slug}`,
+      );
+    }
+  }
+});
+
 test('post dates are valid YYYY-MM-DD and generator validates dates and audio timings', async () => {
   const [{ POSTS }, generatorSource] = await Promise.all([
     loadSourceContent(),
