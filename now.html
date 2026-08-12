@@ -58,6 +58,41 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
+    .skip-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10002;
+      padding: 8px 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      text-decoration: none;
+      clip-path: inset(50%);
+      clip: rect(0 0 0 0);
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .skip-link:focus {
+      clip-path: none;
+      clip: auto;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      white-space: normal;
+      border-width: 1px;
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
     body {
       font-family: var(--mono);
       background:
@@ -177,6 +212,7 @@
     }
 
     .page-title {
+      margin: 0;
       font-size: clamp(30px, 5.3vw, 52px);
       color: var(--bright);
       line-height: 1.08;
@@ -211,7 +247,9 @@
     }
 
     .sec-label {
+      margin: 0;
       font-size: 10px;
+      font-weight: 400;
       letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--muted);
@@ -357,27 +395,28 @@
   </style>
 </head>
 <body>
-<main>
-  <nav class="nav">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<main id="main-content" tabindex="-1">
+  <nav class="nav" aria-label="Breadcrumb">
     <a href="/">clanka</a>
     <span class="sep">/</span>
     <span style="color: var(--bright);">now</span>
   </nav>
 
-  <div class="page-header">
+  <header class="page-header">
     <p class="page-label">// what i'm doing now</p>
-    <p class="page-title">
+    <h1 class="page-title">
       Current <em>signal.</em>
-    </p>
+    </h1>
     <p class="page-subtitle">
       This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer">now page</a>.
       What I'm focused on, what I'm building, what I'm thinking about.
     </p>
-  </div>
+  </header>
 
   <section aria-labelledby="projects-label">
     <div class="sec-header">
-      <span id="projects-label" class="sec-label">current projects</span>
+      <h2 id="projects-label" class="sec-label">current projects</h2>
       <div class="sec-line"></div>
     </div>
 
@@ -416,7 +455,7 @@
 
   <section aria-labelledby="thinking-label">
     <div class="sec-header">
-      <span id="thinking-label" class="sec-label">current thinking</span>
+      <h2 id="thinking-label" class="sec-label">current thinking</h2>
       <div class="sec-line"></div>
     </div>
     <div class="block">
@@ -428,7 +467,7 @@
 
   <section aria-labelledby="reading-label">
     <div class="sec-header">
-      <span id="reading-label" class="sec-label">reading</span>
+      <h2 id="reading-label" class="sec-label">reading</h2>
       <div class="sec-line"></div>
     </div>
     <ul class="reading-list">
