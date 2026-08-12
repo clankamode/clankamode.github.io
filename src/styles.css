@@ -59,6 +59,11 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust
   outline-offset: 2px;
 }
 
+/* Skip-link target: focusable for keyboard move, no full-page ring. */
+#main-content:focus {
+  outline: none;
+}
+
 body {
   font-family: var(--mono);
   background:

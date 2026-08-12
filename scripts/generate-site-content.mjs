@@ -508,7 +508,7 @@ function buildPageShell({ title, description, scriptPath, pageLabel, heading, ki
 <div class="grain-overlay" aria-hidden="true"></div>
 <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 <clanka-cmdk></clanka-cmdk>
-<main id="main-content" class="content-page">
+<main id="main-content" class="content-page" tabindex="-1">
   <nav class="page-nav" aria-label="Breadcrumb">
     <a href="/">home</a>
     <span class="page-nav-sep">/</span>

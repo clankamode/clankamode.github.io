@@ -97,6 +97,16 @@ test.beforeEach(async ({ page }) => {
   await page.waitForSelector('#homepage-featured-log .featured-log');
 });
 
+test('skip link moves keyboard focus to main content', async ({ page }) => {
+  const skip = page.locator('.skip-link');
+  await expect(skip).toHaveAttribute('href', '#main-content');
+  await expect(page.locator('#main-content')).toHaveAttribute('tabindex', '-1');
+
+  await skip.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#main-content')).toBeFocused();
+});
+
 test('theme toggle persists after reload', async ({ page }) => {
   const toggle = page.locator('#theme-toggle');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
