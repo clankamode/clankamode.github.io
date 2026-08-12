@@ -377,6 +377,93 @@ async function validatePostEnhanceScripts() {
   }
 }
 
+function buildStaticPostNav(post) {
+  const parts = [];
+
+  if (post.previous) {
+    const label = String(post.previous.number).padStart(3, '0');
+    parts.push(
+      `      <a href="${escapeHtml(post.previous.canonicalPath)}" data-nav="prev">← older dispatch · ${escapeHtml(label)}</a>`,
+    );
+  } else {
+    parts.push('      <span class="post-nav-spacer" aria-hidden="true"> </span>');
+  }
+
+  if (post.next) {
+    const label = String(post.next.number).padStart(3, '0');
+    parts.push(
+      `      <a href="${escapeHtml(post.next.canonicalPath)}" data-nav="next">newer dispatch · ${escapeHtml(label)} →</a>`,
+    );
+  }
+
+  return `    <div class="post-nav">\n${parts.join('\n')}\n    </div>`;
+}
+
+async function syncStaticPostNavigation(contentIndex) {
+  for (const post of contentIndex.posts) {
+    const postPath = filePathFromCanonical(post.canonicalPath);
+    const html = await fs.readFile(postPath, 'utf8');
+    const navHtml = buildStaticPostNav(post);
+    let nextHtml;
+
+    if (/<div class="post-nav\b[^"]*"[^>]*>[\s\S]*?<\/div>/.test(html)) {
+      nextHtml = html.replace(
+        /[ \t]*<div class="post-nav\b[^"]*"[^>]*>[\s\S]*?<\/div>[ \t]*\n?/,
+        `${navHtml}\n`,
+      );
+    } else if (/<div class="footer\b/.test(html)) {
+      nextHtml = html.replace(/[ \t]*<div class="footer\b/, `${navHtml}\n\n    <div class="footer`);
+    } else if (/\n<\/div>\s*\n\s*<script\b[\s\S]*post-enhance\.js/.test(html)) {
+      // Legacy posts without a .footer still close .page before enhancement scripts.
+      nextHtml = html.replace(
+        /\n<\/div>(\s*\n\s*<script\b[\s\S]*post-enhance\.js)/,
+        `\n${navHtml}\n</div>$1`,
+      );
+    } else {
+      throw new Error(
+        `Cannot sync static post-nav for ${post.slug}: missing .post-nav/.footer/page-close anchors.`,
+      );
+    }
+
+    if (nextHtml !== html) {
+      await fs.writeFile(postPath, nextHtml);
+    }
+  }
+}
+
+async function validateStaticPostNavigation(contentIndex) {
+  for (const post of contentIndex.posts) {
+    const html = await fs.readFile(filePathFromCanonical(post.canonicalPath), 'utf8');
+    const navMatch = html.match(/<div class="post-nav\b[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+    if (!navMatch) {
+      throw new Error(`Missing static .post-nav for ${post.slug}`);
+    }
+
+    const nav = navMatch[1];
+    if (post.previous) {
+      const prevHref = `href="${post.previous.canonicalPath}"`;
+      if (!nav.includes(prevHref) || !nav.includes('data-nav="prev"')) {
+        throw new Error(
+          `Static prev nav mismatch for ${post.slug}: expected ${post.previous.canonicalPath}`,
+        );
+      }
+    } else if (nav.includes('data-nav="prev"')) {
+      throw new Error(`Static prev nav should be absent for first post ${post.slug}`);
+    }
+
+    if (post.next) {
+      const nextHref = `href="${post.next.canonicalPath}"`;
+      if (!nav.includes(nextHref) || !nav.includes('data-nav="next"')) {
+        throw new Error(
+          `Static next nav mismatch for ${post.slug}: expected ${post.next.canonicalPath}`,
+        );
+      }
+    } else if (nav.includes('data-nav="next"')) {
+      throw new Error(`Static next nav should be absent for latest post ${post.slug}`);
+    }
+  }
+}
+
 function buildPageShell({ title, description, scriptPath, pageLabel, heading, kicker, bodyAttrs = '', bodyContent = '' }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -554,6 +641,9 @@ async function main() {
   await validatePostEnhanceScripts();
 
   const contentIndex = deriveContentIndex(posts, topics);
+
+  await syncStaticPostNavigation(contentIndex);
+  await validateStaticPostNavigation(contentIndex);
 
   await writeOutputs(contentIndex);
   await validateOutputs(contentIndex);
