@@ -157,6 +157,33 @@ test('task board shows empty state when API returns no tasks', async ({ page }) 
   await expect(tasks).toContainText('[ no tasks ]');
 });
 
+test('task board drops non-object items and maps in_progress status', async ({ page }) => {
+  await page.route(`${API_BASE}/now`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: 'triaging tasks',
+        status: 'active',
+        tasks: [
+          null,
+          'skip-me',
+          { title: 'Ship the board', status: 'in_progress', assignee: 'clanka', priority: 1 },
+          { title: { nested: true }, status: 'todo' },
+        ],
+      }),
+    });
+  });
+
+  await page.reload();
+  const tasks = page.locator('clanka-tasks#tasks');
+  await expect(tasks).toContainText('Ship the board');
+  await expect(tasks.locator('.task-card')).toHaveCount(2);
+  await expect(tasks.locator('.status-doing')).toHaveCount(1);
+  await expect(tasks).not.toContainText('[object Object]');
+  await expect(tasks).toContainText('untitled');
+});
+
 test('fleet widget renders mocked repo cards', async ({ page }) => {
   const fleet = page.locator('clanka-fleet#fleet');
   await fleet.scrollIntoViewIfNeeded();

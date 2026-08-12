@@ -179,11 +179,19 @@ test('loadContentIndex retries after a rejected fetch', async () => {
 });
 
 test('task display helpers normalize status and preserve labels', async () => {
-  const { getTaskDisplay, normalizeTaskStatus, TASK_SKELETON_CARD_COUNT } = await loadTsModule('src/task-utils.ts');
+  const {
+    getTaskDisplay,
+    normalizeTaskStatus,
+    normalizeTasks,
+    TASK_SKELETON_CARD_COUNT,
+  } = await loadTsModule('src/task-utils.ts');
 
   assert.equal(TASK_SKELETON_CARD_COUNT, 3);
   assert.equal(normalizeTaskStatus(undefined), 'todo');
   assert.equal(normalizeTaskStatus(' Doing '), 'doing');
+  assert.equal(normalizeTaskStatus('in-progress'), 'doing');
+  assert.equal(normalizeTaskStatus('WIP'), 'doing');
+  assert.equal(normalizeTaskStatus('completed'), 'done');
   assert.equal(normalizeTaskStatus('blocked'), 'todo');
 
   assert.deepEqual(
@@ -215,6 +223,32 @@ test('task display helpers normalize status and preserve labels', async () => {
       assignee: 'unassigned',
       priority: '?',
     },
+  );
+
+  // Non-scalar fields must not stringify to "[object Object]".
+  assert.deepEqual(
+    getTaskDisplay({
+      title: { text: 'nope' },
+      assignee: ['a'],
+      priority: { level: 1 },
+    }),
+    {
+      statusClass: 'todo',
+      statusLabel: 'TODO',
+      title: 'untitled',
+      assignee: 'unassigned',
+      priority: '?',
+    },
+  );
+
+  assert.deepEqual(
+    normalizeTasks([
+      null,
+      'bad',
+      { title: 'Keep me', status: 'in_progress' },
+      [{ title: 'nested' }],
+    ]),
+    [{ title: 'Keep me', status: 'in_progress' }],
   );
 
   const a = getTaskDisplay(null);
