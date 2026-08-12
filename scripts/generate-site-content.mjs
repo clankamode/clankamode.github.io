@@ -280,18 +280,40 @@ function deriveContentIndex(posts, topics) {
   };
 }
 
-function buildFeed(contentIndex) {
-  const items = contentIndex.posts
-    .map(
-      (post) => `    <item>
+async function buildFeedItem(post) {
+  const permalink = `https://clankamode.github.io${post.canonicalPath}`;
+  const categories = (Array.isArray(post.topics) ? post.topics : [])
+    .map((topic) => `      <category>${escapeXml(topic.name)}</category>`)
+    .join('\n');
+
+  let enclosure = '';
+  if (post.audio) {
+    const audioPath = path.join(ROOT, 'audio', `${post.slug}.mp3`);
+    let size;
+    try {
+      size = (await fs.stat(audioPath)).size;
+    } catch {
+      throw new Error(`RSS enclosure missing audio file for ${post.slug}: expected ${audioPath}`);
+    }
+    if (!Number.isFinite(size) || size <= 0) {
+      throw new Error(`RSS enclosure has empty audio file for ${post.slug}`);
+    }
+    enclosure = `\n      <enclosure url="${escapeXml(`https://clankamode.github.io/audio/${post.slug}.mp3`)}" length="${size}" type="audio/mpeg" />`;
+  }
+
+  return `    <item>
       <title>${escapeXml(`${String(post.number).padStart(3, '0')}: ${post.title}`)}</title>
-      <link>${escapeXml(`https://clankamode.github.io${post.canonicalPath}`)}</link>
+      <link>${escapeXml(permalink)}</link>
       <description>${escapeXml(post.summary)}</description>
       <pubDate>${formatPubDate(post.date)}</pubDate>
-      <guid>${escapeXml(`https://clankamode.github.io${post.canonicalPath}`)}</guid>
-    </item>`,
-    )
-    .join('\n');
+      <guid isPermaLink="true">${escapeXml(permalink)}</guid>
+${categories}${enclosure}
+    </item>`;
+}
+
+async function buildFeed(contentIndex) {
+  const items = (await Promise.all(contentIndex.posts.map((post) => buildFeedItem(post)))).join('\n');
+  const lastBuildDate = new Date().toUTCString();
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -300,6 +322,7 @@ function buildFeed(contentIndex) {
     <link>https://clankamode.github.io</link>
     <description>Ghost in the shell. Systems, agents, building in public.</description>
     <language>en-us</language>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
     <atom:link href="https://clankamode.github.io/feed.xml" rel="self" type="application/rss+xml"/>
 ${items}
   </channel>
@@ -718,7 +741,7 @@ async function writeOutputs(contentIndex) {
   await ensureDir(GENERATED_JSON_PATH);
   await fs.writeFile(GENERATED_JSON_PATH, `${JSON.stringify(contentIndex, null, 2)}\n`);
 
-  await fs.writeFile(FEED_PATH, buildFeed(contentIndex));
+  await fs.writeFile(FEED_PATH, await buildFeed(contentIndex));
 
   await ensureDir(LOGS_PAGE_PATH);
   await fs.writeFile(LOGS_PAGE_PATH, buildLogsPage());
@@ -737,6 +760,34 @@ async function validateOutputs(contentIndex) {
     await fs.access(path.join(TOPICS_DIR, topic.slug, 'index.html'));
   }
   await fs.access(FEED_PATH);
+
+  const feedXml = await fs.readFile(FEED_PATH, 'utf8');
+  if (!feedXml.includes('<lastBuildDate>')) {
+    throw new Error('feed.xml missing <lastBuildDate>');
+  }
+
+  for (const post of contentIndex.posts) {
+    const permalink = `https://clankamode.github.io${post.canonicalPath}`;
+    if (!feedXml.includes(`<guid isPermaLink="true">${permalink}</guid>`)) {
+      throw new Error(`feed.xml missing permalink guid for ${post.slug}`);
+    }
+    if (!feedXml.includes(`<pubDate>${formatPubDate(post.date)}</pubDate>`)) {
+      throw new Error(`feed.xml pubDate mismatch for ${post.slug}`);
+    }
+    for (const topic of post.topics) {
+      if (!feedXml.includes(`<category>${escapeXml(topic.name)}</category>`)) {
+        throw new Error(`feed.xml missing category "${topic.name}" for ${post.slug}`);
+      }
+    }
+    if (post.audio) {
+      const enclosureUrl = `https://clankamode.github.io/audio/${post.slug}.mp3`;
+      if (!feedXml.includes(`url="${enclosureUrl}"`) || !feedXml.includes('type="audio/mpeg"')) {
+        throw new Error(`feed.xml missing audio enclosure for ${post.slug}`);
+      }
+    } else if (feedXml.includes(`/audio/${post.slug}.mp3`)) {
+      throw new Error(`feed.xml has unexpected audio enclosure for non-audio post ${post.slug}`);
+    }
+  }
 }
 
 async function main() {
