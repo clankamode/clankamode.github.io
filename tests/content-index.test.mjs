@@ -322,6 +322,42 @@ test('withRetries eventually succeeds and withResultRetries stops on ok', async 
   assert.equal(resultAttempts, 2);
 });
 
+test('every post ships static prev/next nav matching content-index chronology', async () => {
+  const [{ POSTS }, generatedRaw] = await Promise.all([
+    loadSourceContent(),
+    fs.readFile(path.join(ROOT, 'public/content-index.json'), 'utf8'),
+  ]);
+
+  const generated = JSON.parse(generatedRaw);
+  const bySlug = new Map(generated.posts.map((post) => [post.slug, post]));
+
+  assert.equal(generated.posts.length, POSTS.length);
+
+  for (const post of POSTS) {
+    const indexed = bySlug.get(post.slug);
+    assert.ok(indexed, `missing generated post for ${post.slug}`);
+
+    const postHtml = await fs.readFile(path.join(ROOT, 'posts', `${post.slug}.html`), 'utf8');
+    const navMatch = postHtml.match(/<div class="post-nav\b[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+    assert.ok(navMatch, `missing static .post-nav for ${post.slug}`);
+    const nav = navMatch[1];
+
+    if (indexed.previous) {
+      assert.ok(nav.includes(`href="${indexed.previous.canonicalPath}"`), `static prev href for ${post.slug}`);
+      assert.ok(nav.includes('data-nav="prev"'), `static prev data-nav for ${post.slug}`);
+    } else {
+      assert.equal(nav.includes('data-nav="prev"'), false, `unexpected static prev on ${post.slug}`);
+    }
+
+    if (indexed.next) {
+      assert.ok(nav.includes(`href="${indexed.next.canonicalPath}"`), `static next href for ${post.slug}`);
+      assert.ok(nav.includes('data-nav="next"'), `static next data-nav for ${post.slug}`);
+    } else {
+      assert.equal(nav.includes('data-nav="next"'), false, `unexpected static next on ${post.slug}`);
+    }
+  }
+});
+
 test('post dates are valid YYYY-MM-DD and generator validates dates and audio timings', async () => {
   const [{ POSTS }, generatorSource] = await Promise.all([
     loadSourceContent(),
