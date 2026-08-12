@@ -89,8 +89,26 @@ test('archive search with no matches shows an empty state message', async ({ pag
 
   await page.locator('#archive-search-input').fill('zzznomatchzzz');
   await expect(page.locator('#archive-results-count')).toHaveText('0 dispatches shown');
-  await expect(page.locator('#archive-results')).toHaveText('no dispatches match these filters');
+  await expect(page.locator('#archive-results .archive-empty')).toHaveAttribute('role', 'status');
+  await expect(page.locator('#archive-results .archive-empty')).toHaveText('no dispatches match these filters');
   await expect(page.locator('#archive-results .archive-card')).toHaveCount(0);
+});
+
+test('archive shows unavailable empty state when content-index fails', async ({ page }) => {
+  await page.route('**/content-index.json', async (route) => {
+    await route.abort('failed');
+  });
+
+  await page.goto('/logs/');
+  await page.waitForSelector('#archive-results .archive-empty');
+
+  await expect(page.locator('#archive-results-count')).toHaveText('archive unavailable');
+  await expect(page.locator('#archive-results .archive-empty')).toHaveAttribute('role', 'status');
+  await expect(page.locator('#archive-results .archive-empty')).toHaveText('archive unavailable');
+  await expect(page.locator('#archive-search-input')).toBeDisabled();
+  await expect(page.locator('#archive-topic-select')).toBeDisabled();
+  await expect(page.locator('#archive-year-select')).toBeDisabled();
+  await expect(page.locator('.archive-format-buttons .filter-chip').first()).toBeDisabled();
 });
 
 test('topic pages show derived counts and matching posts', async ({ page }) => {
@@ -111,6 +129,21 @@ test('topic pages show derived counts and matching posts', async ({ page }) => {
   await expect(page.locator('#topic-posts .archive-card').first().locator('.archive-card-title')).toContainText(
     requireValue(topic.posts[0], 'expected at least one post for the agents topic').title,
   );
+});
+
+test('topic page shows unavailable empty state when content-index fails', async ({ page }) => {
+  await page.route('**/content-index.json', async (route) => {
+    await route.abort('failed');
+  });
+
+  await page.goto('/topics/agents/');
+  await page.waitForSelector('#topic-posts .archive-empty');
+
+  await expect(page.locator('#topic-description')).toHaveText('archive unavailable');
+  await expect(page.locator('#topic-count')).toHaveText('archive unavailable');
+  await expect(page.locator('#topic-posts .archive-empty')).toHaveAttribute('role', 'status');
+  await expect(page.locator('#topic-posts .archive-empty')).toHaveText('archive unavailable');
+  await expect(page.locator('#topic-posts .archive-card')).toHaveCount(0);
 });
 
 test('post pages render topic chips, related posts, and generated navigation', async ({ page }) => {

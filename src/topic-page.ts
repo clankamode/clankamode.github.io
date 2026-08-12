@@ -16,23 +16,32 @@ async function renderTopicPage(): Promise<void> {
     return;
   }
 
+  const renderPostsMessage = (message: string): void => {
+    postsHost.replaceChildren();
+    const empty = document.createElement('p');
+    empty.className = 'archive-empty';
+    empty.setAttribute('role', 'status');
+    empty.textContent = message;
+    postsHost.append(empty);
+  };
+
   let contentIndex;
   try {
     contentIndex = await loadContentIndex();
   } catch {
     description.textContent = 'archive unavailable';
-    count.textContent = '';
+    count.textContent = 'archive unavailable';
     latest.textContent = '';
-    postsHost.textContent = '';
+    renderPostsMessage('archive unavailable');
     return;
   }
 
   const topic = contentIndex.topics.find((entry) => entry.slug === slug);
   if (!topic) {
     description.textContent = 'unknown topic';
-    count.textContent = '';
+    count.textContent = 'unknown topic';
     latest.textContent = '';
-    postsHost.textContent = '';
+    renderPostsMessage('no dispatches for this topic');
     return;
   }
 
@@ -40,7 +49,12 @@ async function renderTopicPage(): Promise<void> {
   count.textContent = formatCount(topic.count, 'dispatch');
   latest.textContent = topic.latestDate ? `last dispatch · ${topic.latestDate}` : 'last dispatch · n/a';
 
-  postsHost.textContent = '';
+  postsHost.replaceChildren();
+  if (topic.posts.length === 0) {
+    renderPostsMessage('no dispatches for this topic');
+    return;
+  }
+
   topic.posts.forEach((post, index) => {
     const detailed = contentIndex.posts.find((entry) => entry.slug === post.slug) ?? post;
     const card = createArchiveCard(detailed as ContentPost);

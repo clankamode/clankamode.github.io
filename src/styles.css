@@ -701,6 +701,13 @@ section {
   gap: 12px;
 }
 
+.archive-empty {
+  margin: 0;
+  color: var(--dim);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
 .archive-preview-row {
   grid-template-columns: minmax(0, 1fr) auto;
   padding: 14px 0;
