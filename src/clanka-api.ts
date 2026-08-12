@@ -191,8 +191,44 @@ export async function fetchNow(): Promise<NowPayload> {
   return parsed;
 }
 
-export function fetchGithubStats(): Promise<unknown> {
-  return fetchJson('/github/stats');
+/** True when the payload has at least one well-typed stats field (zeros allowed). */
+export function isGithubStatsPayload(payload: unknown): boolean {
+  if (!isPlainObject(payload)) return false;
+
+  let recognized = false;
+
+  if ('repoCount' in payload) {
+    if (typeof payload.repoCount !== 'number' || !Number.isFinite(payload.repoCount) || payload.repoCount < 0) {
+      return false;
+    }
+    recognized = true;
+  }
+  if ('totalStars' in payload) {
+    if (typeof payload.totalStars !== 'number' || !Number.isFinite(payload.totalStars) || payload.totalStars < 0) {
+      return false;
+    }
+    recognized = true;
+  }
+  if ('lastPushedAt' in payload) {
+    if (typeof payload.lastPushedAt !== 'string') return false;
+    recognized = true;
+  }
+  if ('lastPushedRepo' in payload) {
+    if (typeof payload.lastPushedRepo !== 'string') return false;
+    recognized = true;
+  }
+
+  return recognized;
+}
+
+export async function fetchGithubStats(): Promise<unknown> {
+  const data = await fetchJson('/github/stats');
+  if (!isGithubStatsPayload(data)) {
+    // Don't TTL-cache `{ error: '…' }` / `{}` as a successful stats response.
+    invalidateEndpoint('/github/stats');
+    throw new Error('Invalid /github/stats payload');
+  }
+  return data;
 }
 
 /** True when the payload is a recognized fleet summary envelope (including empty). */

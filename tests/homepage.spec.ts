@@ -181,6 +181,23 @@ test('homepage repo stats show unavailable when live APIs fail', async ({ page }
   await expect(page.locator('#stat-fleet-score')).toHaveText('fleet: unavailable');
 });
 
+test('malformed github stats show unavailable instead of zeros', async ({ page }) => {
+  await page.route(`${API_BASE}/github/stats`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'token expired', repoCount: null, totalStars: null }),
+    });
+  });
+
+  await page.reload();
+  await expect(page.locator('#stat-repos')).toHaveText('repos unavailable');
+  await expect(page.locator('#stat-stars')).toHaveText('stars unavailable');
+  await expect(page.locator('#stat-last-commit')).toHaveText('last push: unavailable');
+  // Fleet is independent — still hydrated from the default mock.
+  await expect(page.locator('#stat-fleet-score')).toHaveText('fleet: 42 repos');
+});
+
 test('slim initial /now without agent count clears agents placeholder', async ({ page }) => {
   await page.route(`${API_BASE}/now`, async (route) => {
     await route.fulfill({
