@@ -62,6 +62,24 @@ test('pause exits listen-mode class on body', async ({ page }) => {
   await expect(page.locator('body')).not.toHaveClass(/listen-mode/);
 });
 
+test('Space toggles play/pause during listen mode without leaving the page', async ({ page }) => {
+  const urlBefore = page.url();
+  await page.click('.ap-play');
+  await expect(page.locator('body')).toHaveClass(/listen-mode/);
+  await expect(page.locator('.ap-play')).toHaveAttribute('aria-label', 'Pause audio narration');
+
+  // Blur the play button so Space is handled by the document listen-mode shortcut.
+  await page.locator('body').click({ position: { x: 8, y: 8 } });
+  await page.keyboard.press('Space');
+  await expect(page.locator('body')).not.toHaveClass(/listen-mode/);
+  await expect(page.locator('.ap-play')).toHaveAttribute('aria-label', 'Play audio narration');
+  await expect(page).toHaveURL(urlBefore);
+
+  await page.keyboard.press('Space');
+  await expect(page.locator('body')).toHaveClass(/listen-mode/);
+  await expect(page.locator('.ap-play')).toHaveAttribute('aria-label', 'Pause audio narration');
+});
+
 // ── 4. Paragraph sync ─────────────────────────────────────────────────────────
 
 test('paragraph sync — correct element gets lm-active', async ({ page }) => {
