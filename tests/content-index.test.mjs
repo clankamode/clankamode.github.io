@@ -414,6 +414,35 @@ test('every post ships static prev/next nav matching content-index chronology', 
   }
 });
 
+test('post HTML meta and og descriptions stay aligned with posts.ts summaries', async () => {
+  const { POSTS } = await loadSourceContent();
+
+  const decode = (value) =>
+    value
+      .replaceAll('&quot;', '"')
+      .replaceAll('&#39;', "'")
+      .replaceAll('&#x27;', "'")
+      .replaceAll('&apos;', "'")
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&amp;', '&');
+
+  for (const post of POSTS) {
+    const postHtml = await fs.readFile(path.join(ROOT, 'posts', `${post.slug}.html`), 'utf8');
+    const description = postHtml.match(
+      /<meta\b[^>]*\bname=["']description["'][^>]*\bcontent=(["'])([\s\S]*?)\1/i,
+    )?.[2];
+    const ogDescription = postHtml.match(
+      /<meta\b[^>]*\bproperty=["']og:description["'][^>]*\bcontent=(["'])([\s\S]*?)\1/i,
+    )?.[2];
+
+    assert.ok(description, `missing meta description for ${post.slug}`);
+    assert.ok(ogDescription, `missing og:description for ${post.slug}`);
+    assert.equal(decode(description), post.summary, `meta description drift for ${post.slug}`);
+    assert.equal(decode(ogDescription), post.summary, `og:description drift for ${post.slug}`);
+  }
+});
+
 test('post dates are valid YYYY-MM-DD and generator validates dates and audio timings', async () => {
   const [{ POSTS }, generatorSource] = await Promise.all([
     loadSourceContent(),

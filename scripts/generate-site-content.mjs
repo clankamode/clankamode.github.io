@@ -464,6 +464,113 @@ async function validateStaticPostNavigation(contentIndex) {
   }
 }
 
+function decodeHtmlEntities(value) {
+  return value
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll('&#x27;', "'")
+    .replaceAll('&apos;', "'")
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&amp;', '&');
+}
+
+function readMetaContent(html, attribute, name) {
+  const patterns = [
+    new RegExp(
+      `<meta\\b[^>]*\\b${attribute}=["']${name}["'][^>]*\\bcontent=(["'])([\\s\\S]*?)\\1`,
+      'i',
+    ),
+    new RegExp(
+      `<meta\\b[^>]*\\bcontent=(["'])([\\s\\S]*?)\\1[^>]*\\b${attribute}=["']${name}["']`,
+      'i',
+    ),
+  ];
+
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match) return decodeHtmlEntities(match[2]);
+  }
+
+  return null;
+}
+
+function replaceMetaContent(html, attribute, name, content) {
+  const escaped = escapeHtml(content);
+  const patterns = [
+    new RegExp(
+      `(<meta\\b[^>]*\\b${attribute}=["']${name}["'][^>]*\\bcontent=)(["'])[\\s\\S]*?\\2`,
+      'i',
+    ),
+    new RegExp(
+      `(<meta\\b[^>]*\\bcontent=)(["'])[\\s\\S]*?\\2([^>]*\\b${attribute}=["']${name}["'])`,
+      'i',
+    ),
+  ];
+
+  if (patterns[0].test(html)) {
+    return html.replace(patterns[0], `$1$2${escaped}$2`);
+  }
+
+  if (patterns[1].test(html)) {
+    return html.replace(patterns[1], `$1$2${escaped}$2$3`);
+  }
+
+  return null;
+}
+
+async function syncPostSummariesIntoHtml(posts) {
+  for (const post of posts) {
+    const postPath = filePathFromCanonical(post.canonicalPath);
+    let html = await fs.readFile(postPath, 'utf8');
+    const original = html;
+
+    const withDescription = replaceMetaContent(html, 'name', 'description', post.summary);
+    if (!withDescription) {
+      throw new Error(`Missing meta description for ${post.slug}; cannot sync summary.`);
+    }
+    html = withDescription;
+
+    const withOg = replaceMetaContent(html, 'property', 'og:description', post.summary);
+    if (withOg) {
+      html = withOg;
+    } else {
+      // Keep social cards aligned with the registry when older posts omit og:description.
+      html = html.replace(
+        /(<meta\b[^>]*\bname=["']description["'][^>]*\/?>)/i,
+        `$1\n  <meta property="og:description" content="${escapeHtml(post.summary)}" />`,
+      );
+      if (!html.includes('property="og:description"') && !html.includes("property='og:description'")) {
+        throw new Error(`Missing og:description for ${post.slug}; cannot sync summary.`);
+      }
+    }
+
+    if (html !== original) {
+      await fs.writeFile(postPath, html);
+    }
+  }
+}
+
+async function validatePostSummariesInHtml(posts) {
+  for (const post of posts) {
+    const html = await fs.readFile(filePathFromCanonical(post.canonicalPath), 'utf8');
+    const description = readMetaContent(html, 'name', 'description');
+    const ogDescription = readMetaContent(html, 'property', 'og:description');
+
+    if (description !== post.summary) {
+      throw new Error(
+        `meta description drift for ${post.slug}: HTML does not match src/content/posts.ts summary.`,
+      );
+    }
+
+    if (ogDescription !== post.summary) {
+      throw new Error(
+        `og:description drift for ${post.slug}: HTML does not match src/content/posts.ts summary.`,
+      );
+    }
+  }
+}
+
 function buildPageShell({ title, description, scriptPath, pageLabel, heading, kicker, bodyAttrs = '', bodyContent = '' }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -639,6 +746,8 @@ async function main() {
 
   await validateInputs(posts, topics);
   await validatePostEnhanceScripts();
+  await syncPostSummariesIntoHtml(posts);
+  await validatePostSummariesInHtml(posts);
 
   const contentIndex = deriveContentIndex(posts, topics);
 
