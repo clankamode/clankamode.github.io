@@ -298,6 +298,9 @@ test('archive status bar does not claim LIVE telemetry', async ({ page }) => {
   await page.goto('/logs/');
   await page.waitForSelector('#archive-search-input');
   await expect(page.locator('#status-live-label')).toHaveText('SITE');
+  // Dot chrome must match SITE — no green live pulse on archive shells.
+  await expect(page.locator('#status-live-dot')).toHaveAttribute('data-state', 'site');
+  await expect(page.locator('#status-live-dot')).not.toHaveCSS('animation-name', 'livePulse');
 });
 
 test('migrated featured post ships shared styles and social metadata', async ({ page }) => {

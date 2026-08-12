@@ -844,7 +844,7 @@ function buildPageShell({ title, description, scriptPath, pageLabel, heading, ki
 <div id="status-bar" role="status" aria-live="polite">
   <span id="status-left">CLANKA · ⚡ clankamode.github.io · <span id="status-date"></span></span>
   <span class="status-live">
-    <span class="status-live-dot" id="status-live-dot"></span>
+    <span class="status-live-dot" id="status-live-dot" data-state="site"></span>
     <span id="status-live-label">SITE</span>
   </span>
 </div>

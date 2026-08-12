@@ -385,6 +385,7 @@ test('live widgets show offline state when API is unreachable', async ({ page })
 
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: offline');
   await expect(page.locator('#status-live-label')).toHaveText('OFFLINE');
+  await expect(page.locator('#status-live-dot')).toHaveAttribute('data-state', 'offline');
   await expect(page.locator('clanka-agents#agents')).toContainText('[ api unreachable ]');
   await expect(page.locator('clanka-tasks#tasks')).toContainText('[ api unreachable ]');
 
@@ -503,6 +504,7 @@ test('transient sync-error after a successful sync keeps task boards visible', a
   await expect(page.locator('#stat-active-agents')).toHaveText('agents: 2 active');
   // Status chrome should mirror presence STALE, not jump to OFFLINE after a prior sync.
   await expect(page.locator('#status-live-label')).toHaveText('STALE');
+  await expect(page.locator('#status-live-dot')).toHaveAttribute('data-state', 'stale');
 });
 
 
