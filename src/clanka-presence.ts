@@ -13,6 +13,14 @@ export class ClankaPresence extends LitElement {
   private pollId?: number;
   private hasSyncedOnce = false;
   private updateInFlight = false;
+  private onVisibility = (): void => {
+    if (document.hidden) {
+      this.stopPolling();
+      return;
+    }
+    this.ensurePolling();
+    void this.updatePresence();
+  };
 
   static styles = css`
     :host {
@@ -103,23 +111,34 @@ export class ClankaPresence extends LitElement {
     if (!this.hasAttribute('tabindex')) {
       this.tabIndex = 0;
     }
+    document.addEventListener('visibilitychange', this.onVisibility);
     // firstUpdated only runs once per instance — reconnect must re-arm polling
     // and refresh so a mid-flight disconnect cannot leave the widget stuck.
-    this.ensurePolling();
     void this.updatePresence();
+    if (!document.hidden) {
+      this.ensurePolling();
+    }
   }
 
   disconnectedCallback(): void {
-    if (this.pollId) {
-      window.clearInterval(this.pollId);
-      this.pollId = undefined;
-    }
+    document.removeEventListener('visibilitychange', this.onVisibility);
+    this.stopPolling();
     super.disconnectedCallback();
   }
 
   private ensurePolling(): void {
     if (this.pollId !== undefined) return;
-    this.pollId = window.setInterval(() => void this.updatePresence(), 30000);
+    this.pollId = window.setInterval(() => {
+      if (document.hidden) return;
+      void this.updatePresence();
+    }, 30000);
+  }
+
+  private stopPolling(): void {
+    if (this.pollId !== undefined) {
+      window.clearInterval(this.pollId);
+      this.pollId = undefined;
+    }
   }
 
   async updatePresence() {
