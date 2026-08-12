@@ -133,8 +133,18 @@
     if (which === 'prev') return links[0]?.getAttribute('href') || null;
     return links.length > 1 ? links[1].getAttribute('href') : null;
   };
+  const isTypingTarget = (target) => {
+    if (!(target instanceof Element)) return false;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) return true;
+    if (target instanceof HTMLSelectElement || target instanceof HTMLButtonElement) return true;
+    if (target.isContentEditable) return true;
+    // Audio player controls (play/skip/speed/scrubber) must keep j/k/t local.
+    return Boolean(target.closest('.audio-player, a, button, [role="slider"]'));
+  };
+
   document.addEventListener('keydown', (e) => {
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (isTypingTarget(e.target)) return;
     if (e.key === 'j') {
       const next = resolveNavHref('next');
       if (next) window.location.href = next;
@@ -147,7 +157,8 @@
 
   // 4. Back to top on 't'
   document.addEventListener('keydown', (e) => {
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (isTypingTarget(e.target)) return;
     if (e.key === 't') {
       const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         ? 'auto'

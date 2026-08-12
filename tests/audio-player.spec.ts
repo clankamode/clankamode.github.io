@@ -205,3 +205,16 @@ test('skip -15s rewinds currentTime', async ({ page }) => {
   const t = await page.evaluate(() => (window as any).__mockAudio.currentTime);
   expect(t).toBe(35);
 });
+
+test('j/k post navigation does not fire while audio controls are focused', async ({ page }) => {
+  await page.waitForSelector('.post-nav a[data-nav], .post-nav-enhanced a[data-nav]');
+  const before = page.url();
+
+  await page.locator('.ap-progress-wrap').focus();
+  await page.keyboard.press('j');
+  await expect(page).toHaveURL(before);
+
+  await page.locator('.ap-play').focus();
+  await page.keyboard.press('k');
+  await expect(page).toHaveURL(before);
+});
