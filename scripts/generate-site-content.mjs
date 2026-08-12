@@ -571,6 +571,84 @@ async function validatePostSummariesInHtml(posts) {
   }
 }
 
+function buildStaticTopicChips(post) {
+  const topics = Array.isArray(post.topics) ? post.topics.filter(Boolean) : [];
+  if (topics.length === 0) return '';
+
+  const chips = topics
+    .map(
+      (topic) =>
+        `      <a class="post-chip" href="/topics/${escapeHtml(topic.slug)}/">${escapeHtml(topic.name)}</a>`,
+    )
+    .join('\n');
+
+  return `    <div class="post-topic-chips" aria-label="Topics">
+${chips}
+    </div>`;
+}
+
+async function syncStaticTopicChips(contentIndex) {
+  for (const post of contentIndex.posts) {
+    const postPath = filePathFromCanonical(post.canonicalPath);
+    const html = await fs.readFile(postPath, 'utf8');
+    const chipsHtml = buildStaticTopicChips(post);
+    let nextHtml = html;
+
+    if (/<div class="post-topic-chips\b[^"]*"[^>]*>[\s\S]*?<\/div>/.test(html)) {
+      if (chipsHtml) {
+        nextHtml = html.replace(
+          /[ \t]*<div class="post-topic-chips\b[^"]*"[^>]*>[\s\S]*?<\/div>[ \t]*\n?/,
+          `${chipsHtml}\n`,
+        );
+      } else {
+        nextHtml = html.replace(
+          /[ \t]*<div class="post-topic-chips\b[^"]*"[^>]*>[\s\S]*?<\/div>[ \t]*\n?/,
+          '',
+        );
+      }
+    } else if (chipsHtml) {
+      if (/<div class="meta\b[^"]*"[^>]*>[\s\S]*?<\/div>/.test(html)) {
+        nextHtml = html.replace(
+          /(<div class="meta\b[^"]*"[^>]*>[\s\S]*?<\/div>)([ \t]*\n?)/,
+          `$1\n${chipsHtml}$2`,
+        );
+      } else {
+        throw new Error(`Cannot sync static topic chips for ${post.slug}: missing .meta anchor.`);
+      }
+    }
+
+    if (nextHtml !== html) {
+      await fs.writeFile(postPath, nextHtml);
+    }
+  }
+}
+
+async function validateStaticTopicChips(contentIndex) {
+  for (const post of contentIndex.posts) {
+    const html = await fs.readFile(filePathFromCanonical(post.canonicalPath), 'utf8');
+    const topics = Array.isArray(post.topics) ? post.topics.filter(Boolean) : [];
+    const chipsMatch = html.match(/<div class="post-topic-chips\b[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+
+    if (topics.length === 0) {
+      if (chipsMatch) {
+        throw new Error(`Unexpected static topic chips for ${post.slug}`);
+      }
+      continue;
+    }
+
+    if (!chipsMatch) {
+      throw new Error(`Missing static topic chips for ${post.slug}`);
+    }
+
+    for (const topic of topics) {
+      const href = `/topics/${topic.slug}/`;
+      if (!chipsMatch[1].includes(`href="${href}"`) || !chipsMatch[1].includes(topic.name)) {
+        throw new Error(`Static topic chip missing ${topic.slug} on ${post.slug}`);
+      }
+    }
+  }
+}
+
 function buildPageShell({ title, description, scriptPath, pageLabel, heading, kicker, bodyAttrs = '', bodyContent = '' }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -753,6 +831,8 @@ async function main() {
 
   await syncStaticPostNavigation(contentIndex);
   await validateStaticPostNavigation(contentIndex);
+  await syncStaticTopicChips(contentIndex);
+  await validateStaticTopicChips(contentIndex);
 
   await writeOutputs(contentIndex);
   await validateOutputs(contentIndex);

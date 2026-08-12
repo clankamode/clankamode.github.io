@@ -427,6 +427,37 @@ test('every post ships static prev/next nav matching content-index chronology', 
   }
 });
 
+test('every post with topics ships static topic chips', async () => {
+  const generated = JSON.parse(
+    await fs.readFile(path.join(ROOT, 'public/content-index.json'), 'utf8'),
+  );
+
+  for (const post of generated.posts) {
+    const postHtml = await fs.readFile(path.join(ROOT, 'posts', `${post.slug}.html`), 'utf8');
+    const topics = Array.isArray(post.topics) ? post.topics.filter(Boolean) : [];
+    const chipsMatch = postHtml.match(
+      /<div class="post-topic-chips\b[^"]*"[^>]*>([\s\S]*?)<\/div>/,
+    );
+
+    if (topics.length === 0) {
+      assert.equal(chipsMatch, null, `unexpected topic chips on ${post.slug}`);
+      continue;
+    }
+
+    assert.ok(chipsMatch, `missing topic chips on ${post.slug}`);
+    for (const topic of topics) {
+      assert.ok(
+        chipsMatch[1].includes(`href="/topics/${topic.slug}/"`),
+        `topic chip href missing for ${topic.slug} on ${post.slug}`,
+      );
+      assert.ok(
+        chipsMatch[1].includes(topic.name),
+        `topic chip label missing for ${topic.slug} on ${post.slug}`,
+      );
+    }
+  }
+});
+
 test('post HTML meta and og descriptions stay aligned with posts.ts summaries', async () => {
   const { POSTS } = await loadSourceContent();
 
