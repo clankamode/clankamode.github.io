@@ -272,6 +272,33 @@ export function isFleetSummaryPayload(payload: unknown): boolean {
   return false;
 }
 
+const FLEET_TIERS = new Set(['ops', 'infra', 'core', 'quality', 'policy', 'template']);
+
+function fleetRepoCandidates(payload: unknown): unknown[] {
+  if (Array.isArray(payload)) return payload;
+  if (!isPlainObject(payload)) return [];
+
+  if (Array.isArray(payload.repos)) return payload.repos;
+  if (Array.isArray(payload.fleet)) return payload.fleet;
+
+  if (isPlainObject(payload.summary)) {
+    const summary = payload.summary;
+    if (Array.isArray(summary.repos)) return summary.repos;
+    if (Array.isArray(summary.fleet)) return summary.fleet;
+  }
+
+  return [];
+}
+
+/** True when a candidate can become a fleet card (named repo + known tier). */
+export function isUsableFleetRepo(value: unknown): boolean {
+  if (!isPlainObject(value)) return false;
+  const repo = String(value.repo ?? value.name ?? value.full_name ?? '').trim();
+  if (!repo) return false;
+  const tier = String(value.tier ?? '').trim().toLowerCase();
+  return FLEET_TIERS.has(tier);
+}
+
 export async function fetchFleetSummary(): Promise<unknown> {
   const data = await fetchJson('/fleet/summary');
   if (!isFleetSummaryPayload(data)) {
@@ -279,5 +306,13 @@ export async function fetchFleetSummary(): Promise<unknown> {
     invalidateEndpoint('/fleet/summary');
     throw new Error('Invalid /fleet/summary payload');
   }
+
+  const candidates = fleetRepoCandidates(data);
+  // Entries present but none usable → unavailable, not an honest empty registry.
+  if (candidates.length > 0 && !candidates.some(isUsableFleetRepo)) {
+    invalidateEndpoint('/fleet/summary');
+    throw new Error('Invalid /fleet/summary repos');
+  }
+
   return data;
 }

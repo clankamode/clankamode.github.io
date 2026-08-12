@@ -262,6 +262,7 @@ test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
     isGithubEventsPayload,
     isFleetSummaryPayload,
     isGithubStatsPayload,
+    isUsableFleetRepo,
   } = await loadTsModule('src/clanka-api.ts');
   const sample = {
     type: 'PushEvent',
@@ -288,6 +289,12 @@ test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
   assert.equal(isFleetSummaryPayload({ summary: { repos: [] } }), true);
   assert.equal(isFleetSummaryPayload({ message: 'no registry' }), false);
   assert.equal(isFleetSummaryPayload(null), false);
+
+  assert.equal(isUsableFleetRepo({ repo: 'clankamode/api', tier: 'core' }), true);
+  assert.equal(isUsableFleetRepo({ name: 'clankamode/api', tier: 'ops' }), true);
+  assert.equal(isUsableFleetRepo({ repo: 'clankamode/api' }), false);
+  assert.equal(isUsableFleetRepo({ repo: '', tier: 'core' }), false);
+  assert.equal(isUsableFleetRepo({ bad: true }), false);
 
   assert.equal(isGithubStatsPayload({ repoCount: 0, totalStars: 0 }), true);
   assert.equal(isGithubStatsPayload({ lastPushedAt: '2026-08-02T02:03:12Z', lastPushedRepo: 'site' }), true);
@@ -538,6 +545,49 @@ test('fetchNow invalidates cache after rejecting a malformed payload', async () 
     const recovered = await fetchNow();
     assert.deepEqual(recovered, { current: 'recovered', status: 'active' });
     assert.equal(attempts, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('fetchFleetSummary rejects all-unusable repo entries and invalidates cache', async () => {
+  const { fetchFleetSummary } = await loadTsModule('src/clanka-api.ts');
+  const originalFetch = globalThis.fetch;
+  let attempts = 0;
+
+  globalThis.fetch = async () => {
+    attempts += 1;
+    if (attempts === 1) {
+      return {
+        ok: true,
+        async json() {
+          return {
+            repos: [
+              { repo: 'clankamode/x' },
+              { name: 'clankamode/y', tier: 'unknown' },
+              { bad: true },
+            ],
+          };
+        },
+      };
+    }
+    return {
+      ok: true,
+      async json() {
+        return {
+          totalRepos: 1,
+          repos: [{ repo: 'clankamode/clanka-api', tier: 'core', criticality: 'high' }],
+        };
+      },
+    };
+  };
+
+  try {
+    await assert.rejects(fetchFleetSummary(), /Invalid \/fleet\/summary repos/);
+    const recovered = await fetchFleetSummary();
+    assert.equal(attempts, 2);
+    assert.equal(Array.isArray(recovered.repos), true);
+    assert.equal(recovered.repos[0].repo, 'clankamode/clanka-api');
   } finally {
     globalThis.fetch = originalFetch;
   }
