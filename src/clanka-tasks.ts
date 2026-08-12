@@ -166,7 +166,7 @@ export class ClankaTasks extends LitElement {
                         <div class="task-title">${display.title}</div>
                         <div class="task-meta">
                           <span>@${display.assignee}</span>
-                          <span>P${display.priority}</span>
+                          <span>${display.priority}</span>
                         </div>
                       </article>
                     `;
