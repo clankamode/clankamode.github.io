@@ -111,6 +111,28 @@ test('command palette opens with meta+k and navigates to archive', async ({ page
   await expect(page.locator('#archive-search-input')).toBeVisible();
 });
 
+test('command palette navigates to Now', async ({ page }) => {
+  await page.keyboard.press('Meta+k');
+  const palette = page.locator('clanka-cmdk .palette');
+  await expect(palette).toBeVisible();
+
+  const input = palette.locator('input');
+  await input.fill('now');
+  // Prefer the navigate item (href /now.html), not a post titled something with "now".
+  await page.evaluate(() => {
+    const host = document.querySelector('clanka-cmdk') as HTMLElement & {
+      shadowRoot: ShadowRoot | null;
+    };
+    const option = Array.from(host.shadowRoot?.querySelectorAll('.item') ?? []).find((el) =>
+      el.querySelector('.item-label')?.textContent?.trim() === 'Now',
+    ) as HTMLElement | undefined;
+    option?.click();
+  });
+
+  await expect(page).toHaveURL(/\/now\.html$/);
+  await expect(page.getByRole('heading', { level: 1, name: /Current\s+signal/i })).toBeVisible();
+});
+
 test('command palette restores skip-link tab order after close', async ({ page }) => {
   const skip = page.locator('.skip-link');
   await expect(skip).toBeVisible();
