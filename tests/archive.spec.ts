@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import path from 'path';
 
 type ContentIndex = {
   posts: Array<{
@@ -158,6 +159,22 @@ test('post j/k keyboard navigation follows enhanced prev/next links', async ({ p
 
   await page.keyboard.press('k');
   await expect(page).toHaveURL(prevHref!);
+});
+
+test('post j/k shortcuts stay put during listen mode', async ({ page }) => {
+  await page.addInitScript({ path: path.resolve(__dirname, 'audio-mock.js') });
+  await page.goto('/posts/2026-02-21-deploy-fix.html');
+  await page.waitForSelector('.ap-play');
+  await page.waitForSelector('.post-nav-enhanced a[data-nav]');
+
+  const urlBefore = page.url();
+  await page.click('.ap-play');
+  await expect(page.locator('body')).toHaveClass(/listen-mode/);
+
+  await page.keyboard.press('j');
+  await page.keyboard.press('k');
+  await expect(page).toHaveURL(urlBefore);
+  await expect(page.locator('body')).toHaveClass(/listen-mode/);
 });
 
 test('now page exposes skip link and heading outline', async ({ page }) => {
