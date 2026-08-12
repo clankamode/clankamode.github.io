@@ -1,5 +1,3 @@
-import { withResultRetries } from './retry';
-
 const API_BASE = 'https://clanka-api.clankamode.workers.dev';
 const DEFAULT_TTL_MS = 15_000;
 const FETCH_TIMEOUT_MS = 5_000;
@@ -123,6 +121,12 @@ export type GithubEventsResult =
 
 let githubEventsLoad: Promise<GithubEventsResult> | null = null;
 
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function loadGithubEventsOnce(): Promise<GithubEventsResult> {
   try {
     const data = await fetchJson('/github/events');
@@ -146,13 +150,29 @@ async function loadGithubEventsOnce(): Promise<GithubEventsResult> {
   }
 }
 
+/** Local retry helper — keep clanka-api import-free for the content-test loader. */
+async function loadGithubEventsWithRetries(
+  attempts = 3,
+  baseDelayMs = 200,
+): Promise<GithubEventsResult> {
+  let last: GithubEventsResult | undefined;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    last = await loadGithubEventsOnce();
+    if (last.ok) return last;
+    if (attempt < attempts - 1) {
+      await delay(baseDelayMs * (attempt + 1));
+    }
+  }
+  return last ?? { ok: false, reason: 'offline' };
+}
+
 /**
  * Shared events load with bounded retries. Concurrent callers (terminal,
  * commit feed, activity) share one retry chain instead of stampeding.
  */
 export function fetchGithubEvents(): Promise<GithubEventsResult> {
   if (!githubEventsLoad) {
-    githubEventsLoad = withResultRetries(() => loadGithubEventsOnce()).finally(() => {
+    githubEventsLoad = loadGithubEventsWithRetries().finally(() => {
       githubEventsLoad = null;
     });
   }
