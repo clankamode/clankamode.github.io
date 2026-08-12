@@ -335,3 +335,35 @@ test('command palette marks page chrome inert while open', async ({ page }) => {
   await expect(page.locator('clanka-cmdk .palette')).toHaveCount(0);
   await expect(page.locator('#main-content')).not.toHaveAttribute('inert');
 });
+
+test('command palette syncs aria-expanded on the open trigger', async ({ page }) => {
+  const hint = page.locator('.cmdk-hint');
+  await expect(hint).toHaveAttribute('aria-expanded', 'false');
+  await expect(hint).toHaveAttribute('aria-haspopup', 'dialog');
+
+  await page.keyboard.press('Meta+k');
+  await expect(page.locator('clanka-cmdk .palette')).toBeVisible();
+  await expect(hint).toHaveAttribute('aria-expanded', 'true');
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('clanka-cmdk .palette')).toHaveCount(0);
+  await expect(hint).toHaveAttribute('aria-expanded', 'false');
+});
+
+test('command palette re-open does not leave body scroll locked after close', async ({ page }) => {
+  await page.evaluate(() => {
+    document.body.style.overflow = '';
+    const host = document.querySelector('clanka-cmdk') as HTMLElement & {
+      openPalette?: () => void;
+    };
+    host.openPalette?.();
+    host.openPalette?.();
+  });
+
+  await expect(page.locator('clanka-cmdk .palette')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe('hidden');
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('clanka-cmdk .palette')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe('');
+});

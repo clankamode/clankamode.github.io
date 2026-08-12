@@ -209,12 +209,23 @@ export class ClankaCmdk extends LitElement {
       from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.98); }
       to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .backdrop,
+      .palette {
+        animation: none;
+      }
+      .item {
+        transition: none;
+      }
+    }
   `;
 
   connectedCallback(): void {
     super.connectedCallback();
     void this.buildItems();
     window.addEventListener('keydown', this.handleGlobalKey);
+    this.setCmdkHintExpanded(false);
   }
 
   disconnectedCallback(): void {
@@ -223,6 +234,7 @@ export class ClankaCmdk extends LitElement {
     if (this.open) {
       document.body.style.overflow = this.previousBodyOverflow;
       this.setBackgroundInert(false);
+      this.setCmdkHintExpanded(false);
     }
   }
 
@@ -247,10 +259,19 @@ export class ClankaCmdk extends LitElement {
 
   /** Public open path for UI buttons (avoids synthetic keyboard events). */
   openPalette(): void {
+    // Re-entrant open must not overwrite the pre-open overflow/inert snapshot.
+    if (this.open) {
+      this.updateComplete.then(() => {
+        this.shadowRoot?.querySelector('input')?.focus();
+      });
+      return;
+    }
+
     this.previousActiveElement = document.activeElement as HTMLElement | null;
     this.previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     this.setBackgroundInert(true);
+    this.setCmdkHintExpanded(true);
     this.open = true;
     this.query = '';
     this.activeIndex = 0;
@@ -265,10 +286,23 @@ export class ClankaCmdk extends LitElement {
     this.query = '';
     document.body.style.overflow = this.previousBodyOverflow;
     this.setBackgroundInert(false);
+    this.setCmdkHintExpanded(false);
     if (restoreFocus) {
       this.previousActiveElement?.focus();
     }
     this.previousActiveElement = null;
+  }
+
+  private setCmdkHintExpanded(expanded: boolean): void {
+    document.querySelectorAll('.cmdk-hint').forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+      el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      el.setAttribute('aria-haspopup', 'dialog');
+    });
+  }
+
+  private scrollBehavior(): ScrollBehavior {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
   }
 
   private setBackgroundInert(inert: boolean): void {
@@ -381,7 +415,7 @@ export class ClankaCmdk extends LitElement {
     if (item.href.startsWith('/#')) {
       const id = item.href.slice(2);
       if (this.isHomePath()) {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById(id)?.scrollIntoView({ behavior: this.scrollBehavior() });
       } else {
         window.location.href = item.href;
       }
@@ -392,7 +426,7 @@ export class ClankaCmdk extends LitElement {
       const id = item.href.slice(1);
       const el = document.getElementById(id);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+        el.scrollIntoView({ behavior: this.scrollBehavior() });
       } else {
         window.location.href = `/${item.href}`;
       }
