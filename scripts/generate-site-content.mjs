@@ -672,6 +672,95 @@ async function validateStaticTopicChips(contentIndex) {
   }
 }
 
+function buildStaticRelatedPosts(post) {
+  const related = Array.isArray(post.related) ? post.related : [];
+  if (related.length === 0) return '';
+
+  const links = related
+    .map((entry) => {
+      const title = `${String(entry.number).padStart(3, '0')}: ${entry.title}`;
+      return `      <a class="related-link" href="${escapeHtml(entry.canonicalPath)}">
+        <span class="related-link-title">${escapeHtml(title)}</span>
+        <span class="related-link-summary">${escapeHtml(entry.summary)}</span>
+      </a>`;
+    })
+    .join('\n');
+
+  return `    <section class="related-posts" aria-label="Related dispatches">
+      <span class="related-label">related dispatches</span>
+      <div class="related-links">
+${links}
+      </div>
+    </section>`;
+}
+
+async function syncStaticRelatedPosts(contentIndex) {
+  for (const post of contentIndex.posts) {
+    const postPath = filePathFromCanonical(post.canonicalPath);
+    const html = await fs.readFile(postPath, 'utf8');
+    const relatedHtml = buildStaticRelatedPosts(post);
+    let nextHtml = html;
+
+    if (/<section class="related-posts\b[^"]*"[^>]*>[\s\S]*?<\/section>/.test(html)) {
+      if (relatedHtml) {
+        nextHtml = html.replace(
+          /[ \t]*<section class="related-posts\b[^"]*"[^>]*>[\s\S]*?<\/section>[ \t]*\n?/,
+          `${relatedHtml}\n`,
+        );
+      } else {
+        nextHtml = html.replace(
+          /[ \t]*<section class="related-posts\b[^"]*"[^>]*>[\s\S]*?<\/section>[ \t]*\n?/,
+          '',
+        );
+      }
+    } else if (relatedHtml) {
+      if (/<div class="footer\b/.test(html)) {
+        nextHtml = html.replace(/[ \t]*<div class="footer\b/, `${relatedHtml}\n\n    <div class="footer`);
+      } else if (/<div class="post-nav\b/.test(html)) {
+        // Legacy shells without .footer still have chronological nav before page close.
+        nextHtml = html.replace(/[ \t]*<div class="post-nav\b/, `${relatedHtml}\n\n    <div class="post-nav`);
+      } else if (/\n<\/div>\s*\n\s*<script\b/.test(html)) {
+        nextHtml = html.replace(/\n<\/div>(\s*\n\s*<script\b)/, `\n${relatedHtml}\n</div>$1`);
+      } else {
+        throw new Error(
+          `Cannot sync static related posts for ${post.slug}: missing .footer/.post-nav/page-close anchors.`,
+        );
+      }
+    }
+
+    if (nextHtml !== html) {
+      await fs.writeFile(postPath, nextHtml);
+    }
+  }
+}
+
+async function validateStaticRelatedPosts(contentIndex) {
+  for (const post of contentIndex.posts) {
+    const html = await fs.readFile(filePathFromCanonical(post.canonicalPath), 'utf8');
+    const related = Array.isArray(post.related) ? post.related : [];
+    const sectionMatch = html.match(/<section class="related-posts\b[^"]*"[^>]*>([\s\S]*?)<\/section>/);
+
+    if (related.length === 0) {
+      if (sectionMatch) {
+        throw new Error(`Unexpected static related-posts section for ${post.slug}`);
+      }
+      continue;
+    }
+
+    if (!sectionMatch) {
+      throw new Error(`Missing static related-posts section for ${post.slug}`);
+    }
+
+    for (const entry of related) {
+      if (!sectionMatch[1].includes(`href="${entry.canonicalPath}"`)) {
+        throw new Error(
+          `Static related posts missing ${entry.canonicalPath} on ${post.slug}`,
+        );
+      }
+    }
+  }
+}
+
 function buildPageShell({ title, description, scriptPath, pageLabel, heading, kicker, bodyAttrs = '', bodyContent = '' }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -884,6 +973,8 @@ async function main() {
   await validateStaticPostNavigation(contentIndex);
   await syncStaticTopicChips(contentIndex);
   await validateStaticTopicChips(contentIndex);
+  await syncStaticRelatedPosts(contentIndex);
+  await validateStaticRelatedPosts(contentIndex);
 
   await writeOutputs(contentIndex);
   await validateOutputs(contentIndex);

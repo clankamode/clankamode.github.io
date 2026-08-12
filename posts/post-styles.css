@@ -46,6 +46,13 @@
       .post-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 13px; }
     .post-nav a { color: var(--dim); text-decoration: none; letter-spacing: 0.04em; min-width: 0; overflow-wrap: anywhere; }
     .post-nav a:hover { color: var(--accent); }
+    .related-posts { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .related-label { display: block; margin-bottom: 0.9rem; color: var(--dim); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; }
+    .related-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .related-link { display: block; flex: 1 1 200px; border: 1px solid var(--border); background: var(--surface); padding: 12px 14px; text-decoration: none; }
+    .related-link-title { display: block; color: var(--strong); margin-bottom: 6px; }
+    .related-link-summary { display: block; color: var(--dim); font-size: 12px; }
+    .related-link:hover .related-link-title { color: var(--accent); }
     @media (max-width: 480px) {
       .audio-player { gap: 0.5rem; padding: 0.65rem 0.75rem; }
       .ap-progress-wrap { flex: 1 1 100%; order: 3; min-height: 4px; }
