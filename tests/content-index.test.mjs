@@ -489,6 +489,32 @@ test('every post with topics ships static topic chips', async () => {
   }
 });
 
+test('topic pages ship static dispatch cards from the content index', async () => {
+  const generated = JSON.parse(
+    await fs.readFile(path.join(ROOT, 'public/content-index.json'), 'utf8'),
+  );
+
+  for (const topic of generated.topics) {
+    const topicHtml = await fs.readFile(
+      path.join(ROOT, 'topics', topic.slug, 'index.html'),
+      'utf8',
+    );
+
+    assert.match(topicHtml, new RegExp(`id="topic-description"[^>]*>${topic.description.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<`));
+    assert.ok(
+      topicHtml.includes(`>${topic.count} ${topic.count === 1 ? 'dispatch' : 'dispatches'}<`),
+      `static count missing for ${topic.slug}`,
+    );
+
+    for (const post of topic.posts) {
+      assert.ok(
+        topicHtml.includes(`href="${post.canonicalPath}"`),
+        `static topic card missing for ${post.slug} on ${topic.slug}`,
+      );
+    }
+  }
+});
+
 test('post HTML meta and og descriptions stay aligned with posts.ts summaries', async () => {
   const { POSTS } = await loadSourceContent();
 

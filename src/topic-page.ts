@@ -16,6 +16,8 @@ async function renderTopicPage(): Promise<void> {
     return;
   }
 
+  const hasStaticCards = () => postsHost.querySelector('.archive-card') !== null;
+
   const renderPostsMessage = (message: string): void => {
     postsHost.replaceChildren();
     const empty = document.createElement('p');
@@ -29,6 +31,8 @@ async function renderTopicPage(): Promise<void> {
   try {
     contentIndex = await loadContentIndex();
   } catch {
+    // Prefer generator-prefilled dispatches when the live index is offline.
+    if (hasStaticCards()) return;
     description.textContent = 'archive unavailable';
     count.textContent = 'archive unavailable';
     latest.textContent = '';

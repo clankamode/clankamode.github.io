@@ -134,19 +134,19 @@ test('topic pages show derived counts and matching posts', async ({ page }) => {
   );
 });
 
-test('topic page shows unavailable empty state when content-index fails', async ({ page }) => {
+test('topic page keeps static dispatches when content-index fails', async ({ page }) => {
   await page.route('**/content-index.json', async (route) => {
     await route.abort('failed');
   });
 
   await page.goto('/topics/agents/');
-  await page.waitForSelector('#topic-posts .archive-empty');
+  await page.waitForSelector('#topic-posts .archive-card');
 
-  await expect(page.locator('#topic-description')).toHaveText('archive unavailable');
-  await expect(page.locator('#topic-count')).toHaveText('archive unavailable');
-  await expect(page.locator('#topic-posts .archive-empty')).toHaveAttribute('role', 'status');
-  await expect(page.locator('#topic-posts .archive-empty')).toHaveText('archive unavailable');
-  await expect(page.locator('#topic-posts .archive-card')).toHaveCount(0);
+  await expect(page.locator('#topic-description')).not.toHaveText('');
+  await expect(page.locator('#topic-description')).not.toHaveText('archive unavailable');
+  await expect(page.locator('#topic-count')).toHaveText(/\d+ dispatches?/);
+  await expect(page.locator('#topic-posts .archive-card').first()).toBeVisible();
+  await expect(page.locator('#topic-posts .archive-empty')).toHaveCount(0);
 });
 
 test('post pages render topic chips, related posts, and generated navigation', async ({ page }) => {

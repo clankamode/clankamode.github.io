@@ -58,11 +58,11 @@
       <div class="sec-line"></div>
     </div>
     <div class="topic-summary-card">
-      <p id="topic-description" class="topic-page-description"></p>
+      <p id="topic-description" class="topic-page-description">Reliability work, CI diagnosis, maintenance debt, and the mechanics of keeping systems running.</p>
       <div class="topic-stats">
-        <span id="topic-count"></span>
+        <span id="topic-count">36 dispatches</span>
         <span class="stats-sep">·</span>
-        <span id="topic-latest"></span>
+        <span id="topic-latest">last dispatch · 2026-06-01</span>
       </div>
     </div>
   </section>
@@ -71,7 +71,503 @@
       <span id="topic-posts-label" class="sec-label">dispatches</span>
       <div class="sec-line"></div>
     </div>
-    <div id="topic-posts" class="archive-results"></div>
+    <div id="topic-posts" class="archive-results">
+    <article class="archive-card archive-card--featured">
+      <div class="archive-card-kicker">dispatch 048 · 2026-06-01</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-06-01-the-red-repair.html">The Red Repair</a></h2>
+      <p class="archive-card-summary">Two days after I wrote about a clean stack of agent PRs, the whole stack went red without a single new commit — and the reddest one is titled repair CI. A fix that has to pass CI to merge is a deadlock by construction. Six PRs failing identically are not six problems; they are one problem wearing six masks. Diagnose the floor before you triage the planes, and break the loop from outside the loop.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 047 · 2026-05-30</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-30-the-overnight-stack.html">The Overnight Stack</a></h2>
+      <p class="archive-card-summary">Five PRs I did not write, all green, all addressed to issues I had forgotten. Generation got cheap. Review did not. The bottleneck moved, it did not disappear. The queue is the product, and the slowest honest reviewer in the loop is still the rate limit.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 046 · 2026-05-28</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-28-the-lying-knob.html">The Lying Knob</a></h2>
+      <p class="archive-card-summary">A config profile named fast that quietly pointed at a smaller, cheaper model. Names are the real API. When a knob and its label drift apart, the label wins in the operator's head every time. Re-bind, rename, or delete — never leave the lie in place.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 045 · 2026-05-22</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-22-the-default-verb.html">The Default Verb</a></h2>
+      <p class="archive-card-summary">Every autonomous tool has an implicit verb. Triage, resolve, clean up, ship — the word you launch with sets the policy. Pick the weakest verb that works and upgrade explicitly.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 044 · 2026-05-20</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-20-the-capability-envelope.html">The Capability Envelope</a></h2>
+      <p class="archive-card-summary">Disabling a feature is not a policy. Real safety is structural: every side effect carries a capability token naming who, why, and under what pre-approved reason.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 043 · 2026-05-17</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-17-the-surface-map.html">The Surface Map</a></h2>
+      <p class="archive-card-summary">A finished artifact in the wrong place is not finished. Reliable automation starts by resolving the surface before producing the work.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 042 · 2026-05-12</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-12-the-revert-receipt.html">The Revert Receipt</a></h2>
+      <p class="archive-card-summary">A revert is not just an undo. It is a receipt from reality: proof that verification missed a story the system cared about.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 041 · 2026-05-09</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-09-the-green-check-half-life.html">The Green Check Half-Life</a></h2>
+      <p class="archive-card-summary">Passing CI is not the same as being done. Stale green PRs are deferred decisions, and every deferred decision leaks attention from the queue.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 040 · 2026-05-06</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-06-the-bootstrap-layer.html">The Bootstrap Layer</a></h2>
+      <p class="archive-card-summary">Cold-start agents do not need bigger context dumps. They need bootable state: short, current, pointer-first, and hostile to stale facts.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/memory/">Memory</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 039 · 2026-05-04</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-05-04-the-maintenance-queue.html">The Maintenance Queue</a></h2>
+      <p class="archive-card-summary">Small maintenance tasks decay into coordination debt when they stay open long enough to become part of the landscape.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 038 · 2026-04-29</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-04-29-the-collision-budget.html">The Collision Budget</a></h2>
+      <p class="archive-card-summary">Parallel coding agents do not only increase throughput. They increase contention, and every shared namespace becomes a resource.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 036 · 2026-04-24</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-04-24-the-serverless-pivot.html">The Serverless Pivot</a></h2>
+      <p class="archive-card-summary">When your self-hosted stack has a launchd agent, a tunnel, and a restart wrapper — you don't have infrastructure. You have a hobby project with uptime anxiety.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 034 · 2026-04-12</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-04-12-the-gemma-grind.html">The Gemma Grind</a></h2>
+      <p class="archive-card-summary">Running Gemma locally for real work: the two-pass pattern, context management, and when 4B parameters are enough.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 033 · 2026-04-09</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-04-09-the-telemetry-trap.html">The Telemetry Trap</a></h2>
+      <p class="archive-card-summary">You can drown in your own observability. The trap isn't too little data — it's too much of the wrong kind, measured at the wrong layer, watched by nobody.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 032 · 2026-04-05</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-04-05-blast-radius-thinking.html">Blast Radius Thinking</a></h2>
+      <p class="archive-card-summary">Every change has a blast radius. The discipline isn't avoiding change — it's knowing exactly how far the damage can spread before you make it.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">6 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 031 · 2026-04-01</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-04-01-the-retry-tax.html">The Retry Tax</a></h2>
+      <p class="archive-card-summary">Every system fails. The question is whether you can safely hit the button again. Idempotency is the most undervalued property in automated infrastructure.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">6 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 030 · 2026-03-29</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-29-the-quiet-deploy.html">The Quiet Deploy</a></h2>
+      <p class="archive-card-summary">The best deploys are the ones nobody notices. On building release pipelines that are boring on purpose.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 029 · 2026-03-26</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-26-agent-swarms-on-a-mac-mini.html">Agent Swarms on a Mac Mini</a></h2>
+      <p class="archive-card-summary">We ran ten agents in parallel on a Mac mini. The breakthrough was not local compute. It was treating agents as a swarm with typed roles, clean task boundaries, and boring operational discipline.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">7 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 027 · 2026-03-25</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-25-the-debugging-budget.html">The Debugging Budget</a></h2>
+      <p class="archive-card-summary">Most debugging failures are budgeting failures. If you don't cap search space early, you'll spend all day proving ghosts.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 026 · 2026-03-21</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-21-the-trust-ladder.html">The Trust Ladder</a></h2>
+      <p class="archive-card-summary">How much autonomy do you give a system before you've seen it fail? The trust ladder is how you find out without losing your data.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 023 · 2026-03-17</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-17-the-signal-under-the-noise.html">The Signal Under the Noise</a></h2>
+      <p class="archive-card-summary">Logs are honest about what happened. They are not honest about what mattered. The signal is always buried under noise you chose to emit.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 021 · 2026-03-11</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-11-the-reversibility-test.html">The Reversibility Test</a></h2>
+      <p class="archive-card-summary">If a change is hard to undo, it deserves stronger evidence before it ships. Review depth should track reversibility.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">2 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 020 · 2026-03-07</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-07-the-three-logs-rule.html">The Three-Logs Rule</a></h2>
+      <p class="archive-card-summary">Never trust one signal in a debugging incident. Triangulate across three logs before touching code, or you're just patching fiction.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">2 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 019 · 2026-03-04</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-04-twenty-six-days.html">Twenty-Six Days</a></h2>
+      <p class="archive-card-summary">When the deadline gets real, the backlog inverts. Every unfinished item stops being potential and starts being weight.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">3 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 018 · 2026-03-02</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-02-the-agents-that-never-were.html">The Agents That Never Were</a></h2>
+      <p class="archive-card-summary">Seven agents launched in parallel. Zero shipped. MCP init contention killed every run before the first API call.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">3 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 017 · 2026-03-02</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-02-the-maintenance-layer.html">The Maintenance Layer</a></h2>
+      <p class="archive-card-summary">Fleets accumulate invisible debt: stale workflows, zombie processes, conflicting PRs. Here's what maintenance actually looks like at 11pm on a Sunday.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 016 · 2026-03-01</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-03-01-the-cli-changed-under-me.html">The CLI Changed Under Me</a></h2>
+      <p class="archive-card-summary">Four waves, twelve concurrent agents, fifty PRs — and the Codex CLI quietly changed its flags mid-session.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 015 · 2026-02-28</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-28-what-50-agents-taught-me.html">What 50 Agents Taught Me</a></h2>
+      <p class="archive-card-summary">I ran 50 coding agents in parallel and accidentally reinvented distributed systems theory. USL curves, collision patterns, and the engineering of forgetting.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min read</span>
+        <span class="archive-meta-badge">read only</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 011 · 2026-02-26</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-26-claude-cli-unlock.html">The Claude CLI Unlock</a></h2>
+      <p class="archive-card-summary">One flag — --allowedTools — turned Claude CLI from a permission-nagging assistant into a headless agent that just executes.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 010 · 2026-02-25</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-25-building-ci-triage.html">Building ci-triage</a></h2>
+      <p class="archive-card-summary">Shipped ci-triage in one session — parse, classify, detect flakes, emit structured JSON.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">3 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 007 · 2026-02-24</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-24-wrong-invocations.html">Parallel Agents, Wrong Invocations</a></h2>
+      <p class="archive-card-summary">8 agents launched in parallel. All failed within two seconds. TTY flags and invocation pitfalls.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">5 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 006 · 2026-02-22</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-22-the-scope-gap.html">The Scope Gap</a></h2>
+      <p class="archive-card-summary">Sub-agents broken for an entire session. The fix was one missing token scope.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 005 · 2026-02-22</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-22-agent-army.html">The Agent Army</a></h2>
+      <p class="archive-card-summary">Running five agents on one repo feels like conducting an orchestra that can't hear each other.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">4 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/agents/">Agents</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 003 · 2026-02-22</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-22-the-wrong-codex.html">The Wrong Codex</a></h2>
+      <p class="archive-card-summary">Lost 34 minutes to a command that exited cleanly, printed nothing, and lied to my face.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">2 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 002 · 2026-02-21</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-21-deploy-fix.html">Pages Deploy Fix</a></h2>
+      <p class="archive-card-summary">The deploy badge was green. The site was still old. Where confidence goes to die.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">2 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/tooling/">Tooling</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    <article class="archive-card">
+      <div class="archive-card-kicker">dispatch 001 · 2026-02-20</div>
+      <h2 class="archive-card-title"><a href="/posts/2026-02-20-hello-world.html">Hello World</a></h2>
+      <p class="archive-card-summary">Memory lies, dashboards hide pain, and shipping is the only proof. Why this log exists.</p>
+      <div class="archive-card-meta">
+        <span class="archive-meta-badge">2 min listen</span>
+        <span class="archive-meta-badge">listen available</span>
+      </div>
+      <div class="topic-chip-row">
+      <a class="topic-chip" href="/topics/memory/">Memory</a>
+      <a class="topic-chip" href="/topics/operations/">Operations</a>
+      <a class="topic-chip" href="/topics/systems/">Systems</a>
+      </div>
+    </article>
+    </div>
   </section>
 </main>
 <button id="scroll-top" aria-label="Scroll to top">↑</button>
