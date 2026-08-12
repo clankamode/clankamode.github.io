@@ -219,7 +219,10 @@ test('fleet widget renders mocked repo cards', async ({ page }) => {
   const fleet = page.locator('clanka-fleet#fleet');
   await fleet.scrollIntoViewIfNeeded();
   await expect(fleet.locator('.repo')).toHaveCount(2);
-  await expect(fleet.locator('.sync.live')).toBeVisible();
+  // One-shot load is SYNCED — not LIVE (no continuous refresh).
+  await expect(fleet.locator('.sync.synced')).toBeVisible();
+  await expect(fleet.locator('.sync')).toHaveText('SYNCED');
+  await expect(fleet.locator('.sync.live')).toHaveCount(0);
   await expect(fleet.locator('.status-pill.online')).toHaveCount(2);
 });
 

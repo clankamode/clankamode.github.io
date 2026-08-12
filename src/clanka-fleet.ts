@@ -287,13 +287,13 @@ export class ClankaFleet extends LitElement {
   private get syncLabel(): string {
     if (this.loading) return 'SYNCING';
     if (!this.live) return 'OFFLINE';
-    if (!this.repos.length) return 'SYNCED';
-    return this.repos.some((repo) => repo.online !== null) ? 'LIVE' : 'SYNCED';
+    // One-shot near-viewport fetch — SYNCED, not LIVE (no poll/revalidate).
+    return 'SYNCED';
   }
 
   private get syncClass(): string {
     if (this.loading || !this.live) return '';
-    return this.repos.some((repo) => repo.online !== null) ? 'live' : 'synced';
+    return 'synced';
   }
 
   private extractRepos(data: unknown): { repos: FleetRepo[]; sourceCount: number } {
