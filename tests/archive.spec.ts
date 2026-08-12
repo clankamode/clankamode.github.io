@@ -126,6 +126,17 @@ test('post pages render topic chips, related posts, and generated navigation', a
   expect(count).toBeLessThanOrEqual(2);
 });
 
+test('listen posts do not stack min read or listen available over listen meta', async ({ page }) => {
+  await page.goto('/posts/2026-02-21-deploy-fix.html');
+  await page.waitForSelector('.post-topic-chips');
+  await expect(page.locator('.audio-player[data-src]')).toHaveCount(1);
+
+  const meta = page.locator('.meta');
+  await expect(meta).toContainText(/min listen/i);
+  await expect(meta).not.toContainText(/min read/i);
+  await expect(meta).not.toContainText(/listen available/i);
+});
+
 test('posts keep chronological prev/next nav when content-index is offline', async ({ page }) => {
   await page.route('**/content-index.json', async (route) => {
     await route.abort('failed');

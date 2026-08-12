@@ -115,7 +115,12 @@
     const words = (clone.textContent || '').trim().split(/\s+/).filter(Boolean).length;
     const mins = Math.max(1, Math.ceil(words / 220));
     const meta = document.querySelector('.meta');
-    if (meta && !/\bmin read\b/i.test(meta.textContent || '')) {
+    // Listen posts already advertise duration ("N min listen"); don't stack a conflicting read estimate.
+    if (
+      meta
+      && !/\bmin read\b/i.test(meta.textContent || '')
+      && !/\bmin listen\b/i.test(meta.textContent || '')
+    ) {
       meta.innerHTML += ` &nbsp;·&nbsp; ${mins} min read`;
     }
   }
@@ -181,7 +186,15 @@
       if (!currentPost) return;
 
       const meta = document.querySelector('.meta');
-      if (meta && currentPost.audio && !/listen available/i.test(meta.textContent || '')) {
+      // Skip the redundant badge when the player is already above the fold (or meta already says listen).
+      const hasVisiblePlayer = Boolean(document.querySelector('.audio-player[data-src]'));
+      if (
+        meta
+        && currentPost.audio
+        && !hasVisiblePlayer
+        && !/listen available/i.test(meta.textContent || '')
+        && !/\bmin listen\b/i.test(meta.textContent || '')
+      ) {
         meta.innerHTML += ' &nbsp;·&nbsp; listen available';
       }
 
