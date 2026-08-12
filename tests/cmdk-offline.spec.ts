@@ -192,6 +192,8 @@ test('task board drops non-object items and maps in_progress status', async ({ p
           'skip-me',
           { title: 'Ship the board', status: 'in_progress', assignee: 'clanka', priority: 1 },
           { title: { nested: true }, status: 'todo' },
+          { title: 'Wait on review', status: 'blocked', priority: 'P2' },
+          { title: 'Docs pass', status: 'todo', priority: 'high' },
         ],
       }),
     });
@@ -200,8 +202,15 @@ test('task board drops non-object items and maps in_progress status', async ({ p
   await page.reload();
   const tasks = page.locator('clanka-tasks#tasks');
   await expect(tasks).toContainText('Ship the board');
-  await expect(tasks.locator('.task-card')).toHaveCount(2);
+  await expect(tasks.locator('.task-card')).toHaveCount(4);
   await expect(tasks.locator('.status-doing')).toHaveCount(1);
+  await expect(tasks.locator('.status-doing')).toHaveText('DOING');
+  await expect(tasks.locator('.status-blocked')).toHaveText('BLOCKED');
+  await expect(tasks).toContainText('P1');
+  await expect(tasks).toContainText('P2');
+  await expect(tasks).toContainText('high');
+  await expect(tasks).not.toContainText('Phigh');
+  await expect(tasks).not.toContainText('PP2');
   await expect(tasks).not.toContainText('[object Object]');
   await expect(tasks).toContainText('untitled');
 });

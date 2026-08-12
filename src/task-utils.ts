@@ -6,7 +6,7 @@ export type TaskItem = {
 };
 
 export type TaskDisplay = {
-  statusClass: 'todo' | 'doing' | 'done';
+  statusClass: 'todo' | 'doing' | 'done' | 'blocked';
   statusLabel: string;
   title: string;
   assignee: string;
@@ -33,6 +33,10 @@ export function normalizeTaskStatus(value: unknown): TaskDisplay['statusClass'] 
     case 'completed':
     case 'finished':
       return 'done';
+    case 'blocked':
+    case 'waiting':
+    case 'on_hold':
+      return 'blocked';
     case 'todo':
     case 'pending':
     case 'backlog':
@@ -41,6 +45,27 @@ export function normalizeTaskStatus(value: unknown): TaskDisplay['statusClass'] 
     default:
       return 'todo';
   }
+}
+
+const STATUS_LABELS: Record<TaskDisplay['statusClass'], string> = {
+  todo: 'TODO',
+  doing: 'DOING',
+  done: 'DONE',
+  blocked: 'BLOCKED',
+};
+
+/** Format priority without inventing a P-prefix on already-prefixed or non-numeric values. */
+export function formatTaskPriority(value: unknown): string {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return `P${Math.trunc(value)}`;
+  }
+  if (typeof value !== 'string') return '?';
+  const s = value.trim();
+  if (!s) return '?';
+  const stripped = /^p\s*/i.test(s) ? s.replace(/^p\s*/i, '') : s;
+  if (/^\d+$/.test(stripped)) return `P${stripped}`;
+  // Non-numeric priorities (high/low) render as-is — never Phigh / PP1.
+  return s;
 }
 
 function stringifyTaskValue(value: unknown, fallback: string): string {
@@ -77,11 +102,12 @@ export function getTaskDisplay(task: TaskItem | null | undefined): TaskDisplay {
     return { ...FALLBACK_TASK_DISPLAY };
   }
 
+  const statusClass = normalizeTaskStatus(task.status);
   return {
-    statusClass: normalizeTaskStatus(task.status),
-    statusLabel: stringifyTaskValue(task.status, 'TODO'),
+    statusClass,
+    statusLabel: STATUS_LABELS[statusClass],
     title: stringifyTaskValue(task.title, 'untitled'),
     assignee: stringifyTaskValue(task.assignee, 'unassigned'),
-    priority: stringifyTaskValue(task.priority, '?'),
+    priority: formatTaskPriority(task.priority),
   };
 }

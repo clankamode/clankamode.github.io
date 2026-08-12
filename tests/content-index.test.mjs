@@ -192,7 +192,7 @@ test('task display helpers normalize status and preserve labels', async () => {
   assert.equal(normalizeTaskStatus('in-progress'), 'doing');
   assert.equal(normalizeTaskStatus('WIP'), 'doing');
   assert.equal(normalizeTaskStatus('completed'), 'done');
-  assert.equal(normalizeTaskStatus('blocked'), 'todo');
+  assert.equal(normalizeTaskStatus('blocked'), 'blocked');
 
   assert.deepEqual(
     getTaskDisplay({
@@ -201,10 +201,40 @@ test('task display helpers normalize status and preserve labels', async () => {
     }),
     {
       statusClass: 'done',
-      statusLabel: 'Done',
+      statusLabel: 'DONE',
       title: 'untitled',
       assignee: 'unassigned',
-      priority: '0',
+      priority: 'P0',
+    },
+  );
+
+  assert.deepEqual(
+    getTaskDisplay({
+      status: 'blocked',
+      title: 'Wait on review',
+      priority: 'P1',
+    }),
+    {
+      statusClass: 'blocked',
+      statusLabel: 'BLOCKED',
+      title: 'Wait on review',
+      assignee: 'unassigned',
+      priority: 'P1',
+    },
+  );
+
+  assert.deepEqual(
+    getTaskDisplay({
+      status: 'in_progress',
+      title: 'Ship it',
+      priority: 'high',
+    }),
+    {
+      statusClass: 'doing',
+      statusLabel: 'DOING',
+      title: 'Ship it',
+      assignee: 'unassigned',
+      priority: 'high',
     },
   );
 
