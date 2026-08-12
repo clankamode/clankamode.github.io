@@ -276,6 +276,7 @@ test('parseGithubEvents accepts wrapped and bare array payloads', async () => {
   assert.deepEqual(parseGithubEvents(null), []);
   assert.deepEqual(parseGithubEvents({ events: [sample, sample, { type: 1 }] }), [sample]);
   assert.deepEqual(parseGithubEvents([{ type: '', repo: 'x', message: 'm', timestamp: 't' }]), []);
+  assert.deepEqual(parseGithubEvents([{ type: 'PushEvent', repo: 'x', message: 'm', timestamp: 'not-a-date' }]), []);
 
   assert.equal(isGithubEventsPayload({ events: [] }), true);
   assert.equal(isGithubEventsPayload([sample]), true);

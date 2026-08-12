@@ -272,6 +272,33 @@ test('terminal normalizes event types and blank messages', async ({ page }) => {
   await expect(terminal.locator('.terminal')).toHaveAttribute('aria-busy', 'false');
 });
 
+
+test('unparseable event timestamps show unavailable instead of empty activity', async ({ page }) => {
+  await page.route(`${API_BASE}/github/events`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        events: [
+          {
+            type: 'PushEvent',
+            repo: 'clankamode/site',
+            message: 'feat: improve homepage',
+            timestamp: 'not-a-date',
+          },
+        ],
+      }),
+    });
+  });
+
+  await page.reload();
+  await page.locator('clanka-terminal#terminal').scrollIntoViewIfNeeded();
+  await expect(page.locator('clanka-terminal#terminal')).toContainText(
+    '[ offline — activity unavailable ]',
+  );
+  await expect(page.locator('clanka-terminal#terminal')).not.toContainText('[ no recent activity ]');
+});
+
 test('malformed github events show unavailable instead of empty activity', async ({ page }) => {
   await page.route(`${API_BASE}/github/events`, async (route) => {
     await route.fulfill({

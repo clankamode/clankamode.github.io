@@ -68,6 +68,11 @@ export type GithubEvent = {
   timestamp: string;
 };
 
+function isParseableTimestamp(value: string): boolean {
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed);
+}
+
 function isGithubEvent(value: unknown): value is GithubEvent {
   if (!value || typeof value !== 'object') return false;
 
@@ -79,7 +84,8 @@ function isGithubEvent(value: unknown): value is GithubEvent {
     event.repo.trim().length > 0 &&
     typeof event.message === 'string' &&
     typeof event.timestamp === 'string' &&
-    event.timestamp.trim().length > 0
+    event.timestamp.trim().length > 0 &&
+    isParseableTimestamp(event.timestamp)
   );
 }
 
