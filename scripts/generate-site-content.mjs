@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { Buffer } from 'node:buffer';
+import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
 const ROOT = process.cwd();
@@ -561,7 +562,17 @@ async function main() {
   process.stdout.write(`generated content index for ${contentIndex.posts.length} posts and ${contentIndex.topics.length} topics\n`);
 }
 
-main().catch((error) => {
-  process.stderr.write(`${error instanceof Error ? error.stack ?? error.message : String(error)}\n`);
-  process.exitCode = 1;
-});
+export { isValidPostDate, parseAudioTimingsJson };
+
+function isExecutedAsMain() {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  return import.meta.url === pathToFileURL(path.resolve(entry)).href;
+}
+
+if (isExecutedAsMain()) {
+  main().catch((error) => {
+    process.stderr.write(`${error instanceof Error ? error.stack ?? error.message : String(error)}\n`);
+    process.exitCode = 1;
+  });
+}
