@@ -322,6 +322,82 @@ test('withRetries eventually succeeds and withResultRetries stops on ok', async 
   assert.equal(resultAttempts, 2);
 });
 
+test('content-index previous/next chain and topic counts stay coherent', async () => {
+  const [{ POSTS, TOPICS }, generatedRaw] = await Promise.all([
+    loadSourceContent(),
+    fs.readFile(path.join(ROOT, 'public/content-index.json'), 'utf8'),
+  ]);
+
+  const generated = JSON.parse(generatedRaw);
+  const bySlug = new Map(generated.posts.map((post) => [post.slug, post]));
+
+  assert.equal(generated.posts.length, POSTS.length);
+  assert.equal(generated.topics.length, TOPICS.length);
+
+  const chronological = [...POSTS].sort(
+    (a, b) => Date.parse(`${a.date}T00:00:00Z`) - Date.parse(`${b.date}T00:00:00Z`) || a.number - b.number,
+  );
+
+  for (let index = 0; index < chronological.length; index += 1) {
+    const source = chronological[index];
+    const post = bySlug.get(source.slug);
+    assert.ok(post, `missing generated post for ${source.slug}`);
+
+    const expectedPrevious = index > 0 ? chronological[index - 1].slug : null;
+    const expectedNext = index < chronological.length - 1 ? chronological[index + 1].slug : null;
+
+    assert.equal(post.previous?.slug ?? null, expectedPrevious, `previous mismatch for ${source.slug}`);
+    assert.equal(post.next?.slug ?? null, expectedNext, `next mismatch for ${source.slug}`);
+
+    if (post.previous) {
+      const previous = bySlug.get(post.previous.slug);
+      assert.equal(previous?.next?.slug, post.slug, `previous→next asymmetry at ${source.slug}`);
+    }
+
+    if (post.next) {
+      const next = bySlug.get(post.next.slug);
+      assert.equal(next?.previous?.slug, post.slug, `next→previous asymmetry at ${source.slug}`);
+    }
+
+    for (const related of post.related ?? []) {
+      const shared = related.topics.some((topic) => post.topics.some((entry) => entry.slug === topic.slug));
+      assert.ok(shared, `related post ${related.slug} shares no topics with ${post.slug}`);
+      assert.notEqual(related.slug, post.slug, `related post cannot be self for ${post.slug}`);
+    }
+  }
+
+  const audioPosts = POSTS.filter((post) => post.audio).length;
+  assert.equal(generated.homepage.counts.posts, POSTS.length);
+  assert.equal(generated.homepage.counts.audioPosts, audioPosts);
+  assert.equal(generated.homepage.counts.topics, TOPICS.length);
+
+  for (const topic of TOPICS) {
+    const generatedTopic = generated.topics.find((entry) => entry.slug === topic.slug);
+    assert.ok(generatedTopic, `missing generated topic ${topic.slug}`);
+
+    const matching = chronological
+      .filter((post) => post.topics.includes(topic.slug))
+      .reverse(); // newest-first, matching generator sort
+
+    assert.equal(generatedTopic.count, matching.length, `topic count drift for ${topic.slug}`);
+    assert.equal(generatedTopic.posts.length, matching.length, `topic posts length drift for ${topic.slug}`);
+    assert.deepEqual(
+      generatedTopic.posts.map((post) => post.slug),
+      matching.map((post) => post.slug),
+      `topic post order drift for ${topic.slug}`,
+    );
+    assert.equal(
+      generatedTopic.latestDate,
+      matching[0]?.date ?? null,
+      `topic latestDate drift for ${topic.slug}`,
+    );
+
+    const topicPage = await fs.readFile(path.join(ROOT, 'topics', topic.slug, 'index.html'), 'utf8');
+    assert.match(topicPage, new RegExp(`data-topic-slug="${topic.slug}"`));
+    assert.match(topicPage, new RegExp(`id="page-title"[^>]*>${topic.name}<`));
+  }
+});
+
 test('post dates are valid YYYY-MM-DD and generator validates dates and audio timings', async () => {
   const [{ POSTS }, generatorSource] = await Promise.all([
     loadSourceContent(),
