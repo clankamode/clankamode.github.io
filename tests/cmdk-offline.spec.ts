@@ -561,10 +561,31 @@ test('presence announces status via aria-live and rejects blank current', async 
   const presence = page.locator('clanka-presence#presence');
   await expect(presence.locator('.hd-status')).toHaveAttribute('aria-live', 'polite');
   await expect(presence.locator('.presence-block')).toHaveAttribute('aria-live', 'polite');
-  // Blank current falls back on first sync; status still applies.
+  // Blank current stays honest — no invented "active" ops copy; status still applies.
   await expect(presence.locator('.hd-status')).toContainText('THINKING');
-  await expect(presence.locator('.presence-block')).toContainText('active');
+  await expect(presence.locator('.presence-block')).toContainText('[ no current signal ]');
+  await expect(presence.locator('.presence-block')).not.toContainText('active');
   await expect(presence.locator('.presence-block')).not.toContainText('[ api unreachable ]');
+});
+
+test('presence does not invent operational status when /now omits it', async ({ page }) => {
+  await page.route(`${API_BASE}/now`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        current: 'shipping honesty fixes',
+        status: '   ',
+        agents_active: 1,
+      }),
+    });
+  });
+
+  await page.reload();
+  const presence = page.locator('clanka-presence#presence');
+  await expect(presence.locator('.presence-block')).toContainText('shipping honesty fixes');
+  await expect(presence.locator('.hd-status')).toContainText('UNKNOWN');
+  await expect(presence.locator('.hd-status')).not.toContainText('OPERATIONAL');
 });
 
 test('slim sync after offline clears latched agent offline state', async ({ page }) => {

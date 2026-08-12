@@ -6,7 +6,7 @@ import { withRetries } from './retry';
 @customElement('clanka-presence')
 export class ClankaPresence extends LitElement {
   @state() private current: string = '[ loading... ]';
-  @state() private status: string = 'OPERATIONAL';
+  @state() private status: string = '';
   @state() private loading = true;
   @state() private error = '';
   @state() private stale = false;
@@ -160,13 +160,14 @@ export class ClankaPresence extends LitElement {
       if (current.length > 0) {
         this.current = current;
       } else if (!this.hasSyncedOnce) {
-        this.current = 'active';
+        // Do not invent ops copy — blank current means the API sent no signal.
+        this.current = '[ no current signal ]';
       }
       const status = typeof data.status === 'string' ? data.status.trim() : '';
       if (status.length > 0) {
         this.status = status;
       } else if (!this.hasSyncedOnce) {
-        this.status = 'operational';
+        this.status = 'unknown';
       }
       this.error = '';
       this.stale = false;
@@ -204,7 +205,7 @@ export class ClankaPresence extends LitElement {
       ? 'SYNCING'
       : this.stale
         ? 'STALE'
-        : this.status.toUpperCase();
+        : (this.status || 'unknown').toUpperCase();
 
     return html`
       <div class="hd">
