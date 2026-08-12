@@ -262,11 +262,18 @@ export class ClankaFleet extends LitElement {
 
     try {
       const data = await withRetries(() => fetchFleetSummary());
-      const repos = this.extractRepos(data);
-      this.repos = repos;
-      // Valid empty registry is still a successful sync — not offline.
-      this.live = true;
-      this.error = repos.length ? '' : '[ fleet registry empty ]';
+      const { repos, sourceCount } = this.extractRepos(data);
+      // Envelope with entries that all fail normalization is unavailable — not an empty sync.
+      if (sourceCount > 0 && repos.length === 0) {
+        this.repos = [];
+        this.live = false;
+        this.error = '[ fleet unavailable ]';
+      } else {
+        this.repos = repos;
+        // Valid empty registry is still a successful sync — not offline.
+        this.live = true;
+        this.error = repos.length ? '' : '[ fleet registry empty ]';
+      }
     } catch {
       this.repos = [];
       this.live = false;
@@ -289,17 +296,19 @@ export class ClankaFleet extends LitElement {
     return this.repos.some((repo) => repo.online !== null) ? 'live' : 'synced';
   }
 
-  private extractRepos(data: unknown): FleetRepo[] {
+  private extractRepos(data: unknown): { repos: FleetRepo[]; sourceCount: number } {
     const source = this.pickRepoArray(data);
-    if (!source.length) return [];
+    if (!source.length) return { repos: [], sourceCount: 0 };
 
-    return source
+    const repos = source
       .map((item) => this.normalizeRepo(item))
       .filter((item): item is FleetRepo => item !== null)
       .sort((a, b) => {
         const tierOrder = TIERS.indexOf(a.tier) - TIERS.indexOf(b.tier);
         return tierOrder !== 0 ? tierOrder : a.repo.localeCompare(b.repo);
       });
+
+    return { repos, sourceCount: source.length };
   }
 
   private pickRepoArray(data: unknown): unknown[] {
