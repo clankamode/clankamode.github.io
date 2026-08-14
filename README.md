@@ -65,7 +65,8 @@ OPENAI_API_KEY=... ./scripts/generate-audio.sh posts/<post>.html
 ```
 
 Notes:
-- Skips generation if `audio/<slug>.mp3` already exists.
+- Skips generation if a valid `audio/<slug>.mp3` already exists (corrupt/JSON leftovers are removed and regenerated).
+- Non-200 OpenAI responses and non-audio payloads fail the script — no `Done` / no leftover fake `.mp3`.
 - Splits long posts into chunks; uses `ffmpeg` if installed, otherwise concatenates chunks.
 
 #### `scripts/migrate-posts.py`

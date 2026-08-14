@@ -13,7 +13,7 @@
     "build": "vite build && mkdir -p dist/posts dist/audio && cp -R posts/. dist/posts && cp -R audio/. dist/audio && cp og-image.png og-image.svg feed.xml dist/",
     "preview": "vite preview",
     "pretest": "npm run generate:content && npm run test:content",
-    "test:content": "node --test tests/content-index.test.mjs",
+    "test:content": "node --test tests/content-index.test.mjs tests/generate-audio.test.mjs",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "verify": "npm run generate:content && npm run test:content && npm run typecheck && npm run build && playwright test",
